@@ -10,8 +10,8 @@ Monthly arXiv-based digest for EEG Foundation Model papers:
 ```bash
 pip install -e ".[dev]"
 export GEMINI_API_KEY="..."
-export GEMINI_MODEL_TRIAGE="gemini-2.0-flash"
-export GEMINI_MODEL_SUMMARY="gemini-2.0-pro"
+export GEMINI_MODEL_TRIAGE="gemini-flash-lite-latest"
+export GEMINI_MODEL_SUMMARY="gemini-3.0-flash-preview"
 ```
 
 You can also use `GOOGLE_API_KEY` instead of `GEMINI_API_KEY`.
