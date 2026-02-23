@@ -5,7 +5,7 @@ Implement a monthly “EEG Foundation Model Digest” pipeline.
 
 ### Pipeline stages
 - **Stage 1 (Retrieve):** Query arXiv by relevant categories and a high-recall **title+abstract keyword strategy**.
-- **Stage 2 (Triage):** A **cheap Gemini model** reviews metadata+abstract and decides whether it is an **EEG-FM** paper (strict JSON output).
+- **Stage 2 (Triage):** A **cheap Gemini model** reviews title+abstract and decides whether it is an **EEG-FM** paper (strict JSON output).
 - **Stage 3 (Deep summary):** Download PDF for accepted papers, extract text, and use a stronger Gemini model to generate a **deep structured summary** (strict JSON output).
 - **Stage 4 (Publish):** Generate a static GitHub Pages site in `docs/` with **one subpage per month** containing paper cards.
 
@@ -14,6 +14,7 @@ Pipeline artifacts:
 - `outputs/YYYY-MM/arxiv_raw.json` — raw candidates from Stage 1
 - `outputs/YYYY-MM/triage.jsonl` — one triage decision per candidate
 - `outputs/YYYY-MM/papers.jsonl` — one deep summary per accepted paper
+- `outputs/YYYY-MM/backend_rows.jsonl` — canonical backend artifact (one merged row per candidate)
 - `outputs/YYYY-MM/digest.json` — structured digest index (sections + top picks)
 - `data/digest.sqlite` — persistent state for incremental runs
 
@@ -96,15 +97,22 @@ Use `published` for inclusion, not `updated`.
 
 ### 4.1 Inputs to triage model
 Provide:
-- arxiv_id_base, title, authors, categories, published date, abstract, links (abs, pdf)
+- title
+- abstract
 
 ### 4.2 Output schema: `TriageDecision`
 Write JSON only, validate with `schemas/triage.json`.
 
+Model output keys:
+- `decision` in `["accept", "reject", "borderline"]`
+- `confidence` in `[0,1]`
+- `reasons` (2-4 short evidence-based strings)
+
+Persistence rule:
+- pipeline deterministically attaches `arxiv_id_base` outside model output.
+
 Decision logic:
-- accept if `is_eeg_related && is_foundation_model_related` and `confidence >= 0.6`
-- borderline if plausible but unclear OR `confidence in [0.35, 0.6)`
-- reject otherwise
+- trust model `decision` as returned (no local decision rewrite policy).
 
 ### 4.3 JSON repair
 If parse/schema fails:
@@ -129,10 +137,15 @@ Proceed for:
 - Fallback: `pdfminer.six`
 - Save extraction metadata: pages, chars, tool, errors
 
-### 5.4 Deep summary input truncation
-Pass a bounded text window:
-- first `TEXT_HEAD_CHARS` (default 80_000)
-- last `TEXT_TAIL_CHARS` (default 20_000)
+### 5.4 Deep summary input strategy
+Summary input always includes:
+- `arxiv_id_base`, `title`, `published_date`, `categories`, `abstract`, and triage decision fields.
+
+For extracted paper text:
+- Prefer full extracted `fulltext` if token count is within `SUMMARY_MAX_INPUT_TOKENS`.
+- If fulltext is too large (or token count fails), send deterministic `fulltext_slices` with fixed keys:
+  - `abstract`, `introduction`, `methods`, `results`, `conclusion`, `excerpt`.
+- Missing slices are empty strings; `excerpt` is always populated as fallback.
 
 ### 5.5 Output schema: `PaperSummary`
 Validate with `schemas/summary.json`.
@@ -172,7 +185,11 @@ Incremental:
 - skip already-triaged and already-summarized unless `--force`
 
 ## 8) CLI
-`python -m eegfm_digest.run --month YYYY-MM [--max-candidates N] [--max-accepted N] [--include-borderline] [--no-pdf] [--force]`
+`python -m eegfm_digest.run --month YYYY-MM [--max-candidates N] [--max-accepted N] [--include-borderline] [--no-pdf] [--no-site] [--force]`
+
+`--no-site` mode:
+- still writes all `outputs/YYYY-MM/*` artifacts and updates SQLite.
+- skips all `docs/` writes.
 
 Defaults:
 - month: previous calendar month
@@ -195,6 +212,7 @@ Optional:
 - `LLM_TEMPERATURE_SUMMARY` default 0.2
 - `LLM_MAX_OUTPUT_TOKENS_TRIAGE` default 1024
 - `LLM_MAX_OUTPUT_TOKENS_SUMMARY` default 2048
+- `SUMMARY_MAX_INPUT_TOKENS` default 120000
 
 ## 10) Testing
 - Unit tests: arXiv parsing, month boundaries, dedupe, schema validation, render snapshots

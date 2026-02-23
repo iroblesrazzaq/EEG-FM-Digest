@@ -7,5 +7,7 @@ outputs/**/pdfs/
 outputs/**/text/
 outputs/**/.DS_Store
 
+.env
+
 # If you keep monthly site artifacts tracked, do NOT ignore docs/
 # docs/
