@@ -10,14 +10,15 @@
     "categories",
     "paper_type",
     "one_liner",
+    "detailed_summary",
     "unique_contribution",
     "key_points",
     "data_scale",
     "method",
     "evaluation",
     "open_source",
+    "tags",
     "limitations",
-    "digest_tags",
     "used_fulltext",
     "notes"
   ],
@@ -35,6 +36,7 @@
       "enum": ["new_model", "benchmark", "survey", "method", "application", "other"]
     },
     "one_liner": { "type": "string", "minLength": 5, "maxLength": 300 },
+    "detailed_summary": { "type": "string", "minLength": 80, "maxLength": 1200 },
     "unique_contribution": { "type": "string", "minLength": 5, "maxLength": 400 },
     "key_points": {
       "type": "array",
@@ -84,17 +86,48 @@
         "license": { "type": ["string", "null"] }
       }
     },
+    "tags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["paper_type", "backbone", "objective", "tokenization", "topology"],
+      "properties": {
+        "paper_type": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["eeg-fm", "post-training", "benchmark", "survey"] },
+          "uniqueItems": true,
+          "maxItems": 2
+        },
+        "backbone": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["transformer", "mamba-ssm", "moe", "diffusion"] },
+          "uniqueItems": true,
+          "maxItems": 2
+        },
+        "objective": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["masked-reconstruction", "autoregressive", "contrastive", "discrete-code-prediction"] },
+          "uniqueItems": true,
+          "maxItems": 2
+        },
+        "tokenization": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["time-patch", "latent-tokens", "discrete-tokens"] },
+          "uniqueItems": true,
+          "maxItems": 2
+        },
+        "topology": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["fixed-montage", "channel-flexible", "topology-agnostic"] },
+          "uniqueItems": true,
+          "maxItems": 2
+        }
+      }
+    },
     "limitations": {
       "type": "array",
       "items": { "type": "string", "minLength": 3 },
       "minItems": 2,
       "maxItems": 8
-    },
-    "digest_tags": {
-      "type": "array",
-      "items": { "type": "string", "minLength": 1 },
-      "minItems": 3,
-      "maxItems": 15
     },
     "used_fulltext": { "type": "boolean" },
     "notes": { "type": "string" }

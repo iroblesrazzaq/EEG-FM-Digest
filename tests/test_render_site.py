@@ -12,8 +12,18 @@ def test_month_page_snapshot():
             "published_date": "2025-01-04",
             "paper_type": "new_model",
             "one_liner": "A concise line",
+            "detailed_summary": (
+                "This paper proposes a reusable EEG foundation model backbone for cross-task transfer. "
+                "Its key novelty is a compact architecture that preserves performance while reducing compute."
+            ),
             "unique_contribution": "A unique thing",
-            "digest_tags": ["eeg", "ssl", "foundation"],
+            "tags": {
+                "paper_type": ["eeg-fm"],
+                "backbone": ["transformer"],
+                "objective": ["masked-reconstruction"],
+                "tokenization": ["time-patch"],
+                "topology": ["fixed-montage"],
+            },
             "open_source": {"code_url": "https://code", "weights_url": None, "license": None},
         }
     ]

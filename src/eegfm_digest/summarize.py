@@ -6,6 +6,19 @@ from typing import Any
 from .llm_gemini import GeminiClient, parse_json_text
 from .triage import validate_json
 
+TAG_TAXONOMY: dict[str, list[str]] = {
+    "paper_type": ["eeg-fm", "post-training", "benchmark", "survey"],
+    "backbone": ["transformer", "mamba-ssm", "moe", "diffusion"],
+    "objective": [
+        "masked-reconstruction",
+        "autoregressive",
+        "contrastive",
+        "discrete-code-prediction",
+    ],
+    "tokenization": ["time-patch", "latent-tokens", "discrete-tokens"],
+    "topology": ["fixed-montage", "channel-flexible", "topology-agnostic"],
+}
+
 
 def _summary_triage_payload(triage: dict[str, Any]) -> dict[str, Any]:
     reasons = triage.get("reasons", [])
@@ -26,6 +39,7 @@ def _base_payload(paper: dict[str, Any], triage: dict[str, Any]) -> dict[str, An
         "categories": paper["categories"],
         "abstract": paper["summary"],
         "triage": _summary_triage_payload(triage),
+        "allowed_tags": TAG_TAXONOMY,
     }
 
 
@@ -124,6 +138,7 @@ def summarize_paper(
                 "categories": paper["categories"],
                 "paper_type": "other",
                 "one_liner": "Summary unavailable due to JSON validation failure.",
+                "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
                 "unique_contribution": "unknown",
                 "key_points": ["unknown", "unknown", "unknown"],
                 "data_scale": {"datasets": [], "subjects": None, "eeg_hours": None, "channels": None},
@@ -135,6 +150,13 @@ def summarize_paper(
                 },
                 "evaluation": {"tasks": [], "benchmarks": [], "headline_results": []},
                 "open_source": {"code_url": None, "weights_url": None, "license": None},
+                "tags": {
+                    "paper_type": [],
+                    "backbone": [],
+                    "objective": [],
+                    "tokenization": [],
+                    "topology": [],
+                },
                 "limitations": ["unknown", "summary_json_error"],
                 "used_fulltext": used_fulltext,
                 "notes": f"{merged_notes};summary_json_error",

@@ -6,6 +6,24 @@ from pathlib import Path
 from typing import Any
 
 
+def _tag_chips(summary: dict[str, Any]) -> str:
+    tags = summary.get("tags")
+    if not isinstance(tags, dict):
+        return ""
+    chips: list[str] = []
+    for category in ("paper_type", "backbone", "objective", "tokenization", "topology"):
+        values = tags.get(category, [])
+        if not isinstance(values, list):
+            continue
+        for value in values:
+            chips.append(
+                f"<span class='chip'>{html.escape(str(category))}:{html.escape(str(value))}</span>"
+            )
+    if not chips:
+        return ""
+    return f"<p>{' '.join(chips)}</p>"
+
+
 def _card(summary: dict[str, Any], meta: dict[str, Any]) -> str:
     title = html.escape(summary["title"])
     abs_url = html.escape(meta.get("links", {}).get("abs", "#"))
@@ -17,12 +35,16 @@ def _card(summary: dict[str, Any], meta: dict[str, Any]) -> str:
     weights_link = (
         f"<a href='{html.escape(os_info['weights_url'])}'>weights</a>" if os_info.get("weights_url") else ""
     )
+    detail = html.escape(summary.get("detailed_summary", summary["one_liner"]))
+    tag_html = _tag_chips(summary)
     return f"""
     <article class='paper-card' id='{html.escape(summary['arxiv_id_base'])}'>
       <h3><a href='{abs_url}'>{title}</a></h3>
       <div class='meta'>{html.escape(summary['published_date'])} · {html.escape(summary['paper_type'])} · {html.escape(authors)}</div>
       <p><strong>One-liner:</strong> {html.escape(summary['one_liner'])}</p>
+      <p><strong>Summary:</strong> {detail}</p>
       <p><strong>Unique contribution:</strong> {html.escape(summary['unique_contribution'])}</p>
+      {tag_html}
       <p>{code_link} {weights_link}</p>
     </article>
     """

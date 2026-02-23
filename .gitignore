@@ -1,11 +1,15 @@
 .venv/
 __pycache__/
 *.pyc
+.DS_Store
 
 data/*.sqlite
-outputs/**/pdfs/
-outputs/**/text/
-outputs/**/.DS_Store
+data/*.pdf
+outputs/
+docs/local/
+src/eegfm_digest.egg-info/
+repomix-output.xml
+package-lock.json
 
 .env
 

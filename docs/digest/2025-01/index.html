@@ -1,0 +1,21 @@
+<!doctype html>
+<html><head><meta charset='utf-8'><title>EEG-FM Digest 2025-01</title>
+<link rel='stylesheet' href='../../assets/style.css'></head>
+<body>
+  <main>
+    <h1>EEG Foundation Model Digest — 2025-01</h1>
+    <p>Top picks: 2501.10885</p>
+    <section><h2>new_model</h2>
+    <article class='paper-card' id='2501.10885'>
+      <h3><a href='http://arxiv.org/abs/2501.10885v4'>CEReBrO: Compact Encoder for Representations of Brain Oscillations Using Efficient Alternating Attention</a></h3>
+      <div class='meta'>2025-01-18 · new_model · Alexandru Dimofte, Glenn Anta Bucagu, Thorir Mar Ingolfsson, Xiaying Wang, Andrea Cossettini, Luca Benini, Yawei Li</div>
+      <p><strong>One-liner:</strong> CEReBrO introduces a compact EEG foundation model with alternating attention that achieves 2x speed and 6x memory improvements over standard self-attention while setting new benchmarks in emotion and seizure detection.</p>
+      <p><strong>Summary:</strong> CEReBrO addresses key limitations in current EEG foundation models by introducing a compact encoder with alternating attention mechanism that jointly models intra-channel temporal dynamics and inter-channel spatial correlations. The model uses per-channel patch tokenization and achieves 2x speed improvement with 6x less memory compared to standard self-attention. Pre-trained on over 20,000 hours of publicly available scalp EEG recordings from the Temple University EEG Corpus (TUEG) with diverse channel configurations, CEReBrO offers three model sizes (3.6M, 40M, and 85M parameters) that set new benchmarks in emotion detection and seizure detection tasks while maintaining competitive performance in anomaly classification and gait prediction. The alternating attention mechanism enables efficient processing of long EEG sequences and high-channel-count data, making it particularly suitable for deployment on resource-constrained devices.</p>
+      <p><strong>Unique contribution:</strong> Introduces alternating attention mechanism that achieves 2x speed improvement and 6x memory reduction compared to standard self-attention while maintaining competitive performance across multiple EEG tasks.</p>
+      <p><span class='chip'>paper_type:eeg-fm</span> <span class='chip'>backbone:transformer</span> <span class='chip'>objective:masked-reconstruction</span> <span class='chip'>tokenization:time-patch</span> <span class='chip'>topology:channel-flexible</span></p>
+      <p> </p>
+    </article>
+    </section>
+  </main>
+  <script src='../../assets/site.js'></script>
+</body></html>
