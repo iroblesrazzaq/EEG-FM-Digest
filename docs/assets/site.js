@@ -87,6 +87,23 @@ async function fetchJson(path) {
   return response.json();
 }
 
+function resolveMonthJsonPath(path, view) {
+  const value = String(path || "");
+  if (!value) {
+    return value;
+  }
+  if (
+    value.startsWith("http://") ||
+    value.startsWith("https://") ||
+    value.startsWith("/") ||
+    value.startsWith("./") ||
+    value.startsWith("../")
+  ) {
+    return value;
+  }
+  return view === "explore" ? `../${value}` : value;
+}
+
 function parseFallbackMonths(raw) {
   try {
     const parsed = JSON.parse(raw || "[]");
@@ -235,9 +252,6 @@ function monthHasPapers(monthRow) {
 }
 
 function visibleMonthRows(state) {
-  if (state.showEmptyMonths) {
-    return state.monthRows;
-  }
   return state.monthRows.filter((row) => monthHasPapers(row));
 }
 
@@ -483,7 +497,7 @@ function renderTagGroups(state, tagOptions, compact) {
       })
       .join("");
     return `
-      <fieldset class="tag-filter">
+      <fieldset class="tag-filter tag-filter-${esc(category)}">
         <legend>${esc(category.replaceAll("_", " "))}</legend>
         <div class="tag-options">${options}</div>
       </fieldset>
@@ -527,50 +541,17 @@ function renderExploreControls(app, state) {
   if (!controls) {
     return;
   }
-  const monthRows = visibleMonthRows(state);
-  if (state.selectedMonth !== "all" && !monthRows.some((row) => row.month === state.selectedMonth)) {
-    state.selectedMonth = "all";
-  }
-  const scopedPapers =
-    state.selectedMonth !== "all" ? state.papers.filter((paper) => paper.month === state.selectedMonth) : state.papers;
-  const tagOptions = collectTagOptions(scopedPapers);
+  const tagOptions = collectTagOptions(state.papers);
   const tagGroups = renderTagGroups(state, tagOptions, false);
 
   controls.innerHTML = `
-    <div class="control-row">
+    <div class="control-row search-only-row">
       <label class="control control-grow" for="search-input">
         <span>Search</span>
         <input id="search-input" type="text" value="${esc(state.queryRaw)}" placeholder="title, author, summary, tags">
       </label>
-      <label class="control" for="month-filter">
-        <span>Month</span>
-        <select id="month-filter">
-          <option value="all"${state.selectedMonth === "all" ? " selected" : ""}>All months</option>
-          ${monthRows
-            .map(
-              (row) =>
-                `<option value="${esc(row.month)}"${state.selectedMonth === row.month ? " selected" : ""}>${esc(
-                  row.month_label || monthDisplayLabel(row.month),
-                )}</option>`,
-            )
-            .join("")}
-        </select>
-      </label>
-      <label class="control" for="sort-select">
-        <span>Sort</span>
-        <select id="sort-select">
-          <option value="published_desc"${state.sortBy === "published_desc" ? " selected" : ""}>Newest first</option>
-          <option value="published_asc"${state.sortBy === "published_asc" ? " selected" : ""}>Oldest first</option>
-          <option value="confidence_desc"${state.sortBy === "confidence_desc" ? " selected" : ""}>Triage confidence</option>
-          <option value="title_asc"${state.sortBy === "title_asc" ? " selected" : ""}>Title A-Z</option>
-        </select>
-      </label>
-      <button id="reset-filters" type="button">See all</button>
+      <button id="reset-filters" type="button">Clear search</button>
     </div>
-    <label class="toggle-control" for="show-empty-months">
-      <input id="show-empty-months" type="checkbox"${state.showEmptyMonths ? " checked" : ""}>
-      <span>Show empty months in selector</span>
-    </label>
     <p class="small filter-help">Tag filters: OR within each category, AND across categories.</p>
     ${tagGroups}
   `;
@@ -583,37 +564,11 @@ function renderExploreControls(app, state) {
       renderResults(app, state);
     });
   }
-  const monthFilter = controls.querySelector("#month-filter");
-  if (monthFilter) {
-    monthFilter.addEventListener("change", (event) => {
-      state.selectedMonth = String(event.target.value || "all");
-      renderExploreControls(app, state);
-      renderResults(app, state);
-    });
-  }
-  const sortSelect = controls.querySelector("#sort-select");
-  if (sortSelect) {
-    sortSelect.addEventListener("change", (event) => {
-      state.sortBy = String(event.target.value || "published_desc");
-      renderResults(app, state);
-    });
-  }
-  const showEmpty = controls.querySelector("#show-empty-months");
-  if (showEmpty) {
-    showEmpty.addEventListener("change", (event) => {
-      state.showEmptyMonths = Boolean(event.target.checked);
-      renderExploreControls(app, state);
-      renderResults(app, state);
-    });
-  }
   const resetBtn = controls.querySelector("#reset-filters");
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
       state.queryRaw = "";
       state.query = "";
-      state.sortBy = "published_desc";
-      state.selectedMonth = "all";
-      state.showEmptyMonths = false;
       for (const category of TAG_ORDER) {
         state.selectedTags[category].clear();
       }
@@ -719,19 +674,8 @@ function renderHome(app, state) {
   if (!controls || !results) {
     return;
   }
-  controls.innerHTML = `
-    <label class="toggle-control" for="show-empty-home">
-      <input id="show-empty-home" type="checkbox"${state.showEmptyMonths ? " checked" : ""}>
-      <span>Show empty months</span>
-    </label>
-  `;
-  const input = controls.querySelector("#show-empty-home");
-  if (input) {
-    input.addEventListener("change", (event) => {
-      state.showEmptyMonths = Boolean(event.target.checked);
-      renderHome(app, state);
-    });
-  }
+  controls.innerHTML = "";
+  controls.style.display = "none";
 
   const rows = visibleMonthRows(state);
   if (!rows.length) {
@@ -756,7 +700,8 @@ function renderHome(app, state) {
         .map((row) => {
           const featured = row.featured;
           const stats = row.stats || {};
-          const statsText = `${safeNumber(stats.accepted, 0)} accepted · ${safeNumber(stats.summarized, 0)} summarized`;
+          const paperCount = safeNumber(stats.accepted, 0);
+          const statsText = `${paperCount} ${paperCount === 1 ? "paper" : "papers"}`;
           const featuredHtml =
             featured && featured.title
               ? `
@@ -812,7 +757,6 @@ async function setupDigestApp() {
     const state = {
       view,
       monthRows: manifest.months,
-      showEmptyMonths: false,
     };
     renderHome(app, state);
     return true;
@@ -837,7 +781,7 @@ async function setupDigestApp() {
       const monthKey = item.month;
       let payload = parseMonthPayload({}, monthKey);
       try {
-        const raw = await fetchJson(item.json_path);
+        const raw = await fetchJson(resolveMonthJsonPath(item.json_path, view));
         payload = parseMonthPayload(raw, monthKey);
       } catch (_err) {
         payload = parseMonthPayload({}, monthKey);
@@ -857,7 +801,6 @@ async function setupDigestApp() {
     query: "",
     sortBy: "published_desc",
     selectedMonth: view === "month" ? month : "all",
-    showEmptyMonths: false,
     selectedTags: Object.fromEntries(TAG_ORDER.map((category) => [category, new Set()])),
   };
 

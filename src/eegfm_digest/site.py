@@ -328,7 +328,6 @@ def render_month_page(
       <h1>{month_title} Digest</h1>
       <p class='sub'>Accepted EEG-FM papers and summaries for this month.</p>
     </section>
-    {_about_digest_block("../../process/index.html", include_process_cta=False)}
     <section id='controls' class='controls'></section>
     <p id='results-meta' class='small'></p>
     <section id='results'></section>
@@ -364,12 +363,7 @@ def render_explore_page(months: list[str]) -> str:
 <link rel='stylesheet' href='../assets/style.css'></head><body>
 {nav}
 <main id='digest-app' class='container' data-view='explore' data-month='' data-manifest-json='../data/months.json' data-fallback-months='{fallback_months}'>
-<section class='hero-banner explore-hero'>
-<p class='hero-kicker'>Cross-Month Search</p>
-<h1>Explore All Digests</h1>
-<p class='sub'>Filter accepted papers by month, tags, and confidence.</p>
-</section>
-{_about_digest_block("../process/index.html", include_process_cta=False)}
+<h1>Search</h1>
 <section id='controls' class='controls'></section>
 <p id='results-meta' class='small'></p>
 <section id='results'></section>

@@ -201,6 +201,10 @@ h3 {
   align-items: end;
 }
 
+.search-only-row {
+  grid-template-columns: minmax(320px, 1fr) auto;
+}
+
 .month-controls-row {
   grid-template-columns: minmax(170px, 240px) auto;
 }
@@ -277,6 +281,51 @@ button:hover {
   border-radius: 12px;
   padding: 8px 10px 10px 10px;
   background: var(--surface);
+}
+
+.tag-filter-paper_type {
+  background: #f8f0ee;
+  border-color: #ebddd9;
+}
+
+.tag-filter-paper_type legend {
+  color: #7f665f;
+}
+
+.tag-filter-backbone {
+  background: #eef2f8;
+  border-color: #dde4ef;
+}
+
+.tag-filter-backbone legend {
+  color: #556377;
+}
+
+.tag-filter-objective {
+  background: #eef5f0;
+  border-color: #dce8df;
+}
+
+.tag-filter-objective legend {
+  color: #536a5b;
+}
+
+.tag-filter-tokenization {
+  background: #f5f1ea;
+  border-color: #e7ded0;
+}
+
+.tag-filter-tokenization legend {
+  color: #736558;
+}
+
+.tag-filter-topology {
+  background: #f2f1f7;
+  border-color: #e2deee;
+}
+
+.tag-filter-topology legend {
+  color: #635e79;
 }
 
 .tag-filter legend {
