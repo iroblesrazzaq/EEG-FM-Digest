@@ -2,106 +2,15 @@
 <html><head><meta charset='utf-8'><title>EEG-FM Digest 2025-09</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
-  <main>
-    <h1>EEG Foundation Model Digest — 2025-09</h1>
+  <main id='digest-app' class='container' data-view='month' data-month='2025-09' data-manifest-json='../../data/months.json' data-month-json='../../digest/2025-09/papers.json'>
+    <div class='header'>
+      <h1>September 2025 Digest</h1>
+      <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a></p>
+    </div>
     <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
-    <p>Top picks: 2509.24222, 2509.22050, 2510.00032, 2509.26301, 2509.24302</p>
-    <section><h2>new_model</h2>
-    <article class='paper-card' id='2509.02746'>
-      <h3><a href='http://arxiv.org/abs/2509.02746v1'>Mentality: A Mamba-based Approach towards Foundation Models for EEG</a></h3>
-      <div class='meta'>2025-09-02 · Saarang Panchavati, Corey Arnold, William Speier</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: Mentality uses Mamba blocks with U-Net architecture for EEG analysis.</li><li>Self-supervised pretraining on large EEG dataset improves seizure detection performance significantly.</li><li>Incorporates spectral loss for better signal reconstruction and achieves 0.72 AUROC on seizure detection.</li></ul>
-      <p><strong>Unique contribution:</strong> First Mamba-based foundation model for EEG with self-supervised pretraining and seizure detection, achieving 0.72 AUROC.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper introduces Mentality, a Mamba-based selective state space model for EEG analysis. The model is pretrained on a large EEG dataset using a self-supervised reconstruction task, then fine-tuned for seizure detection. The architecture combines 1D CNN layers for frequency filtering, channel mixing, and stacked Mamba blocks in a U-Net style encoder-decoder structure. The authors demonstrate that pretraining improves seizure detection AUROC from 0.64 to 0.72, and that including a spectral loss significantly enhances reconstruction quality.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Mamba-SSM</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2509.17920'>
-      <h3><a href='http://arxiv.org/abs/2509.17920v1'>SingLEM: Single-Channel Large EEG Model</a></h3>
-      <div class='meta'>2025-09-22 · Jamiyan Sukhbaatar, Satoshi Imamura, Ibuki Inoue, Shoya Murakami, Kazi Mahmudul Hassan, Seungwoo Han, Ingon Chanpornpakdi, Toshihisa Tanaka</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: SingLEM learns robust, general-purpose representations from single-channel EEG, making it inherently hardware agnostic.</li><li>State-of-the-art performance: SingLEM consistently outperforms leading multi-channel foundation models and handcrafted baselines across six diverse EEG tasks.</li><li>Interpretability and neurophysiological insights: SingLEM&#x27;s single-channel granularity enables fine-grained neurophysiological analysis and aids in paradigm validation.</li></ul>
-      <p><strong>Unique contribution:</strong> SingLEM is the first self-supervised foundation model designed to learn robust, general-purpose representations from single-channel EEG, making it inherently hardware agnostic and adaptable across diverse montages.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>SingLEM addresses the limitations of existing EEG foundation models, which are often rigidly tied to fixed, high-density multi-channel montages, by introducing a self-supervised foundation model that learns robust, general-purpose representations from single-channel EEG. The model employs a hybrid encoder architecture that combines convolutional layers to extract local features with a hierarchical transformer to model both short- and long-range temporal dependencies. Pretrained on 71 public datasets comprising over 9,200 subjects and 357,000 single-channel hours of EEG, SingLEM demonstrates state-of-the-art generalization when evaluated as a fixed feature extractor across six motor imagery and cognitive tasks, consistently outperforming leading multi-channel foundation models and handcrafted baselines. This single-channel approach not only achieves superior performance but also enables fine-grained neurophysiological analysis and enhances interpretability.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p><a href='https://github.com/ttlabtuat/SingLEM'>code</a> <a href='https://github.com/ttlabtuat/SingLEM'>weights</a></p>
-    </article>
-    
-
-    <article class='paper-card' id='2509.22050'>
-      <h3><a href='http://arxiv.org/abs/2509.22050v1'>BrainPro: Towards Large-scale Brain State-aware EEG Representation Learning</a></h3>
-      <div class='meta'>2025-09-26 · Yi Ding, Muyun Jiang, Weibang Jiang, Shuailei Zhang, Xinliang Zhou, Chenyu Liu, Shanglin Li, Yong Li, Cuntai Guan</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: BrainPro introduces retrieval-based spatial learning and brain state-decoupling to achieve state-of-the-art performance across nine BCI datasets.</li><li>Method novelty: Uses parallel encoders with decoupling losses to disentangle shared and brain-state-specific representations, supporting flexible downstream adaptation.</li><li>Strong evidence: Achieves highest balanced accuracy and robust gains across metrics on diverse tasks including emotion recognition, motor imagery, and mental disorder diagnosis.</li></ul>
-      <p><strong>Unique contribution:</strong> BrainPro is the first EEG foundation model to combine retrieval-based spatial learning with brain state-decoupling through parallel encoders, enabling flexible adaptation across heterogeneous montages and tasks while explicitly capturing neurophysiological dependencies.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>BrainPro addresses key limitations in existing EEG foundation models by introducing a retrieval-based spatial learning block that flexibly captures channel- and region-level interactions across varying electrode layouts, and a brain state-decoupling block with parallel encoders that enables state-aware representation learning through decoupling and region-aware reconstruction losses. Unlike single-encoder EFMs, BrainPro supports flexible downstream adaptation by combining shared and process-specific encoders, allowing richer representations for tasks involving overlapping brain processes. Pre-trained on an extensive EEG corpus, BrainPro achieves state-of-the-art performance and robust generalization across nine public BCI datasets spanning motor, emotion, speech, stress, mental disease, and attention tasks.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2509.22556'>
-      <h3><a href='http://arxiv.org/abs/2509.22556v1'>ECHO: Toward Contextual Seq2Seq Paradigms in Large EEG Models</a></h3>
-      <div class='meta'>2025-09-26 · Chenyu Liu, Yuqiu Deng, Tianyu Liu, Jinan Zhou, Xinliang Zhou, Ziyu Jia, Yi Ding</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New decoder-centric LEM paradigm: ECHO reformulates EEG modeling as sequence-to-sequence learning, capturing layered relationships among signals, labels, and tasks.</li><li>In-context learning capability: ECHO leverages discrete support samples to dynamically adapt to heterogeneous tasks without parameter updates.</li><li>Superior multi-task performance: Extensive experiments show ECHO consistently outperforms state-of-the-art single-task LEMs in multi-task settings.</li></ul>
-      <p><strong>Unique contribution:</strong> ECHO introduces a decoder-centric sequence-to-sequence paradigm for large EEG models, enabling in-context learning and superior multi-task generalization.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>ECHO addresses the decoder bottleneck in existing large EEG models (LEMs) by reformulating EEG modeling as sequence-to-sequence learning. Unlike encoder-centric LEMs that rely on lightweight classifiers, ECHO jointly models signals, labels, and tasks within a unified sequence space, incorporating discrete support samples to construct contextual cues. This design enables in-context learning, allowing dynamic adaptation to heterogeneous tasks without parameter updates. Extensive experiments across multiple datasets demonstrate that ECHO consistently outperforms state-of-the-art single-task LEMs in multi-task settings, showing superior generalization and adaptability.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Autoregressive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2510.00032'>
-      <h3><a href='http://arxiv.org/abs/2510.00032v1'>WaveMind: Towards a Conversational EEG Foundation Model Aligned to Textual and Visual Modalities</a></h3>
-      <div class='meta'>2025-09-26 · Ziyi Zeng, Zhenyang Cai, Yixi Cai, Xidong Wang, Junying Chen, Rongsheng Wang, Yipeng Liu, Siqi Cai, Benyou Wang, Zhiguo Zhang, Haizhou Li</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: WaveMind aligns EEG signals with textual and visual modalities in a unified semantic space for generalized interpretation.</li><li>Cross-task instruction tuning: Introduces WaveMind-Instruct-338k, the first open-source EEG instruction-tuning dataset with three instruction types and two dialogue scenarios.</li><li>Robust multimodal performance: Demonstrates strong classification accuracy and open-ended conversational capabilities across four downstream tasks including visual-stimulus interpretation and abnormality detection.</li></ul>
-      <p><strong>Unique contribution:</strong> WaveMind is the first conversational EEG foundation model that unifies textual and visual modality alignment for generalized brain signal interpretation.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>WaveMind addresses the challenge of EEG interpretation by introducing a multimodal alignment framework that maps EEG signals to both textual and visual modalities in a unified semantic space. The model leverages complementary relationships between brain cognition (image-EEG) and brain state (text-EEG) data to enhance cross-modal representation learning. A key innovation is WaveMind-Instruct-338k, the first cross-task EEG instruction-tuning dataset featuring three instruction types and two dialogue scenarios. The resulting model demonstrates robust classification accuracy while supporting flexible, open-ended conversations across four downstream tasks including visual-stimulus interpretation, emotion recognition, event detection, and abnormality detection.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2509.24222'>
-      <h3><a href='http://arxiv.org/abs/2509.24222v1'>Uni-NTFM: A Unified Foundation Model for EEG Signal Representation Learning</a></h3>
-      <div class='meta'>2025-09-29 · Zhisheng Chen, Yingwei Zhang, Qizhen Lan, Tianyu Liu, Huacan Wang, Yi Ding, Ziyu Jia, Ronghao Chen, Kun Wang, Xinliang Zhou</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: Uni-NTFM introduces a 1.9B-parameter architecture with decoupled time-frequency processing, topological embeddings, and MoE-based neural Transformer.</li><li>Superior performance: Uni-NTFM significantly outperforms existing task-specific methods and foundation models across nine downstream tasks under both linear probing and fine-tuning settings.</li><li>Scalable architecture: The MoE-based neural Transformer enables efficient scaling while maintaining specialized modeling of heterogeneous EEG patterns.</li></ul>
-      <p><strong>Unique contribution:</strong> Uni-NTFM is the first foundation model to simultaneously address the temporal, frequency, and spatial topology challenges in EEG representation learning through a decoupled architecture, topological embeddings, and MoE-based neural Transformer.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>Uni-NTFM addresses three core limitations of existing EEG foundation models: conflating time-domain and frequency-domain features, ignoring spatial topology of electrodes, and computational bottlenecks in dense networks. It introduces a decoupled architecture that parallelly encodes time, frequency, and raw signal representations before cross-domain fusion; a topological embedding mechanism that unifies electrodes from different international standards and generates structured input sequences for brain regions; and a Mixture-of-Experts neural Transformer that efficiently scales model capacity by routing signal patterns to specialized subnetworks. Pretrained on over 28,000 hours of diverse EEG data via a dual-domain masked reconstruction objective, Uni-NTFM significantly outperforms existing task-specific methods and foundation models across nine distinct downstream tasks under both linear probing and fine-tuning settings.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-backbone' title='backbone'>MoE</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p><a href='https://anonymous.4open.science/r/Uni-NTFM-0924'>code</a> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2509.24302'>
-      <h3><a href='http://arxiv.org/abs/2509.24302v1'>ELASTIQ: EEG-Language Alignment with Semantic Task Instruction and Querying</a></h3>
-      <div class='meta'>2025-09-29 · Muyun Jiang, Shuailei Zhang, Zhenjie Yang, Mengjun Wu, Weibang Jiang, Zhiwei Guo, Wei Zhang, Rui Liu, Shangen Zhang, Yong Li, Yi Ding, Cuntai Guan</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: ELASTIQ integrates spectral-temporal reconstruction with instruction-conditioned query-based alignment for transferable EEG representations.</li><li>Novel joint STR module unifies frequency and temporal modeling through complementary masking strategies, capturing richer EEG dynamics.</li><li>Instruction-conditioned Q-Former aligns EEG with language semantics via cross-attention, enabling task-specific semantic guidance and improved decoding robustness.</li></ul>
-      <p><strong>Unique contribution:</strong> First to demonstrate that explicit task instructions serve as semantic priors guiding EEG embeddings into coherent and linguistically grounded spaces, enabling superior generalization across diverse BCI applications.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>ELASTIQ is a foundation model for EEG-language alignment that integrates task-aware semantic guidance to produce structured and linguistically aligned EEG embeddings. The model employs a joint Spectral-Temporal Reconstruction (STR) module during pretraining, combining frequency masking with random and causal temporal masking to capture both spectral and temporal dynamics. In the instruction tuning stage, an Instruction-conditioned Q-Former (IQF) injects instruction embeddings into EEG tokens and aligns them with textual label embeddings through learnable queries. Evaluated on 20 datasets spanning motor imagery, emotion recognition, SSVEP, covert speech, and healthcare tasks, ELASTIQ achieves state-of-the-art performance on 14 datasets and the best average results across all five task categories.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p><a href='Code and pre-trained weights will be released.'>code</a> <a href='Code and pre-trained weights will be released.'>weights</a></p>
-    </article>
-    
-
-    <article class='paper-card' id='2509.26301'>
-      <h3><a href='http://arxiv.org/abs/2509.26301v2'>NeuroTTT: Bridging Pretraining-Downstream Task Misalignment in EEG Foundation Models via Test-Time Training</a></h3>
-      <div class='meta'>2025-09-30 · Suli Wang, Yangshen Deng, Zhenghua Bao, Xinyu Zhan, Yiqun Duan</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model alignment method: NeuroTTT bridges pretraining-downstream misalignment through domain-specific self-supervised fine-tuning and test-time adaptation.</li><li>Domain-specific self-supervised tasks (band prediction, amplitude scaling, temporal jigsaw) align representations to task-relevant EEG features without additional labeled data.</li><li>Test-time training with entropy minimization (Tent) provides lightweight, privacy-preserving adaptation that updates only normalization statistics for continual calibration to new subjects.</li></ul>
-      <p><strong>Unique contribution:</strong> The first method to unify domain-tuned self-supervision with test-time training in large-scale EEG foundation models, achieving state-of-the-art performance across diverse BCI tasks.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>Large-scale EEG foundation models often suffer from misalignment between pretraining objectives and downstream task requirements, as well as cross-subject distribution shifts. NeuroTTT addresses these challenges through a two-stage alignment strategy. First, it performs domain-specific self-supervised fine-tuning that augments the foundation model with task-relevant self-supervised objectives, aligning latent representations to important spectral, spatial, and temporal EEG features without requiring additional labeled data. Second, it incorporates test-time training at inference, applying self-supervised test-time training on individual unlabeled test samples and prediction entropy minimization (Tent), which updates only normalization statistics to continually calibrate the model to each new input on the fly. Using CBraMod and LaBraM as backbones, this approach yields substantially improved robustness and accuracy across diverse BCI tasks including imagined speech, stress detection, and motor imagery.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-tokenization' title='tokenization'>Latent Tokens</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p><a href='https://github.com/wsl2000/NeuroTTT'>code</a> </p>
-    </article>
-    </section>
+    <section id='controls' class='controls'></section>
+    <p id='results-meta' class='small'></p>
+    <section id='results'></section>
   </main>
   <script src='../../assets/site.js'></script>
 </body></html>

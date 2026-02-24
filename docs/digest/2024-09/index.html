@@ -2,58 +2,15 @@
 <html><head><meta charset='utf-8'><title>EEG-FM Digest 2024-09</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
-  <main>
-    <h1>EEG Foundation Model Digest — 2024-09</h1>
+  <main id='digest-app' class='container' data-view='month' data-month='2024-09' data-manifest-json='../../data/months.json' data-month-json='../../digest/2024-09/papers.json'>
+    <div class='header'>
+      <h1>September 2024 Digest</h1>
+      <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a></p>
+    </div>
     <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
-    <p>Top picks: 2409.12454, 2410.07190, 2409.14021, 2409.07480</p>
-    <section><h2>new_model</h2>
-    <article class='paper-card' id='2409.07480'>
-      <h3><a href='http://arxiv.org/abs/2409.07480v4'>EEG-Language Pretraining for Highly Label-Efficient Clinical Phenotyping</a></h3>
-      <div class='meta'>2024-09-02 · Sam Gijsen, Kerstin Ritter</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: CEReBrO ELM-MIL achieves state-of-the-art pathology detection with 84.42% balanced accuracy on TUAB using linear probing</li><li>Novel multimodal alignment: Combines timeseries cropping and text segmentation with multiple instance learning to address data misalignment</li><li>Zero-shot capabilities: Enables classification and retrieval of neural signals and reports without explicit labels, improving label efficiency by up to 9.7%</li></ul>
-      <p><strong>Unique contribution:</strong> The paper introduces EEG-language models that combine multimodal alignment with timeseries cropping and text segmentation, enabling zero-shot classification and retrieval of neural signals and reports for the first time.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper pioneers EEG-language models (ELMs) by aligning functional brain data with medical textual information for the first time. The authors propose sub-unit alignment through timeseries cropping and text segmentation, combined with a multiple instance learning extension to address misalignment between irrelevant EEG or text segments. Their multimodal models significantly improve over EEG-only models across four clinical evaluations and enable zero-shot classification as well as retrieval of both neural signals and reports. The approach demonstrates considerable progress for clinical applications, particularly in scenarios with few labels.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p><a href='https://github.com/SamGijsen/ELM'>code</a> <a href='pretrained models available'>weights</a></p>
-    </article>
-    
-
-    <article class='paper-card' id='2409.12454'>
-      <h3><a href='http://arxiv.org/abs/2409.12454v1'>FoME: A Foundation Model for EEG using Adaptive Temporal-Lateral Attention Scaling</a></h3>
-      <div class='meta'>2024-09-19 · Enze Shi, Kui Zhao, Qilong Yuan, Jiaqi Wang, Huawen Hu, Sigang Yu, Shu Zhang</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: FoME pre-trained on 1.7TB diverse EEG dataset with 745M parameters for 1,096k steps</li><li>Novel time-frequency fusion embedding and ATLAS mechanism capture complex temporal-spectral dynamics across heterogeneous EEG data</li><li>Achieves state-of-the-art performance across four downstream tasks including seizure classification, emotion recognition, and signal forecasting</li></ul>
-      <p><strong>Unique contribution:</strong> FoME introduces adaptive temporal-lateral attention scaling (ATLAS) that dynamically adapts to changing temporal and spatial patterns across diverse EEG data streams, enabling robust multi-channel modeling without requiring uniform topological rules or custom channel encodings for each dataset.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>FoME addresses the challenges of EEG signal heterogeneity and limited labeled data by introducing a foundation model pre-trained on a diverse 1.7TB dataset of scalp and intracranial EEG recordings. The model employs two key innovations: time-frequency fusion embedding and adaptive time-lateral attention scaling (ATLAS) mechanism. These components synergistically capture complex temporal and spectral EEG dynamics, enabling robust multi-channel modeling. Evaluations across four downstream tasks demonstrate superior performance in classification and forecasting applications, achieving state-of-the-art results.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p><a href='https://github.com/1061413241/FoME'>code</a> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2409.14021'>
-      <h3><a href='http://arxiv.org/abs/2409.14021v1'>BrainDreamer: Reasoning-Coherent and Controllable Image Generation from EEG Brain Signals via Language Guidance</a></h3>
-      <div class='meta'>2024-09-21 · Ling Wang, Chen Wu, Lin Wang</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: BrainDreamer generates high-quality, reasoning-coherent images from EEG brain signals while incorporating textual descriptions for controllability.</li><li>Core method/evidence: Proposes mask-based triple contrastive learning to align EEG, text, and image embeddings, and uses FiLM-based EEG adapter to inject EEG embeddings into Stable Diffusion with lower computational overhead than cross-attention methods.</li><li>Main practical takeaway: Extensive experiments show BrainDreamer significantly outperforms prior arts in generation quality and quantitative performance, with real-world user study confirming effectiveness of EEG-text interaction for coherent image generation.</li></ul>
-      <p><strong>Unique contribution:</strong> BrainDreamer is the first framework to generate reasoning-coherent and controllable images from EEG brain signals by combining EEG embeddings with textual descriptions through a novel mask-based triple contrastive learning strategy and FiLM-based EEG adapter.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>BrainDreamer introduces a novel end-to-end language-guided generative framework that generates high-quality, reasoning-coherent images from EEG brain signals. The method addresses limitations of prior work by proposing a two-stage pipeline: first, a mask-based triple contrastive learning strategy aligns EEG, text, and image embeddings in CLIP embedding space; second, an EEG adapter injects EEG embeddings into a pre-trained Stable Diffusion model using FiLM modulation. This approach effectively eliminates noise from non-invasive EEG acquisition and achieves precise mapping between EEG and image modalities. The framework can accept textual descriptions (e.g., color, position) to achieve controllable image generation, mimicking human reasoning processes where language description supplements visual imagination.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Diffusion</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Latent Tokens</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2410.07190'>
-      <h3><a href='http://arxiv.org/abs/2410.07190v1'>Designing Pre-training Datasets from Unlabeled Data for EEG Classification with Transformers</a></h3>
-      <div class='meta'>2024-09-23 · Tim Bary, Benoit Macq</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG pre-training method: generate labeled datasets from unlabeled EEG via signal alterations to accelerate transformer training.</li><li>Channel shuffling pre-training yields fastest convergence and best validation loss on EO/EC task.</li><li>Pre-trained models achieve 92.16% accuracy and 0.9702 AUC on seizure forecasting, outperforming non-pre-trained models.</li></ul>
-      <p><strong>Unique contribution:</strong> Introduces a method to create pre-training datasets from unlabeled EEG by altering signals to teach frequency behavior and channel correlations, enabling faster and more accurate transformer training.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper proposes a novel approach to pre-train transformers on unlabeled EEG data by creating labeled datasets through three signal alterations: white-noise replacement, channel shuffling, and channel mixing. The method is tested on an eyes-open/eyes-closed classification task and then applied to epileptic seizure forecasting using the Temple University Seizure Detection Corpus. Results show that pre-trained models converge significantly faster (50% reduction in fine-tuning epochs) and achieve higher accuracy (90.93% to 92.16%) and AUC (0.9648 to 0.9702) compared to non-pre-trained models.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p><a href='https://github.com/tbary/EEGPreTrainingDatasets'>code</a> </p>
-    </article>
-    </section>
+    <section id='controls' class='controls'></section>
+    <p id='results-meta' class='small'></p>
+    <section id='results'></section>
   </main>
   <script src='../../assets/site.js'></script>
 </body></html>

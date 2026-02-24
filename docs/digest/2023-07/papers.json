@@ -1,1 +1,10 @@
-[]
+{
+  "month": "2023-07",
+  "papers": [],
+  "stats": {
+    "accepted": 0,
+    "candidates": 8,
+    "summarized": 0
+  },
+  "top_picks": []
+}

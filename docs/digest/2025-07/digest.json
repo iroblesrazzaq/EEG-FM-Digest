@@ -1,0 +1,26 @@
+{
+  "month": "2025-07",
+  "sections": [
+    {
+      "paper_ids": [
+        "2507.09882"
+      ],
+      "title": "benchmark"
+    },
+    {
+      "paper_ids": [
+        "2507.11783"
+      ],
+      "title": "survey"
+    }
+  ],
+  "stats": {
+    "accepted": 2,
+    "candidates": 17,
+    "summarized": 2
+  },
+  "top_picks": [
+    "2507.11783",
+    "2507.09882"
+  ]
+}

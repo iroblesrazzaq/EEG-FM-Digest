@@ -1,161 +1,234 @@
-[
-  {
-    "arxiv_id_base": "2503.02636",
-    "categories": [
-      "q-bio.NC",
-      "cs.AI"
-    ],
-    "data_scale": {
-      "channels": 8.0,
-      "datasets": [
-        "MPI-LEMON"
+{
+  "month": "2025-03",
+  "papers": [
+    {
+      "arxiv_id": "2503.02636v4",
+      "arxiv_id_base": "2503.02636",
+      "authors": [
+        "Yeganeh Farahzadi",
+        "Morteza Ansarinia",
+        "Zoltan Kekecs"
       ],
-      "eeg_hours": 54.13,
-      "subjects": 216.0
+      "categories": [
+        "q-bio.NC",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2503.02636v4",
+        "pdf": "https://arxiv.org/pdf/2503.02636v4"
+      },
+      "published_date": "2025-03-04",
+      "summary": {
+        "arxiv_id_base": "2503.02636",
+        "categories": [
+          "q-bio.NC",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 8.0,
+          "datasets": [
+            "MPI-LEMON"
+          ],
+          "eeg_hours": 54.13,
+          "subjects": 216.0
+        },
+        "detailed_summary": "This paper introduces YARE-GAN, a Wasserstein GAN with gradient penalty designed to generate realistic multi-channel resting-state EEG signals and extract unsupervised representations. The model incorporates self-attention layers, positional encoding, and a subject-specific transformation layer to capture temporal dependencies and individual variability. Trained on the MPI-LEMON dataset (54.13 hours, 216 participants, 8 selected channels), it generates EEG signals that closely match real data in time/frequency domains and inter-channel connectivity. Critically, the discriminator's intermediate representations are repurposed for a downstream gender classification task, achieving 73% accuracy—outperforming raw EEG and matching CBraMod foundation model performance while using far less data and computational resources.",
+        "evaluation": {
+          "benchmarks": [
+            "CBraMod foundation model"
+          ],
+          "headline_results": [
+            "73% gender classification accuracy",
+            "comparable performance with 1/10th data and compute"
+          ],
+          "tasks": [
+            "signal synthesis validation",
+            "gender classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: YARE-GAN generates realistic resting-state EEG signals and extracts unsupervised representations via a Wasserstein GAN with gradient penalty.",
+          "Method novelty: Incorporates self-attention, positional encoding, and subject-specific transformation layers to capture temporal dependencies and individual variability in EEG data.",
+          "Strong evidence: Generated signals match real EEG in spectral properties and connectivity; discriminator representations achieve 73% gender classification accuracy, outperforming raw EEG and matching CBraMod with 1/10th the data and compute."
+        ],
+        "limitations": [
+          "Trained on single dataset (MPI-LEMON) with limited 8-channel subset, restricting generalizability",
+          "Struggles with high-frequency components, especially in frontal regions due to spectral bias",
+          "Evaluation limited to one downstream task (gender classification) without fine-tuning",
+          "Scalability to more channels requires architectural adjustments and further experimentation"
+        ],
+        "method": {
+          "architecture": "Wasserstein GAN with gradient penalty (WGAN-GP) using DCGAN architecture with self-attention layers, positional encoding, and subject-specific transformation",
+          "finetuning": null,
+          "objective": "generate realistic resting-state EEG signals and extract unsupervised representations",
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 42047, \"error\": null, \"pages\": 28, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=11962",
+        "one_liner": "GAN-based framework for resting-state EEG synthesis and unsupervised feature extraction, achieving downstream gender classification performance comparable to foundation models with significantly less data and compute.",
+        "open_source": {
+          "code_url": "https://github.com/Yeganehfrh/YARE-GAN",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-03-04",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "YARE-GAN: Yet Another Resting State EEG-GAN",
+        "unique_contribution": "Demonstrates that GAN-based architectures can serve dual roles in EEG research: high-fidelity signal synthesis and powerful unsupervised feature extraction, with downstream task performance matching data-intensive foundation models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "YARE-GAN: Yet Another Resting State EEG-GAN",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "EEG is central modality",
+          "GAN-based framework for unsupervised feature extraction",
+          "Demonstrates learned representations repurposed for downstream task",
+          "Performs comparably to EEG foundation models"
+        ]
+      }
     },
-    "detailed_summary": "This paper introduces YARE-GAN, a Wasserstein GAN with gradient penalty designed to generate realistic multi-channel resting-state EEG signals and extract unsupervised representations. The model incorporates self-attention layers, positional encoding, and a subject-specific transformation layer to capture temporal dependencies and individual variability. Trained on the MPI-LEMON dataset (54.13 hours, 216 participants, 8 selected channels), it generates EEG signals that closely match real data in time/frequency domains and inter-channel connectivity. Critically, the discriminator's intermediate representations are repurposed for a downstream gender classification task, achieving 73% accuracy—outperforming raw EEG and matching CBraMod foundation model performance while using far less data and computational resources.",
-    "evaluation": {
-      "benchmarks": [
-        "CBraMod foundation model"
+    {
+      "arxiv_id": "2503.10362v1",
+      "arxiv_id_base": "2503.10362",
+      "authors": [
+        "Ruggero G. Bettinardi",
+        "Mohamed Rahmouni",
+        "Ulysse Gimenez"
       ],
-      "headline_results": [
-        "73% gender classification accuracy",
-        "comparable performance with 1/10th data and compute"
+      "categories": [
+        "q-bio.QM",
+        "cs.LG",
+        "eess.SP",
+        "q-bio.NC"
       ],
-      "tasks": [
-        "signal synthesis validation",
-        "gender classification"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: YARE-GAN generates realistic resting-state EEG signals and extracts unsupervised representations via a Wasserstein GAN with gradient penalty.",
-      "Method novelty: Incorporates self-attention, positional encoding, and subject-specific transformation layers to capture temporal dependencies and individual variability in EEG data.",
-      "Strong evidence: Generated signals match real EEG in spectral properties and connectivity; discriminator representations achieve 73% gender classification accuracy, outperforming raw EEG and matching CBraMod with 1/10th the data and compute."
-    ],
-    "limitations": [
-      "Trained on single dataset (MPI-LEMON) with limited 8-channel subset, restricting generalizability",
-      "Struggles with high-frequency components, especially in frontal regions due to spectral bias",
-      "Evaluation limited to one downstream task (gender classification) without fine-tuning",
-      "Scalability to more channels requires architectural adjustments and further experimentation"
-    ],
-    "method": {
-      "architecture": "Wasserstein GAN with gradient penalty (WGAN-GP) using DCGAN architecture with self-attention layers, positional encoding, and subject-specific transformation",
-      "finetuning": null,
-      "objective": "generate realistic resting-state EEG signals and extract unsupervised representations",
-      "pretraining": null
-    },
-    "notes": "{\"chars\": 42047, \"error\": null, \"pages\": 28, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=11962",
-    "one_liner": "GAN-based framework for resting-state EEG synthesis and unsupervised feature extraction, achieving downstream gender classification performance comparable to foundation models with significantly less data and compute.",
-    "open_source": {
-      "code_url": "https://github.com/Yeganehfrh/YARE-GAN",
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-03-04",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "contrastive"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "fixed-montage"
-      ]
-    },
-    "title": "YARE-GAN: Yet Another Resting State EEG-GAN",
-    "unique_contribution": "Demonstrates that GAN-based architectures can serve dual roles in EEG research: high-fidelity signal synthesis and powerful unsupervised feature extraction, with downstream task performance matching data-intensive foundation models.",
-    "used_fulltext": true
+      "links": {
+        "abs": "http://arxiv.org/abs/2503.10362v1",
+        "pdf": "https://arxiv.org/pdf/2503.10362v1"
+      },
+      "published_date": "2025-03-13",
+      "summary": {
+        "arxiv_id_base": "2503.10362",
+        "categories": [
+          "q-bio.QM",
+          "cs.LG",
+          "eess.SP",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": 16.0,
+          "datasets": [
+            "BioSerenity proprietary dataset",
+            "TUH EEG Corpus",
+            "Neurophysiology datasets"
+          ],
+          "eeg_hours": 4005.0,
+          "subjects": null
+        },
+        "detailed_summary": "BioSerenity-E1 introduces a two-phase self-supervised pretraining framework for clinical EEG applications. The model first learns compressed EEG representations via a transformer-based VQ-VAE architecture that reconstructs log-multitaper spectral projections, then implements extensive (70% block) masked token prediction to learn complex spatiotemporal dependencies. Pre-trained on 4,000 hours of clinical EEG data, BioSerenity-E1 achieves strong performance across three clinical tasks: seizure detection (AUROC = 0.926, Sensitivity = 0.909), normal/abnormal classification (AUPRC = 0.970 on proprietary data; 0.910 on TUH-Abnormal), and multiclass pathology differentiation (Weighted F1 = 0.730). The model demonstrates particular utility in low-data regimes, showing improvements of 2-17% in AUPRC when trained on less than 10% of available data.",
+        "evaluation": {
+          "benchmarks": [
+            "TUH Seizure Corpus",
+            "TUH Abnormal Corpus",
+            "Neurophysiology datasets"
+          ],
+          "headline_results": [
+            "AUROC = 0.926 for seizure detection",
+            "AUPRC = 0.970 on proprietary normal/abnormal classification",
+            "Weighted F1 = 0.730 for multiclass pathology"
+          ],
+          "tasks": [
+            "seizure detection",
+            "normal/abnormal classification",
+            "multiclass pathology differentiation"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: BioSerenity-E1 uses a two-phase self-supervised pretraining framework combining spectral tokenization with masked prediction.",
+          "Novel architecture: The model employs a transformer-based VQ-VAE to learn compressed representations of log-multitaper spectral projections, followed by extensive masked token prediction.",
+          "Strong clinical performance: Achieves state-of-the-art results across seizure detection, normal/abnormal classification, and multiclass pathology tasks, with particular advantages in low-data scenarios."
+        ],
+        "limitations": [
+          "Relies on relatively small and homogeneous dataset for pretraining, potentially limiting generalizability",
+          "Uses fixed 16-channel montage, reducing flexibility for different EEG systems",
+          "Less than 20% of codebook vectors are actively used, suggesting underutilized representational capacity",
+          "Performance differences across top-tier models on TUH-Abnormal suggest possible saturation on this dataset"
+        ],
+        "method": {
+          "architecture": "VQ-VAE with transformer encoder",
+          "finetuning": "frozen base model with added prediction head",
+          "objective": "masked token prediction",
+          "pretraining": "spectral tokenization via log-multitaper reconstruction"
+        },
+        "notes": "{\"chars\": 67639, \"error\": null, \"pages\": 20, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=18495",
+        "one_liner": "BioSerenity-E1 is a self-supervised foundation model for clinical EEG that combines spectral tokenization with masked prediction to achieve state-of-the-art performance across multiple diagnostic tasks.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-03-13",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "discrete-code-prediction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "BioSerenity-E1: a self-supervised EEG model for medical applications",
+        "unique_contribution": "BioSerenity-E1 is the first self-supervised foundation model for clinical EEG that combines spectral tokenization with masked prediction, achieving state-of-the-art performance while requiring minimal labeled data.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "BioSerenity-E1: a self-supervised EEG model for medical applications",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "explicitly frames as self-supervised foundation model for clinical EEG",
+          "describes two-phase pretraining framework for generalizable EEG representations",
+          "achieves state-of-the-art performance on multiple clinical EEG tasks"
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 2,
+    "candidates": 4,
+    "summarized": 2
   },
-  {
-    "arxiv_id_base": "2503.10362",
-    "categories": [
-      "q-bio.QM",
-      "cs.LG",
-      "eess.SP",
-      "q-bio.NC"
-    ],
-    "data_scale": {
-      "channels": 16.0,
-      "datasets": [
-        "BioSerenity proprietary dataset",
-        "TUH EEG Corpus",
-        "Neurophysiology datasets"
-      ],
-      "eeg_hours": 4005.0,
-      "subjects": null
-    },
-    "detailed_summary": "BioSerenity-E1 introduces a two-phase self-supervised pretraining framework for clinical EEG applications. The model first learns compressed EEG representations via a transformer-based VQ-VAE architecture that reconstructs log-multitaper spectral projections, then implements extensive (70% block) masked token prediction to learn complex spatiotemporal dependencies. Pre-trained on 4,000 hours of clinical EEG data, BioSerenity-E1 achieves strong performance across three clinical tasks: seizure detection (AUROC = 0.926, Sensitivity = 0.909), normal/abnormal classification (AUPRC = 0.970 on proprietary data; 0.910 on TUH-Abnormal), and multiclass pathology differentiation (Weighted F1 = 0.730). The model demonstrates particular utility in low-data regimes, showing improvements of 2-17% in AUPRC when trained on less than 10% of available data.",
-    "evaluation": {
-      "benchmarks": [
-        "TUH Seizure Corpus",
-        "TUH Abnormal Corpus",
-        "Neurophysiology datasets"
-      ],
-      "headline_results": [
-        "AUROC = 0.926 for seizure detection",
-        "AUPRC = 0.970 on proprietary normal/abnormal classification",
-        "Weighted F1 = 0.730 for multiclass pathology"
-      ],
-      "tasks": [
-        "seizure detection",
-        "normal/abnormal classification",
-        "multiclass pathology differentiation"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: BioSerenity-E1 uses a two-phase self-supervised pretraining framework combining spectral tokenization with masked prediction.",
-      "Novel architecture: The model employs a transformer-based VQ-VAE to learn compressed representations of log-multitaper spectral projections, followed by extensive masked token prediction.",
-      "Strong clinical performance: Achieves state-of-the-art results across seizure detection, normal/abnormal classification, and multiclass pathology tasks, with particular advantages in low-data scenarios."
-    ],
-    "limitations": [
-      "Relies on relatively small and homogeneous dataset for pretraining, potentially limiting generalizability",
-      "Uses fixed 16-channel montage, reducing flexibility for different EEG systems",
-      "Less than 20% of codebook vectors are actively used, suggesting underutilized representational capacity",
-      "Performance differences across top-tier models on TUH-Abnormal suggest possible saturation on this dataset"
-    ],
-    "method": {
-      "architecture": "VQ-VAE with transformer encoder",
-      "finetuning": "frozen base model with added prediction head",
-      "objective": "masked token prediction",
-      "pretraining": "spectral tokenization via log-multitaper reconstruction"
-    },
-    "notes": "{\"chars\": 67639, \"error\": null, \"pages\": 20, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=18495",
-    "one_liner": "BioSerenity-E1 is a self-supervised foundation model for clinical EEG that combines spectral tokenization with masked prediction to achieve state-of-the-art performance across multiple diagnostic tasks.",
-    "open_source": {
-      "code_url": null,
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-03-13",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "masked-reconstruction",
-        "discrete-code-prediction"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "discrete-tokens"
-      ],
-      "topology": [
-        "fixed-montage"
-      ]
-    },
-    "title": "BioSerenity-E1: a self-supervised EEG model for medical applications",
-    "unique_contribution": "BioSerenity-E1 is the first self-supervised foundation model for clinical EEG that combines spectral tokenization with masked prediction, achieving state-of-the-art performance while requiring minimal labeled data.",
-    "used_fulltext": true
-  }
-]
+  "top_picks": [
+    "2503.10362",
+    "2503.02636"
+  ]
+}

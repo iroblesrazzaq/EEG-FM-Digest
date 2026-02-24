@@ -1,668 +1,944 @@
-[
-  {
-    "arxiv_id_base": "2510.08059",
-    "categories": [
-      "cs.LG"
-    ],
-    "data_scale": {
-      "channels": 208.0,
-      "datasets": [
-        "MEG speech perception",
-        "EEG motor imagery"
+{
+  "month": "2025-10",
+  "papers": [
+    {
+      "arxiv_id": "2510.08059v2",
+      "arxiv_id_base": "2510.08059",
+      "authors": [
+        "Timon Klein",
+        "Piotr Minakowski",
+        "Sebastian Sager",
+        "Steffen Schotthöfer"
       ],
-      "eeg_hours": 56.2,
-      "subjects": 27.0
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2510.08059v2",
+        "pdf": "https://arxiv.org/pdf/2510.08059v2"
+      },
+      "published_date": "2025-10-09",
+      "summary": {
+        "arxiv_id_base": "2510.08059",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 208.0,
+          "datasets": [
+            "MEG speech perception",
+            "EEG motor imagery"
+          ],
+          "eeg_hours": 56.2,
+          "subjects": 27.0
+        },
+        "detailed_summary": "Subject-specific distribution shifts pose a fundamental challenge to developing foundation models for brain decoding. We introduce the Subject-Specific Low-Rank Adapter (SuLoRA), a drop-in replacement for standard linear or convolutional layers that decomposes weights into a shared, subject-invariant component and a lightweight, low-rank correction unique to each subject. This explicit separation enables existing architectures to become robust to subject shifts without architectural redesign. We evaluate SuLoRA on MEG speech perception and EEG motor imagery tasks across CNN and transformer architectures. In the speech decoding task, SuLoRA exceeds baseline performance with half the parameters. On motor imagery datasets, SuLoRA outperforms both subject-agnostic models and independently trained subject-specific models. SuLoRA offers a practical path towards effective cross-subject foundation models for brain signal applications.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [
+            "SuLoRA exceeds baseline performance with half the parameters on MEG speech perception",
+            "SuLoRA outperforms both subject-agnostic models and independently trained subject-specific models on EEG motor imagery datasets"
+          ],
+          "tasks": [
+            "speech segment retrieval",
+            "motor imagery classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: SuLoRA addresses subject-specific distribution shifts by decomposing network weights into shared and subject-specific components.",
+          "Core method/evidence: SuLoRA achieves superior performance on MEG speech perception and EEG motor imagery tasks while using fewer parameters than baseline approaches.",
+          "Main practical takeaway: SuLoRA enables existing architectures to become robust to subject shifts without architectural redesign, offering a practical path towards effective cross-subject foundation models."
+        ],
+        "limitations": [
+          "Requires subject identity at both training and inference time, preventing direct application to entirely unseen subjects without adaptation.",
+          "Selection of rank r and scaling factor α requires parameter tuning, with optimal values varying between tasks and architectures.",
+          "Evaluation focuses on datasets with 9-27 subjects; validation on larger scale with hundreds of subjects would strengthen the foundation model motivation.",
+          "Total parameter count increases with number of subjects, though modestly due to low-rank constraint."
+        ],
+        "method": {
+          "architecture": "SuLoRA decomposes network weights into shared general weights and subject-specific low-rank corrections using LoRA (Low-Rank Adaptation). The method replaces standard linear or convolutional layers with a shared weight matrix plus subject-specific low-rank adapters. The adapters are initialized with As ∼ N(0, 2/r) and Bs ∼ N(0, 0.01²), with scaling factor α/r.",
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 61822, \"error\": null, \"pages\": 16, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=16918",
+        "one_liner": "SuLoRA enables foundation models for EEG by separating shared and subject-specific representations through low-rank adapters.",
+        "open_source": {
+          "code_url": "https://github.com/username/sulora",
+          "license": "MIT",
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-10-09",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Mitigating Subject Dependency in EEG Decoding with Subject-Specific Low-Rank Adapters",
+        "unique_contribution": "We propose SuLoRA, a novel adaptive layer that explicitly separates shared knowledge from subject-specific signatures, designed as a drop-in replacement for linear and convolutional layers in any architecture.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Mitigating Subject Dependency in EEG Decoding with Subject-Specific Low-Rank Adapters",
+      "triage": {
+        "confidence": 0.85,
+        "decision": "accept",
+        "reasons": [
+          "explicitly targets cross-subject foundation models",
+          "proposes method for subject-invariant EEG representations",
+          "evaluates on EEG motor imagery task"
+        ]
+      }
     },
-    "detailed_summary": "Subject-specific distribution shifts pose a fundamental challenge to developing foundation models for brain decoding. We introduce the Subject-Specific Low-Rank Adapter (SuLoRA), a drop-in replacement for standard linear or convolutional layers that decomposes weights into a shared, subject-invariant component and a lightweight, low-rank correction unique to each subject. This explicit separation enables existing architectures to become robust to subject shifts without architectural redesign. We evaluate SuLoRA on MEG speech perception and EEG motor imagery tasks across CNN and transformer architectures. In the speech decoding task, SuLoRA exceeds baseline performance with half the parameters. On motor imagery datasets, SuLoRA outperforms both subject-agnostic models and independently trained subject-specific models. SuLoRA offers a practical path towards effective cross-subject foundation models for brain signal applications.",
-    "evaluation": {
-      "benchmarks": [],
-      "headline_results": [
-        "SuLoRA exceeds baseline performance with half the parameters on MEG speech perception",
-        "SuLoRA outperforms both subject-agnostic models and independently trained subject-specific models on EEG motor imagery datasets"
+    {
+      "arxiv_id": "2510.09095v1",
+      "arxiv_id_base": "2510.09095",
+      "authors": [
+        "Kleanthis Avramidis",
+        "Tiantian Feng",
+        "Woojae Jeong",
+        "Jihwan Lee",
+        "Wenhui Cui",
+        "Richard M Leahy",
+        "Shrikanth Narayanan"
       ],
-      "tasks": [
-        "speech segment retrieval",
-        "motor imagery classification"
-      ]
+      "categories": [
+        "cs.LG",
+        "cs.NE"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2510.09095v1",
+        "pdf": "https://arxiv.org/pdf/2510.09095v1"
+      },
+      "published_date": "2025-10-10",
+      "summary": {
+        "arxiv_id_base": "2510.09095",
+        "categories": [
+          "cs.LG",
+          "cs.NE"
+        ],
+        "data_scale": {
+          "channels": 21.0,
+          "datasets": [
+            "TUH-EEG",
+            "emg2qwerty"
+          ],
+          "eeg_hours": 5000.0,
+          "subjects": 2383.0
+        },
+        "detailed_summary": "BioCodec is a self-supervised representation learning framework for biosignals that draws inspiration from neural audio codecs. It uses Residual Vector Quantization (RVQ) to tokenize continuous EEG and EMG waveforms into discrete latent sequences without imposing artificial temporal boundaries or multi-channel embeddings. Pre-trained on thousands of EEG hours from the TUH-EEG corpus and extended to EMG using the emg2qwerty dataset, BioCodec demonstrates efficacy across diverse downstream tasks including clinical abnormality detection, sleep staging, motor imagery, and speech decoding. The model achieves competitive or superior performance compared to state-of-the-art approaches while operating with substantially fewer parameters and supporting 8× signal compression. Qualitative analyses of codebook usage and spatial coherence validate the learned representations, and the framework shows robustness in low-resource settings.",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "TUEV",
+            "Sleep-EDF",
+            "Kaggle-ERN",
+            "PhysioNet-MI",
+            "BCI IV-2a",
+            "N400",
+            "Ninapro DB2/3/5",
+            "EMG MCS"
+          ],
+          "headline_results": [
+            "Competitive performance with 8× compression",
+            "Fewer parameters than state-of-the-art models",
+            "Robust in low-resource settings"
+          ],
+          "tasks": [
+            "Clinical abnormality detection",
+            "Event detection",
+            "Sleep staging",
+            "ERP recognition",
+            "Motor imagery",
+            "Speech decoding",
+            "EMG gesture classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: BioCodec uses neural codec principles with Residual Vector Quantization to tokenize biosignals into discrete latent sequences without artificial temporal boundaries.",
+          "Competitive performance with compression: Achieves state-of-the-art results on clinical, sleep, motor imagery, and speech decoding tasks while compressing signals 8× and using fewer parameters than comparable models.",
+          "Robust low-resource learning: Maintains strong performance when trained on as little as 10-30% of available data, demonstrating the effectiveness of pre-trained codec representations for downstream adaptation."
+        ],
+        "limitations": [
+          "Performance lags behind in AUROC metrics due to signal compression effects",
+          "Sensitive to pre-processing variations particularly gain shifts and normalization",
+          "Generalization across populations and recording setups not evaluated",
+          "Limited to single-channel pre-training requiring additional fine-tuning for multi-channel tasks"
+        ],
+        "method": {
+          "architecture": "Encoder-decoder with SEANet backbone",
+          "finetuning": "Downstream task adaptation",
+          "objective": "Temporal, spectral, and commitment losses",
+          "pretraining": "Self-supervised on TUH-EEG corpus"
+        },
+        "notes": "{\"chars\": 71722, \"error\": null, \"pages\": 25, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=19456",
+        "one_liner": "BioCodec introduces a neural codec-based foundation model for EEG and EMG tokenization that achieves competitive performance with 8× compression and fewer parameters than state-of-the-art models.",
+        "open_source": {
+          "code_url": "https://github.com/usc-sail/BioCodec",
+          "license": "Unknown",
+          "weights_url": "https://github.com/usc-sail/BioCodec"
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-10-10",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "discrete-code-prediction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Neural Codecs as Biosignal Tokenizers",
+        "unique_contribution": "BioCodec introduces a codec-based foundation model for biosignals that tokenizes continuous waveforms using Residual Vector Quantization, achieving competitive performance with 8× compression and fewer parameters than state-of-the-art models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Neural Codecs as Biosignal Tokenizers",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "EEG is central modality",
+          "Pre-trained on thousands of EEG hours",
+          "Reusable representation for multiple downstream tasks",
+          "Explicitly framed as foundation model approach"
+        ]
+      }
     },
-    "key_points": [
-      "New EEG foundation model: SuLoRA addresses subject-specific distribution shifts by decomposing network weights into shared and subject-specific components.",
-      "Core method/evidence: SuLoRA achieves superior performance on MEG speech perception and EEG motor imagery tasks while using fewer parameters than baseline approaches.",
-      "Main practical takeaway: SuLoRA enables existing architectures to become robust to subject shifts without architectural redesign, offering a practical path towards effective cross-subject foundation models."
-    ],
-    "limitations": [
-      "Requires subject identity at both training and inference time, preventing direct application to entirely unseen subjects without adaptation.",
-      "Selection of rank r and scaling factor α requires parameter tuning, with optimal values varying between tasks and architectures.",
-      "Evaluation focuses on datasets with 9-27 subjects; validation on larger scale with hundreds of subjects would strengthen the foundation model motivation.",
-      "Total parameter count increases with number of subjects, though modestly due to low-rank constraint."
-    ],
-    "method": {
-      "architecture": "SuLoRA decomposes network weights into shared general weights and subject-specific low-rank corrections using LoRA (Low-Rank Adaptation). The method replaces standard linear or convolutional layers with a shared weight matrix plus subject-specific low-rank adapters. The adapters are initialized with As ∼ N(0, 2/r) and Bs ∼ N(0, 0.01²), with scaling factor α/r.",
-      "finetuning": null,
-      "objective": null,
-      "pretraining": null
+    {
+      "arxiv_id": "2510.12515v1",
+      "arxiv_id_base": "2510.12515",
+      "authors": [
+        "Zhige Chen",
+        "Chengxuan Qin",
+        "Wenlong You",
+        "Rui Liu",
+        "Congying Chu",
+        "Rui Yang",
+        "Kay Chen Tan",
+        "Jibin Wu"
+      ],
+      "categories": [
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2510.12515v1",
+        "pdf": "https://arxiv.org/pdf/2510.12515v1"
+      },
+      "published_date": "2025-10-14",
+      "summary": {
+        "arxiv_id_base": "2510.12515",
+        "categories": [
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": 1132.0,
+          "datasets": [
+            "unknown"
+          ],
+          "eeg_hours": 8782.0,
+          "subjects": null
+        },
+        "detailed_summary": "HEAR introduces a novel EEG foundation model that addresses the challenge of heterogeneous electrode configurations across different EEG devices. The model employs a learnable, coordinate-based spatial embedding to map electrodes with varying layouts and counts into a unified representational space. This unified spatial representation is processed by a spatially-guided transformer that captures spatiotemporal dependencies across electrodes. To support HEAR's development, the authors constructed a large-scale dataset comprising 8,782 hours of EEG data from over 150 distinct electrode layouts with up to 1,132 electrodes. Experimental results demonstrate that HEAR substantially outperforms existing EEG foundation models in supporting heterogeneous EEG devices and generalizing across diverse cognitive tasks and subjects.",
+        "evaluation": {
+          "benchmarks": [
+            "unknown"
+          ],
+          "headline_results": [
+            "unknown"
+          ],
+          "tasks": [
+            "unknown"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: HEAR is the first model explicitly designed to support heterogeneous EEG devices with varying electrode layouts and counts.",
+          "Coordinate-based spatial embedding: Uses learnable spatial embeddings to map diverse electrode configurations into a unified representational space.",
+          "Spatially-guided transformer: Processes unified spatial representations to effectively capture spatiotemporal dependencies across electrodes."
+        ],
+        "limitations": [
+          "The paper does not mention specific limitations of the HEAR model or its dataset.",
+          "No information is provided about potential biases in the dataset or model.",
+          "The computational requirements for training and inference are not discussed.",
+          "No mention of how the model handles missing or noisy electrode data.",
+          "The generalizability to clinical settings or specific neurological conditions is not addressed."
+        ],
+        "method": {
+          "architecture": "spatially-guided transformer with coordinate-based spatial embedding",
+          "finetuning": "unknown",
+          "objective": "masked reconstruction",
+          "pretraining": "unknown"
+        },
+        "notes": "{\"chars\": 98513, \"error\": null, \"pages\": 27, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=26301",
+        "one_liner": "HEAR is the first EEG foundation model designed to handle heterogeneous electrode layouts and counts across diverse EEG devices.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-10-14",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "HEAR: An EEG Foundation Model with Heterogeneous Electrode Adaptive Representation",
+        "unique_contribution": "HEAR is the first EEG foundation model explicitly designed to support heterogeneous EEG devices with varying electrode layouts and counts, using a coordinate-based spatial embedding and spatially-guided transformer architecture.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "HEAR: An EEG Foundation Model with Heterogeneous Electrode Adaptive Representation",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "explicitly introduces EEG foundation model (HEAR)",
+          "designed for heterogeneous EEG devices with transferable representation",
+          "outperforms existing EEG foundation models in generalization"
+        ]
+      }
     },
-    "notes": "{\"chars\": 61822, \"error\": null, \"pages\": 16, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=16918",
-    "one_liner": "SuLoRA enables foundation models for EEG by separating shared and subject-specific representations through low-rank adapters.",
-    "open_source": {
-      "code_url": "https://github.com/username/sulora",
-      "license": "MIT",
-      "weights_url": null
+    {
+      "arxiv_id": "2510.13068v3",
+      "arxiv_id_base": "2510.13068",
+      "authors": [
+        "Konstantinos Barmpas",
+        "Na Lee",
+        "Alexandros Koliousis",
+        "Yannis Panagakis",
+        "Dimitrios A. Adamos",
+        "Nikolaos Laskaris",
+        "Stefanos Zafeiriou"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.HC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2510.13068v3",
+        "pdf": "https://arxiv.org/pdf/2510.13068v3"
+      },
+      "published_date": "2025-10-15",
+      "summary": {
+        "arxiv_id_base": "2510.13068",
+        "categories": [
+          "cs.LG",
+          "cs.AI",
+          "cs.HC"
+        ],
+        "data_scale": {
+          "channels": 0.0,
+          "datasets": [
+            "datasets"
+          ],
+          "eeg_hours": 0.0,
+          "subjects": 0.0
+        },
+        "detailed_summary": "NeuroRVQ addresses the challenge of EEG signal tokenization for foundation models by introducing a multi-scale RVQ codebook tokenizer. The tokenizer integrates multi-scale feature extraction with hierarchical residual vector quantization codebooks and a unit circle phase-aware loss function. This design enables efficient EEG compression and accurate reconstruction across all frequency bands, supporting robust generative masked modeling. The model is evaluated on both in-distribution and out-of-distribution datasets, demonstrating superior reconstruction performance compared to existing methods. Additionally, NeuroRVQ achieves up to 15% higher performance on five BCI downstream tasks compared to other EEG foundation models, validating the effectiveness of its codebook-based approach.",
+        "evaluation": {
+          "benchmarks": [
+            "Existing EEG foundation models"
+          ],
+          "headline_results": [
+            "Achieves up to 15% higher balanced accuracy compared to other EEG foundation models."
+          ],
+          "tasks": [
+            "Motor (4-class)",
+            "ERP (2-class)",
+            "Memory (binary)",
+            "Sleep (6-class)",
+            "Eyes (binary)"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: NeuroRVQ with multi-scale RVQ codebook tokenizer for efficient and accurate EEG signal reconstruction.",
+          "Core method/evidence: Achieves up to 15% higher performance on five BCI downstream tasks compared to existing EEG foundation models.",
+          "Main practical takeaway: The tokenizer's design principles can be extended to other biosignal modalities, enabling broader applications of foundation models in biosignal analysis."
+        ],
+        "limitations": [
+          "Evaluation limited to specific BCI tasks and datasets.",
+          "Potential overfitting on downstream tasks with early stopping.",
+          "Generalization to other biosignal modalities requires further validation."
+        ],
+        "method": {
+          "architecture": "Multi-scale temporal encoder with varying kernel sizes captures frequency components. Hierarchical RVQ codebooks discretize embeddings into neural tokens. Unit circle phase-aware loss function optimizes phase reconstruction. Tokenizer decoder reconstructs signals using Fourier spectrum.",
+          "finetuning": "Fine-tuned on five BCI downstream tasks: Motor (4-class), ERP (2-class), Memory (binary), Sleep (6-class), and Eyes (binary).",
+          "objective": "Generative masked modeling with unit circle phase-aware loss for EEG signal reconstruction.",
+          "pretraining": "Pre-trained on large-scale EEG datasets with multi-scale RVQ codebook tokenizer."
+        },
+        "notes": "{\"chars\": 56183, \"error\": null, \"pages\": 16, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=15604",
+        "one_liner": "NeuroRVQ introduces a scalable Large Brainwave Model with a multi-scale RVQ codebook tokenizer that achieves state-of-the-art EEG signal reconstruction and downstream task performance.",
+        "open_source": {
+          "code_url": "",
+          "license": "",
+          "weights_url": ""
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-10-15",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "NeuroRVQ: Multi-Scale EEG Tokenization for Generative Large Brainwave Models",
+        "unique_contribution": "NeuroRVQ introduces a novel multi-scale RVQ codebook tokenizer with a unit circle phase-aware loss, enabling state-of-the-art EEG signal reconstruction and downstream task performance.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "NeuroRVQ: Multi-Scale EEG Tokenization for Generative Large Brainwave Models",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "EEG foundation model (LBM) with masked signal-token prediction",
+          "Scalable codebook-based tokenizer for generalizable EEG representations",
+          "Evaluated on downstream tasks, demonstrating broad transfer"
+        ]
+      }
     },
-    "paper_type": "new_model",
-    "published_date": "2025-10-09",
-    "tags": {
-      "backbone": [
-        "transformer"
+    {
+      "arxiv_id": "2510.16548v1",
+      "arxiv_id_base": "2510.16548",
+      "authors": [
+        "Zitao Fang",
+        "Chenxuan Li",
+        "Hongting Zhou",
+        "Shuyang Yu",
+        "Guodong Du",
+        "Ashwaq Qasem",
+        "Yang Lu",
+        "Jing Li",
+        "Junsong Zhang",
+        "Sim Kuan Goh"
       ],
-      "objective": [
-        "contrastive"
+      "categories": [
+        "cs.LG"
       ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
+      "links": {
+        "abs": "http://arxiv.org/abs/2510.16548v1",
+        "pdf": "https://arxiv.org/pdf/2510.16548v1"
+      },
+      "published_date": "2025-10-18",
+      "summary": {
+        "arxiv_id_base": "2510.16548",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 20.0,
+          "datasets": [
+            "eight downstream BCI datasets"
+          ],
+          "eeg_hours": 2100.0,
+          "subjects": 1000.0
+        },
+        "detailed_summary": "NeurIPT addresses the challenge of applying foundation models to EEG data, which is complicated by inter-subject variability, diverse electrode configurations, and heterogeneous signal patterns. The model introduces Amplitude-Aware Masked Pretraining (AAMP), which masks segments based on signal amplitude rather than random intervals, enabling learning of robust features across varying signal intensities. A Progressive Mixture-of-Experts (PMoE) architecture progressively introduces specialized expert subnetworks at deeper layers to adapt to diverse temporal EEG patterns. Spatially, NeurIPT leverages 3D electrode coordinates for transferable embeddings and employs Intra-Inter Lobe Pooling (IILP) during fine-tuning to exploit regional brain features. Empirical evaluations across eight downstream BCI datasets demonstrate consistent state-of-the-art performance, highlighting broad applicability and robust generalization.",
+        "evaluation": {
+          "benchmarks": [
+            "eight downstream BCI datasets"
+          ],
+          "headline_results": [
+            "state-of-the-art performance across all eight tasks"
+          ],
+          "tasks": [
+            "mental stress detection",
+            "mental disorder diagnosis",
+            "P300 detection",
+            "sleep staging",
+            "emotion recognition",
+            "motor imagery",
+            "abnormal detection",
+            "event type classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: NeurIPT achieves state-of-the-art performance across eight diverse BCI datasets including seizure detection, cognitive state decoding, and motor imagery tasks.",
+          "Novel amplitude-aware masking: AAMP masks based on signal amplitude rather than random intervals, enabling robust feature learning across varying signal intensities and avoiding trivial local interpolation.",
+          "Progressive mixture-of-experts: PMoE architecture progressively introduces specialized expert subnetworks at deeper layers to effectively capture diverse temporal dynamics in EEG signals."
+        ],
+        "limitations": [
+          "Requires large number of parameters leading to increased memory usage and computational costs",
+          "Limited by available GPU resources for scaling and investigating scaling laws",
+          "Room for improvement in neural decoding accuracy to fully meet practical BCI system demands",
+          "Additional EEG-specific aspects like brain connectivity representations not yet fully explored"
+        ],
+        "method": {
+          "architecture": "Transformer-based with progressive mixture-of-experts",
+          "finetuning": "Intra-inter lobe pooling with 3D electrode embeddings",
+          "objective": "Amplitude-aware masked pretraining",
+          "pretraining": "AAMP with amplitude-based masking"
+        },
+        "notes": "{\"chars\": 129089, \"error\": null, \"pages\": 43, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=34245",
+        "one_liner": "NeurIPT is a foundation model for EEG-based neural interfaces that achieves state-of-the-art performance across eight BCI tasks through novel amplitude-aware masking and progressive mixture-of-experts architecture.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-10-18",
+        "tags": {
+          "backbone": [
+            "transformer",
+            "moe"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "NeurIPT: Foundation Model for Neural Interfaces",
+        "unique_contribution": "NeurIPT introduces amplitude-aware masking and progressive mixture-of-experts architecture specifically designed for EEG foundation models, achieving state-of-the-art performance across eight diverse BCI tasks while addressing the unique challenges of EEG signal variability and electrode configuration differences.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "NeurIPT: Foundation Model for Neural Interfaces",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "explicitly proposes foundation model for EEG",
+          "addresses inter-subject/task variability for broad transfer",
+          "demonstrates state-of-the-art performance across multiple BCI datasets"
+        ]
+      }
     },
-    "title": "Mitigating Subject Dependency in EEG Decoding with Subject-Specific Low-Rank Adapters",
-    "unique_contribution": "We propose SuLoRA, a novel adaptive layer that explicitly separates shared knowledge from subject-specific signatures, designed as a drop-in replacement for linear and convolutional layers in any architecture.",
-    "used_fulltext": true
+    {
+      "arxiv_id": "2510.21585v1",
+      "arxiv_id_base": "2510.21585",
+      "authors": [
+        "Yassine El Ouahidi",
+        "Jonathan Lys",
+        "Philipp Thölke",
+        "Nicolas Farrugia",
+        "Bastien Pasdeloup",
+        "Vincent Gripon",
+        "Karim Jerbi",
+        "Giulia Lioi"
+      ],
+      "categories": [
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2510.21585v1",
+        "pdf": "https://arxiv.org/pdf/2510.21585v1"
+      },
+      "published_date": "2025-10-24",
+      "summary": {
+        "arxiv_id_base": "2510.21585",
+        "categories": [
+          "cs.LG",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "92"
+          ],
+          "eeg_hours": 60000.0,
+          "subjects": 25000.0
+        },
+        "detailed_summary": "REVE (Representation for EEG with Versatile Embeddings) addresses the challenge of EEG heterogeneity by introducing a novel 4D positional encoding scheme that enables processing of signals with arbitrary electrode configurations and temporal lengths. The model is pretrained on over 60,000 hours of EEG data from 92 diverse datasets spanning 25,000 subjects using a masked autoencoding objective. REVE achieves state-of-the-art performance across 10 downstream EEG tasks including motor imagery, seizure detection, sleep staging, and emotion recognition, demonstrating strong generalization with minimal fine-tuning requirements.",
+        "evaluation": {
+          "benchmarks": [
+            "PhysioNet-MI",
+            "BCIC-IV-2a",
+            "TUAB",
+            "TUEV",
+            "ISRUC",
+            "HMC",
+            "FACED",
+            "Mumtaz",
+            "MAT",
+            "BCIC2020-3"
+          ],
+          "headline_results": [
+            "State-of-the-art performance across 10 downstream tasks",
+            "Up to 17% gains in linear probing",
+            "Effective transfer to unseen electrode setups"
+          ],
+          "tasks": [
+            "motor imagery",
+            "seizure detection",
+            "sleep staging",
+            "emotion recognition",
+            "mental disorder diagnosis",
+            "mental stress detection",
+            "imagined speech"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: REVE achieves state-of-the-art results on 10 downstream tasks including motor imagery, seizure detection, and sleep staging through large-scale pretraining on 25,000 subjects.",
+          "Novel 4D positional encoding: Introduces a Fourier-based encoding scheme that processes arbitrary electrode configurations and temporal lengths without requiring fixed montages.",
+          "Strong generalization: Demonstrates up to 17% gains in linear probing and transfers effectively to unseen electrode setups and longer inputs than used in pretraining."
+        ],
+        "limitations": [
+          "Requires signals to be at least one second and multiples of one second",
+          "Most public EEG data originates from North America and Europe, limiting demographic diversity",
+          "Fixed input duration requirements",
+          "Limited dataset curation and selection"
+        ],
+        "method": {
+          "architecture": "Transformer-based with 4D Fourier positional encoding",
+          "finetuning": "Minimal fine-tuning for downstream tasks",
+          "objective": "Masked autoencoding with spatio-temporal block masking and secondary global-token reconstruction",
+          "pretraining": "Large-scale pretraining on 60,000 hours from 92 diverse datasets"
+        },
+        "notes": "{\"chars\": 124160, \"error\": null, \"pages\": 37, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=32785",
+        "one_liner": "REVE is a foundation model for EEG that generalizes across diverse setups through large-scale pretraining on 25,000 subjects and 60,000 hours of data.",
+        "open_source": {
+          "code_url": "https://github.com/reve-model/reve",
+          "license": "MIT",
+          "weights_url": "https://huggingface.co/reve-model/reve"
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-10-24",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "REVE: A Foundation Model for EEG -- Adapting to Any Setup with Large-Scale Pretraining on 25,000 Subjects",
+        "unique_contribution": "REVE introduces a 4D Fourier positional encoding that natively supports arbitrary electrode layouts and sequence lengths, enabling the first EEG foundation model to generalize across diverse setups without requiring fixed montages or extensive fine-tuning.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "REVE: A Foundation Model for EEG -- Adapting to Any Setup with Large-Scale Pretraining on 25,000 Subjects",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "explicitly presents EEG foundation model (REVE)",
+          "large-scale pretraining on 25,000 subjects and 60,000 hours",
+          "designed for broad transfer across diverse EEG setups"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2510.22257v1",
+      "arxiv_id_base": "2510.22257",
+      "authors": [
+        "Berkay Döner",
+        "Thorir Mar Ingolfsson",
+        "Luca Benini",
+        "Yawei Li"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2510.22257v1",
+        "pdf": "https://arxiv.org/pdf/2510.22257v1"
+      },
+      "published_date": "2025-10-25",
+      "summary": {
+        "arxiv_id_base": "2510.22257",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "TUEG",
+            "Siena"
+          ],
+          "eeg_hours": 21928.0,
+          "subjects": 15001.0
+        },
+        "detailed_summary": "LUNA addresses the challenge of topological heterogeneity in EEG by introducing a learned query-based encoder that projects variable-channel inputs into a fixed-size latent representation. This design decouples computational cost from electrode count, allowing linear scaling with channels rather than quadratic. Pre-trained on over 21,000 hours of multi-montage EEG data using masked-patch reconstruction, LUNA transfers effectively to four downstream tasks—abnormality detection, artifact rejection, slowing classification, and emotion recognition—achieving state-of-the-art results on TUAR and TUSL while reducing FLOPs by 300x and GPU memory by up to 10x.",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "TUAR",
+            "TUSL",
+            "SEED-V"
+          ],
+          "headline_results": [
+            "0.921 AUROC on TUAR",
+            "81.57% balanced accuracy on TUAB",
+            "300x FLOP reduction",
+            "10x memory reduction"
+          ],
+          "tasks": [
+            "abnormality detection",
+            "artifact rejection",
+            "slowing classification",
+            "emotion recognition"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: LUNA unifies arbitrary electrode layouts into a fixed latent space using learned queries and cross-attention.",
+          "Topology-agnostic and efficient: Decouples computation from channel count, scaling linearly and reducing FLOPs by 300x and memory by 10x.",
+          "Strong transfer performance: Achieves state-of-the-art results on TUAR (0.921 AUROC) and TUSL while generalizing across diverse electrode configurations."
+        ],
+        "limitations": [
+          "Performance on unseen high-density montages (e.g., SEED-V) lags behind specialized models, suggesting sensitivity to positional encoding learned during pre-training.",
+          "Pre-training montage diversity limited to three dominant layouts; generalization to arbitrary sparse/dense montages could be improved.",
+          "No explicit handling of domain-specific neurophysiological priors or real-time constraints in current design."
+        ],
+        "method": {
+          "architecture": "encoder-decoder transformer with learned queries",
+          "finetuning": "supervised on four downstream EEG tasks",
+          "objective": "masked-patch reconstruction",
+          "pretraining": "self-supervised on TUEG + Siena (>21k hours)"
+        },
+        "notes": "{\"chars\": 75478, \"error\": null, \"pages\": 27, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=20503",
+        "one_liner": "LUNA is a self-supervised foundation model that unifies arbitrary EEG electrode layouts into a fixed latent space, enabling efficient, topology-agnostic transfer across diverse clinical tasks.",
+        "open_source": {
+          "code_url": "https://github.com/pulp-bio/BioFoundation",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-10-25",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "topology-agnostic"
+          ]
+        },
+        "title": "LUNA: Efficient and Topology-Agnostic Foundation Model for EEG Signal Analysis",
+        "unique_contribution": "LUNA introduces a topology-invariant encoder using learned queries and cross-attention to map arbitrary electrode layouts into a fixed latent space, enabling efficient, montage-agnostic EEG modeling with linear-in-channels complexity.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "LUNA: Efficient and Topology-Agnostic Foundation Model for EEG Signal Analysis",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "explicitly introduces a self-supervised foundation model for EEG",
+          "pretrained on large-scale EEG data (21,000+ hours) for broad transfer",
+          "demonstrates transfer to multiple downstream EEG tasks"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2510.27522v1",
+      "arxiv_id_base": "2510.27522",
+      "authors": [
+        "Théo Gnassounou",
+        "Yessin Moakher",
+        "Shifeng Xie",
+        "Vasilii Feofanov",
+        "Ievgen Redko"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2510.27522v1",
+        "pdf": "https://arxiv.org/pdf/2510.27522v1"
+      },
+      "published_date": "2025-10-31",
+      "summary": {
+        "arxiv_id_base": "2510.27522",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "PhysioNet-MI",
+            "SHU-MI",
+            "ABC",
+            "CCSHS",
+            "CFS",
+            "HPAP",
+            "MROS",
+            "SHHS",
+            "CHAT",
+            "SOF",
+            "MASS",
+            "PhysioNet"
+          ],
+          "eeg_hours": null,
+          "subjects": 3420.0
+        },
+        "detailed_summary": "This paper investigates whether general-purpose time series foundation models can effectively transfer to EEG classification tasks without extensive domain-specific pretraining. The authors evaluate Mantis, a recently proposed time series classification foundation model, on two EEG tasks: motor imagery classification and sleep staging. They compare Mantis against EEGNet, a widely used convolutional baseline, and CBraMod, the most recent EEG-specific foundation model. The experiments reveal that Mantis, even when pretrained on purely synthetic data or heterogeneous time series from non-neural domains, consistently outperforms both baselines across multiple datasets. Notably, Mantis achieves competitive results with CBraMod on motor imagery tasks while significantly surpassing it on sleep staging, particularly in scenarios with limited spatial information. These findings suggest that generalist time series foundation models can effectively transfer to EEG analysis, potentially reducing the need for extensive domain-specific pretraining.",
+        "evaluation": {
+          "benchmarks": [
+            "PhysioNet-MI",
+            "SHU-MI",
+            "ABC",
+            "CCSHS",
+            "CFS",
+            "HPAP",
+            "MROS",
+            "SHHS",
+            "CHAT",
+            "SOF",
+            "MASS",
+            "PhysioNet"
+          ],
+          "headline_results": [
+            "Mantis achieves 64.34% weighted F1 on PhysioNet-MI (competitive with CBraMod's 64.27%)",
+            "Mantis achieves 72.15% weighted F1 on SHU-MI (outperforms CBraMod's 69.88%)",
+            "Mantis consistently outperforms CBraMod across all 8 sleep staging datasets with gains up to 3% F1",
+            "Mantis achieves 82.49% F1 on MASS vs CBraMod's 79.06%",
+            "Mantis achieves 88.80% F1 on CCSHS vs CBraMod's 88.55%"
+          ],
+          "tasks": [
+            "motor imagery classification",
+            "sleep staging"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model approach: Shows that Mantis, a general time series foundation model, can effectively transfer to EEG tasks without extensive domain-specific pretraining.",
+          "Strong empirical evidence: Mantis consistently outperforms both EEGNet baseline and CBraMod (EEG-specific foundation model) across motor imagery and sleep staging tasks.",
+          "Synthetic pretraining validation: Mantis pretrained solely on synthetic data achieves state-of-the-art performance on EEG tasks, suggesting synthetic data can effectively replace real EEG pretraining."
+        ],
+        "limitations": [
+          "Limited evaluation to motor imagery and sleep staging tasks only",
+          "Does not explore zero-shot learning capabilities on EEG data",
+          "Performance gains on sleep staging are modest despite consistent improvements",
+          "No comparison with larger foundation models like MOMENT due to computational constraints",
+          "Limited analysis of model interpretability for EEG-specific features"
+        ],
+        "method": {
+          "architecture": "Mantis - time series foundation model with contrastive pretraining",
+          "finetuning": "Linear classification head with cross-entropy loss",
+          "objective": "Contrastive learning with InfoNCE loss",
+          "pretraining": "Heterogeneous real-world time series (1.8M samples) or synthetic data (1M samples)"
+        },
+        "notes": "{\"chars\": 30046, \"error\": null, \"pages\": 9, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=8849",
+        "one_liner": "Generic time series foundation models can effectively transfer to EEG tasks without domain-specific pretraining.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": "Mantis checkpoints available (real and synthetic pretraining)"
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-10-31",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Leveraging Generic Time Series Foundation Models for EEG Classification",
+        "unique_contribution": "Demonstrates that a general-purpose time series foundation model pretrained on synthetic or heterogeneous data can outperform specialized EEG models on multiple EEG classification tasks.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Leveraging Generic Time Series Foundation Models for EEG Classification",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "EEG is central to the study",
+          "Investigates time series foundation models for EEG tasks",
+          "Compares against EEG-specific foundation model (CBraMod)",
+          "Focuses on transfer learning from pretrained models to EEG"
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 8,
+    "candidates": 26,
+    "summarized": 8
   },
-  {
-    "arxiv_id_base": "2510.09095",
-    "categories": [
-      "cs.LG",
-      "cs.NE"
-    ],
-    "data_scale": {
-      "channels": 21.0,
-      "datasets": [
-        "TUH-EEG",
-        "emg2qwerty"
-      ],
-      "eeg_hours": 5000.0,
-      "subjects": 2383.0
-    },
-    "detailed_summary": "BioCodec is a self-supervised representation learning framework for biosignals that draws inspiration from neural audio codecs. It uses Residual Vector Quantization (RVQ) to tokenize continuous EEG and EMG waveforms into discrete latent sequences without imposing artificial temporal boundaries or multi-channel embeddings. Pre-trained on thousands of EEG hours from the TUH-EEG corpus and extended to EMG using the emg2qwerty dataset, BioCodec demonstrates efficacy across diverse downstream tasks including clinical abnormality detection, sleep staging, motor imagery, and speech decoding. The model achieves competitive or superior performance compared to state-of-the-art approaches while operating with substantially fewer parameters and supporting 8× signal compression. Qualitative analyses of codebook usage and spatial coherence validate the learned representations, and the framework shows robustness in low-resource settings.",
-    "evaluation": {
-      "benchmarks": [
-        "TUAB",
-        "TUEV",
-        "Sleep-EDF",
-        "Kaggle-ERN",
-        "PhysioNet-MI",
-        "BCI IV-2a",
-        "N400",
-        "Ninapro DB2/3/5",
-        "EMG MCS"
-      ],
-      "headline_results": [
-        "Competitive performance with 8× compression",
-        "Fewer parameters than state-of-the-art models",
-        "Robust in low-resource settings"
-      ],
-      "tasks": [
-        "Clinical abnormality detection",
-        "Event detection",
-        "Sleep staging",
-        "ERP recognition",
-        "Motor imagery",
-        "Speech decoding",
-        "EMG gesture classification"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: BioCodec uses neural codec principles with Residual Vector Quantization to tokenize biosignals into discrete latent sequences without artificial temporal boundaries.",
-      "Competitive performance with compression: Achieves state-of-the-art results on clinical, sleep, motor imagery, and speech decoding tasks while compressing signals 8× and using fewer parameters than comparable models.",
-      "Robust low-resource learning: Maintains strong performance when trained on as little as 10-30% of available data, demonstrating the effectiveness of pre-trained codec representations for downstream adaptation."
-    ],
-    "limitations": [
-      "Performance lags behind in AUROC metrics due to signal compression effects",
-      "Sensitive to pre-processing variations particularly gain shifts and normalization",
-      "Generalization across populations and recording setups not evaluated",
-      "Limited to single-channel pre-training requiring additional fine-tuning for multi-channel tasks"
-    ],
-    "method": {
-      "architecture": "Encoder-decoder with SEANet backbone",
-      "finetuning": "Downstream task adaptation",
-      "objective": "Temporal, spectral, and commitment losses",
-      "pretraining": "Self-supervised on TUH-EEG corpus"
-    },
-    "notes": "{\"chars\": 71722, \"error\": null, \"pages\": 25, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=19456",
-    "one_liner": "BioCodec introduces a neural codec-based foundation model for EEG and EMG tokenization that achieves competitive performance with 8× compression and fewer parameters than state-of-the-art models.",
-    "open_source": {
-      "code_url": "https://github.com/usc-sail/BioCodec",
-      "license": "Unknown",
-      "weights_url": "https://github.com/usc-sail/BioCodec"
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-10-10",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "discrete-code-prediction"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "discrete-tokens"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
-    },
-    "title": "Neural Codecs as Biosignal Tokenizers",
-    "unique_contribution": "BioCodec introduces a codec-based foundation model for biosignals that tokenizes continuous waveforms using Residual Vector Quantization, achieving competitive performance with 8× compression and fewer parameters than state-of-the-art models.",
-    "used_fulltext": true
-  },
-  {
-    "arxiv_id_base": "2510.12515",
-    "categories": [
-      "eess.SP"
-    ],
-    "data_scale": {
-      "channels": 1132.0,
-      "datasets": [
-        "unknown"
-      ],
-      "eeg_hours": 8782.0,
-      "subjects": null
-    },
-    "detailed_summary": "HEAR introduces a novel EEG foundation model that addresses the challenge of heterogeneous electrode configurations across different EEG devices. The model employs a learnable, coordinate-based spatial embedding to map electrodes with varying layouts and counts into a unified representational space. This unified spatial representation is processed by a spatially-guided transformer that captures spatiotemporal dependencies across electrodes. To support HEAR's development, the authors constructed a large-scale dataset comprising 8,782 hours of EEG data from over 150 distinct electrode layouts with up to 1,132 electrodes. Experimental results demonstrate that HEAR substantially outperforms existing EEG foundation models in supporting heterogeneous EEG devices and generalizing across diverse cognitive tasks and subjects.",
-    "evaluation": {
-      "benchmarks": [
-        "unknown"
-      ],
-      "headline_results": [
-        "unknown"
-      ],
-      "tasks": [
-        "unknown"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: HEAR is the first model explicitly designed to support heterogeneous EEG devices with varying electrode layouts and counts.",
-      "Coordinate-based spatial embedding: Uses learnable spatial embeddings to map diverse electrode configurations into a unified representational space.",
-      "Spatially-guided transformer: Processes unified spatial representations to effectively capture spatiotemporal dependencies across electrodes."
-    ],
-    "limitations": [
-      "The paper does not mention specific limitations of the HEAR model or its dataset.",
-      "No information is provided about potential biases in the dataset or model.",
-      "The computational requirements for training and inference are not discussed.",
-      "No mention of how the model handles missing or noisy electrode data.",
-      "The generalizability to clinical settings or specific neurological conditions is not addressed."
-    ],
-    "method": {
-      "architecture": "spatially-guided transformer with coordinate-based spatial embedding",
-      "finetuning": "unknown",
-      "objective": "masked reconstruction",
-      "pretraining": "unknown"
-    },
-    "notes": "{\"chars\": 98513, \"error\": null, \"pages\": 27, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=26301",
-    "one_liner": "HEAR is the first EEG foundation model designed to handle heterogeneous electrode layouts and counts across diverse EEG devices.",
-    "open_source": {
-      "code_url": null,
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-10-14",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "masked-reconstruction"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
-    },
-    "title": "HEAR: An EEG Foundation Model with Heterogeneous Electrode Adaptive Representation",
-    "unique_contribution": "HEAR is the first EEG foundation model explicitly designed to support heterogeneous EEG devices with varying electrode layouts and counts, using a coordinate-based spatial embedding and spatially-guided transformer architecture.",
-    "used_fulltext": true
-  },
-  {
-    "arxiv_id_base": "2510.13068",
-    "categories": [
-      "cs.LG",
-      "cs.AI",
-      "cs.HC"
-    ],
-    "data_scale": {
-      "channels": 0.0,
-      "datasets": [
-        "datasets"
-      ],
-      "eeg_hours": 0.0,
-      "subjects": 0.0
-    },
-    "detailed_summary": "NeuroRVQ addresses the challenge of EEG signal tokenization for foundation models by introducing a multi-scale RVQ codebook tokenizer. The tokenizer integrates multi-scale feature extraction with hierarchical residual vector quantization codebooks and a unit circle phase-aware loss function. This design enables efficient EEG compression and accurate reconstruction across all frequency bands, supporting robust generative masked modeling. The model is evaluated on both in-distribution and out-of-distribution datasets, demonstrating superior reconstruction performance compared to existing methods. Additionally, NeuroRVQ achieves up to 15% higher performance on five BCI downstream tasks compared to other EEG foundation models, validating the effectiveness of its codebook-based approach.",
-    "evaluation": {
-      "benchmarks": [
-        "Existing EEG foundation models"
-      ],
-      "headline_results": [
-        "Achieves up to 15% higher balanced accuracy compared to other EEG foundation models."
-      ],
-      "tasks": [
-        "Motor (4-class)",
-        "ERP (2-class)",
-        "Memory (binary)",
-        "Sleep (6-class)",
-        "Eyes (binary)"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: NeuroRVQ with multi-scale RVQ codebook tokenizer for efficient and accurate EEG signal reconstruction.",
-      "Core method/evidence: Achieves up to 15% higher performance on five BCI downstream tasks compared to existing EEG foundation models.",
-      "Main practical takeaway: The tokenizer's design principles can be extended to other biosignal modalities, enabling broader applications of foundation models in biosignal analysis."
-    ],
-    "limitations": [
-      "Evaluation limited to specific BCI tasks and datasets.",
-      "Potential overfitting on downstream tasks with early stopping.",
-      "Generalization to other biosignal modalities requires further validation."
-    ],
-    "method": {
-      "architecture": "Multi-scale temporal encoder with varying kernel sizes captures frequency components. Hierarchical RVQ codebooks discretize embeddings into neural tokens. Unit circle phase-aware loss function optimizes phase reconstruction. Tokenizer decoder reconstructs signals using Fourier spectrum.",
-      "finetuning": "Fine-tuned on five BCI downstream tasks: Motor (4-class), ERP (2-class), Memory (binary), Sleep (6-class), and Eyes (binary).",
-      "objective": "Generative masked modeling with unit circle phase-aware loss for EEG signal reconstruction.",
-      "pretraining": "Pre-trained on large-scale EEG datasets with multi-scale RVQ codebook tokenizer."
-    },
-    "notes": "{\"chars\": 56183, \"error\": null, \"pages\": 16, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=15604",
-    "one_liner": "NeuroRVQ introduces a scalable Large Brainwave Model with a multi-scale RVQ codebook tokenizer that achieves state-of-the-art EEG signal reconstruction and downstream task performance.",
-    "open_source": {
-      "code_url": "",
-      "license": "",
-      "weights_url": ""
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-10-15",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "masked-reconstruction"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "discrete-tokens"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
-    },
-    "title": "NeuroRVQ: Multi-Scale EEG Tokenization for Generative Large Brainwave Models",
-    "unique_contribution": "NeuroRVQ introduces a novel multi-scale RVQ codebook tokenizer with a unit circle phase-aware loss, enabling state-of-the-art EEG signal reconstruction and downstream task performance.",
-    "used_fulltext": true
-  },
-  {
-    "arxiv_id_base": "2510.16548",
-    "categories": [
-      "cs.LG"
-    ],
-    "data_scale": {
-      "channels": 20.0,
-      "datasets": [
-        "eight downstream BCI datasets"
-      ],
-      "eeg_hours": 2100.0,
-      "subjects": 1000.0
-    },
-    "detailed_summary": "NeurIPT addresses the challenge of applying foundation models to EEG data, which is complicated by inter-subject variability, diverse electrode configurations, and heterogeneous signal patterns. The model introduces Amplitude-Aware Masked Pretraining (AAMP), which masks segments based on signal amplitude rather than random intervals, enabling learning of robust features across varying signal intensities. A Progressive Mixture-of-Experts (PMoE) architecture progressively introduces specialized expert subnetworks at deeper layers to adapt to diverse temporal EEG patterns. Spatially, NeurIPT leverages 3D electrode coordinates for transferable embeddings and employs Intra-Inter Lobe Pooling (IILP) during fine-tuning to exploit regional brain features. Empirical evaluations across eight downstream BCI datasets demonstrate consistent state-of-the-art performance, highlighting broad applicability and robust generalization.",
-    "evaluation": {
-      "benchmarks": [
-        "eight downstream BCI datasets"
-      ],
-      "headline_results": [
-        "state-of-the-art performance across all eight tasks"
-      ],
-      "tasks": [
-        "mental stress detection",
-        "mental disorder diagnosis",
-        "P300 detection",
-        "sleep staging",
-        "emotion recognition",
-        "motor imagery",
-        "abnormal detection",
-        "event type classification"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: NeurIPT achieves state-of-the-art performance across eight diverse BCI datasets including seizure detection, cognitive state decoding, and motor imagery tasks.",
-      "Novel amplitude-aware masking: AAMP masks based on signal amplitude rather than random intervals, enabling robust feature learning across varying signal intensities and avoiding trivial local interpolation.",
-      "Progressive mixture-of-experts: PMoE architecture progressively introduces specialized expert subnetworks at deeper layers to effectively capture diverse temporal dynamics in EEG signals."
-    ],
-    "limitations": [
-      "Requires large number of parameters leading to increased memory usage and computational costs",
-      "Limited by available GPU resources for scaling and investigating scaling laws",
-      "Room for improvement in neural decoding accuracy to fully meet practical BCI system demands",
-      "Additional EEG-specific aspects like brain connectivity representations not yet fully explored"
-    ],
-    "method": {
-      "architecture": "Transformer-based with progressive mixture-of-experts",
-      "finetuning": "Intra-inter lobe pooling with 3D electrode embeddings",
-      "objective": "Amplitude-aware masked pretraining",
-      "pretraining": "AAMP with amplitude-based masking"
-    },
-    "notes": "{\"chars\": 129089, \"error\": null, \"pages\": 43, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=34245",
-    "one_liner": "NeurIPT is a foundation model for EEG-based neural interfaces that achieves state-of-the-art performance across eight BCI tasks through novel amplitude-aware masking and progressive mixture-of-experts architecture.",
-    "open_source": {
-      "code_url": null,
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-10-18",
-    "tags": {
-      "backbone": [
-        "transformer",
-        "moe"
-      ],
-      "objective": [
-        "masked-reconstruction"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
-    },
-    "title": "NeurIPT: Foundation Model for Neural Interfaces",
-    "unique_contribution": "NeurIPT introduces amplitude-aware masking and progressive mixture-of-experts architecture specifically designed for EEG foundation models, achieving state-of-the-art performance across eight diverse BCI tasks while addressing the unique challenges of EEG signal variability and electrode configuration differences.",
-    "used_fulltext": true
-  },
-  {
-    "arxiv_id_base": "2510.21585",
-    "categories": [
-      "cs.LG",
-      "q-bio.NC"
-    ],
-    "data_scale": {
-      "channels": null,
-      "datasets": [
-        "92"
-      ],
-      "eeg_hours": 60000.0,
-      "subjects": 25000.0
-    },
-    "detailed_summary": "REVE (Representation for EEG with Versatile Embeddings) addresses the challenge of EEG heterogeneity by introducing a novel 4D positional encoding scheme that enables processing of signals with arbitrary electrode configurations and temporal lengths. The model is pretrained on over 60,000 hours of EEG data from 92 diverse datasets spanning 25,000 subjects using a masked autoencoding objective. REVE achieves state-of-the-art performance across 10 downstream EEG tasks including motor imagery, seizure detection, sleep staging, and emotion recognition, demonstrating strong generalization with minimal fine-tuning requirements.",
-    "evaluation": {
-      "benchmarks": [
-        "PhysioNet-MI",
-        "BCIC-IV-2a",
-        "TUAB",
-        "TUEV",
-        "ISRUC",
-        "HMC",
-        "FACED",
-        "Mumtaz",
-        "MAT",
-        "BCIC2020-3"
-      ],
-      "headline_results": [
-        "State-of-the-art performance across 10 downstream tasks",
-        "Up to 17% gains in linear probing",
-        "Effective transfer to unseen electrode setups"
-      ],
-      "tasks": [
-        "motor imagery",
-        "seizure detection",
-        "sleep staging",
-        "emotion recognition",
-        "mental disorder diagnosis",
-        "mental stress detection",
-        "imagined speech"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: REVE achieves state-of-the-art results on 10 downstream tasks including motor imagery, seizure detection, and sleep staging through large-scale pretraining on 25,000 subjects.",
-      "Novel 4D positional encoding: Introduces a Fourier-based encoding scheme that processes arbitrary electrode configurations and temporal lengths without requiring fixed montages.",
-      "Strong generalization: Demonstrates up to 17% gains in linear probing and transfers effectively to unseen electrode setups and longer inputs than used in pretraining."
-    ],
-    "limitations": [
-      "Requires signals to be at least one second and multiples of one second",
-      "Most public EEG data originates from North America and Europe, limiting demographic diversity",
-      "Fixed input duration requirements",
-      "Limited dataset curation and selection"
-    ],
-    "method": {
-      "architecture": "Transformer-based with 4D Fourier positional encoding",
-      "finetuning": "Minimal fine-tuning for downstream tasks",
-      "objective": "Masked autoencoding with spatio-temporal block masking and secondary global-token reconstruction",
-      "pretraining": "Large-scale pretraining on 60,000 hours from 92 diverse datasets"
-    },
-    "notes": "{\"chars\": 124160, \"error\": null, \"pages\": 37, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=32785",
-    "one_liner": "REVE is a foundation model for EEG that generalizes across diverse setups through large-scale pretraining on 25,000 subjects and 60,000 hours of data.",
-    "open_source": {
-      "code_url": "https://github.com/reve-model/reve",
-      "license": "MIT",
-      "weights_url": "https://huggingface.co/reve-model/reve"
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-10-24",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "masked-reconstruction"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
-    },
-    "title": "REVE: A Foundation Model for EEG -- Adapting to Any Setup with Large-Scale Pretraining on 25,000 Subjects",
-    "unique_contribution": "REVE introduces a 4D Fourier positional encoding that natively supports arbitrary electrode layouts and sequence lengths, enabling the first EEG foundation model to generalize across diverse setups without requiring fixed montages or extensive fine-tuning.",
-    "used_fulltext": true
-  },
-  {
-    "arxiv_id_base": "2510.22257",
-    "categories": [
-      "cs.LG",
-      "cs.AI"
-    ],
-    "data_scale": {
-      "channels": null,
-      "datasets": [
-        "TUEG",
-        "Siena"
-      ],
-      "eeg_hours": 21928.0,
-      "subjects": 15001.0
-    },
-    "detailed_summary": "LUNA addresses the challenge of topological heterogeneity in EEG by introducing a learned query-based encoder that projects variable-channel inputs into a fixed-size latent representation. This design decouples computational cost from electrode count, allowing linear scaling with channels rather than quadratic. Pre-trained on over 21,000 hours of multi-montage EEG data using masked-patch reconstruction, LUNA transfers effectively to four downstream tasks—abnormality detection, artifact rejection, slowing classification, and emotion recognition—achieving state-of-the-art results on TUAR and TUSL while reducing FLOPs by 300x and GPU memory by up to 10x.",
-    "evaluation": {
-      "benchmarks": [
-        "TUAB",
-        "TUAR",
-        "TUSL",
-        "SEED-V"
-      ],
-      "headline_results": [
-        "0.921 AUROC on TUAR",
-        "81.57% balanced accuracy on TUAB",
-        "300x FLOP reduction",
-        "10x memory reduction"
-      ],
-      "tasks": [
-        "abnormality detection",
-        "artifact rejection",
-        "slowing classification",
-        "emotion recognition"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: LUNA unifies arbitrary electrode layouts into a fixed latent space using learned queries and cross-attention.",
-      "Topology-agnostic and efficient: Decouples computation from channel count, scaling linearly and reducing FLOPs by 300x and memory by 10x.",
-      "Strong transfer performance: Achieves state-of-the-art results on TUAR (0.921 AUROC) and TUSL while generalizing across diverse electrode configurations."
-    ],
-    "limitations": [
-      "Performance on unseen high-density montages (e.g., SEED-V) lags behind specialized models, suggesting sensitivity to positional encoding learned during pre-training.",
-      "Pre-training montage diversity limited to three dominant layouts; generalization to arbitrary sparse/dense montages could be improved.",
-      "No explicit handling of domain-specific neurophysiological priors or real-time constraints in current design."
-    ],
-    "method": {
-      "architecture": "encoder-decoder transformer with learned queries",
-      "finetuning": "supervised on four downstream EEG tasks",
-      "objective": "masked-patch reconstruction",
-      "pretraining": "self-supervised on TUEG + Siena (>21k hours)"
-    },
-    "notes": "{\"chars\": 75478, \"error\": null, \"pages\": 27, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=20503",
-    "one_liner": "LUNA is a self-supervised foundation model that unifies arbitrary EEG electrode layouts into a fixed latent space, enabling efficient, topology-agnostic transfer across diverse clinical tasks.",
-    "open_source": {
-      "code_url": "https://github.com/pulp-bio/BioFoundation",
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-10-25",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "masked-reconstruction"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "topology-agnostic"
-      ]
-    },
-    "title": "LUNA: Efficient and Topology-Agnostic Foundation Model for EEG Signal Analysis",
-    "unique_contribution": "LUNA introduces a topology-invariant encoder using learned queries and cross-attention to map arbitrary electrode layouts into a fixed latent space, enabling efficient, montage-agnostic EEG modeling with linear-in-channels complexity.",
-    "used_fulltext": true
-  },
-  {
-    "arxiv_id_base": "2510.27522",
-    "categories": [
-      "cs.LG",
-      "cs.AI"
-    ],
-    "data_scale": {
-      "channels": null,
-      "datasets": [
-        "PhysioNet-MI",
-        "SHU-MI",
-        "ABC",
-        "CCSHS",
-        "CFS",
-        "HPAP",
-        "MROS",
-        "SHHS",
-        "CHAT",
-        "SOF",
-        "MASS",
-        "PhysioNet"
-      ],
-      "eeg_hours": null,
-      "subjects": 3420.0
-    },
-    "detailed_summary": "This paper investigates whether general-purpose time series foundation models can effectively transfer to EEG classification tasks without extensive domain-specific pretraining. The authors evaluate Mantis, a recently proposed time series classification foundation model, on two EEG tasks: motor imagery classification and sleep staging. They compare Mantis against EEGNet, a widely used convolutional baseline, and CBraMod, the most recent EEG-specific foundation model. The experiments reveal that Mantis, even when pretrained on purely synthetic data or heterogeneous time series from non-neural domains, consistently outperforms both baselines across multiple datasets. Notably, Mantis achieves competitive results with CBraMod on motor imagery tasks while significantly surpassing it on sleep staging, particularly in scenarios with limited spatial information. These findings suggest that generalist time series foundation models can effectively transfer to EEG analysis, potentially reducing the need for extensive domain-specific pretraining.",
-    "evaluation": {
-      "benchmarks": [
-        "PhysioNet-MI",
-        "SHU-MI",
-        "ABC",
-        "CCSHS",
-        "CFS",
-        "HPAP",
-        "MROS",
-        "SHHS",
-        "CHAT",
-        "SOF",
-        "MASS",
-        "PhysioNet"
-      ],
-      "headline_results": [
-        "Mantis achieves 64.34% weighted F1 on PhysioNet-MI (competitive with CBraMod's 64.27%)",
-        "Mantis achieves 72.15% weighted F1 on SHU-MI (outperforms CBraMod's 69.88%)",
-        "Mantis consistently outperforms CBraMod across all 8 sleep staging datasets with gains up to 3% F1",
-        "Mantis achieves 82.49% F1 on MASS vs CBraMod's 79.06%",
-        "Mantis achieves 88.80% F1 on CCSHS vs CBraMod's 88.55%"
-      ],
-      "tasks": [
-        "motor imagery classification",
-        "sleep staging"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model approach: Shows that Mantis, a general time series foundation model, can effectively transfer to EEG tasks without extensive domain-specific pretraining.",
-      "Strong empirical evidence: Mantis consistently outperforms both EEGNet baseline and CBraMod (EEG-specific foundation model) across motor imagery and sleep staging tasks.",
-      "Synthetic pretraining validation: Mantis pretrained solely on synthetic data achieves state-of-the-art performance on EEG tasks, suggesting synthetic data can effectively replace real EEG pretraining."
-    ],
-    "limitations": [
-      "Limited evaluation to motor imagery and sleep staging tasks only",
-      "Does not explore zero-shot learning capabilities on EEG data",
-      "Performance gains on sleep staging are modest despite consistent improvements",
-      "No comparison with larger foundation models like MOMENT due to computational constraints",
-      "Limited analysis of model interpretability for EEG-specific features"
-    ],
-    "method": {
-      "architecture": "Mantis - time series foundation model with contrastive pretraining",
-      "finetuning": "Linear classification head with cross-entropy loss",
-      "objective": "Contrastive learning with InfoNCE loss",
-      "pretraining": "Heterogeneous real-world time series (1.8M samples) or synthetic data (1M samples)"
-    },
-    "notes": "{\"chars\": 30046, \"error\": null, \"pages\": 9, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=8849",
-    "one_liner": "Generic time series foundation models can effectively transfer to EEG tasks without domain-specific pretraining.",
-    "open_source": {
-      "code_url": null,
-      "license": null,
-      "weights_url": "Mantis checkpoints available (real and synthetic pretraining)"
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-10-31",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "contrastive"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
-    },
-    "title": "Leveraging Generic Time Series Foundation Models for EEG Classification",
-    "unique_contribution": "Demonstrates that a general-purpose time series foundation model pretrained on synthetic or heterogeneous data can outperform specialized EEG models on multiple EEG classification tasks.",
-    "used_fulltext": true
-  }
-]
+  "top_picks": [
+    "2510.22257",
+    "2510.21585",
+    "2510.12515",
+    "2510.27522",
+    "2510.16548"
+  ]
+}

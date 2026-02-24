@@ -1,491 +1,709 @@
-[
-  {
-    "arxiv_id_base": "2508.04956",
-    "categories": [
-      "cs.LG",
-      "cs.AI"
-    ],
-    "data_scale": {
-      "channels": 19.0,
-      "datasets": [
-        "Temple University Hospital EEG Corpus (TUEG)"
+{
+  "month": "2025-08",
+  "papers": [
+    {
+      "arxiv_id": "2508.04956v1",
+      "arxiv_id_base": "2508.04956",
+      "authors": [
+        "Matthew Chen",
+        "Micky Nnamdi",
+        "Justin Shao",
+        "Andrew Hornback",
+        "Hongyun Huang",
+        "Ben Tamo",
+        "Yishan Zhong",
+        "Benoit Marteau",
+        "Wenqi Shi",
+        "May Dongmei Wang"
       ],
-      "eeg_hours": 4000.0,
-      "subjects": null
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2508.04956v1",
+        "pdf": "https://arxiv.org/pdf/2508.04956v1"
+      },
+      "published_date": "2025-08-07",
+      "summary": {
+        "arxiv_id_base": "2508.04956",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 19.0,
+          "datasets": [
+            "Temple University Hospital EEG Corpus (TUEG)"
+          ],
+          "eeg_hours": 4000.0,
+          "subjects": null
+        },
+        "detailed_summary": "MENDR addresses key limitations in current EEG foundation models by introducing a Riemannian Manifold Transformer architecture that learns symmetric positive definite (SPD) matrix embeddings of EEG signals. The model processes EEG data through discrete wavelet packet transforms into multi-resolution coefficients, then uses a GNN-based spatial harmonizer to ensure fixed electrode layouts via spline interpolation. MENDR is pretrained on over 4,000 hours of EEG data using a dual-task self-supervised objective combining leave-one-out contrastive learning and masked autoencoder reconstruction. The model achieves near state-of-the-art performance with substantially fewer parameters than existing approaches, while providing geometric ellipsoid visualizations of embeddings for clinical interpretability.",
+        "evaluation": {
+          "benchmarks": [
+            "Temple University Hospital EEG Corpus (TUEG)"
+          ],
+          "headline_results": [
+            "Achieves near state-of-the-art performance on TUAB (balanced accuracy 0.78-0.80)",
+            "Competitive results on other datasets while using significantly fewer parameters than baseline models like LaBraM (369M parameters)"
+          ],
+          "tasks": [
+            "TUAB (binary abnormal/normal classification)",
+            "TUEV (6-class sleep staging)",
+            "ISRUC (sleep staging with reduced channels)",
+            "MoBI (multivariate regression for gait prediction)",
+            "Seed-V (emotion classification)"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: MENDR learns symmetric positive definite matrix embeddings through wavelet decomposition and manifold attention for interpretable clinical EEG analysis.",
+          "Method novelty: Combines GNN-based spatial harmonization with Riemannian Manifold Transformer architecture using dual-task self-supervised learning (leave-one-out contrastive + masked autoencoder reconstruction).",
+          "Strong evidence: Achieves near state-of-the-art performance on multiple clinical EEG tasks (TUAB, TUEV, ISRUC, MoBI, Seed-V) with substantially fewer parameters than existing models."
+        ],
+        "limitations": [
+          "Underperformed on ISRUC dataset despite achieving state-of-the-art results on other benchmarks, possibly due to insufficient training epochs or hyperparameter choices.",
+          "Large MENDR model performed worse than tiny model on ISRUC dataset, suggesting lower-dimensional manifolds may not be optimal for all tasks.",
+          "Model requires fixed 19-channel electrode layout, limiting direct application to datasets with different channel configurations without preprocessing.",
+          "Computational complexity of Riemannian operations (SVD, matrix logarithms) may limit scalability to larger embedding dimensions.",
+          "Limited evaluation on out-of-distribution datasets and real-time clinical deployment scenarios."
+        ],
+        "method": {
+          "architecture": "Riemannian Manifold Transformer with Manifold Attention (MAtt) mechanism",
+          "finetuning": "Fine-tuned on five clinical EEG tasks: TUAB, TUEV, ISRUC, MoBI, and Seed-V",
+          "objective": "Dual-task self-supervised learning (leave-one-out contrastive + masked autoencoder reconstruction)",
+          "pretraining": "Pretrained on over 4,000 hours of EEG data using discrete wavelet packet transforms and GNN-based spatial harmonizer"
+        },
+        "notes": "{\"chars\": 99099, \"error\": null, \"pages\": 23, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=26620",
+        "one_liner": "MENDR is the first Riemannian EEG foundation model that learns symmetric positive definite matrix embeddings through wavelet decomposition and manifold attention for interpretable clinical EEG analysis.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-08-07",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "MENDR: Manifold Explainable Neural Data Representations",
+        "unique_contribution": "MENDR introduces the first Riemannian EEG foundation model that learns SPD matrix embeddings through wavelet decomposition and manifold attention, achieving near state-of-the-art performance with significantly fewer parameters while providing geometric ellipsoid visualizations for clinical interpretability.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "MENDR: Manifold Explainable Neural Data Representations",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "EEG foundation model explicitly mentioned",
+          "Pretraining on large EEG corpus (4000+ hours)",
+          "Focus on interpretable, reusable EEG representations",
+          "Clinical applicability and downstream task performance"
+        ]
+      }
     },
-    "detailed_summary": "MENDR addresses key limitations in current EEG foundation models by introducing a Riemannian Manifold Transformer architecture that learns symmetric positive definite (SPD) matrix embeddings of EEG signals. The model processes EEG data through discrete wavelet packet transforms into multi-resolution coefficients, then uses a GNN-based spatial harmonizer to ensure fixed electrode layouts via spline interpolation. MENDR is pretrained on over 4,000 hours of EEG data using a dual-task self-supervised objective combining leave-one-out contrastive learning and masked autoencoder reconstruction. The model achieves near state-of-the-art performance with substantially fewer parameters than existing approaches, while providing geometric ellipsoid visualizations of embeddings for clinical interpretability.",
-    "evaluation": {
-      "benchmarks": [
-        "Temple University Hospital EEG Corpus (TUEG)"
+    {
+      "arxiv_id": "2508.14086v3",
+      "arxiv_id_base": "2508.14086",
+      "authors": [
+        "Jia Hong Puah",
+        "Sim Kuan Goh",
+        "Ziwei Zhang",
+        "Zixuan Ye",
+        "Chow Khuen Chan",
+        "Kheng Seang Lim",
+        "Si Lei Fong",
+        "Kok Sin Woon",
+        "Cuntai Guan"
       ],
-      "headline_results": [
-        "Achieves near state-of-the-art performance on TUAB (balanced accuracy 0.78-0.80)",
-        "Competitive results on other datasets while using significantly fewer parameters than baseline models like LaBraM (369M parameters)"
+      "categories": [
+        "cs.LG"
       ],
-      "tasks": [
-        "TUAB (binary abnormal/normal classification)",
-        "TUEV (6-class sleep staging)",
-        "ISRUC (sleep staging with reduced channels)",
-        "MoBI (multivariate regression for gait prediction)",
-        "Seed-V (emotion classification)"
-      ]
+      "links": {
+        "abs": "http://arxiv.org/abs/2508.14086v3",
+        "pdf": "https://arxiv.org/pdf/2508.14086v3"
+      },
+      "published_date": "2025-08-13",
+      "summary": {
+        "arxiv_id_base": "2508.14086",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 22.0,
+          "datasets": [
+            "TUEV",
+            "CHB-MIT"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "EEGDM proposes a novel framework for learning meaningful representations from raw EEG signals using generative diffusion models. The method addresses the challenge of limited annotations and high signal variability in EEG by developing a structured state-space model for diffusion pretraining (SSMDP) that captures temporal dynamics, followed by a latent fusion transformer (LFT) for downstream classification tasks. Unlike existing EEG foundation models that rely on masking-based pretraining with transformers, EEGDM leverages the denoising diffusion probabilistic model (DDPM) framework to learn representations through a forward noise injection process and reverse denoising process. The approach was evaluated on multi-event datasets including TUEV (interictal epileptiform discharges) and CHB-MIT (seizure detection), demonstrating superior performance compared to state-of-the-art methods while using approximately 19× fewer parameters than current EEG foundation models.",
+        "evaluation": {
+          "benchmarks": [
+            "TUEV",
+            "CHB-MIT"
+          ],
+          "headline_results": [
+            "kappa: 74.23%",
+            "balanced_accuracy: 75.57%",
+            "weighted_f1: 86.88%"
+          ],
+          "tasks": [
+            "interictal epileptiform discharges detection",
+            "seizure detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: EEGDM uses generative diffusion models with structured state-space architecture for EEG representation learning",
+          "Novel SSMDP architecture captures temporal dynamics through bidirectional state-space modeling and DDPM training",
+          "Achieves state-of-the-art performance on TUEV and CHB-MIT datasets while being 19× smaller than existing EEG foundation models"
+        ],
+        "limitations": [
+          "Evaluated primarily on epilepsy-related EEG tasks (IED and seizure detection)",
+          "Performance on other EEG applications (sleep staging, emotion recognition) not demonstrated",
+          "Generalization to different sampling rates shows some performance degradation",
+          "Model size, while smaller than FMs, still requires substantial computational resources for training"
+        ],
+        "method": {
+          "architecture": "structured state-space model for diffusion pretraining (SSMDP) with latent fusion transformer (LFT)",
+          "finetuning": "LFT integrates latent representations from gate channels for downstream classification tasks",
+          "objective": "denoising diffusion probabilistic model (DDPM)",
+          "pretraining": "SSMDP trained via DDPM framework to capture temporal dynamics"
+        },
+        "notes": "{\"chars\": 60332, \"error\": null, \"pages\": 10, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=16717",
+        "one_liner": "EEGDM introduces a diffusion model-based framework for EEG representation learning, achieving state-of-the-art performance with significantly fewer parameters than existing EEG foundation models.",
+        "open_source": {
+          "code_url": "https://github.com/jhpuah/EEGDM",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-08-13",
+        "tags": {
+          "backbone": [
+            "diffusion",
+            "mamba-ssm"
+          ],
+          "objective": [
+            "discrete-code-prediction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "EEGDM: EEG Representation Learning via Generative Diffusion Model",
+        "unique_contribution": "EEGDM is the first work to extend diffusion models beyond signal generation and data augmentation for EEG, introducing SSMDP for temporal dynamics capture and LFT for latent representation fusion, achieving state-of-the-art performance with significantly reduced model size.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EEGDM: EEG Representation Learning via Generative Diffusion Model",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "proposes EEGDM framework for EEG representation learning",
+          "uses generative diffusion model with SSMDP for pretraining",
+          "compares against state-of-the-art EEG FMs",
+          "evaluates on multi-event EEG datasets for downstream tasks"
+        ]
+      }
     },
-    "key_points": [
-      "New EEG foundation model: MENDR learns symmetric positive definite matrix embeddings through wavelet decomposition and manifold attention for interpretable clinical EEG analysis.",
-      "Method novelty: Combines GNN-based spatial harmonization with Riemannian Manifold Transformer architecture using dual-task self-supervised learning (leave-one-out contrastive + masked autoencoder reconstruction).",
-      "Strong evidence: Achieves near state-of-the-art performance on multiple clinical EEG tasks (TUAB, TUEV, ISRUC, MoBI, Seed-V) with substantially fewer parameters than existing models."
-    ],
-    "limitations": [
-      "Underperformed on ISRUC dataset despite achieving state-of-the-art results on other benchmarks, possibly due to insufficient training epochs or hyperparameter choices.",
-      "Large MENDR model performed worse than tiny model on ISRUC dataset, suggesting lower-dimensional manifolds may not be optimal for all tasks.",
-      "Model requires fixed 19-channel electrode layout, limiting direct application to datasets with different channel configurations without preprocessing.",
-      "Computational complexity of Riemannian operations (SVD, matrix logarithms) may limit scalability to larger embedding dimensions.",
-      "Limited evaluation on out-of-distribution datasets and real-time clinical deployment scenarios."
-    ],
-    "method": {
-      "architecture": "Riemannian Manifold Transformer with Manifold Attention (MAtt) mechanism",
-      "finetuning": "Fine-tuned on five clinical EEG tasks: TUAB, TUEV, ISRUC, MoBI, and Seed-V",
-      "objective": "Dual-task self-supervised learning (leave-one-out contrastive + masked autoencoder reconstruction)",
-      "pretraining": "Pretrained on over 4,000 hours of EEG data using discrete wavelet packet transforms and GNN-based spatial harmonizer"
+    {
+      "arxiv_id": "2508.15716v2",
+      "arxiv_id_base": "2508.15716",
+      "authors": [
+        "Hongqi Li",
+        "Yitong Chen",
+        "Yujuan Wang",
+        "Weihang Ni",
+        "Haodong Zhang"
+      ],
+      "categories": [
+        "cs.HC",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2508.15716v2",
+        "pdf": "https://arxiv.org/pdf/2508.15716v2"
+      },
+      "published_date": "2025-08-21",
+      "summary": {
+        "arxiv_id_base": "2508.15716",
+        "categories": [
+          "cs.HC",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 0.0,
+          "datasets": [],
+          "eeg_hours": 0.0,
+          "subjects": 0.0
+        },
+        "detailed_summary": "This survey presents the first comprehensive modality-oriented taxonomy for foundation models in EEG analysis, systematically organizing research advances based on output modalities including native EEG decoding, EEG-text, EEG-vision, EEG-audio, and broader multimodal frameworks. The paper rigorously analyzes each category's research ideas, theoretical foundations, and architectural innovations, while highlighting open challenges such as model interpretability, cross-domain generalization, and real-world applicability in EEG-based systems. By unifying this dispersed field, the work provides a reference framework for future methodology development and accelerates the translation of EEG foundation models into scalable, interpretable, and online actionable solutions.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [
+            "Analysis of architectural innovations, application scenarios, and performance trends"
+          ],
+          "tasks": [
+            "Systematic review of existing research across five modality domains"
+          ]
+        },
+        "key_points": [
+          "First comprehensive survey of foundation models pre-trained on non-EEG data applied to EEG analysis",
+          "Systematic taxonomy covering native EEG decoding, EEG-to-text, EEG-to-vision, EEG-to-audio, and multimodal fusion",
+          "Highlights cross-domain generalization, interpretability challenges, and future research directions"
+        ],
+        "limitations": [
+          "Cross-subject generalization remains challenging due to inter-individual variability",
+          "Interpretability of cross-modal alignment mechanisms is limited",
+          "Authenticity concerns about whether generated outputs truly reflect EEG content",
+          "Lack of standardized evaluation protocols and benchmarks",
+          "Limited research on EEG generative and inverse modeling"
+        ],
+        "method": {
+          "architecture": "Foundation models pre-trained on large-scale non-EEG data (text, vision, audio) applied to EEG analysis through cross-modal alignment, feature extraction, and generative modeling. Methods include contrastive learning, masked reconstruction, and multimodal fusion architectures.",
+          "finetuning": "Applied to EEG analysis through cross-modal adaptation",
+          "objective": "Cross-modal alignment, feature extraction, generative modeling",
+          "pretraining": "Pre-trained on non-EEG data (text, vision, audio)"
+        },
+        "notes": "{\"chars\": 78217, \"error\": null, \"pages\": 15, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=21161",
+        "one_liner": "First comprehensive modality-oriented taxonomy of foundation models pre-trained on non-EEG data and applied to EEG analysis.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "survey",
+        "published_date": "2025-08-21",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "survey"
+          ],
+          "tokenization": [
+            "time-patch",
+            "latent-tokens"
+          ],
+          "topology": [
+            "fixed-montage",
+            "channel-flexible"
+          ]
+        },
+        "title": "Foundation Models for Cross-Domain EEG Analysis Application: A Survey",
+        "unique_contribution": "Presents the first comprehensive modality-oriented taxonomy for foundation models in EEG analysis, systematically organizing research advances across five output modality domains.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Foundation Models for Cross-Domain EEG Analysis Application: A Survey",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "Comprehensive survey of EEG foundation models",
+          "Focus on cross-domain EEG analysis and generalization",
+          "Systematic taxonomy of foundation models in EEG analysis"
+        ]
+      }
     },
-    "notes": "{\"chars\": 99099, \"error\": null, \"pages\": 23, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=26620",
-    "one_liner": "MENDR is the first Riemannian EEG foundation model that learns symmetric positive definite matrix embeddings through wavelet decomposition and manifold attention for interpretable clinical EEG analysis.",
-    "open_source": {
-      "code_url": null,
-      "license": null,
-      "weights_url": null
+    {
+      "arxiv_id": "2508.17742v2",
+      "arxiv_id_base": "2508.17742",
+      "authors": [
+        "Wei Xiong",
+        "Jiangtong Li",
+        "Jie Li",
+        "Kun Zhu",
+        "Changjun Jiang"
+      ],
+      "categories": [
+        "eess.SP",
+        "cs.AI",
+        "cs.HC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2508.17742v2",
+        "pdf": "https://arxiv.org/pdf/2508.17742v2"
+      },
+      "published_date": "2025-08-25",
+      "summary": {
+        "arxiv_id_base": "2508.17742",
+        "categories": [
+          "eess.SP",
+          "cs.AI",
+          "cs.HC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "unknown"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "EEG-FM-Bench addresses the lack of standardized evaluation protocols for EEG foundation models by providing a unified benchmark system. The benchmark integrates 14 datasets across 10 EEG paradigms and incorporates diverse experimental settings including multiple fine-tuning strategies, task organizations, and classifier configurations. It also provides tools for gradient and representation analysis. Our experiments reveal critical insights: multi-task learning acts as a regularizer to mitigate overfitting in data-scarce EEG contexts, pre-training efficiency is limited by gradient conflicts between reconstruction objectives and downstream tasks, and model scaling deviates from typical laws as compact architectures with domain-specific inductive biases outperform larger models.",
+        "evaluation": {
+          "benchmarks": [
+            "Balanced Accuracy",
+            "Weighted F1",
+            "Cohen's Kappa",
+            "AUROC",
+            "AUC-PR"
+          ],
+          "headline_results": [
+            "unknown"
+          ],
+          "tasks": [
+            "motor imagery",
+            "sleep staging",
+            "emotion recognition",
+            "disease diagnosis"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model benchmark: EEG-FM-Bench integrates 14 datasets across 10 paradigms with standardized protocols",
+          "Multi-task learning acts as critical regularizer to mitigate overfitting in data-scarce EEG contexts",
+          "Compact architectures with domain-specific inductive biases consistently outperform significantly larger models"
+        ],
+        "limitations": [
+          "Benchmark cannot represent full spectrum of EEG applications including multi-modal settings and certain clinical workflows",
+          "Multi-task fine-tuning risks negative transfer when datasets have conflicting objectives or incompatible inductive biases",
+          "Rapid evolution of EEG foundation models creates moving target for fair comparison"
+        ],
+        "method": {
+          "architecture": "Unified benchmark system with standardized data preprocessing, three fine-tuning strategies (frozen-backbone, full-parameter, LoRA), two task setups (single-task, multi-task), and three classifier configurations (average pooling, attention pooling, temporal-spatial-embedding dimension aggregation)",
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 134237, \"error\": null, \"pages\": 35, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=36660",
+        "one_liner": "EEG-FM-Bench is a unified benchmark for standardized evaluation and diagnostic analysis of EEG foundation models.",
+        "open_source": {
+          "code_url": "https://github.com/xw1216/EEG-FM-Bench",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2025-08-25",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "EEG-FM-Bench: A Comprehensive Benchmark for the Systematic Evaluation of EEG Foundation Models",
+        "unique_contribution": "EEG-FM-Bench is the first comprehensive benchmark that combines standardized evaluation protocols with diagnostic analysis tools for EEG foundation models, enabling fair comparison and interpretable advances in the field.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EEG-FM-Bench: A Comprehensive Benchmark for the Systematic Evaluation of EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "explicitly targets EEG foundation models",
+          "introduces benchmark for standardized evaluation of EEG-FMs",
+          "focuses on reproducible analysis and fair comparison of EEG-FMs"
+        ]
+      }
     },
-    "paper_type": "new_model",
-    "published_date": "2025-08-07",
-    "tags": {
-      "backbone": [
-        "transformer"
+    {
+      "arxiv_id": "2508.20705v2",
+      "arxiv_id_base": "2508.20705",
+      "authors": [
+        "Shaocong Wang",
+        "Tong Liu",
+        "Yihan Li",
+        "Ming Li",
+        "Kairui Wen",
+        "Pei Yang",
+        "Wenqi Ji",
+        "Minjing Yu",
+        "Yong-Jin Liu"
       ],
-      "objective": [
-        "masked-reconstruction",
-        "contrastive"
+      "categories": [
+        "cs.LG",
+        "cs.AI"
       ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
+      "links": {
+        "abs": "http://arxiv.org/abs/2508.20705v2",
+        "pdf": "https://arxiv.org/pdf/2508.20705v2"
+      },
+      "published_date": "2025-08-28",
+      "summary": {
+        "arxiv_id_base": "2508.20705",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 19.0,
+          "datasets": [
+            "TUH Abnormal EEG Corpus",
+            "TUEV",
+            "TUAB",
+            "SHU-MI",
+            "CL-Drive",
+            "Seed-VII",
+            "DMER"
+          ],
+          "eeg_hours": 0.0,
+          "subjects": 0.0
+        },
+        "detailed_summary": "EEGDM proposes a novel self-supervised framework that leverages latent diffusion models to generate EEG signals as an objective, addressing the limitation of masked reconstruction methods in capturing global dynamics and long-range dependencies. The framework incorporates an EEG encoder that distills raw signals and their channel augmentations into a compact representation, acting as conditional information to guide the diffusion model for generating EEG signals. This design endows EEGDM with a compact latent space that not only offers ample control over the generative process but also can be leveraged for downstream tasks. Experimental results show that EEGDM reconstructs high-quality EEG signals, learns robust representations, and achieves competitive performance across diverse downstream tasks.",
+        "evaluation": {
+          "benchmarks": [
+            "TUEV",
+            "TUAB",
+            "SHU-MI",
+            "CL-Drive",
+            "Seed-VII",
+            "DMER"
+          ],
+          "headline_results": [
+            "competitive performance across diverse downstream tasks",
+            "robust EEG signal reconstruction",
+            "improved cross-dataset generalizability"
+          ],
+          "tasks": [
+            "event classification",
+            "abnormal detection",
+            "motor imagery classification",
+            "cognitive load assessment",
+            "emotion recognition",
+            "emotion distribution prediction"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: EEGDM leverages latent diffusion models for self-supervised EEG representation learning, capturing global dynamics and long-range dependencies.",
+          "Novel method: Incorporates channel augmentation and PCA-based latent space operations to enhance conditional information, enable robust EEG signal reconstruction, and improve cross-dataset generalizability.",
+          "Strong evidence: Achieves competitive performance across diverse downstream tasks including event classification, abnormal detection, motor imagery, cognitive load assessment, and emotion recognition."
+        ],
+        "limitations": [
+          "Limited evaluation on small-scale downstream datasets",
+          "Performance depends on optimal number of PCA components",
+          "No explicit comparison with other generative models for EEG",
+          "Limited discussion of computational efficiency",
+          "No ablation study on different diffusion model architectures",
+          "No analysis of model interpretability",
+          "Limited discussion of real-world deployment challenges"
+        ],
+        "method": {
+          "architecture": "latent diffusion model",
+          "finetuning": "supervised",
+          "objective": "EEG signal generation",
+          "pretraining": "self-supervised"
+        },
+        "notes": "{\"chars\": 53889, \"error\": null, \"pages\": 10, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=15007",
+        "one_liner": "EEGDM introduces a latent diffusion model for self-supervised EEG representation learning, capturing global dynamics and long-range dependencies.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-08-28",
+        "tags": {
+          "backbone": [
+            "diffusion"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "EEGDM: Learning EEG Representation with Latent Diffusion Model",
+        "unique_contribution": "EEGDM introduces the first diffusion model-based approach for self-supervised EEG representation learning, using EEG signal generation as the self-supervised objective to capture rich EEG semantics.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EEGDM: Learning EEG Representation with Latent Diffusion Model",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "proposes EEGDM for self-supervised EEG representation learning",
+          "uses latent diffusion model to capture global dynamics and long-range dependencies",
+          "learns compact latent space for downstream tasks"
+        ]
+      }
     },
-    "title": "MENDR: Manifold Explainable Neural Data Representations",
-    "unique_contribution": "MENDR introduces the first Riemannian EEG foundation model that learns SPD matrix embeddings through wavelet decomposition and manifold attention, achieving near state-of-the-art performance with significantly fewer parameters while providing geometric ellipsoid visualizations for clinical interpretability.",
-    "used_fulltext": true
+    {
+      "arxiv_id": "2509.00314v1",
+      "arxiv_id_base": "2509.00314",
+      "authors": [
+        "Ang Li",
+        "Zikai Wang",
+        "Liuyin Yang",
+        "Zhenyu Wang",
+        "Tianheng Xu",
+        "Honglin Hu",
+        "Marc M. Van Hulle"
+      ],
+      "categories": [
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2509.00314v1",
+        "pdf": "https://arxiv.org/pdf/2509.00314v1"
+      },
+      "published_date": "2025-08-30",
+      "summary": {
+        "arxiv_id_base": "2509.00314",
+        "categories": [
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": 62.0,
+          "datasets": [
+            "multiple"
+          ],
+          "eeg_hours": null,
+          "subjects": 3155.0
+        },
+        "detailed_summary": "CoMET addresses limitations in existing EEG foundation models by integrating masked autoencoder (MAE) with a novel contrastive learning framework. Traditional masked reconstruction methods overly focus on local channel correlations due to volume conduction, while contrastive learning suffers from attention collapse. CoMET employs mirror-scale augmentation to generate positive views that preserve global correlations while avoiding token-level similarity, and uses a momentum encoder with InfoNCE loss to strengthen global discrimination. The model is pre-trained on over 3000 subjects with 1M+ samples and achieves state-of-the-art performance on ten diverse downstream datasets, demonstrating superior ability to capture both local and global discriminative EEG features.",
+        "evaluation": {
+          "benchmarks": [
+            "BCIC IV 2A/2B",
+            "Large-5F",
+            "BCIC2020-3",
+            "KaggleERN/FACED",
+            "THUBenchmark/PhysioP300",
+            "TUAB/TUEV"
+          ],
+          "headline_results": [
+            "State-of-the-art performance on ten downstream datasets",
+            "Superior ability to capture both local and global discriminative EEG features",
+            "Compliance with scaling laws"
+          ],
+          "tasks": [
+            "motor imagery",
+            "emotion recognition",
+            "clinical applications",
+            "SSVEP",
+            "P300",
+            "imagined speech"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: CoMET combines masked autoencoder with contrastive learning to extract universal EEG representations across diverse tasks.",
+          "Novel mirror-scale augmentation: Generates positive views that preserve global correlations while avoiding token-level similarity, addressing volume conduction limitations.",
+          "State-of-the-art results: Achieves SOTA performance on ten downstream datasets including motor imagery, emotion recognition, and clinical applications, with scaling law compliance."
+        ],
+        "limitations": [
+          "Performance slightly lower on TUAB/TUEV datasets where CBraMod had pre-training advantage",
+          "Requires substantial computational resources for 151M parameter model",
+          "Linear probing evaluation may not capture full fine-tuning potential"
+        ],
+        "method": {
+          "architecture": "Masked autoencoder with redesigned patching and embedding for EEG",
+          "finetuning": "Linear probing strategy",
+          "objective": "Combined masked reconstruction and contrastive learning",
+          "pretraining": "Mirror-scale augmentation with momentum encoder and InfoNCE loss"
+        },
+        "notes": "{\"chars\": 68106, \"error\": null, \"pages\": 20, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=18643",
+        "one_liner": "CoMET is a 151M-parameter brain foundation model that combines masked reconstruction and contrastive learning to extract universal EEG representations across diverse tasks.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-08-30",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "CoMET: A Contrastive-Masked Brain Foundation Model for Universal EEG Representation",
+        "unique_contribution": "CoMET introduces mirror-scale augmentation and a contrastive-masked framework that effectively merges local reconstruction with global discrimination, overcoming the attention collapse and local similarity limitations of prior EEG foundation models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "CoMET: A Contrastive-Masked Brain Foundation Model for Universal EEG Representation",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "EEG is central modality",
+          "Explicitly frames as foundation model with pretraining",
+          "Presents universal EEG representations for broad transfer",
+          "Evaluated on multiple downstream tasks"
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 6,
+    "candidates": 20,
+    "summarized": 6
   },
-  {
-    "arxiv_id_base": "2508.14086",
-    "categories": [
-      "cs.LG"
-    ],
-    "data_scale": {
-      "channels": 22.0,
-      "datasets": [
-        "TUEV",
-        "CHB-MIT"
-      ],
-      "eeg_hours": null,
-      "subjects": null
-    },
-    "detailed_summary": "EEGDM proposes a novel framework for learning meaningful representations from raw EEG signals using generative diffusion models. The method addresses the challenge of limited annotations and high signal variability in EEG by developing a structured state-space model for diffusion pretraining (SSMDP) that captures temporal dynamics, followed by a latent fusion transformer (LFT) for downstream classification tasks. Unlike existing EEG foundation models that rely on masking-based pretraining with transformers, EEGDM leverages the denoising diffusion probabilistic model (DDPM) framework to learn representations through a forward noise injection process and reverse denoising process. The approach was evaluated on multi-event datasets including TUEV (interictal epileptiform discharges) and CHB-MIT (seizure detection), demonstrating superior performance compared to state-of-the-art methods while using approximately 19× fewer parameters than current EEG foundation models.",
-    "evaluation": {
-      "benchmarks": [
-        "TUEV",
-        "CHB-MIT"
-      ],
-      "headline_results": [
-        "kappa: 74.23%",
-        "balanced_accuracy: 75.57%",
-        "weighted_f1: 86.88%"
-      ],
-      "tasks": [
-        "interictal epileptiform discharges detection",
-        "seizure detection"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: EEGDM uses generative diffusion models with structured state-space architecture for EEG representation learning",
-      "Novel SSMDP architecture captures temporal dynamics through bidirectional state-space modeling and DDPM training",
-      "Achieves state-of-the-art performance on TUEV and CHB-MIT datasets while being 19× smaller than existing EEG foundation models"
-    ],
-    "limitations": [
-      "Evaluated primarily on epilepsy-related EEG tasks (IED and seizure detection)",
-      "Performance on other EEG applications (sleep staging, emotion recognition) not demonstrated",
-      "Generalization to different sampling rates shows some performance degradation",
-      "Model size, while smaller than FMs, still requires substantial computational resources for training"
-    ],
-    "method": {
-      "architecture": "structured state-space model for diffusion pretraining (SSMDP) with latent fusion transformer (LFT)",
-      "finetuning": "LFT integrates latent representations from gate channels for downstream classification tasks",
-      "objective": "denoising diffusion probabilistic model (DDPM)",
-      "pretraining": "SSMDP trained via DDPM framework to capture temporal dynamics"
-    },
-    "notes": "{\"chars\": 60332, \"error\": null, \"pages\": 10, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=16717",
-    "one_liner": "EEGDM introduces a diffusion model-based framework for EEG representation learning, achieving state-of-the-art performance with significantly fewer parameters than existing EEG foundation models.",
-    "open_source": {
-      "code_url": "https://github.com/jhpuah/EEGDM",
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-08-13",
-    "tags": {
-      "backbone": [
-        "diffusion",
-        "mamba-ssm"
-      ],
-      "objective": [
-        "discrete-code-prediction"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "latent-tokens"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
-    },
-    "title": "EEGDM: EEG Representation Learning via Generative Diffusion Model",
-    "unique_contribution": "EEGDM is the first work to extend diffusion models beyond signal generation and data augmentation for EEG, introducing SSMDP for temporal dynamics capture and LFT for latent representation fusion, achieving state-of-the-art performance with significantly reduced model size.",
-    "used_fulltext": true
-  },
-  {
-    "arxiv_id_base": "2508.15716",
-    "categories": [
-      "cs.HC",
-      "cs.AI"
-    ],
-    "data_scale": {
-      "channels": 0.0,
-      "datasets": [],
-      "eeg_hours": 0.0,
-      "subjects": 0.0
-    },
-    "detailed_summary": "This survey presents the first comprehensive modality-oriented taxonomy for foundation models in EEG analysis, systematically organizing research advances based on output modalities including native EEG decoding, EEG-text, EEG-vision, EEG-audio, and broader multimodal frameworks. The paper rigorously analyzes each category's research ideas, theoretical foundations, and architectural innovations, while highlighting open challenges such as model interpretability, cross-domain generalization, and real-world applicability in EEG-based systems. By unifying this dispersed field, the work provides a reference framework for future methodology development and accelerates the translation of EEG foundation models into scalable, interpretable, and online actionable solutions.",
-    "evaluation": {
-      "benchmarks": [],
-      "headline_results": [
-        "Analysis of architectural innovations, application scenarios, and performance trends"
-      ],
-      "tasks": [
-        "Systematic review of existing research across five modality domains"
-      ]
-    },
-    "key_points": [
-      "First comprehensive survey of foundation models pre-trained on non-EEG data applied to EEG analysis",
-      "Systematic taxonomy covering native EEG decoding, EEG-to-text, EEG-to-vision, EEG-to-audio, and multimodal fusion",
-      "Highlights cross-domain generalization, interpretability challenges, and future research directions"
-    ],
-    "limitations": [
-      "Cross-subject generalization remains challenging due to inter-individual variability",
-      "Interpretability of cross-modal alignment mechanisms is limited",
-      "Authenticity concerns about whether generated outputs truly reflect EEG content",
-      "Lack of standardized evaluation protocols and benchmarks",
-      "Limited research on EEG generative and inverse modeling"
-    ],
-    "method": {
-      "architecture": "Foundation models pre-trained on large-scale non-EEG data (text, vision, audio) applied to EEG analysis through cross-modal alignment, feature extraction, and generative modeling. Methods include contrastive learning, masked reconstruction, and multimodal fusion architectures.",
-      "finetuning": "Applied to EEG analysis through cross-modal adaptation",
-      "objective": "Cross-modal alignment, feature extraction, generative modeling",
-      "pretraining": "Pre-trained on non-EEG data (text, vision, audio)"
-    },
-    "notes": "{\"chars\": 78217, \"error\": null, \"pages\": 15, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=21161",
-    "one_liner": "First comprehensive modality-oriented taxonomy of foundation models pre-trained on non-EEG data and applied to EEG analysis.",
-    "open_source": {
-      "code_url": null,
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "survey",
-    "published_date": "2025-08-21",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "masked-reconstruction",
-        "contrastive"
-      ],
-      "paper_type": [
-        "survey"
-      ],
-      "tokenization": [
-        "time-patch",
-        "latent-tokens"
-      ],
-      "topology": [
-        "fixed-montage",
-        "channel-flexible"
-      ]
-    },
-    "title": "Foundation Models for Cross-Domain EEG Analysis Application: A Survey",
-    "unique_contribution": "Presents the first comprehensive modality-oriented taxonomy for foundation models in EEG analysis, systematically organizing research advances across five output modality domains.",
-    "used_fulltext": true
-  },
-  {
-    "arxiv_id_base": "2508.17742",
-    "categories": [
-      "eess.SP",
-      "cs.AI",
-      "cs.HC"
-    ],
-    "data_scale": {
-      "channels": null,
-      "datasets": [
-        "unknown"
-      ],
-      "eeg_hours": null,
-      "subjects": null
-    },
-    "detailed_summary": "EEG-FM-Bench addresses the lack of standardized evaluation protocols for EEG foundation models by providing a unified benchmark system. The benchmark integrates 14 datasets across 10 EEG paradigms and incorporates diverse experimental settings including multiple fine-tuning strategies, task organizations, and classifier configurations. It also provides tools for gradient and representation analysis. Our experiments reveal critical insights: multi-task learning acts as a regularizer to mitigate overfitting in data-scarce EEG contexts, pre-training efficiency is limited by gradient conflicts between reconstruction objectives and downstream tasks, and model scaling deviates from typical laws as compact architectures with domain-specific inductive biases outperform larger models.",
-    "evaluation": {
-      "benchmarks": [
-        "Balanced Accuracy",
-        "Weighted F1",
-        "Cohen's Kappa",
-        "AUROC",
-        "AUC-PR"
-      ],
-      "headline_results": [
-        "unknown"
-      ],
-      "tasks": [
-        "motor imagery",
-        "sleep staging",
-        "emotion recognition",
-        "disease diagnosis"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model benchmark: EEG-FM-Bench integrates 14 datasets across 10 paradigms with standardized protocols",
-      "Multi-task learning acts as critical regularizer to mitigate overfitting in data-scarce EEG contexts",
-      "Compact architectures with domain-specific inductive biases consistently outperform significantly larger models"
-    ],
-    "limitations": [
-      "Benchmark cannot represent full spectrum of EEG applications including multi-modal settings and certain clinical workflows",
-      "Multi-task fine-tuning risks negative transfer when datasets have conflicting objectives or incompatible inductive biases",
-      "Rapid evolution of EEG foundation models creates moving target for fair comparison"
-    ],
-    "method": {
-      "architecture": "Unified benchmark system with standardized data preprocessing, three fine-tuning strategies (frozen-backbone, full-parameter, LoRA), two task setups (single-task, multi-task), and three classifier configurations (average pooling, attention pooling, temporal-spatial-embedding dimension aggregation)",
-      "finetuning": null,
-      "objective": null,
-      "pretraining": null
-    },
-    "notes": "{\"chars\": 134237, \"error\": null, \"pages\": 35, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=36660",
-    "one_liner": "EEG-FM-Bench is a unified benchmark for standardized evaluation and diagnostic analysis of EEG foundation models.",
-    "open_source": {
-      "code_url": "https://github.com/xw1216/EEG-FM-Bench",
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "benchmark",
-    "published_date": "2025-08-25",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "masked-reconstruction"
-      ],
-      "paper_type": [
-        "benchmark"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "fixed-montage"
-      ]
-    },
-    "title": "EEG-FM-Bench: A Comprehensive Benchmark for the Systematic Evaluation of EEG Foundation Models",
-    "unique_contribution": "EEG-FM-Bench is the first comprehensive benchmark that combines standardized evaluation protocols with diagnostic analysis tools for EEG foundation models, enabling fair comparison and interpretable advances in the field.",
-    "used_fulltext": true
-  },
-  {
-    "arxiv_id_base": "2508.20705",
-    "categories": [
-      "cs.LG",
-      "cs.AI"
-    ],
-    "data_scale": {
-      "channels": 19.0,
-      "datasets": [
-        "TUH Abnormal EEG Corpus",
-        "TUEV",
-        "TUAB",
-        "SHU-MI",
-        "CL-Drive",
-        "Seed-VII",
-        "DMER"
-      ],
-      "eeg_hours": 0.0,
-      "subjects": 0.0
-    },
-    "detailed_summary": "EEGDM proposes a novel self-supervised framework that leverages latent diffusion models to generate EEG signals as an objective, addressing the limitation of masked reconstruction methods in capturing global dynamics and long-range dependencies. The framework incorporates an EEG encoder that distills raw signals and their channel augmentations into a compact representation, acting as conditional information to guide the diffusion model for generating EEG signals. This design endows EEGDM with a compact latent space that not only offers ample control over the generative process but also can be leveraged for downstream tasks. Experimental results show that EEGDM reconstructs high-quality EEG signals, learns robust representations, and achieves competitive performance across diverse downstream tasks.",
-    "evaluation": {
-      "benchmarks": [
-        "TUEV",
-        "TUAB",
-        "SHU-MI",
-        "CL-Drive",
-        "Seed-VII",
-        "DMER"
-      ],
-      "headline_results": [
-        "competitive performance across diverse downstream tasks",
-        "robust EEG signal reconstruction",
-        "improved cross-dataset generalizability"
-      ],
-      "tasks": [
-        "event classification",
-        "abnormal detection",
-        "motor imagery classification",
-        "cognitive load assessment",
-        "emotion recognition",
-        "emotion distribution prediction"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: EEGDM leverages latent diffusion models for self-supervised EEG representation learning, capturing global dynamics and long-range dependencies.",
-      "Novel method: Incorporates channel augmentation and PCA-based latent space operations to enhance conditional information, enable robust EEG signal reconstruction, and improve cross-dataset generalizability.",
-      "Strong evidence: Achieves competitive performance across diverse downstream tasks including event classification, abnormal detection, motor imagery, cognitive load assessment, and emotion recognition."
-    ],
-    "limitations": [
-      "Limited evaluation on small-scale downstream datasets",
-      "Performance depends on optimal number of PCA components",
-      "No explicit comparison with other generative models for EEG",
-      "Limited discussion of computational efficiency",
-      "No ablation study on different diffusion model architectures",
-      "No analysis of model interpretability",
-      "Limited discussion of real-world deployment challenges"
-    ],
-    "method": {
-      "architecture": "latent diffusion model",
-      "finetuning": "supervised",
-      "objective": "EEG signal generation",
-      "pretraining": "self-supervised"
-    },
-    "notes": "{\"chars\": 53889, \"error\": null, \"pages\": 10, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=15007",
-    "one_liner": "EEGDM introduces a latent diffusion model for self-supervised EEG representation learning, capturing global dynamics and long-range dependencies.",
-    "open_source": {
-      "code_url": null,
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-08-28",
-    "tags": {
-      "backbone": [
-        "diffusion"
-      ],
-      "objective": [
-        "masked-reconstruction"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "latent-tokens"
-      ],
-      "topology": [
-        "fixed-montage"
-      ]
-    },
-    "title": "EEGDM: Learning EEG Representation with Latent Diffusion Model",
-    "unique_contribution": "EEGDM introduces the first diffusion model-based approach for self-supervised EEG representation learning, using EEG signal generation as the self-supervised objective to capture rich EEG semantics.",
-    "used_fulltext": true
-  },
-  {
-    "arxiv_id_base": "2509.00314",
-    "categories": [
-      "eess.SP"
-    ],
-    "data_scale": {
-      "channels": 62.0,
-      "datasets": [
-        "multiple"
-      ],
-      "eeg_hours": null,
-      "subjects": 3155.0
-    },
-    "detailed_summary": "CoMET addresses limitations in existing EEG foundation models by integrating masked autoencoder (MAE) with a novel contrastive learning framework. Traditional masked reconstruction methods overly focus on local channel correlations due to volume conduction, while contrastive learning suffers from attention collapse. CoMET employs mirror-scale augmentation to generate positive views that preserve global correlations while avoiding token-level similarity, and uses a momentum encoder with InfoNCE loss to strengthen global discrimination. The model is pre-trained on over 3000 subjects with 1M+ samples and achieves state-of-the-art performance on ten diverse downstream datasets, demonstrating superior ability to capture both local and global discriminative EEG features.",
-    "evaluation": {
-      "benchmarks": [
-        "BCIC IV 2A/2B",
-        "Large-5F",
-        "BCIC2020-3",
-        "KaggleERN/FACED",
-        "THUBenchmark/PhysioP300",
-        "TUAB/TUEV"
-      ],
-      "headline_results": [
-        "State-of-the-art performance on ten downstream datasets",
-        "Superior ability to capture both local and global discriminative EEG features",
-        "Compliance with scaling laws"
-      ],
-      "tasks": [
-        "motor imagery",
-        "emotion recognition",
-        "clinical applications",
-        "SSVEP",
-        "P300",
-        "imagined speech"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: CoMET combines masked autoencoder with contrastive learning to extract universal EEG representations across diverse tasks.",
-      "Novel mirror-scale augmentation: Generates positive views that preserve global correlations while avoiding token-level similarity, addressing volume conduction limitations.",
-      "State-of-the-art results: Achieves SOTA performance on ten downstream datasets including motor imagery, emotion recognition, and clinical applications, with scaling law compliance."
-    ],
-    "limitations": [
-      "Performance slightly lower on TUAB/TUEV datasets where CBraMod had pre-training advantage",
-      "Requires substantial computational resources for 151M parameter model",
-      "Linear probing evaluation may not capture full fine-tuning potential"
-    ],
-    "method": {
-      "architecture": "Masked autoencoder with redesigned patching and embedding for EEG",
-      "finetuning": "Linear probing strategy",
-      "objective": "Combined masked reconstruction and contrastive learning",
-      "pretraining": "Mirror-scale augmentation with momentum encoder and InfoNCE loss"
-    },
-    "notes": "{\"chars\": 68106, \"error\": null, \"pages\": 20, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=18643",
-    "one_liner": "CoMET is a 151M-parameter brain foundation model that combines masked reconstruction and contrastive learning to extract universal EEG representations across diverse tasks.",
-    "open_source": {
-      "code_url": null,
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-08-30",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "masked-reconstruction",
-        "contrastive"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
-    },
-    "title": "CoMET: A Contrastive-Masked Brain Foundation Model for Universal EEG Representation",
-    "unique_contribution": "CoMET introduces mirror-scale augmentation and a contrastive-masked framework that effectively merges local reconstruction with global discrimination, overcoming the attention collapse and local similarity limitations of prior EEG foundation models.",
-    "used_fulltext": true
-  }
-]
+  "top_picks": [
+    "2508.17742",
+    "2509.00314",
+    "2508.20705",
+    "2508.15716",
+    "2508.14086"
+  ]
+}

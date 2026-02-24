@@ -1,242 +1,356 @@
-[
-  {
-    "arxiv_id_base": "2504.20069",
-    "categories": [
-      "cs.LG",
-      "cs.AI",
-      "eess.SP"
-    ],
-    "data_scale": {
-      "channels": null,
-      "datasets": [
-        "Multiple EEG datasets"
+{
+  "month": "2025-04",
+  "papers": [
+    {
+      "arxiv_id": "2504.20069v2",
+      "arxiv_id_base": "2504.20069",
+      "authors": [
+        "Junhong Lai",
+        "Jiyu Wei",
+        "Lin Yao",
+        "Yueming Wang"
       ],
-      "eeg_hours": null,
-      "subjects": null
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2504.20069v2",
+        "pdf": "https://arxiv.org/pdf/2504.20069v2"
+      },
+      "published_date": "2025-04-24",
+      "summary": {
+        "arxiv_id_base": "2504.20069",
+        "categories": [
+          "cs.LG",
+          "cs.AI",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Multiple EEG datasets"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "This paper provides a systematic review of 14 early EEG foundation models (EEG-FMs), which are self-supervised models designed to learn robust EEG feature representations without extensive labeled data. The review covers the methodologies of these models, including their architectures (primarily transformers and CNNs), pretraining strategies, and downstream applications. It analyzes the datasets used for pretraining (totaling up to 13.79TB in some cases) and downstream tasks across various domains like seizure detection, emotion recognition, and sleep staging. The paper identifies key research gaps including the need for standardized benchmarks, better understanding of preprocessing impacts, and improved model interpretability for clinical applications.",
+        "evaluation": {
+          "benchmarks": [
+            "Multiple EEG datasets"
+          ],
+          "headline_results": [
+            "Robust feature representations without extensive labeled data"
+          ],
+          "tasks": [
+            "Classification",
+            "Prediction",
+            "Imputation"
+          ]
+        },
+        "key_points": [
+          "Survey of 14 first-generation EEG foundation models analyzing their architectures, pretraining strategies, and downstream applications",
+          "Comprehensive analysis of pretraining datasets (up to 13.79TB) and downstream task diversity across clinical and cognitive domains",
+          "Identifies critical research gaps including need for standardized benchmarks, better preprocessing understanding, and improved model interpretability"
+        ],
+        "limitations": [
+          "Lack of standardized benchmark tasks makes direct model comparisons difficult",
+          "Minimal data preprocessing in reviewed studies leaves unclear impact of noise/artifact handling",
+          "No focus on model interpretability or explainability for clinical applications",
+          "Limited analysis of model and data scaling effects on performance",
+          "Heterogeneous evaluation protocols across different studies"
+        ],
+        "method": {
+          "architecture": "Transformers and CNNs",
+          "finetuning": "Downstream task adaptation",
+          "objective": "Self-supervised learning",
+          "pretraining": "Masked reconstruction and codebook prediction"
+        },
+        "notes": "{\"chars\": 77529, \"error\": null, \"pages\": 15, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=21131",
+        "one_liner": "Comprehensive review of 14 first-generation EEG foundation models (EEG-FMs), analyzing their architectures, pretraining strategies, datasets, and future research directions.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "survey",
+        "published_date": "2025-04-24",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "survey"
+          ],
+          "tokenization": [
+            "time-patch",
+            "discrete-tokens"
+          ],
+          "topology": [
+            "fixed-montage",
+            "channel-flexible"
+          ]
+        },
+        "title": "A Simple Review of EEG Foundation Models: Datasets, Advancements and Future Perspectives",
+        "unique_contribution": "Provides the first comprehensive critical analysis of first-generation EEG-FMs, systematically reviewing 14 models and identifying key research gaps and future directions for the field.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "A Simple Review of EEG Foundation Models: Datasets, Advancements and Future Perspectives",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "explicitly reviews EEG foundation models (EEG-FMs)",
+          "focuses on first-generation EEG-FMs and their methodologies",
+          "discusses pretraining strategies and downstream applications"
+        ]
+      }
     },
-    "detailed_summary": "This paper provides a systematic review of 14 early EEG foundation models (EEG-FMs), which are self-supervised models designed to learn robust EEG feature representations without extensive labeled data. The review covers the methodologies of these models, including their architectures (primarily transformers and CNNs), pretraining strategies, and downstream applications. It analyzes the datasets used for pretraining (totaling up to 13.79TB in some cases) and downstream tasks across various domains like seizure detection, emotion recognition, and sleep staging. The paper identifies key research gaps including the need for standardized benchmarks, better understanding of preprocessing impacts, and improved model interpretability for clinical applications.",
-    "evaluation": {
-      "benchmarks": [
-        "Multiple EEG datasets"
+    {
+      "arxiv_id": "2504.19596v2",
+      "arxiv_id_base": "2504.19596",
+      "authors": [
+        "Wei-Bang Jiang",
+        "Xi Fu",
+        "Yi Ding",
+        "Cuntai Guan"
       ],
-      "headline_results": [
-        "Robust feature representations without extensive labeled data"
+      "categories": [
+        "eess.SP",
+        "cs.LG"
       ],
-      "tasks": [
-        "Classification",
-        "Prediction",
-        "Imputation"
-      ]
+      "links": {
+        "abs": "http://arxiv.org/abs/2504.19596v2",
+        "pdf": "https://arxiv.org/pdf/2504.19596v2"
+      },
+      "published_date": "2025-04-28",
+      "summary": {
+        "arxiv_id_base": "2504.19596",
+        "categories": [
+          "eess.SP",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 0.0,
+          "datasets": [
+            "SEED-VII",
+            "HMC",
+            "FBM",
+            "EEGMAT"
+          ],
+          "eeg_hours": 0.0,
+          "subjects": 0.0
+        },
+        "detailed_summary": "PhysioOmni addresses the challenge of building universal multimodal physiological foundation models that can generalize across datasets and handle missing modalities at inference. The model introduces a decoupled multimodal tokenizer that disentangles modality-invariant and modality-specific features using shared and private codebooks, enabling masked signal pre-training to learn generic representations. During fine-tuning, PhysioOmni employs homogeneous representation mapping, prototype alignment, and modality-specific prediction to maintain robust performance when some modalities are missing. Extensive experiments on four BCI tasks—emotion recognition, sleep stage classification, motor prediction, and mental workload detection—demonstrate state-of-the-art performance across both unimodal and multimodal settings while maintaining strong robustness to missing modalities.",
+        "evaluation": {
+          "benchmarks": [
+            "SEED-VII",
+            "HMC",
+            "FBM",
+            "EEGMAT"
+          ],
+          "headline_results": [
+            "State-of-the-art performance across four BCI tasks",
+            "Strong robustness to missing modalities",
+            "Effective in both unimodal and multimodal settings"
+          ],
+          "tasks": [
+            "emotion recognition",
+            "sleep stage classification",
+            "motor prediction",
+            "mental workload detection"
+          ]
+        },
+        "key_points": [
+          "New multimodal physiological foundation model: PhysioOmni handles EEG, ECG, EOG, and EMG signals while maintaining compatibility with arbitrary missing modalities at inference.",
+          "Decoupled tokenization and masked pre-training: The model learns both modality-invariant and modality-specific representations through a shared codebook and private codebooks, enabling robust multimodal learning.",
+          "State-of-the-art performance with robustness: PhysioOmni achieves SOTA results across four BCI tasks while demonstrating strong resilience to missing modalities through prototype alignment and modality-specific prediction."
+        ],
+        "limitations": [
+          "Relies on fixed set of known modalities during training and cannot adapt to entirely new modalities not seen during pre-training",
+          "Uses individual encoders for each modality rather than a unified architecture, increasing model complexity",
+          "Requires careful hyperparameter tuning for different modality combinations and datasets"
+        ],
+        "method": {
+          "architecture": "Decoupled multimodal tokenizer with shared and private codebooks, modality-specific encoders, Transformer blocks for feature fusion",
+          "finetuning": "Resilient fine-tuning with homogeneous representation mapping, prototype alignment, and modality-specific prediction",
+          "objective": "Masked signal pre-training for generic representation learning",
+          "pretraining": "Pre-training on multimodal physiological signals using masked reconstruction"
+        },
+        "notes": "{\"chars\": 79311, \"error\": null, \"pages\": 19, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=21395",
+        "one_liner": "PhysioOmni is a foundation model for multimodal physiological signals that handles arbitrary missing modalities through decoupled tokenization and resilient fine-tuning.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-04-28",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Towards Robust Multimodal Physiological Foundation Models: Handling Arbitrary Missing Modalities",
+        "unique_contribution": "PhysioOmni is the first foundation model for multimodal physiological signals that explicitly handles arbitrary missing modalities through a combination of decoupled tokenization, masked signal pre-training, and resilient fine-tuning with prototype alignment.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Towards Robust Multimodal Physiological Foundation Models: Handling Arbitrary Missing Modalities",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "proposes PhysioOmni, a foundation model for multimodal physiological signals",
+          "explicitly handles EEG as a core modality",
+          "focuses on universal representations and generalization across datasets",
+          "includes masked signal pre-training and robust fine-tuning for missing modalities"
+        ]
+      }
     },
-    "key_points": [
-      "Survey of 14 first-generation EEG foundation models analyzing their architectures, pretraining strategies, and downstream applications",
-      "Comprehensive analysis of pretraining datasets (up to 13.79TB) and downstream task diversity across clinical and cognitive domains",
-      "Identifies critical research gaps including need for standardized benchmarks, better preprocessing understanding, and improved model interpretability"
-    ],
-    "limitations": [
-      "Lack of standardized benchmark tasks makes direct model comparisons difficult",
-      "Minimal data preprocessing in reviewed studies leaves unclear impact of noise/artifact handling",
-      "No focus on model interpretability or explainability for clinical applications",
-      "Limited analysis of model and data scaling effects on performance",
-      "Heterogeneous evaluation protocols across different studies"
-    ],
-    "method": {
-      "architecture": "Transformers and CNNs",
-      "finetuning": "Downstream task adaptation",
-      "objective": "Self-supervised learning",
-      "pretraining": "Masked reconstruction and codebook prediction"
-    },
-    "notes": "{\"chars\": 77529, \"error\": null, \"pages\": 15, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=21131",
-    "one_liner": "Comprehensive review of 14 first-generation EEG foundation models (EEG-FMs), analyzing their architectures, pretraining strategies, datasets, and future research directions.",
-    "open_source": {
-      "code_url": null,
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "survey",
-    "published_date": "2025-04-24",
-    "tags": {
-      "backbone": [
-        "transformer"
+    {
+      "arxiv_id": "2504.21214v2",
+      "arxiv_id_base": "2504.21214",
+      "authors": [
+        "Jinzhao Zhou",
+        "Zehong Cao",
+        "Yiqun Duan",
+        "Connor Barkley",
+        "Daniel Leong",
+        "Xiaowei Jiang",
+        "Quoc-Toan Nguyen",
+        "Ziyi Zhao",
+        "Thomas Do",
+        "Yu-Cheng Chang",
+        "Sheng-Fu Liang",
+        "Chin-teng Lin"
       ],
-      "objective": [
-        "masked-reconstruction",
-        "contrastive"
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "eess.AS"
       ],
-      "paper_type": [
-        "survey"
-      ],
-      "tokenization": [
-        "time-patch",
-        "discrete-tokens"
-      ],
-      "topology": [
-        "fixed-montage",
-        "channel-flexible"
-      ]
-    },
-    "title": "A Simple Review of EEG Foundation Models: Datasets, Advancements and Future Perspectives",
-    "unique_contribution": "Provides the first comprehensive critical analysis of first-generation EEG-FMs, systematically reviewing 14 models and identifying key research gaps and future directions for the field.",
-    "used_fulltext": true
+      "links": {
+        "abs": "http://arxiv.org/abs/2504.21214v2",
+        "pdf": "https://arxiv.org/pdf/2504.21214v2"
+      },
+      "published_date": "2025-04-29",
+      "summary": {
+        "arxiv_id_base": "2504.21214",
+        "categories": [
+          "cs.CL",
+          "cs.AI",
+          "eess.AS"
+        ],
+        "data_scale": {
+          "channels": 122.0,
+          "datasets": [
+            "unknown"
+          ],
+          "eeg_hours": 120.0,
+          "subjects": 12.0
+        },
+        "detailed_summary": "This paper introduces LBLM, a 22-million-parameter model pretrained on over 120 hours of EEG data from 12 subjects performing silent speech tasks. Unlike existing EEG pretraining methods that rely on masked reconstruction, LBLM uses a novel Future Spectro-Temporal Prediction (FSTP) paradigm that autoregressively predicts future EEG signals and their spectral components in both time and frequency domains. The model achieves state-of-the-art performance on word-level (39.6%) and semantic-level (47.0%) classification tasks in challenging cross-session settings, outperforming fully-supervised and pretrained baselines by significant margins.",
+        "evaluation": {
+          "benchmarks": [
+            "cross-session evaluation"
+          ],
+          "headline_results": [
+            "39.6% word-level accuracy",
+            "47.0% semantic-level accuracy",
+            "outperforms baselines by 5.4-7.3%"
+          ],
+          "tasks": [
+            "word-level classification",
+            "semantic-level classification",
+            "future EEG prediction"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: LBLM with 22M parameters pretrained on 120+ hours of silent speech EEG data from 12 subjects",
+          "Novel FSTP pretraining: Autoregressive prediction of future EEG waves and spectral components in both time and frequency domains",
+          "Strong empirical results: Achieves 39.6% word-level and 47.0% semantic-level accuracy in cross-session evaluation, outperforming baselines by 5.4-7.3%"
+        ],
+        "limitations": [
+          "Performance degrades for longer prediction horizons in future EEG forecasting",
+          "Model size (22M parameters) may limit deployment on resource-constrained devices",
+          "Cross-session performance still challenging despite improvements"
+        ],
+        "method": {
+          "architecture": "Conformer backbone with layer-gating mechanism",
+          "finetuning": "Spatio-temporal classifier for downstream tasks",
+          "objective": "Future Spectro-Temporal Prediction (FSTP)",
+          "pretraining": "MSTP + ASTP predicting raw EEG waves, Fourier amplitude, and phase"
+        },
+        "notes": "{\"chars\": 75192, \"error\": null, \"pages\": 16, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=20461",
+        "one_liner": "Large Brain Language Model (LBLM) pretrained with Future Spectro-Temporal Prediction (FSTP) paradigm for silent speech decoding in active BCI.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-04-29",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "autoregressive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Pretraining Large Brain Language Model for Active BCI: Silent Speech",
+        "unique_contribution": "Proposes FSTP, the first self-supervised pretraining paradigm for EEG that predicts future signals and spectral components autoregressively, enabling effective silent speech decoding without external modalities.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Pretraining Large Brain Language Model for Active BCI: Silent Speech",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "EEG is central modality for silent speech decoding",
+          "Proposes LBLM pretrained with self-supervised FSTP paradigm",
+          "Focuses on reusable EEG representations for broad transfer"
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 3,
+    "candidates": 10,
+    "summarized": 3
   },
-  {
-    "arxiv_id_base": "2504.19596",
-    "categories": [
-      "eess.SP",
-      "cs.LG"
-    ],
-    "data_scale": {
-      "channels": 0.0,
-      "datasets": [
-        "SEED-VII",
-        "HMC",
-        "FBM",
-        "EEGMAT"
-      ],
-      "eeg_hours": 0.0,
-      "subjects": 0.0
-    },
-    "detailed_summary": "PhysioOmni addresses the challenge of building universal multimodal physiological foundation models that can generalize across datasets and handle missing modalities at inference. The model introduces a decoupled multimodal tokenizer that disentangles modality-invariant and modality-specific features using shared and private codebooks, enabling masked signal pre-training to learn generic representations. During fine-tuning, PhysioOmni employs homogeneous representation mapping, prototype alignment, and modality-specific prediction to maintain robust performance when some modalities are missing. Extensive experiments on four BCI tasks—emotion recognition, sleep stage classification, motor prediction, and mental workload detection—demonstrate state-of-the-art performance across both unimodal and multimodal settings while maintaining strong robustness to missing modalities.",
-    "evaluation": {
-      "benchmarks": [
-        "SEED-VII",
-        "HMC",
-        "FBM",
-        "EEGMAT"
-      ],
-      "headline_results": [
-        "State-of-the-art performance across four BCI tasks",
-        "Strong robustness to missing modalities",
-        "Effective in both unimodal and multimodal settings"
-      ],
-      "tasks": [
-        "emotion recognition",
-        "sleep stage classification",
-        "motor prediction",
-        "mental workload detection"
-      ]
-    },
-    "key_points": [
-      "New multimodal physiological foundation model: PhysioOmni handles EEG, ECG, EOG, and EMG signals while maintaining compatibility with arbitrary missing modalities at inference.",
-      "Decoupled tokenization and masked pre-training: The model learns both modality-invariant and modality-specific representations through a shared codebook and private codebooks, enabling robust multimodal learning.",
-      "State-of-the-art performance with robustness: PhysioOmni achieves SOTA results across four BCI tasks while demonstrating strong resilience to missing modalities through prototype alignment and modality-specific prediction."
-    ],
-    "limitations": [
-      "Relies on fixed set of known modalities during training and cannot adapt to entirely new modalities not seen during pre-training",
-      "Uses individual encoders for each modality rather than a unified architecture, increasing model complexity",
-      "Requires careful hyperparameter tuning for different modality combinations and datasets"
-    ],
-    "method": {
-      "architecture": "Decoupled multimodal tokenizer with shared and private codebooks, modality-specific encoders, Transformer blocks for feature fusion",
-      "finetuning": "Resilient fine-tuning with homogeneous representation mapping, prototype alignment, and modality-specific prediction",
-      "objective": "Masked signal pre-training for generic representation learning",
-      "pretraining": "Pre-training on multimodal physiological signals using masked reconstruction"
-    },
-    "notes": "{\"chars\": 79311, \"error\": null, \"pages\": 19, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=21395",
-    "one_liner": "PhysioOmni is a foundation model for multimodal physiological signals that handles arbitrary missing modalities through decoupled tokenization and resilient fine-tuning.",
-    "open_source": {
-      "code_url": null,
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-04-28",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "masked-reconstruction"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "discrete-tokens"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
-    },
-    "title": "Towards Robust Multimodal Physiological Foundation Models: Handling Arbitrary Missing Modalities",
-    "unique_contribution": "PhysioOmni is the first foundation model for multimodal physiological signals that explicitly handles arbitrary missing modalities through a combination of decoupled tokenization, masked signal pre-training, and resilient fine-tuning with prototype alignment.",
-    "used_fulltext": true
-  },
-  {
-    "arxiv_id_base": "2504.21214",
-    "categories": [
-      "cs.CL",
-      "cs.AI",
-      "eess.AS"
-    ],
-    "data_scale": {
-      "channels": 122.0,
-      "datasets": [
-        "unknown"
-      ],
-      "eeg_hours": 120.0,
-      "subjects": 12.0
-    },
-    "detailed_summary": "This paper introduces LBLM, a 22-million-parameter model pretrained on over 120 hours of EEG data from 12 subjects performing silent speech tasks. Unlike existing EEG pretraining methods that rely on masked reconstruction, LBLM uses a novel Future Spectro-Temporal Prediction (FSTP) paradigm that autoregressively predicts future EEG signals and their spectral components in both time and frequency domains. The model achieves state-of-the-art performance on word-level (39.6%) and semantic-level (47.0%) classification tasks in challenging cross-session settings, outperforming fully-supervised and pretrained baselines by significant margins.",
-    "evaluation": {
-      "benchmarks": [
-        "cross-session evaluation"
-      ],
-      "headline_results": [
-        "39.6% word-level accuracy",
-        "47.0% semantic-level accuracy",
-        "outperforms baselines by 5.4-7.3%"
-      ],
-      "tasks": [
-        "word-level classification",
-        "semantic-level classification",
-        "future EEG prediction"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: LBLM with 22M parameters pretrained on 120+ hours of silent speech EEG data from 12 subjects",
-      "Novel FSTP pretraining: Autoregressive prediction of future EEG waves and spectral components in both time and frequency domains",
-      "Strong empirical results: Achieves 39.6% word-level and 47.0% semantic-level accuracy in cross-session evaluation, outperforming baselines by 5.4-7.3%"
-    ],
-    "limitations": [
-      "Performance degrades for longer prediction horizons in future EEG forecasting",
-      "Model size (22M parameters) may limit deployment on resource-constrained devices",
-      "Cross-session performance still challenging despite improvements"
-    ],
-    "method": {
-      "architecture": "Conformer backbone with layer-gating mechanism",
-      "finetuning": "Spatio-temporal classifier for downstream tasks",
-      "objective": "Future Spectro-Temporal Prediction (FSTP)",
-      "pretraining": "MSTP + ASTP predicting raw EEG waves, Fourier amplitude, and phase"
-    },
-    "notes": "{\"chars\": 75192, \"error\": null, \"pages\": 16, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=20461",
-    "one_liner": "Large Brain Language Model (LBLM) pretrained with Future Spectro-Temporal Prediction (FSTP) paradigm for silent speech decoding in active BCI.",
-    "open_source": {
-      "code_url": null,
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-04-29",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "autoregressive"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "fixed-montage"
-      ]
-    },
-    "title": "Pretraining Large Brain Language Model for Active BCI: Silent Speech",
-    "unique_contribution": "Proposes FSTP, the first self-supervised pretraining paradigm for EEG that predicts future signals and spectral components autoregressively, enabling effective silent speech decoding without external modalities.",
-    "used_fulltext": true
-  }
-]
+  "top_picks": [
+    "2504.21214",
+    "2504.20069",
+    "2504.19596"
+  ]
+}

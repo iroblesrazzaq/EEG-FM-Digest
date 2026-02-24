@@ -1,86 +1,127 @@
-[
-  {
-    "arxiv_id_base": "2101.12037",
-    "categories": [
-      "cs.LG",
-      "cs.NE",
-      "q-bio.QM"
-    ],
-    "data_scale": {
-      "channels": 20.0,
-      "datasets": [
-        "Temple University Hospital EEG Corpus (TUEG)"
+{
+  "month": "2021-01",
+  "papers": [
+    {
+      "arxiv_id": "2101.12037v1",
+      "arxiv_id_base": "2101.12037",
+      "authors": [
+        "Demetres Kostas",
+        "Stephane Aroca-Ouellette",
+        "Frank Rudzicz"
       ],
-      "eeg_hours": null,
-      "subjects": 10000.0
-    },
-    "detailed_summary": "This paper introduces BENDR, a transformer-based model for electroencephalography (EEG) that adapts techniques from language modeling and speech recognition to the EEG domain. The authors propose using contrastive self-supervised learning to pretrain on massive amounts of unlabeled EEG data, specifically adapting the wav2vec 2.0 framework. BENDR learns compressed representations (called BENDR vectors) from raw EEG signals through a two-stage architecture: a convolutional encoder that downsamples the signal, followed by a transformer encoder. The model is pretrained on the Temple University Hospital EEG Corpus and then fine-tuned on various downstream BCI and EEG classification tasks. The key innovation is demonstrating that a single pretrained model can generalize across different hardware, subjects, and tasks, outperforming prior work in sleep stage classification and showing competitive results on motor imagery and P300 speller tasks.",
-    "evaluation": {
-      "benchmarks": [
-        "Temple University Hospital EEG Corpus",
-        "MMI dataset",
-        "BCIC dataset",
-        "ERN dataset",
-        "SSC dataset",
-        "P300 speller dataset"
+      "categories": [
+        "cs.LG",
+        "cs.NE",
+        "q-bio.QM"
       ],
-      "headline_results": [
-        "Outperformed prior self-supervised approaches on sleep staging",
-        "Competitive performance on motor imagery and P300 tasks",
-        "Generalizes across different hardware and subjects"
-      ],
-      "tasks": [
-        "Sleep staging",
-        "Motor imagery",
-        "P300 speller",
-        "Error-related negativity",
-        "BCI competition"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: BENDR uses transformers and contrastive self-supervised learning to learn from massive unlabeled EEG datasets, adapting techniques from wav2vec 2.0.",
-      "Generalizes across domains: A single pretrained BENDR model works across different hardware, subjects, and tasks, showing strong performance on sleep staging, motor imagery, and P300 classification.",
-      "Outperforms prior work: BENDR achieves better results than previous self-supervised approaches for sleep stage classification while maintaining competitive performance on BCI tasks."
-    ],
-    "limitations": [
-      "Limited evaluation on datasets with many channels - only used 19 EEG channels from 10/20 system",
-      "Position encoding receptive field (25 samples) may exceed sequence length for some tasks",
-      "No explicit spatial integration - relies on 1D convolutions despite evidence that spatial information is important for EEG"
-    ],
-    "method": {
-      "architecture": "Transformer-based architecture with convolutional encoder (6 blocks, 512 filters each) downsampling raw EEG to BENDR vectors, followed by transformer encoder (8 layers, 8 heads, 1536 dim)",
-      "finetuning": "Fine-tuned on downstream tasks including sleep staging, motor imagery, and P300 classification",
-      "objective": "Contrastive self-supervised learning via masked prediction comparing masked positions to distractors",
-      "pretraining": "Pretrained on Temple University Hospital EEG Corpus using contrastive loss"
-    },
-    "notes": "{\"chars\": 63773, \"error\": null, \"pages\": 19, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=17457",
-    "one_liner": "BENDR is a transformer-based EEG foundation model pretrained via contrastive self-supervision to learn generalizable representations across subjects, hardware, and tasks.",
-    "open_source": {
-      "code_url": "https://github.com/SPOClab-ca/BENDR",
-      "license": "MIT",
-      "weights_url": "https://github.com/SPOClab-ca/BENDR"
-    },
-    "paper_type": "new_model",
-    "published_date": "2021-01-28",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "contrastive"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
-    },
-    "title": "BENDR: using transformers and a contrastive self-supervised learning task to learn from massive amounts of EEG data",
-    "unique_contribution": "The paper introduces BENDR, a transformer-based EEG foundation model that adapts contrastive self-supervised learning from speech recognition to EEG, demonstrating generalizability across subjects, hardware, and tasks while outperforming prior self-supervised approaches.",
-    "used_fulltext": true
-  }
-]
+      "links": {
+        "abs": "http://arxiv.org/abs/2101.12037v1",
+        "pdf": "https://arxiv.org/pdf/2101.12037v1"
+      },
+      "published_date": "2021-01-28",
+      "summary": {
+        "arxiv_id_base": "2101.12037",
+        "categories": [
+          "cs.LG",
+          "cs.NE",
+          "q-bio.QM"
+        ],
+        "data_scale": {
+          "channels": 20.0,
+          "datasets": [
+            "Temple University Hospital EEG Corpus (TUEG)"
+          ],
+          "eeg_hours": null,
+          "subjects": 10000.0
+        },
+        "detailed_summary": "This paper introduces BENDR, a transformer-based model for electroencephalography (EEG) that adapts techniques from language modeling and speech recognition to the EEG domain. The authors propose using contrastive self-supervised learning to pretrain on massive amounts of unlabeled EEG data, specifically adapting the wav2vec 2.0 framework. BENDR learns compressed representations (called BENDR vectors) from raw EEG signals through a two-stage architecture: a convolutional encoder that downsamples the signal, followed by a transformer encoder. The model is pretrained on the Temple University Hospital EEG Corpus and then fine-tuned on various downstream BCI and EEG classification tasks. The key innovation is demonstrating that a single pretrained model can generalize across different hardware, subjects, and tasks, outperforming prior work in sleep stage classification and showing competitive results on motor imagery and P300 speller tasks.",
+        "evaluation": {
+          "benchmarks": [
+            "Temple University Hospital EEG Corpus",
+            "MMI dataset",
+            "BCIC dataset",
+            "ERN dataset",
+            "SSC dataset",
+            "P300 speller dataset"
+          ],
+          "headline_results": [
+            "Outperformed prior self-supervised approaches on sleep staging",
+            "Competitive performance on motor imagery and P300 tasks",
+            "Generalizes across different hardware and subjects"
+          ],
+          "tasks": [
+            "Sleep staging",
+            "Motor imagery",
+            "P300 speller",
+            "Error-related negativity",
+            "BCI competition"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: BENDR uses transformers and contrastive self-supervised learning to learn from massive unlabeled EEG datasets, adapting techniques from wav2vec 2.0.",
+          "Generalizes across domains: A single pretrained BENDR model works across different hardware, subjects, and tasks, showing strong performance on sleep staging, motor imagery, and P300 classification.",
+          "Outperforms prior work: BENDR achieves better results than previous self-supervised approaches for sleep stage classification while maintaining competitive performance on BCI tasks."
+        ],
+        "limitations": [
+          "Limited evaluation on datasets with many channels - only used 19 EEG channels from 10/20 system",
+          "Position encoding receptive field (25 samples) may exceed sequence length for some tasks",
+          "No explicit spatial integration - relies on 1D convolutions despite evidence that spatial information is important for EEG"
+        ],
+        "method": {
+          "architecture": "Transformer-based architecture with convolutional encoder (6 blocks, 512 filters each) downsampling raw EEG to BENDR vectors, followed by transformer encoder (8 layers, 8 heads, 1536 dim)",
+          "finetuning": "Fine-tuned on downstream tasks including sleep staging, motor imagery, and P300 classification",
+          "objective": "Contrastive self-supervised learning via masked prediction comparing masked positions to distractors",
+          "pretraining": "Pretrained on Temple University Hospital EEG Corpus using contrastive loss"
+        },
+        "notes": "{\"chars\": 63773, \"error\": null, \"pages\": 19, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=17457",
+        "one_liner": "BENDR is a transformer-based EEG foundation model pretrained via contrastive self-supervision to learn generalizable representations across subjects, hardware, and tasks.",
+        "open_source": {
+          "code_url": "https://github.com/SPOClab-ca/BENDR",
+          "license": "MIT",
+          "weights_url": "https://github.com/SPOClab-ca/BENDR"
+        },
+        "paper_type": "new_model",
+        "published_date": "2021-01-28",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "BENDR: using transformers and a contrastive self-supervised learning task to learn from massive amounts of EEG data",
+        "unique_contribution": "The paper introduces BENDR, a transformer-based EEG foundation model that adapts contrastive self-supervised learning from speech recognition to EEG, demonstrating generalizability across subjects, hardware, and tasks while outperforming prior self-supervised approaches.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "BENDR: using transformers and a contrastive self-supervised learning task to learn from massive amounts of EEG data",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "The paper explicitly proposes 'encephalography modelling' (EM) as an analogue to large-scale language modeling using massive EEG datasets.",
+          "It introduces BENDR, a transformer-based model pretrained via self-supervision to learn reusable representations for broad transfer.",
+          "The model demonstrates generalizability across different hardware, subjects, and diverse downstream tasks like sleep stage classification and BCI."
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 1,
+    "candidates": 1,
+    "summarized": 1
+  },
+  "top_picks": [
+    "2101.12037"
+  ]
+}

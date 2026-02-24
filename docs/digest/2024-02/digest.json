@@ -1,0 +1,21 @@
+{
+  "month": "2024-02",
+  "sections": [
+    {
+      "paper_ids": [
+        "2403.03222",
+        "2402.17772"
+      ],
+      "title": "new_model"
+    }
+  ],
+  "stats": {
+    "accepted": 2,
+    "candidates": 6,
+    "summarized": 2
+  },
+  "top_picks": [
+    "2403.03222",
+    "2402.17772"
+  ]
+}

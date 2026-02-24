@@ -1,83 +1,127 @@
-[
-  {
-    "arxiv_id_base": "2501.10885",
-    "categories": [
-      "cs.LG"
-    ],
-    "data_scale": {
-      "channels": null,
-      "datasets": [
-        "Temple University EEG Corpus (TUEG)"
+{
+  "month": "2025-01",
+  "papers": [
+    {
+      "arxiv_id": "2501.10885v4",
+      "arxiv_id_base": "2501.10885",
+      "authors": [
+        "Alexandru Dimofte",
+        "Glenn Anta Bucagu",
+        "Thorir Mar Ingolfsson",
+        "Xiaying Wang",
+        "Andrea Cossettini",
+        "Luca Benini",
+        "Yawei Li"
       ],
-      "eeg_hours": 20000.0,
-      "subjects": 10000.0
-    },
-    "detailed_summary": "CEReBrO introduces a compact EEG foundation model that addresses key limitations in current approaches: sub-optimal EEG signal modeling, large model sizes, and reliance on private datasets. The model uses a novel tokenization scheme that represents EEG signals at per-channel patch granularity and employs an alternating attention mechanism that jointly models intra-channel temporal dynamics and inter-channel spatial correlations. This design achieves 2× speed improvement with 6× less memory compared to standard self-attention. Pre-trained on over 20,000 hours of publicly available scalp EEG recordings from the Temple University EEG Corpus with diverse channel configurations, CEReBrO sets new benchmarks in emotion detection and seizure detection tasks while maintaining competitive performance in anomaly classification and gait prediction.",
-    "evaluation": {
-      "benchmarks": [
-        "SEED dataset",
-        "Neonate dataset",
-        "TUAB dataset",
-        "MoBI dataset"
+      "categories": [
+        "cs.LG"
       ],
-      "headline_results": [
-        "68.21% accuracy, 0.6845 F1 score (85M parameters)",
-        "0.875 AUROC (85M parameters)",
-        "81.67% balanced accuracy, 0.9049 AUPR (85M parameters)",
-        "0.3118 R² score, 0.1209 RMSE (85M parameters)"
-      ],
-      "tasks": [
-        "Emotion detection",
-        "Seizure detection",
-        "Anomaly classification",
-        "Gait prediction"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: CEReBrO achieves state-of-the-art performance with 2× speed improvement and 6× less memory using alternating attention.",
-      "Alternating attention mechanism jointly models intra-channel temporal dynamics and inter-channel spatial correlations, enabling efficient processing of long EEG sequences.",
-      "Pre-trained on 20,000+ hours of public EEG data, CEReBrO sets new benchmarks in emotion and seizure detection while maintaining competitive performance in anomaly classification and gait prediction."
-    ],
-    "limitations": [
-      "Alternating attention mechanism may be less effective for spectrogram representations compared to raw waveforms",
-      "Model performance still lags behind specialized models on some tasks (e.g., STATENET on seizure detection)",
-      "Requires careful hyperparameter tuning for different EEG tasks and datasets",
-      "Limited evaluation on extremely long EEG sequences beyond typical clinical recordings"
-    ],
-    "method": {
-      "architecture": "Transformer encoder with alternating attention mechanism",
-      "finetuning": "Fine-tuning with global mean pooling for classification",
-      "objective": "Masked autoencoding on raw EEG waveforms",
-      "pretraining": "Pre-training on Temple University EEG Corpus"
-    },
-    "notes": "{\"chars\": 60305, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=16809",
-    "one_liner": "New EEG foundation model: CEReBrO achieves state-of-the-art performance with 2× speed improvement and 6× less memory using alternating attention.",
-    "open_source": {
-      "code_url": null,
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2025-01-18",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "masked-reconstruction"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
-    },
-    "title": "CEReBrO: Compact Encoder for Representations of Brain Oscillations Using Efficient Alternating Attention",
-    "unique_contribution": "CEReBrO introduces alternating attention for EEG modeling, achieving 2× speed improvement and 6× memory reduction while maintaining state-of-the-art performance across multiple EEG tasks.",
-    "used_fulltext": true
-  }
-]
+      "links": {
+        "abs": "http://arxiv.org/abs/2501.10885v4",
+        "pdf": "https://arxiv.org/pdf/2501.10885v4"
+      },
+      "published_date": "2025-01-18",
+      "summary": {
+        "arxiv_id_base": "2501.10885",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Temple University EEG Corpus (TUEG)"
+          ],
+          "eeg_hours": 20000.0,
+          "subjects": 10000.0
+        },
+        "detailed_summary": "CEReBrO introduces a compact EEG foundation model that addresses key limitations in current approaches: sub-optimal EEG signal modeling, large model sizes, and reliance on private datasets. The model uses a novel tokenization scheme that represents EEG signals at per-channel patch granularity and employs an alternating attention mechanism that jointly models intra-channel temporal dynamics and inter-channel spatial correlations. This design achieves 2× speed improvement with 6× less memory compared to standard self-attention. Pre-trained on over 20,000 hours of publicly available scalp EEG recordings from the Temple University EEG Corpus with diverse channel configurations, CEReBrO sets new benchmarks in emotion detection and seizure detection tasks while maintaining competitive performance in anomaly classification and gait prediction.",
+        "evaluation": {
+          "benchmarks": [
+            "SEED dataset",
+            "Neonate dataset",
+            "TUAB dataset",
+            "MoBI dataset"
+          ],
+          "headline_results": [
+            "68.21% accuracy, 0.6845 F1 score (85M parameters)",
+            "0.875 AUROC (85M parameters)",
+            "81.67% balanced accuracy, 0.9049 AUPR (85M parameters)",
+            "0.3118 R² score, 0.1209 RMSE (85M parameters)"
+          ],
+          "tasks": [
+            "Emotion detection",
+            "Seizure detection",
+            "Anomaly classification",
+            "Gait prediction"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: CEReBrO achieves state-of-the-art performance with 2× speed improvement and 6× less memory using alternating attention.",
+          "Alternating attention mechanism jointly models intra-channel temporal dynamics and inter-channel spatial correlations, enabling efficient processing of long EEG sequences.",
+          "Pre-trained on 20,000+ hours of public EEG data, CEReBrO sets new benchmarks in emotion and seizure detection while maintaining competitive performance in anomaly classification and gait prediction."
+        ],
+        "limitations": [
+          "Alternating attention mechanism may be less effective for spectrogram representations compared to raw waveforms",
+          "Model performance still lags behind specialized models on some tasks (e.g., STATENET on seizure detection)",
+          "Requires careful hyperparameter tuning for different EEG tasks and datasets",
+          "Limited evaluation on extremely long EEG sequences beyond typical clinical recordings"
+        ],
+        "method": {
+          "architecture": "Transformer encoder with alternating attention mechanism",
+          "finetuning": "Fine-tuning with global mean pooling for classification",
+          "objective": "Masked autoencoding on raw EEG waveforms",
+          "pretraining": "Pre-training on Temple University EEG Corpus"
+        },
+        "notes": "{\"chars\": 60305, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=16809",
+        "one_liner": "New EEG foundation model: CEReBrO achieves state-of-the-art performance with 2× speed improvement and 6× less memory using alternating attention.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-01-18",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "CEReBrO: Compact Encoder for Representations of Brain Oscillations Using Efficient Alternating Attention",
+        "unique_contribution": "CEReBrO introduces alternating attention for EEG modeling, achieving 2× speed improvement and 6× memory reduction while maintaining state-of-the-art performance across multiple EEG tasks.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "CEReBrO: Compact Encoder for Representations of Brain Oscillations Using Efficient Alternating Attention",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "The paper introduces CEReBrO, a new small EEG foundation model.",
+          "It explicitly mentions 'pre-trained reusable EEG representations/models intended for broad transfer' by using 'large unlabeled datasets' and setting 'new benchmarks in emotion detection and seizure detection tasks'.",
+          "The model is designed to address limitations in current EEG signal modeling and model size, aiming for efficiency and reproducibility.",
+          "The abstract clearly states the goal of creating a 'Compact Encoder for Representations of Brain Oscillations' which aligns with the definition of an EEG foundation model."
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 1,
+    "candidates": 9,
+    "summarized": 1
+  },
+  "top_picks": [
+    "2501.10885"
+  ]
+}

@@ -2,33 +2,15 @@
 <html><head><meta charset='utf-8'><title>EEG-FM Digest 2025-07</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
-  <main>
-    <h1>EEG Foundation Model Digest — 2025-07</h1>
+  <main id='digest-app' class='container' data-view='month' data-month='2025-07' data-manifest-json='../../data/months.json' data-month-json='../../digest/2025-07/papers.json'>
+    <div class='header'>
+      <h1>July 2025 Digest</h1>
+      <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a></p>
+    </div>
     <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
-    <p>Top picks: 2507.11783, 2507.09882</p>
-    <section><h2>benchmark</h2>
-    <article class='paper-card' id='2507.09882'>
-      <h3><a href='http://arxiv.org/abs/2507.09882v2'>AdaBrain-Bench: Benchmarking Brain Foundation Models for Brain-Computer Interface Applications</a></h3>
-      <div class='meta'>2025-07-14 · Jiamin Wu, Zichen Ren, Junyu Wang, Pengyu Zhu, Yonghao Song, Mianxin Liu, Qihao Zheng, Lei Bai, Wanli Ouyang, Chunfeng Song</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model benchmark: AdaBrain-Bench evaluates brain foundation models across 7 BCI applications using 13 diverse datasets and 3 transfer settings.</li><li>Core method/evidence: Large-scale self-supervised pretraining (LaBraM, CBraMod) consistently outperforms traditional supervised models in cross-subject transfer, with gains up to 10% in accuracy.</li><li>Main practical takeaway: Expanding training cohort size and using z-score normalization are effective strategies for improving cross-subject generalization of brain foundation models.</li></ul>
-      <p><strong>Unique contribution:</strong> First comprehensive, standardized benchmark framework that unifies evaluation of brain foundation models across diverse BCI tasks with systematic assessment of transfer generalizability in cross-subject, multi-subject, and few-shot settings.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>AdaBrain-Bench addresses the critical gap in standardized evaluation frameworks for brain foundation models by providing a comprehensive benchmark that systematically assesses their generalizability across 7 key BCI applications spanning cognitive state assessment, human augmentation, and clinical monitoring. The benchmark introduces a modular adaptation pipeline with standardized preprocessing, flexible transfer strategies, and multi-dimensional evaluation metrics across cross-subject, multi-subject, and few-shot transfer settings. By evaluating recently published foundation models (BIOT, EEGPT, LaBraM, CBraMod) alongside traditional supervised approaches on 13 diverse EEG datasets, the study reveals that large-scale self-supervised pretraining significantly enhances cross-subject generalization, with LaBraM and CBraMod consistently outperforming traditional models. The work also identifies key factors affecting performance including pretraining scale, channel compatibility, and normalization strategies, while highlighting remaining challenges in emotion recognition and motor imagery tasks.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>Benchmark</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p><a href='Yes - benchmark pipeline available on GitHub repository with MIT License'>code</a> </p>
-    </article>
-    </section><section><h2>survey</h2>
-    <article class='paper-card' id='2507.11783'>
-      <h3><a href='http://arxiv.org/abs/2507.11783v3'>EEG Foundation Models: A Critical Review of Current Progress and Future Directions</a></h3>
-      <div class='meta'>2025-07-15 · Gayal Kuruppu, Neeraj Wagh, Vaclav Kremen, Sandipan Pati, Gregory Worrell, Yogatheesan Varatharajah</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model survey: Reviews ten early EEG-FMs analyzing their architecture, pretraining, and evaluation approaches.</li><li>Most models use transformer backbones with masked reconstruction pretraining on multivariate time series EEG data.</li><li>Evaluations remain heterogeneous and limited, with most studies focusing on in-distribution fine-tuning rather than out-of-distribution robustness.</li></ul>
-      <p><strong>Unique contribution:</strong> Provides the first critical, holistic review of EEG foundation models that goes beyond technical components to examine data representation, evaluation rigor, and real-world translational requirements.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper conducts a comprehensive review of ten early EEG foundation models (EEG-FMs) developed between 2021 and 2024. The authors analyze these models across three fundamental pillars: input data representation, self-supervised modeling, and evaluation strategies. They find that most EEG-FMs adopt transformer-based architectures with masked reconstruction pretraining on multivariate time series EEG data. However, evaluations remain heterogeneous and limited, making it difficult to assess practical utility. The review identifies key research gaps including the need for standardized benchmarks, better understanding of preprocessing effects, long temporal context modeling, and trustworthy evaluation metrics. The authors propose future directions focusing on benchmark development, technical advances like privacy-preserving learning, and application development through interdisciplinary collaboration.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>Survey</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p><a href='Some models provide code (BrainBERT, Neuro-GPT, LaBraM, NeuroLM, Brant, BIOT, FoME, BrainWave)'>code</a> </p>
-    </article>
-    </section>
+    <section id='controls' class='controls'></section>
+    <p id='results-meta' class='small'></p>
+    <section id='results'></section>
   </main>
   <script src='../../assets/site.js'></script>
 </body></html>

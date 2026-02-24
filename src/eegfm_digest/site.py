@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import html
 import json
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -152,6 +153,14 @@ def _about_digest_block() -> str:
     )
 
 
+def _month_label(month: str) -> str:
+    try:
+        dt = datetime.strptime(month, "%Y-%m")
+        return dt.strftime("%B %Y")
+    except Exception:
+        return month
+
+
 def render_month_page(
     month: str,
     summaries: list[dict[str, Any]],
@@ -162,14 +171,15 @@ def render_month_page(
     month_attr = html.escape(month)
     month_json = html.escape(f"../../digest/{month}/papers.json")
     manifest_json = html.escape("../../data/months.json")
+    month_title = html.escape(_month_label(month))
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>EEG-FM Digest {html.escape(month)}</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
   <main id='digest-app' class='container' data-view='month' data-month='{month_attr}' data-manifest-json='{manifest_json}' data-month-json='{month_json}'>
     <div class='header'>
-      <h1>EEG Foundation Model Digest — {html.escape(month)}</h1>
-      <p class='sub'><a href='../../index.html'>All months</a></p>
+      <h1>{month_title} Digest</h1>
+      <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a></p>
     </div>
     {_about_digest_block()}
     <section id='controls' class='controls'></section>
@@ -189,19 +199,36 @@ def render_home_page(months: list[str]) -> str:
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>EEG-FM Digest</title>
 <link rel='stylesheet' href='assets/style.css'></head><body>
-<main id='digest-app' class='container' data-view='all' data-month='' data-manifest-json='data/months.json' data-fallback-months='{fallback_months}'>
+<main id='digest-app' class='container' data-view='home' data-month='' data-manifest-json='data/months.json' data-fallback-months='{fallback_months}'>
 <h1>EEG Foundation Model Digest</h1>
 {_about_digest_block()}
-<p class='sub'>Latest month: <a href='{latest_link}'>{latest}</a></p>
-<section id='controls' class='controls'></section>
-<p id='results-meta' class='small'></p>
-<section id='results'></section>
+<p class='sub'>Latest month: <a href='{latest_link}'>{latest}</a> · <a href='explore/index.html'>Explore all papers</a></p>
+<section id='home-controls' class='controls'></section>
+<section id='home-results'></section>
 <details class='archive-fallback'>
 <summary>Archive (fallback links)</summary>
 <ul>{links}</ul>
 </details>
 </main>
 <script src='assets/site.js'></script>
+</body></html>
+"""
+
+
+def render_explore_page(months: list[str]) -> str:
+    fallback_months = html.escape(json.dumps(months, ensure_ascii=False))
+    return f"""<!doctype html>
+<html><head><meta charset='utf-8'><title>Explore EEG-FM Digest</title>
+<link rel='stylesheet' href='../assets/style.css'></head><body>
+<main id='digest-app' class='container' data-view='explore' data-month='' data-manifest-json='../data/months.json' data-fallback-months='{fallback_months}'>
+<h1>Explore All Digests</h1>
+{_about_digest_block()}
+<p class='sub'><a href='../index.html'>Back to main page</a></p>
+<section id='controls' class='controls'></section>
+<p id='results-meta' class='small'></p>
+<section id='results'></section>
+</main>
+<script src='../assets/site.js'></script>
 </body></html>
 """
 
@@ -269,8 +296,56 @@ def _month_manifest_item(month_dir: Path) -> dict[str, Any]:
         empty_state = "no_summaries"
     else:
         empty_state = "has_papers"
+    top_picks: list[str] = []
+    if isinstance(payload, dict):
+        picks = payload.get("top_picks", [])
+        if isinstance(picks, list):
+            top_picks = [str(item) for item in picks if str(item).strip()]
+
+    featured_row: dict[str, Any] | None = None
+    if top_picks:
+        paper_map = {str(row.get("arxiv_id_base", "")): row for row in papers if isinstance(row, dict)}
+        for paper_id in top_picks:
+            row = paper_map.get(paper_id)
+            if isinstance(row, dict):
+                featured_row = row
+                if isinstance(row.get("summary"), dict):
+                    break
+    if featured_row is None:
+        for row in papers:
+            if isinstance(row.get("summary"), dict):
+                featured_row = row
+                break
+    if featured_row is None and papers:
+        featured_row = papers[0]
+
+    featured: dict[str, Any] | None = None
+    if isinstance(featured_row, dict):
+        summary = featured_row.get("summary")
+        links = featured_row.get("links", {})
+        featured_id = str(featured_row.get("arxiv_id_base", "")).strip()
+        title = str(featured_row.get("title", "")).strip()
+        if isinstance(summary, dict):
+            title = str(summary.get("title", title)).strip()
+        if not title:
+            title = featured_id
+        abs_url = ""
+        if isinstance(links, dict):
+            abs_url = str(links.get("abs", "")).strip()
+        if not abs_url and featured_id:
+            abs_url = f"https://arxiv.org/abs/{featured_id}"
+        one_liner = ""
+        if isinstance(summary, dict):
+            one_liner = str(summary.get("one_liner", "")).strip()
+        featured = {
+            "arxiv_id_base": featured_id,
+            "title": title,
+            "one_liner": one_liner,
+            "abs_url": abs_url,
+        }
     return {
         "month": month,
+        "month_label": _month_label(month),
         "href": f"digest/{month}/index.html",
         "json_path": f"digest/{month}/papers.json",
         "stats": {
@@ -279,6 +354,7 @@ def _month_manifest_item(month_dir: Path) -> dict[str, Any]:
             "summarized": summarized,
         },
         "empty_state": empty_state,
+        "featured": featured,
     }
 
 
@@ -290,6 +366,9 @@ def update_home(docs_dir: Path) -> None:
     ) if (docs_dir / "digest").exists() else []
     months = [p.name for p in month_dirs]
     (docs_dir / "index.html").write_text(render_home_page(months), encoding="utf-8")
+    explore_dir = docs_dir / "explore"
+    explore_dir.mkdir(parents=True, exist_ok=True)
+    (explore_dir / "index.html").write_text(render_explore_page(months), encoding="utf-8")
     manifest = {
         "latest": months[0] if months else None,
         "months": [_month_manifest_item(month_dir) for month_dir in month_dirs],

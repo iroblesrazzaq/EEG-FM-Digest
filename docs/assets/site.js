@@ -54,6 +54,23 @@ function safeNumber(value, fallback) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+function monthDisplayLabel(month) {
+  if (!month) {
+    return "";
+  }
+  const [year, mon] = String(month).split("-");
+  const y = Number(year);
+  const m = Number(mon);
+  if (!Number.isFinite(y) || !Number.isFinite(m) || m < 1 || m > 12) {
+    return String(month);
+  }
+  return new Date(Date.UTC(y, m - 1, 1)).toLocaleString("en-US", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
 function tagValueLabel(category, value) {
   const mapping = TAG_LABELS[category] || {};
   if (mapping[value]) {
@@ -93,7 +110,6 @@ function normalizePaper(raw, month) {
   if (!raw || typeof raw !== "object") {
     return null;
   }
-
   const looksLikeLegacySummary = Boolean(raw.tags && raw.key_points && raw.unique_contribution);
   const summary =
     raw.summary && typeof raw.summary === "object"
@@ -168,10 +184,12 @@ function normalizeManifest(raw, fallbackMonths) {
     latest: fallbackMonths.length ? fallbackMonths[0] : null,
     months: fallbackMonths.map((month) => ({
       month,
+      month_label: monthDisplayLabel(month),
       href: `digest/${month}/index.html`,
       json_path: `digest/${month}/papers.json`,
       stats: { candidates: 0, accepted: 0, summarized: 0 },
       empty_state: "unknown",
+      featured: null,
     })),
   };
   if (!raw || typeof raw !== "object" || !Array.isArray(raw.months)) {
@@ -188,10 +206,20 @@ function normalizeManifest(raw, fallbackMonths) {
       }
       return {
         month,
+        month_label: String(row.month_label || monthDisplayLabel(month)),
         href: String(row.href || `digest/${month}/index.html`),
         json_path: String(row.json_path || `digest/${month}/papers.json`),
         stats: normalizeStats(row.stats, []),
         empty_state: String(row.empty_state || "unknown"),
+        featured:
+          row.featured && typeof row.featured === "object"
+            ? {
+                arxiv_id_base: String(row.featured.arxiv_id_base || "").trim(),
+                title: String(row.featured.title || "").trim(),
+                one_liner: String(row.featured.one_liner || "").trim(),
+                abs_url: String(row.featured.abs_url || "").trim(),
+              }
+            : null,
       };
     })
     .filter((row) => row !== null);
@@ -200,6 +228,17 @@ function normalizeManifest(raw, fallbackMonths) {
     latest: raw.latest ? String(raw.latest) : monthRows[0]?.month || null,
     months: monthRows,
   };
+}
+
+function monthHasPapers(monthRow) {
+  return safeNumber(monthRow?.stats?.accepted, 0) > 0;
+}
+
+function visibleMonthRows(state) {
+  if (state.showEmptyMonths) {
+    return state.monthRows;
+  }
+  return state.monthRows.filter((row) => monthHasPapers(row));
 }
 
 function collectTagOptions(papers) {
@@ -306,6 +345,9 @@ function sortPapers(papers, sortBy) {
 }
 
 function monthBaseCount(state) {
+  if (state.view === "month") {
+    return state.papers.length;
+  }
   if (state.selectedMonth === "all") {
     return state.papers.length;
   }
@@ -317,15 +359,15 @@ function monthEmptyMessage(month, stats) {
   const accepted = safeNumber(stats?.accepted, 0);
   const summarized = safeNumber(stats?.summarized, 0);
   if (candidates === 0) {
-    return `No arXiv candidates were found for ${month}.`;
+    return `No arXiv candidates were found for ${monthDisplayLabel(month)}.`;
   }
   if (accepted === 0) {
-    return `No papers were accepted by triage for ${month}.`;
+    return `No papers were accepted by triage for ${monthDisplayLabel(month)}.`;
   }
   if (summarized === 0) {
-    return `Accepted papers exist for ${month}, but summaries are unavailable.`;
+    return `Accepted papers exist for ${monthDisplayLabel(month)}, but summaries are unavailable.`;
   }
-  return `No papers match the current filters for ${month}.`;
+  return `No papers match the current filters for ${monthDisplayLabel(month)}.`;
 }
 
 function renderTagChips(summary) {
@@ -358,8 +400,8 @@ function renderPaperCard(paper, view) {
   const title = esc(paper.title || paper.arxiv_id_base);
   const absUrl = esc(paper.links?.abs || "#");
   const metaParts = [];
-  if (view === "all") {
-    metaParts.push(esc(paper.month));
+  if (view === "explore") {
+    metaParts.push(esc(monthDisplayLabel(paper.month)));
   }
   if (paper.published_date) {
     metaParts.push(esc(paper.published_date));
@@ -423,30 +465,9 @@ function renderPaperCard(paper, view) {
   `;
 }
 
-function renderControls(app, state) {
-  const controls = app.querySelector("#controls");
-  if (!controls) {
-    return;
-  }
-  const monthControl =
-    state.view === "all"
-      ? `
-      <label class="control" for="month-filter">
-        <span>Month</span>
-        <select id="month-filter">
-          <option value="all"${state.selectedMonth === "all" ? " selected" : ""}>All months</option>
-          ${state.months
-            .map(
-              (month) =>
-                `<option value="${esc(month)}"${state.selectedMonth === month ? " selected" : ""}>${esc(month)}</option>`,
-            )
-            .join("")}
-        </select>
-      </label>`
-      : "";
-
-  const tagGroups = TAG_ORDER.map((category) => {
-    const values = state.tagOptions[category] || [];
+function renderTagGroups(state, tagOptions, compact) {
+  const groups = TAG_ORDER.map((category) => {
+    const values = tagOptions[category] || [];
     if (!values.length) {
       return "";
     }
@@ -470,66 +491,14 @@ function renderControls(app, state) {
   })
     .filter(Boolean)
     .join("");
+  if (!groups) {
+    return "";
+  }
+  const cls = compact ? "tag-filter-grid compact" : "tag-filter-grid";
+  return `<div class="${cls}">${groups}</div>`;
+}
 
-  controls.innerHTML = `
-    <div class="control-row">
-      <label class="control control-grow" for="search-input">
-        <span>Search</span>
-        <input id="search-input" type="text" value="${esc(state.queryRaw)}" placeholder="title, author, summary, tags">
-      </label>
-      ${monthControl}
-      <label class="control" for="sort-select">
-        <span>Sort</span>
-        <select id="sort-select">
-          <option value="published_desc"${state.sortBy === "published_desc" ? " selected" : ""}>Newest first</option>
-          <option value="published_asc"${state.sortBy === "published_asc" ? " selected" : ""}>Oldest first</option>
-          <option value="confidence_desc"${state.sortBy === "confidence_desc" ? " selected" : ""}>Triage confidence</option>
-          <option value="title_asc"${state.sortBy === "title_asc" ? " selected" : ""}>Title A-Z</option>
-        </select>
-      </label>
-      <button id="reset-filters" type="button">See all</button>
-    </div>
-    ${tagGroups ? `<div class="tag-filter-grid">${tagGroups}</div>` : ""}
-  `;
-
-  const searchInput = controls.querySelector("#search-input");
-  if (searchInput) {
-    searchInput.addEventListener("input", (event) => {
-      state.queryRaw = event.target.value || "";
-      state.query = norm(state.queryRaw);
-      renderResults(app, state);
-    });
-  }
-  const monthFilter = controls.querySelector("#month-filter");
-  if (monthFilter) {
-    monthFilter.addEventListener("change", (event) => {
-      state.selectedMonth = String(event.target.value || "all");
-      renderResults(app, state);
-    });
-  }
-  const sortSelect = controls.querySelector("#sort-select");
-  if (sortSelect) {
-    sortSelect.addEventListener("change", (event) => {
-      state.sortBy = String(event.target.value || "published_desc");
-      renderResults(app, state);
-    });
-  }
-  const resetBtn = controls.querySelector("#reset-filters");
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      state.queryRaw = "";
-      state.query = "";
-      state.sortBy = "published_desc";
-      if (state.view === "all") {
-        state.selectedMonth = "all";
-      }
-      for (const category of TAG_ORDER) {
-        state.selectedTags[category].clear();
-      }
-      renderControls(app, state);
-      renderResults(app, state);
-    });
-  }
+function bindTagCheckboxes(controls, state, app) {
   controls.addEventListener("change", (event) => {
     const target = event.target;
     if (!target || target.tagName !== "INPUT") {
@@ -553,6 +522,156 @@ function renderControls(app, state) {
   });
 }
 
+function renderExploreControls(app, state) {
+  const controls = app.querySelector("#controls");
+  if (!controls) {
+    return;
+  }
+  const monthRows = visibleMonthRows(state);
+  if (state.selectedMonth !== "all" && !monthRows.some((row) => row.month === state.selectedMonth)) {
+    state.selectedMonth = "all";
+  }
+  const scopedPapers =
+    state.selectedMonth !== "all" ? state.papers.filter((paper) => paper.month === state.selectedMonth) : state.papers;
+  const tagOptions = collectTagOptions(scopedPapers);
+  const tagGroups = renderTagGroups(state, tagOptions, false);
+
+  controls.innerHTML = `
+    <div class="control-row">
+      <label class="control control-grow" for="search-input">
+        <span>Search</span>
+        <input id="search-input" type="text" value="${esc(state.queryRaw)}" placeholder="title, author, summary, tags">
+      </label>
+      <label class="control" for="month-filter">
+        <span>Month</span>
+        <select id="month-filter">
+          <option value="all"${state.selectedMonth === "all" ? " selected" : ""}>All months</option>
+          ${monthRows
+            .map(
+              (row) =>
+                `<option value="${esc(row.month)}"${state.selectedMonth === row.month ? " selected" : ""}>${esc(
+                  row.month_label || monthDisplayLabel(row.month),
+                )}</option>`,
+            )
+            .join("")}
+        </select>
+      </label>
+      <label class="control" for="sort-select">
+        <span>Sort</span>
+        <select id="sort-select">
+          <option value="published_desc"${state.sortBy === "published_desc" ? " selected" : ""}>Newest first</option>
+          <option value="published_asc"${state.sortBy === "published_asc" ? " selected" : ""}>Oldest first</option>
+          <option value="confidence_desc"${state.sortBy === "confidence_desc" ? " selected" : ""}>Triage confidence</option>
+          <option value="title_asc"${state.sortBy === "title_asc" ? " selected" : ""}>Title A-Z</option>
+        </select>
+      </label>
+      <button id="reset-filters" type="button">See all</button>
+    </div>
+    <label class="toggle-control" for="show-empty-months">
+      <input id="show-empty-months" type="checkbox"${state.showEmptyMonths ? " checked" : ""}>
+      <span>Show empty months in selector</span>
+    </label>
+    <p class="small filter-help">Tag filters: OR within each category, AND across categories.</p>
+    ${tagGroups}
+  `;
+
+  const searchInput = controls.querySelector("#search-input");
+  if (searchInput) {
+    searchInput.addEventListener("input", (event) => {
+      state.queryRaw = event.target.value || "";
+      state.query = norm(state.queryRaw);
+      renderResults(app, state);
+    });
+  }
+  const monthFilter = controls.querySelector("#month-filter");
+  if (monthFilter) {
+    monthFilter.addEventListener("change", (event) => {
+      state.selectedMonth = String(event.target.value || "all");
+      renderExploreControls(app, state);
+      renderResults(app, state);
+    });
+  }
+  const sortSelect = controls.querySelector("#sort-select");
+  if (sortSelect) {
+    sortSelect.addEventListener("change", (event) => {
+      state.sortBy = String(event.target.value || "published_desc");
+      renderResults(app, state);
+    });
+  }
+  const showEmpty = controls.querySelector("#show-empty-months");
+  if (showEmpty) {
+    showEmpty.addEventListener("change", (event) => {
+      state.showEmptyMonths = Boolean(event.target.checked);
+      renderExploreControls(app, state);
+      renderResults(app, state);
+    });
+  }
+  const resetBtn = controls.querySelector("#reset-filters");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      state.queryRaw = "";
+      state.query = "";
+      state.sortBy = "published_desc";
+      state.selectedMonth = "all";
+      state.showEmptyMonths = false;
+      for (const category of TAG_ORDER) {
+        state.selectedTags[category].clear();
+      }
+      renderExploreControls(app, state);
+      renderResults(app, state);
+    });
+  }
+  bindTagCheckboxes(controls, state, app);
+}
+
+function renderMonthControls(app, state) {
+  const controls = app.querySelector("#controls");
+  if (!controls) {
+    return;
+  }
+  const tagOptions = collectTagOptions(state.papers);
+  const tagGroups = renderTagGroups(state, tagOptions, true);
+  controls.innerHTML = `
+    <div class="control-row month-controls-row">
+      <label class="control" for="sort-select">
+        <span>Sort</span>
+        <select id="sort-select">
+          <option value="published_desc"${state.sortBy === "published_desc" ? " selected" : ""}>Newest first</option>
+          <option value="published_asc"${state.sortBy === "published_asc" ? " selected" : ""}>Oldest first</option>
+          <option value="confidence_desc"${state.sortBy === "confidence_desc" ? " selected" : ""}>Triage confidence</option>
+          <option value="title_asc"${state.sortBy === "title_asc" ? " selected" : ""}>Title A-Z</option>
+        </select>
+      </label>
+      <button id="reset-filters" type="button">Clear filters</button>
+    </div>
+    ${
+      tagGroups
+        ? `<details class="filter-collapse"><summary>Filter by tags</summary><p class="small filter-help">OR within each category, AND across categories.</p>${tagGroups}</details>`
+        : ""
+    }
+  `;
+
+  const sortSelect = controls.querySelector("#sort-select");
+  if (sortSelect) {
+    sortSelect.addEventListener("change", (event) => {
+      state.sortBy = String(event.target.value || "published_desc");
+      renderResults(app, state);
+    });
+  }
+  const resetBtn = controls.querySelector("#reset-filters");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      state.sortBy = "published_desc";
+      for (const category of TAG_ORDER) {
+        state.selectedTags[category].clear();
+      }
+      renderMonthControls(app, state);
+      renderResults(app, state);
+    });
+  }
+  bindTagCheckboxes(controls, state, app);
+}
+
 function renderResults(app, state) {
   const results = app.querySelector("#results");
   const meta = app.querySelector("#results-meta");
@@ -561,7 +680,7 @@ function renderResults(app, state) {
   }
 
   let filtered = state.papers;
-  if (state.view === "all" && state.selectedMonth !== "all") {
+  if (state.view === "explore" && state.selectedMonth !== "all") {
     filtered = filtered.filter((paper) => paper.month === state.selectedMonth);
   }
   if (state.query) {
@@ -571,18 +690,19 @@ function renderResults(app, state) {
   filtered = sortPapers(filtered, state.sortBy);
 
   const baseCount = monthBaseCount(state);
-  const scopeLabel =
-    state.view === "all"
-      ? state.selectedMonth === "all"
-        ? "across all months"
-        : `for ${state.selectedMonth}`
-      : `for ${state.month}`;
-  meta.textContent = `Showing ${filtered.length} of ${baseCount} accepted papers ${scopeLabel}.`;
+  if (state.view === "month") {
+    meta.textContent = `Showing ${filtered.length} of ${baseCount} accepted papers for ${monthDisplayLabel(state.month)}.`;
+  } else {
+    const scopeLabel = state.selectedMonth === "all" ? "across all months" : `for ${monthDisplayLabel(state.selectedMonth)}`;
+    meta.textContent = `Showing ${filtered.length} of ${baseCount} accepted papers ${scopeLabel}.`;
+  }
 
   if (!filtered.length) {
     const monthKey = state.view === "month" ? state.month : state.selectedMonth;
     const noFilters = !state.query && !hasTagFilters(state);
-    if (monthKey !== "all" && noFilters) {
+    if (monthKey === "all" && noFilters) {
+      results.innerHTML = "<p class='empty-state'>No accepted papers are available for the selected month set.</p>";
+    } else if (monthKey !== "all" && noFilters) {
       results.innerHTML = `<p class="empty-state">${esc(monthEmptyMessage(monthKey, state.monthStats[monthKey]))}</p>`;
     } else {
       results.innerHTML = "<p class='empty-state'>No papers match the current filters.</p>";
@@ -593,12 +713,88 @@ function renderResults(app, state) {
   results.innerHTML = filtered.map((paper) => renderPaperCard(paper, state.view)).join("\n");
 }
 
+function renderHome(app, state) {
+  const controls = app.querySelector("#home-controls");
+  const results = app.querySelector("#home-results");
+  if (!controls || !results) {
+    return;
+  }
+  controls.innerHTML = `
+    <label class="toggle-control" for="show-empty-home">
+      <input id="show-empty-home" type="checkbox"${state.showEmptyMonths ? " checked" : ""}>
+      <span>Show empty months</span>
+    </label>
+  `;
+  const input = controls.querySelector("#show-empty-home");
+  if (input) {
+    input.addEventListener("change", (event) => {
+      state.showEmptyMonths = Boolean(event.target.checked);
+      renderHome(app, state);
+    });
+  }
+
+  const rows = visibleMonthRows(state);
+  if (!rows.length) {
+    results.innerHTML = "<p class='empty-state'>No monthly digests to show yet.</p>";
+    return;
+  }
+
+  const groups = {};
+  for (const row of rows) {
+    const year = String(row.month).slice(0, 4);
+    if (!groups[year]) {
+      groups[year] = [];
+    }
+    groups[year].push(row);
+  }
+  const years = Object.keys(groups).sort((a, b) => b.localeCompare(a));
+  const newestYear = years[0];
+
+  const yearBlocks = years
+    .map((year) => {
+      const cards = groups[year]
+        .map((row) => {
+          const featured = row.featured;
+          const stats = row.stats || {};
+          const statsText = `${safeNumber(stats.accepted, 0)} accepted · ${safeNumber(stats.summarized, 0)} summarized`;
+          const featuredHtml =
+            featured && featured.title
+              ? `
+                <div class="featured-paper">
+                  <p class="small">Featured paper</p>
+                  <p class="featured-title"><a href="${esc(featured.abs_url || row.href)}">${esc(featured.title)}</a></p>
+                  ${featured.one_liner ? `<p class="small">${esc(featured.one_liner)}</p>` : ""}
+                </div>
+              `
+              : `<p class="small">Featured paper: not set.</p>`;
+          return `
+            <article class="month-card">
+              <div class="month-head">
+                <h3><a href="${esc(row.href)}">${esc(row.month_label || monthDisplayLabel(row.month))} Digest</a></h3>
+                <p class="small month-stats">${esc(statsText)}</p>
+              </div>
+              ${featuredHtml}
+            </article>
+          `;
+        })
+        .join("");
+      return `
+        <details class="year-block"${year === newestYear ? " open" : ""}>
+          <summary class="year-summary">${esc(year)}</summary>
+          <div class="home-month-grid">${cards}</div>
+        </details>
+      `;
+    })
+    .join("");
+  results.innerHTML = yearBlocks;
+}
+
 async function setupDigestApp() {
   const app = document.getElementById("digest-app");
   if (!app) {
     return false;
   }
-  const view = String(app.dataset.view || "all");
+  const view = String(app.dataset.view || "home");
   const month = String(app.dataset.month || "");
   const manifestPath = String(app.dataset.manifestJson || "data/months.json");
   const monthJsonPath = String(app.dataset.monthJson || "");
@@ -610,6 +806,16 @@ async function setupDigestApp() {
     manifest = normalizeManifest(rawManifest, fallbackMonths);
   } catch (_err) {
     manifest = normalizeManifest(null, fallbackMonths);
+  }
+
+  if (view === "home") {
+    const state = {
+      view,
+      monthRows: manifest.months,
+      showEmptyMonths: false,
+    };
+    renderHome(app, state);
+    return true;
   }
 
   const monthStats = {};
@@ -627,8 +833,7 @@ async function setupDigestApp() {
     monthStats[monthPayload.month || month] = monthPayload.stats;
     papers.push(...monthPayload.papers);
   } else {
-    const months = manifest.months;
-    for (const item of months) {
+    for (const item of manifest.months) {
       const monthKey = item.month;
       let payload = parseMonthPayload({}, monthKey);
       try {
@@ -643,20 +848,24 @@ async function setupDigestApp() {
   }
 
   const state = {
-    view,
+    view: view === "all" ? "explore" : view,
     month,
-    months: manifest.months.map((row) => row.month),
+    monthRows: manifest.months,
     monthStats,
     papers,
     queryRaw: "",
     query: "",
     sortBy: "published_desc",
-    selectedMonth: view === "all" ? "all" : month,
-    tagOptions: collectTagOptions(papers),
+    selectedMonth: view === "month" ? month : "all",
+    showEmptyMonths: false,
     selectedTags: Object.fromEntries(TAG_ORDER.map((category) => [category, new Set()])),
   };
 
-  renderControls(app, state);
+  if (state.view === "month") {
+    renderMonthControls(app, state);
+  } else {
+    renderExploreControls(app, state);
+  }
   renderResults(app, state);
   return true;
 }

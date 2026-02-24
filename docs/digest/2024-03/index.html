@@ -2,22 +2,15 @@
 <html><head><meta charset='utf-8'><title>EEG-FM Digest 2024-03</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
-  <main>
-    <h1>EEG Foundation Model Digest — 2024-03</h1>
+  <main id='digest-app' class='container' data-view='month' data-month='2024-03' data-manifest-json='../../data/months.json' data-month-json='../../digest/2024-03/papers.json'>
+    <div class='header'>
+      <h1>March 2024 Digest</h1>
+      <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a></p>
+    </div>
     <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
-    <p>Top picks: 2403.11772</p>
-    <section><h2>new_model</h2>
-    <article class='paper-card' id='2403.11772'>
-      <h3><a href='http://arxiv.org/abs/2403.11772v2'>S-JEPA: towards seamless cross-dataset transfer through dynamic spatial attention</a></h3>
-      <div class='meta'>2024-03-18 · Pierre Guetschel, Thomas Moreau, Michael Tangermann</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: Signal-JEPA introduces a novel spatial block masking strategy for EEG self-supervised learning</li><li>Achieves state-of-the-art performance on ERP and SSVEP BCI tasks, with spatial filtering proving critical for downstream accuracy</li><li>Longer pre-training examples (16s) significantly improve performance compared to shorter windows</li></ul>
-      <p><strong>Unique contribution:</strong> Signal-JEPA introduces a novel spatial block masking strategy for EEG self-supervised learning, enabling effective cross-dataset transfer.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>This exploratory study introduces Signal-JEPA, a Joint Embedding Predictive Architecture tailored for EEG signal representation. The key innovation is a domain-specific spatial block masking strategy that masks EEG channels within a radius of a randomly chosen central channel, enabling dynamic spatial filtering. The framework includes three novel downstream architectures for BCI tasks (motor imagery, ERP, SSVEP) and is evaluated on a 54-subject dataset. Results show that longer pre-training examples (16s) significantly improve downstream performance, while spatial filtering in the fine-tuning stage proves critical for accurate classification. The approach achieves state-of-the-art results on two of three BCI paradigms tested.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p> </p>
-    </article>
-    </section>
+    <section id='controls' class='controls'></section>
+    <p id='results-meta' class='small'></p>
+    <section id='results'></section>
   </main>
   <script src='../../assets/site.js'></script>
 </body></html>

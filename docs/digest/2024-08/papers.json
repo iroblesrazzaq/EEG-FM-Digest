@@ -1,181 +1,256 @@
-[
-  {
-    "arxiv_id_base": "2409.00101",
-    "categories": [
-      "eess.SP",
-      "cs.HC",
-      "cs.LG"
-    ],
-    "data_scale": {
-      "channels": null,
-      "datasets": [
-        "TUAB",
-        "TUEV",
-        "SEED",
-        "HMC",
-        "Workload",
-        "TUSL"
+{
+  "month": "2024-08",
+  "papers": [
+    {
+      "arxiv_id": "2409.00101v3",
+      "arxiv_id_base": "2409.00101",
+      "authors": [
+        "Wei-Bang Jiang",
+        "Yansen Wang",
+        "Bao-Liang Lu",
+        "Dongsheng Li"
       ],
-      "eeg_hours": 25000.0,
-      "subjects": null
+      "categories": [
+        "eess.SP",
+        "cs.HC",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2409.00101v3",
+        "pdf": "https://arxiv.org/pdf/2409.00101v3"
+      },
+      "published_date": "2024-08-27",
+      "summary": {
+        "arxiv_id_base": "2409.00101",
+        "categories": [
+          "eess.SP",
+          "cs.HC",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "TUAB",
+            "TUEV",
+            "SEED",
+            "HMC",
+            "Workload",
+            "TUSL"
+          ],
+          "eeg_hours": 25000.0,
+          "subjects": null
+        },
+        "detailed_summary": "NeuroLM introduces a novel approach to EEG signal processing by integrating EEG data into a Large Language Model (LLM) framework. The model employs a text-aligned neural tokenizer that encodes EEG signals into discrete tokens through vector-quantized temporal-frequency prediction, enabling alignment between EEG and text embedding spaces. This tokenizer is trained using adversarial methods to ensure the EEG embeddings fall into the same space as text embeddings. The model then undergoes multi-channel autoregressive pre-training on a large-scale corpus of approximately 25,000 hours of EEG data, allowing it to learn causal representations across different EEG channels. Finally, multi-task instruction tuning adapts NeuroLM to various downstream tasks, demonstrating its ability to perform multiple tasks within a single model. The largest variant, NeuroLM-XL, has 1.7 billion parameters, setting a record for EEG signal processing. When evaluated on six diverse downstream datasets, NeuroLM showcases the potential of this multi-task learning paradigm, achieving performance comparable to most single-task baselines while offering the advantage of unified task handling.",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "TUEV",
+            "SEED",
+            "HMC",
+            "Workload",
+            "TUSL"
+          ],
+          "headline_results": [
+            "Achieved performance comparable to most single-task baselines",
+            "NeuroLM-XL has 1.7 billion parameters",
+            "Used metrics such as balanced accuracy, AUC-PR, AUROC, Cohen's Kappa, and weighted F1 score"
+          ],
+          "tasks": [
+            "abnormal detection",
+            "event type classification",
+            "emotion recognition",
+            "sleep stage classification",
+            "cognitive workload classification",
+            "slowing event classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: NeuroLM unifies diverse EEG tasks within a single model through instruction tuning, leveraging LLMs to treat EEG as a foreign language.",
+          "Novel text-aligned neural tokenizer: Encodes EEG signals into discrete tokens through vector-quantized temporal-frequency prediction, enabling alignment between EEG and text embedding spaces.",
+          "Large-scale multi-channel autoregressive pre-training: Pre-trained on 25,000 hours of EEG data to learn causal representations across different EEG channels, enhancing generalization across diverse tasks."
+        ],
+        "limitations": [
+          "NeuroLM still lags behind state-of-the-art methods that are end-to-end trained on each downstream dataset.",
+          "The model is somewhat sensitive to hyperparameter settings and may not yield satisfactory results without careful tuning.",
+          "With limited high-quality EEG-text pairs available, the paper only employs coarse-grained alignment between EEG and language, which can pose challenges for LLMs in extracting useful information from EEG tokens."
+        ],
+        "method": {
+          "architecture": "NeuroLM employs a text-aligned neural tokenizer that encodes EEG signals into discrete tokens through vector-quantized temporal-frequency prediction. These tokens are then fed into an LLM that learns causal EEG information via multi-channel autoregression.",
+          "finetuning": "Multi-task instruction tuning to adapt to various downstream tasks.",
+          "objective": "The model is pre-trained on a large-scale corpus of approximately 25,000 hours of EEG data and undergoes multi-task instruction tuning to adapt to various downstream tasks.",
+          "pretraining": "Multi-channel autoregressive pre-training on 25,000 hours of EEG data to learn causal representations across different EEG channels."
+        },
+        "notes": "{\"chars\": 107739, \"error\": null, \"pages\": 22, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=28732",
+        "one_liner": "NeuroLM is the first multi-task foundation model that unifies diverse EEG tasks within a single model through instruction tuning, leveraging LLMs to treat EEG as a foreign language.",
+        "open_source": {
+          "code_url": "https://github.com/935963004/NeuroLM",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2024-08-27",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "autoregressive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "NeuroLM: A Universal Multi-task Foundation Model for Bridging the Gap between Language and EEG Signals",
+        "unique_contribution": "NeuroLM is the first multi-task foundation model for EEG that unifies diverse tasks within a single model through instruction tuning, leveraging LLMs to treat EEG as a foreign language.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "NeuroLM: A Universal Multi-task Foundation Model for Bridging the Gap between Language and EEG Signals",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "proposes NeuroLM, a multi-task foundation model for EEG",
+          "explicitly frames EEG as a modality for foundation model pretraining",
+          "demonstrates pretraining on large-scale EEG corpus (25,000-hour)"
+        ]
+      }
     },
-    "detailed_summary": "NeuroLM introduces a novel approach to EEG signal processing by integrating EEG data into a Large Language Model (LLM) framework. The model employs a text-aligned neural tokenizer that encodes EEG signals into discrete tokens through vector-quantized temporal-frequency prediction, enabling alignment between EEG and text embedding spaces. This tokenizer is trained using adversarial methods to ensure the EEG embeddings fall into the same space as text embeddings. The model then undergoes multi-channel autoregressive pre-training on a large-scale corpus of approximately 25,000 hours of EEG data, allowing it to learn causal representations across different EEG channels. Finally, multi-task instruction tuning adapts NeuroLM to various downstream tasks, demonstrating its ability to perform multiple tasks within a single model. The largest variant, NeuroLM-XL, has 1.7 billion parameters, setting a record for EEG signal processing. When evaluated on six diverse downstream datasets, NeuroLM showcases the potential of this multi-task learning paradigm, achieving performance comparable to most single-task baselines while offering the advantage of unified task handling.",
-    "evaluation": {
-      "benchmarks": [
-        "TUAB",
-        "TUEV",
-        "SEED",
-        "HMC",
-        "Workload",
-        "TUSL"
+    {
+      "arxiv_id": "2409.00122v1",
+      "arxiv_id_base": "2409.00122",
+      "authors": [
+        "Daoze Zhang",
+        "Zhizhang Yuan",
+        "Junru Chen",
+        "Kerui Chen",
+        "Yang Yang"
       ],
-      "headline_results": [
-        "Achieved performance comparable to most single-task baselines",
-        "NeuroLM-XL has 1.7 billion parameters",
-        "Used metrics such as balanced accuracy, AUC-PR, AUROC, Cohen's Kappa, and weighted F1 score"
+      "categories": [
+        "eess.SP",
+        "cs.AI",
+        "cs.LG"
       ],
-      "tasks": [
-        "abnormal detection",
-        "event type classification",
-        "emotion recognition",
-        "sleep stage classification",
-        "cognitive workload classification",
-        "slowing event classification"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: NeuroLM unifies diverse EEG tasks within a single model through instruction tuning, leveraging LLMs to treat EEG as a foreign language.",
-      "Novel text-aligned neural tokenizer: Encodes EEG signals into discrete tokens through vector-quantized temporal-frequency prediction, enabling alignment between EEG and text embedding spaces.",
-      "Large-scale multi-channel autoregressive pre-training: Pre-trained on 25,000 hours of EEG data to learn causal representations across different EEG channels, enhancing generalization across diverse tasks."
-    ],
-    "limitations": [
-      "NeuroLM still lags behind state-of-the-art methods that are end-to-end trained on each downstream dataset.",
-      "The model is somewhat sensitive to hyperparameter settings and may not yield satisfactory results without careful tuning.",
-      "With limited high-quality EEG-text pairs available, the paper only employs coarse-grained alignment between EEG and language, which can pose challenges for LLMs in extracting useful information from EEG tokens."
-    ],
-    "method": {
-      "architecture": "NeuroLM employs a text-aligned neural tokenizer that encodes EEG signals into discrete tokens through vector-quantized temporal-frequency prediction. These tokens are then fed into an LLM that learns causal EEG information via multi-channel autoregression.",
-      "finetuning": "Multi-task instruction tuning to adapt to various downstream tasks.",
-      "objective": "The model is pre-trained on a large-scale corpus of approximately 25,000 hours of EEG data and undergoes multi-task instruction tuning to adapt to various downstream tasks.",
-      "pretraining": "Multi-channel autoregressive pre-training on 25,000 hours of EEG data to learn causal representations across different EEG channels."
-    },
-    "notes": "{\"chars\": 107739, \"error\": null, \"pages\": 22, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=28732",
-    "one_liner": "NeuroLM is the first multi-task foundation model that unifies diverse EEG tasks within a single model through instruction tuning, leveraging LLMs to treat EEG as a foreign language.",
-    "open_source": {
-      "code_url": "https://github.com/935963004/NeuroLM",
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2024-08-27",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "autoregressive"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "discrete-tokens"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
-    },
-    "title": "NeuroLM: A Universal Multi-task Foundation Model for Bridging the Gap between Language and EEG Signals",
-    "unique_contribution": "NeuroLM is the first multi-task foundation model for EEG that unifies diverse tasks within a single model through instruction tuning, leveraging LLMs to treat EEG as a foreign language.",
-    "used_fulltext": true
+      "links": {
+        "abs": "http://arxiv.org/abs/2409.00122v1",
+        "pdf": "https://arxiv.org/pdf/2409.00122v1"
+      },
+      "published_date": "2024-08-28",
+      "summary": {
+        "arxiv_id_base": "2409.00122",
+        "categories": [
+          "eess.SP",
+          "cs.AI",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Sleep-EDF",
+            "DREAMER",
+            "FoG dataset",
+            "eye movement communication dataset",
+            "AFDB"
+          ],
+          "eeg_hours": null,
+          "subjects": 267.0
+        },
+        "detailed_summary": "Brant-X addresses the challenge of modeling correlations between EEG and other physiological signals (EXG) by leveraging a pre-trained EEG foundation model (Brant-2) and introducing a two-level alignment framework. The first level aligns EEG and EXG patches at a fine-grained semantic scale, while the second level aligns entire sequences at a coarser scale. This approach overcomes data scarcity by transferring knowledge from the rich EEG corpus to EXG signals, and handles differences in sampling rates and signal properties through sampling augmentation and contrastive learning. Experiments on four downstream tasks—sleep stage classification, emotion recognition, freezing of gaits detection, and eye movement communication—show that Brant-X achieves state-of-the-art performance compared to both task-agnostic and task-specific baselines, demonstrating its effectiveness in unifying physiological signal modeling across diverse scenarios.",
+        "evaluation": {
+          "benchmarks": [
+            "Sleep-EDF",
+            "DREAMER",
+            "FoG dataset",
+            "eye movement communication dataset",
+            "AFDB"
+          ],
+          "headline_results": [
+            "84.58% accuracy on Sleep-EDF-20",
+            "70.61% accuracy on valence dimension",
+            "80.14% accuracy",
+            "92.04% accuracy",
+            "93.40% accuracy"
+          ],
+          "tasks": [
+            "sleep stage classification",
+            "emotion recognition",
+            "freezing of gaits detection",
+            "eye movement communication",
+            "arrhythmia detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model alignment framework: Brant-X uses a two-level contrastive alignment strategy to model correlations between EEG and other physiological signals.",
+          "Data-efficient knowledge transfer: Leverages a pre-trained 1B-parameter EEG foundation model (Brant-2) to empower representation learning on scarce EXG data.",
+          "State-of-the-art performance: Achieves SOTA results on sleep staging, emotion recognition, freezing of gaits detection, and eye movement communication tasks."
+        ],
+        "limitations": [
+          "Requires simultaneously collected EEG and EXG data for alignment training",
+          "Performance depends on quality and quantity of available multi-type physiological datasets",
+          "Framework complexity may limit real-time deployment in resource-constrained settings"
+        ],
+        "method": {
+          "architecture": "EEG foundation model (Brant-2) + EXG encoder + two-level contrastive alignment",
+          "finetuning": "supervised finetuning on downstream tasks",
+          "objective": "contrastive learning",
+          "pretraining": "EEG foundation model pre-trained on 4TB brain signal data"
+        },
+        "notes": "{\"chars\": 79731, \"error\": null, \"pages\": 12, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=21698",
+        "one_liner": "Brant-X is the first unified EEG-centric framework that aligns EEG with other physiological signals using a two-level contrastive alignment strategy, enabling data-efficient knowledge transfer from a large EEG foundation model to improve performance across diverse downstream tasks.",
+        "open_source": {
+          "code_url": "https://github.com/zjunet/Brant-X/",
+          "license": "unknown",
+          "weights_url": "EEG foundation model weights available"
+        },
+        "paper_type": "new_model",
+        "published_date": "2024-08-28",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Brant-X: A Unified Physiological Signal Alignment Framework",
+        "unique_contribution": "The first unified EEG-centric alignment framework that uses a two-level contrastive alignment strategy to transfer knowledge from a large EEG foundation model to other physiological signals, enabling effective modeling of EEG-EXG correlations across diverse downstream tasks.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Brant-X: A Unified Physiological Signal Alignment Framework",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "EEG foundation model used for knowledge transfer to other physiological signals",
+          "Framework explicitly models EEG-other signal correlations",
+          "Achieves SOTA on multiple downstream tasks using EEG-FM"
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 2,
+    "candidates": 11,
+    "summarized": 2
   },
-  {
-    "arxiv_id_base": "2409.00122",
-    "categories": [
-      "eess.SP",
-      "cs.AI",
-      "cs.LG"
-    ],
-    "data_scale": {
-      "channels": null,
-      "datasets": [
-        "Sleep-EDF",
-        "DREAMER",
-        "FoG dataset",
-        "eye movement communication dataset",
-        "AFDB"
-      ],
-      "eeg_hours": null,
-      "subjects": 267.0
-    },
-    "detailed_summary": "Brant-X addresses the challenge of modeling correlations between EEG and other physiological signals (EXG) by leveraging a pre-trained EEG foundation model (Brant-2) and introducing a two-level alignment framework. The first level aligns EEG and EXG patches at a fine-grained semantic scale, while the second level aligns entire sequences at a coarser scale. This approach overcomes data scarcity by transferring knowledge from the rich EEG corpus to EXG signals, and handles differences in sampling rates and signal properties through sampling augmentation and contrastive learning. Experiments on four downstream tasks—sleep stage classification, emotion recognition, freezing of gaits detection, and eye movement communication—show that Brant-X achieves state-of-the-art performance compared to both task-agnostic and task-specific baselines, demonstrating its effectiveness in unifying physiological signal modeling across diverse scenarios.",
-    "evaluation": {
-      "benchmarks": [
-        "Sleep-EDF",
-        "DREAMER",
-        "FoG dataset",
-        "eye movement communication dataset",
-        "AFDB"
-      ],
-      "headline_results": [
-        "84.58% accuracy on Sleep-EDF-20",
-        "70.61% accuracy on valence dimension",
-        "80.14% accuracy",
-        "92.04% accuracy",
-        "93.40% accuracy"
-      ],
-      "tasks": [
-        "sleep stage classification",
-        "emotion recognition",
-        "freezing of gaits detection",
-        "eye movement communication",
-        "arrhythmia detection"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model alignment framework: Brant-X uses a two-level contrastive alignment strategy to model correlations between EEG and other physiological signals.",
-      "Data-efficient knowledge transfer: Leverages a pre-trained 1B-parameter EEG foundation model (Brant-2) to empower representation learning on scarce EXG data.",
-      "State-of-the-art performance: Achieves SOTA results on sleep staging, emotion recognition, freezing of gaits detection, and eye movement communication tasks."
-    ],
-    "limitations": [
-      "Requires simultaneously collected EEG and EXG data for alignment training",
-      "Performance depends on quality and quantity of available multi-type physiological datasets",
-      "Framework complexity may limit real-time deployment in resource-constrained settings"
-    ],
-    "method": {
-      "architecture": "EEG foundation model (Brant-2) + EXG encoder + two-level contrastive alignment",
-      "finetuning": "supervised finetuning on downstream tasks",
-      "objective": "contrastive learning",
-      "pretraining": "EEG foundation model pre-trained on 4TB brain signal data"
-    },
-    "notes": "{\"chars\": 79731, \"error\": null, \"pages\": 12, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=21698",
-    "one_liner": "Brant-X is the first unified EEG-centric framework that aligns EEG with other physiological signals using a two-level contrastive alignment strategy, enabling data-efficient knowledge transfer from a large EEG foundation model to improve performance across diverse downstream tasks.",
-    "open_source": {
-      "code_url": "https://github.com/zjunet/Brant-X/",
-      "license": "unknown",
-      "weights_url": "EEG foundation model weights available"
-    },
-    "paper_type": "new_model",
-    "published_date": "2024-08-28",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "contrastive"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
-    },
-    "title": "Brant-X: A Unified Physiological Signal Alignment Framework",
-    "unique_contribution": "The first unified EEG-centric alignment framework that uses a two-level contrastive alignment strategy to transfer knowledge from a large EEG foundation model to other physiological signals, enabling effective modeling of EEG-EXG correlations across diverse downstream tasks.",
-    "used_fulltext": true
-  }
-]
+  "top_picks": [
+    "2409.00122",
+    "2409.00101"
+  ]
+}

@@ -2,104 +2,15 @@
 <html><head><meta charset='utf-8'><title>EEG-FM Digest 2025-06</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
-  <main>
-    <h1>EEG Foundation Model Digest — 2025-06</h1>
+  <main id='digest-app' class='container' data-view='month' data-month='2025-06' data-manifest-json='../../data/months.json' data-month-json='../../digest/2025-06/papers.json'>
+    <div class='header'>
+      <h1>June 2025 Digest</h1>
+      <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a></p>
+    </div>
     <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
-    <p>Top picks: 2507.14141, 2506.20354, 2506.01867, 2506.23075, 2506.09110</p>
-    <section><h2>new_model</h2>
-    <article class='paper-card' id='2506.01867'>
-      <h3><a href='http://arxiv.org/abs/2506.01867v1'>EEG Foundation Models for BCI Learn Diverse Features of Electrophysiology</a></h3>
-      <div class='meta'>2025-06-02 · Mattson Ogg, Rahul Hingorani, Diego Luna, Griffin W. Milsap, William G. Coon, Clara A. Scholl</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: CEReBrO adapts HuBERT framework for self-supervised pre-training on 14,979 participants&#x27; EEG data.</li><li>Method novelty: Two-stage masked prediction with k-means clustering, optimized for real-time use with minimal preprocessing and eight channels.</li><li>Strong evidence: Model achieves above-chance performance on BCI benchmarks and learns individual variability and alpha rhythm features.</li></ul>
-      <p><strong>Unique contribution:</strong> First EEG foundation model using HuBERT-inspired self-supervised pre-training that learns both BCI task features and broader electrophysiological components like alpha rhythms and individual variability.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper introduces a novel self-supervised pre-training method for EEG foundation models, adapting the HuBERT framework from speech processing to multi-channel EEG data. The model is trained on over 1,100 days of EEG data from 14,979 participants using a two-stage masked prediction approach with k-means clustering. The architecture uses a transformer-based design with eight EEG channels, optimized for real-time operation with minimal preprocessing. The model demonstrates strong performance on standard BCI tasks (P300, motor imagery) and shows ability to learn individual variability and alpha rhythm features, though it doesn&#x27;t yet exceed state-of-the-art results on BCI benchmarks.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2506.09110'>
-      <h3><a href='http://arxiv.org/abs/2506.09110v2'>CodeBrain: Towards Decoupled Interpretability and Multi-Scale Architecture for EEG Foundation Model</a></h3>
-      <div class='meta'>2025-06-10 · Jingying Ma, Feng Wu, Qika Lin, Yucheng Xing, Chenyu Liu, Ziyu Jia, Mengling Feng</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: CodeBrain introduces a two-stage architecture with decoupled temporal-frequency tokenization and brain-inspired multi-scale modeling.</li><li>Domain-specific interpretability: TFDual-Tokenizer expands representation space and aligns tokens with neural events and spectral rhythms.</li><li>Multi-scale architecture: EEGSSM combines structured global convolution with sliding window attention to capture both long-range and local dependencies efficiently.</li></ul>
-      <p><strong>Unique contribution:</strong> CodeBrain is the first EEG foundation model to decouple temporal and frequency EEG signals into domain-specific discrete tokens while integrating a brain-inspired multi-scale architecture for efficient global and local dependency modeling.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>CodeBrain addresses key limitations in existing EEG foundation models by introducing a two-stage architecture. The first stage employs a TFDual-Tokenizer that decouples heterogeneous temporal and frequency EEG signals into discrete tokens, expanding the representation space and enabling domain-specific interpretability by aligning tokens with neural events and spectral rhythms. The second stage uses a multi-scale EEGSSM architecture that combines structured global convolution with sliding window attention to efficiently capture both sparse long-range and local dependencies, reflecting the brain&#x27;s small-world topology. Pretrained on the largest public EEG corpus (TUEG), CodeBrain achieves strong generalization across 8 downstream tasks and 10 datasets under distribution shifts, supported by comprehensive ablations, scaling-law analyses, and interpretability evaluations.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Mamba-SSM</span> <span class='chip chip-objective' title='objective'>Discrete Code Prediction</span> <span class='chip chip-tokenization' title='tokenization'>Discrete Tokens</span> <span class='chip chip-topology' title='topology'>Topology Agnostic</span></p>
-      <p> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2507.14141'>
-      <h3><a href='http://arxiv.org/abs/2507.14141v1'>DIVER-0 : A Fully Channel Equivariant EEG Foundation Model</a></h3>
-      <div class='meta'>2025-06-13 · Danny Dongyeop Han, Ahhyun Lucy Lee, Taeyang Lee, Yonghyeon Gwon, Sebin Lee, Seongjin Lee, David Keetae Park, Shinjae Yoo, Jiook Cha, Chun Kee Chung</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: DIVER-0 achieves competitive performance on emotion recognition and motor imagery tasks using only 10% of pretraining data while maintaining strict channel permutation equivariance.</li><li>Unified spatio-temporal attention: Combines Rotary Position Embedding for temporal relationships with binary attention biases for channel differentiation, capturing complex brain dynamics more effectively than segregated spatial-temporal processing.</li><li>Sliding Temporal Conditional Positional Encoding: Introduces STCPE that preserves both temporal translation equivariance and channel permutation equivariance, enabling robust generalization to arbitrary electrode configurations unseen during pretraining.</li></ul>
-      <p><strong>Unique contribution:</strong> DIVER-0 introduces unified spatio-temporal attention with binary attention biases and STCPE to achieve strict channel permutation equivariance while maintaining competitive performance with minimal pretraining data.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>DIVER-0 addresses critical limitations in existing EEG foundation models by introducing unified spatio-temporal attention that captures complex brain dynamics while maintaining channel permutation equivariance. The model combines Rotary Position Embedding (RoPE) for temporal relationships with binary attention biases for channel differentiation, enabling robust generalization across diverse electrode configurations. A key innovation is the Sliding Temporal Conditional Positional Encoding (STCPE), which preserves both temporal translation equivariance and channel permutation equivariance, allowing the model to adapt to arbitrary electrode configurations unseen during pretraining. Experimental results demonstrate that DIVER-0 achieves competitive performance on emotion recognition and motor imagery tasks using only 10% of the pretraining data while maintaining consistent results across all channel permutation conditions.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p><a href='https://github.com/cha-lab/DIVER-0'>code</a> <a href='https://github.com/cha-lab/DIVER-0'>weights</a></p>
-    </article>
-    
-
-    <article class='paper-card' id='2506.20354'>
-      <h3><a href='http://arxiv.org/abs/2506.20354v2'>A foundation model with multi-variate parallel attention to generate neuronal activity</a></h3>
-      <div class='meta'>2025-06-25 · Francesco Carzaniga, Michael Hersche, Abu Sebastian, Kaspar Schindler, Abbas Rahimi</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: MVPFormer uses multi-variate parallel attention (MVPA) to achieve expert-level seizure detection and SOTA performance on iEEG tasks.</li><li>Novel attention mechanism: MVPA disentangles content, temporal, and spatial attention, enabling flexible modeling of time-series with varying channel counts and configurations.</li><li>Largest iEEG dataset: Releases the SWEC iEEG dataset, comprising nearly 10,000 hours of recordings from heterogeneous clinical sources, supporting community foundation model efforts.</li></ul>
-      <p><strong>Unique contribution:</strong> Introduces MVPA, a novel self-attention mechanism that disentangles content, temporal, and spatial attention, enabling flexible and efficient modeling of heterogeneous time-series data, and applies it to build MVPFormer, the first open-source, open-weights, and open-data iEEG foundation model with SOTA clinical performance.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper introduces MVPFormer, a generative foundation model for human electrophysiology, powered by a novel multi-variate parallel attention (MVPA) mechanism. MVPFormer is trained on the SWEC iEEG dataset, the largest publicly available iEEG corpus to date with nearly 10,000 hours of recordings. The model demonstrates expert-level performance in seizure detection across multiple institutional datasets and achieves state-of-the-art results on four Brain TreeBank iEEG decoding tasks. MVPA enables flexible and efficient modeling of time-series data with varying channel counts and configurations by disentangling content, temporal, and spatial attention. The work establishes MVPFormer as the first open-source, open-weights, and open-data iEEG foundation model with SOTA clinical performance.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Autoregressive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p><a href='https://github.com/IBM/multi-variate-parallel-transformer'>code</a> <a href='open-weights'>weights</a></p>
-    </article>
-    
-
-    <article class='paper-card' id='2506.23075'>
-      <h3><a href='http://arxiv.org/abs/2506.23075v1'>CSBrain: A Cross-scale Spatiotemporal Brain Foundation Model for EEG Decoding</a></h3>
-      <div class='meta'>2025-06-29 · Yuchen Zhou, Jiamin Wu, Zichen Ren, Zhouheng Yao, Weiheng Lu, Kunyu Peng, Qihao Zheng, Chunfeng Song, Wanli Ouyang, Chao Gou</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: CSBrain introduces cross-scale spatiotemporal modeling for generalized brain decoding across diverse tasks.</li><li>Novel architecture: Combines Cross-scale Spatiotemporal Tokenization (CST) with Structured Sparse Attention (SSA) to capture multi-scale neural patterns while avoiding spurious dependencies.</li><li>Strong empirical results: Achieves state-of-the-art performance across 11 tasks and 16 datasets, outperforming both task-specific and foundation model baselines.</li></ul>
-      <p><strong>Unique contribution:</strong> CSBrain is the first EEG foundation model to explicitly model cross-scale spatiotemporal structure through alternating CST and SSA modules, achieving state-of-the-art performance across diverse brain decoding tasks.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>CSBrain addresses a fundamental limitation in existing EEG foundation models: their reliance on scale-agnostic dense modeling inherited from NLP and vision, which fails to capture the intrinsic cross-scale spatiotemporal structure of neural activity. The model introduces two key innovations: Cross-scale Spatiotemporal Tokenization (CST), which aggregates multi-scale features from localized temporal windows and anatomical brain regions into compact scale-aware tokens, and Structured Sparse Attention (SSA), which captures cross-window and cross-region dependencies while eliminating spurious correlations. These components are alternately stacked to progressively integrate multi-scale dependencies. Extensive experiments across 11 representative EEG tasks and 16 public datasets demonstrate that CSBrain consistently outperforms both task-specific models and strong foundation model baselines, establishing cross-scale modeling as a key inductive bias for generalized EEG decoding.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p> </p>
-    </article>
-    </section><section><h2>other</h2>
-    <article class='paper-card' id='2506.16056'>
-      <h3><a href='http://arxiv.org/abs/2506.16056v1'>CRIA: A Cross-View Interaction and Instance-Adapted Pre-training Framework for Generalizable EEG Representations</a></h3>
-      <div class='meta'>2025-06-19 · Puchun Liu, C. L. Philip Chen, Yubin He, Tong Zhang</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>unknown</li><li>unknown</li><li>unknown</li></ul>
-      <p><strong>Unique contribution:</strong> unknown</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>Unable to produce a reliable multi-sentence summary due to JSON validation failure.</p></details>
-      
-      <p> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2506.17068'>
-      <h3><a href='http://arxiv.org/abs/2506.17068v1'>Cross-Modal Epileptic Signal Harmonization: Frequency Domain Mapping Quantization for Pre-training a Unified Neurophysiological Transformer</a></h3>
-      <div class='meta'>2025-06-20 · Runkai Zhang, Hua Yu, John Q. Gan, Haixian Wang</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>unknown</li><li>unknown</li><li>unknown</li></ul>
-      <p><strong>Unique contribution:</strong> unknown</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>Unable to produce a reliable multi-sentence summary due to JSON validation failure.</p></details>
-      
-      <p> </p>
-    </article>
-    </section><section><h2>survey</h2>
-    <article class='paper-card' id='2506.06353'>
-      <h3><a href='http://arxiv.org/abs/2506.06353v1'>Large Language Models for EEG: A Comprehensive Survey and Taxonomy</a></h3>
-      <div class='meta'>2025-06-02 · Naseem Babu, Jimson Mathew, A. P. Vinod</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>Comprehensive survey of LLM applications in EEG analysis across four domains: foundation models, decoding, cross-modal generation, and clinical applications.</li><li>Highlights transformer-based architectures adapted through fine-tuning, few-shot, and zero-shot learning for complex EEG tasks.</li><li>Organizes recent studies into structured taxonomy with detailed tables covering tasks, datasets, methods, and model types.</li></ul>
-      <p><strong>Unique contribution:</strong> Provides the first comprehensive taxonomy and systematic review of LLM applications in EEG analysis, organizing recent studies into four distinct domains and highlighting adaptation strategies across the emerging field.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>This survey systematically reviews recent advancements in applying large language models (LLMs) to electroencephalography (EEG) analysis. It organizes the literature into four domains: (1) LLM-inspired foundation models for EEG representation learning, (2) EEG-to-language decoding, (3) cross-modal generation including image and 3D object synthesis, and (4) clinical applications and dataset management tools. The survey highlights how transformer-based architectures adapted through fine-tuning, few-shot, and zero-shot learning have enabled EEG-based models to perform complex tasks such as natural language generation, semantic interpretation, and diagnostic assistance. By presenting a structured overview of modeling strategies, system designs, and application areas, this work serves as a foundational resource for future work to bridge natural language processing and neural signal analysis through language models.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>Survey</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-objective' title='objective'>Autoregressive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-tokenization' title='tokenization'>Latent Tokens</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p> </p>
-    </article>
-    </section>
+    <section id='controls' class='controls'></section>
+    <p id='results-meta' class='small'></p>
+    <section id='results'></section>
   </main>
   <script src='../../assets/site.js'></script>
 </body></html>

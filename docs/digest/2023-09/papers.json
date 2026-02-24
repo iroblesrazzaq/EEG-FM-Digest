@@ -1,1 +1,45 @@
-[]
+{
+  "month": "2023-09",
+  "papers": [
+    {
+      "arxiv_id": "2309.12056v2",
+      "arxiv_id_base": "2309.12056",
+      "authors": [
+        "Jinzhao Zhou",
+        "Yiqun Duan",
+        "Yu-Cheng Chang",
+        "Yu-Kai Wang",
+        "Chin-Teng Lin"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2309.12056v2",
+        "pdf": "https://arxiv.org/pdf/2309.12056v2"
+      },
+      "published_date": "2023-09-21",
+      "summary": null,
+      "summary_failed_reason": "download_or_extract_failed:HTTPStatusError",
+      "title": "BELT:Bootstrapping Electroencephalography-to-Language Decoding and Zero-Shot Sentiment Classification by Natural Language Supervision",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "EEG is central modality for brain-to-language translation",
+          "Presents BELT framework for EEG representation learning",
+          "Utilizes large language models for EEG-FM style pretraining",
+          "Achieves state-of-the-art results on EEG decoding tasks"
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 1,
+    "candidates": 6,
+    "summarized": 0
+  },
+  "top_picks": []
+}

@@ -2,34 +2,15 @@
 <html><head><meta charset='utf-8'><title>EEG-FM Digest 2024-05</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
-  <main>
-    <h1>EEG Foundation Model Digest — 2024-05</h1>
+  <main id='digest-app' class='container' data-view='month' data-month='2024-05' data-manifest-json='../../data/months.json' data-month-json='../../digest/2024-05/papers.json'>
+    <div class='header'>
+      <h1>May 2024 Digest</h1>
+      <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a></p>
+    </div>
     <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
-    <p>Top picks: 2405.18765, 2405.19373</p>
-    <section><h2>new_model</h2>
-    <article class='paper-card' id='2405.19373'>
-      <h3><a href='http://arxiv.org/abs/2405.19373v1'>Multi-modal Mood Reader: Pre-trained Model Empowers Cross-Subject Emotion Recognition</a></h3>
-      <div class='meta'>2024-05-28 · Yihang Dong, Xuhang Chen, Yanyan Shen, Michael Kwok-Po Ng, Tao Qian, Shuqiang Wang</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: Mood Reader uses pre-training on large-scale EEG data to learn universal latent representations for cross-subject emotion recognition.</li><li>Interlinked spatial-temporal attention: The model employs an attention-based interlinked spatial-temporal mechanism to capture complex dynamics of EEG signals and their compensatory relationships.</li><li>Multi-level fusion: A multi-level fusion layer integrates discriminative features across different dimensions and modalities, maximizing their advantages for emotion recognition.</li></ul>
-      <p><strong>Unique contribution:</strong> Mood Reader introduces a novel multi-modal cross-scale fusion model that integrates pre-trained EEG representations with interlinked spatial-temporal attention for cross-subject emotion recognition.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper proposes Mood Reader, a pre-trained model based multimodal cross-scale fusion architecture for cross-subject emotion recognition from EEG signals. The model leverages masked brain signal modeling to learn universal latent representations from large-scale EEG data, and employs an interlinked spatial-temporal attention mechanism to process Differential Entropy features extracted from EEG. A multi-level fusion layer integrates discriminative features across different dimensions and modalities, maximizing their advantages. Extensive experiments on public datasets demonstrate Mood Reader&#x27;s superior performance in cross-subject emotion recognition tasks, outperforming state-of-the-art methods.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2405.18765'>
-      <h3><a href='http://arxiv.org/abs/2405.18765v1'>Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI</a></h3>
-      <div class='meta'>2024-05-29 · Wei-Bang Jiang, Li-Ming Zhao, Bao-Liang Lu</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: LaBraM learns universal EEG representations through unsupervised pre-training on 2,500+ hours of diverse EEG data from 20+ datasets.</li><li>Cross-dataset learning capability: The model handles varying electrode configurations and time lengths through patch segmentation and spatial embeddings, enabling one pre-trained model to adapt to any downstream dataset.</li><li>SOTA performance across tasks: LaBraM outperforms all compared methods on abnormal detection, event type classification, emotion recognition, and gait prediction, with the largest 369M parameter model achieving the best results.</li></ul>
-      <p><strong>Unique contribution:</strong> LaBraM is the first large-scale foundation model for EEG that learns universal representations through unsupervised pre-training on over 2,500 hours of diverse EEG data, enabling cross-dataset learning and achieving SOTA performance across multiple BCI tasks.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>LaBraM addresses the challenge of limited generalizability in current EEG deep learning models by proposing a unified foundation model that can handle diverse EEG datasets with varying channels and lengths. The model segments raw EEG signals into channel patches and uses vector-quantized neural spectrum prediction to train a semantically rich neural tokenizer that encodes continuous raw EEG channel patches into compact neural codes. LaBraM is then pre-trained by predicting the original neural codes for masked EEG channel patches. The model was pre-trained on about 2,500 hours of various types of EEG signals from around 20 datasets and validated on multiple downstream tasks including abnormal detection, event type classification, emotion recognition, and gait prediction, where it outperforms all compared SOTA methods. The approach enables cross-dataset learning and demonstrates that large-scale unsupervised pre-training can learn universal EEG representations that generalize across different BCI tasks.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Discrete Tokens</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p><a href='https://github.com/935963004/LaBraM'>code</a> </p>
-    </article>
-    </section>
+    <section id='controls' class='controls'></section>
+    <p id='results-meta' class='small'></p>
+    <section id='results'></section>
   </main>
   <script src='../../assets/site.js'></script>
 </body></html>

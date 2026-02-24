@@ -2,22 +2,15 @@
 <html><head><meta charset='utf-8'><title>EEG-FM Digest 2022-10</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
-  <main>
-    <h1>EEG Foundation Model Digest — 2022-10</h1>
+  <main id='digest-app' class='container' data-view='month' data-month='2022-10' data-manifest-json='../../data/months.json' data-month-json='../../digest/2022-10/papers.json'>
+    <div class='header'>
+      <h1>October 2022 Digest</h1>
+      <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a></p>
+    </div>
     <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
-    <p>Top picks: 2211.02625</p>
-    <section><h2>new_model</h2>
-    <article class='paper-card' id='2211.02625'>
-      <h3><a href='http://arxiv.org/abs/2211.02625v1'>MAEEG: Masked Auto-encoder for EEG Representation Learning</a></h3>
-      <div class='meta'>2022-10-27 · Hsiang-Yun Sherry Chien, Hanlin Goh, Christopher M. Sandino, Joseph Y. Cheng</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: MAEEG uses masked auto-encoding with transformers to learn EEG representations from unlabeled data.</li><li>Novel masking strategy: Higher masking rates (75%) with concentrated masks during pretraining yield better downstream sleep classification performance.</li><li>Strong empirical results: MAEEG achieves approximately 5% accuracy improvement in sleep stage classification when labels are scarce.</li></ul>
-      <p><strong>Unique contribution:</strong> MAEEG introduces a reconstruction-based self-supervised learning approach for EEG that learns representations by reconstructing masked features using a transformer, achieving significant improvements in sleep stage classification with limited labels.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper proposes MAEEG, a masked auto-encoder for EEG representation learning that addresses the challenge of limited labeled EEG data. The model learns representations by reconstructing masked EEG features using a transformer architecture, inspired by both BENDR and computer vision MAE models. The authors demonstrate that MAEEG pretraining significantly improves sleep stage classification accuracy by approximately 5% when only small numbers of labels are available. They also systematically investigate how different masking strategies during pretraining affect downstream performance, finding that higher masking rates with more concentrated masks yield better results.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p> </p>
-    </article>
-    </section>
+    <section id='controls' class='controls'></section>
+    <p id='results-meta' class='small'></p>
+    <section id='results'></section>
   </main>
   <script src='../../assets/site.js'></script>
 </body></html>

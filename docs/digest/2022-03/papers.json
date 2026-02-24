@@ -1,1 +1,10 @@
-[]
+{
+  "month": "2022-03",
+  "papers": [],
+  "stats": {
+    "accepted": 0,
+    "candidates": 0,
+    "summarized": 0
+  },
+  "top_picks": []
+}

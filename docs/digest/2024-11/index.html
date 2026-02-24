@@ -2,46 +2,15 @@
 <html><head><meta charset='utf-8'><title>EEG-FM Digest 2024-11</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
-  <main>
-    <h1>EEG Foundation Model Digest — 2024-11</h1>
+  <main id='digest-app' class='container' data-view='month' data-month='2024-11' data-manifest-json='../../data/months.json' data-month-json='../../digest/2024-11/papers.json'>
+    <div class='header'>
+      <h1>November 2024 Digest</h1>
+      <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a></p>
+    </div>
     <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
-    <p>Top picks: 2411.19507, 2411.16155, 2411.19230</p>
-    <section><h2>new_model</h2>
-    <article class='paper-card' id='2411.16155'>
-      <h3><a href='http://arxiv.org/abs/2411.16155v2'>Graph Adapter of EEG Foundation Models for Parameter Efficient Fine Tuning</a></h3>
-      <div class='meta'>2024-11-25 · Toyotaro Suzumura, Hiroki Kanezashi, Shotaro Akahori</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model adapter: EEG-GraphAdapter (EGA) integrates GNN-based modules with pre-trained temporal backbone models to capture spatial relationships between EEG sensors.</li><li>Method novelty: EGA freezes the pre-trained backbone model and fine-tunes only the GNN adapter, achieving up to 16.1% improvement in F1-score on healthcare tasks while reducing computational cost.</li><li>Strong evidence: Experiments on MDD and TUAB datasets demonstrate EGA&#x27;s effectiveness, with GAT-based EGA achieving 12.8% higher F1-score on MDD and GraphSAGE-based EGA achieving 16.1% improvement on TUAB compared to baseline BENDR.</li></ul>
-      <p><strong>Unique contribution:</strong> We propose EEG-GraphAdapter (EGA), a parameter-efficient fine-tuning approach that integrates a GNN-based module with pre-trained EEG foundation models to capture spatial relationships between EEG sensors while significantly reducing computational overhead and data requirements.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper proposes EEG-GraphAdapter (EGA), a parameter-efficient fine-tuning (PEFT) approach designed to address the computational cost and data scarcity challenges in fine-tuning large-scale EEG foundation models for both temporal and spatial features. EGA is integrated into a pre-trained temporal backbone model (BENDR) as a GNN-based module, freezing the backbone and allowing only the adapter to be fine-tuned. This enables the effective acquisition of EEG spatial representations, significantly reducing computational overhead and data requirements. Experimental evaluations on two healthcare-related downstream tasks—Major Depressive Disorder (MDD) and Abnormality Detection (TUAB)—show that EGA improves performance by up to 16.1% in F1-score compared with the backbone BENDR model, highlighting its potential for scalable and accurate EEG-based predictions.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p><a href='https://github.com/SPOClab-ca/BENDR'>code</a> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2411.19230'>
-      <h3><a href='http://arxiv.org/abs/2411.19230v2'>Pre-Training Graph Contrastive Masked Autoencoders are Strong Distillers for EEG</a></h3>
-      <div class='meta'>2024-11-28 · Xinxu Wei, Kanhao Zhao, Yong Jiao, Hua Xie, Lifang He, Yu Zhang</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: EEG-DisGCMAE that unifies graph contrastive and masked autoencoder pre-training for EEG analysis</li><li>Novel graph topology distillation loss enables effective knowledge transfer from high-density to low-density EEG data</li><li>Validated across four clinical classification tasks with significant performance improvements over state-of-the-art methods</li></ul>
-      <p><strong>Unique contribution:</strong> The paper introduces the first unified graph pre-training framework that combines contrastive and masked autoencoder methods for EEG analysis, along with a novel graph topology distillation loss for transferring knowledge from high-density to low-density EEG data.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper addresses the challenge of leveraging extensive unlabeled high-density EEG data to improve performance in scenarios with limited labeled low-density EEG data. The authors formulate this as a graph transfer learning and knowledge distillation problem, proposing EEG-DisGCMAE - a unified pre-trained graph contrastive masked autoencoder distiller. The approach introduces a novel unified graph self-supervised pre-training paradigm that seamlessly integrates graph contrastive pre-training with graph masked autoencoder pre-training. Additionally, they propose a graph topology distillation loss function that allows a lightweight student model trained on low-density data to learn from a teacher model trained on high-density data during both pre-training and fine-tuning. This method effectively handles missing electrodes through contrastive distillation and is validated across four classification tasks using two clinical EEG datasets.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p><a href='https://github.com/weixinxu666/EEG_DisGCMAE'>code</a> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2411.19507'>
-      <h3><a href='http://arxiv.org/abs/2411.19507v3'>GEFM: Graph-Enhanced EEG Foundation Model</a></h3>
-      <div class='meta'>2024-11-29 · Limin Wang, Toyotaro Suzumura, Hiroki Kanezashi</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: GEFM integrates Graph Neural Networks with masked autoencoder to capture both temporal dynamics and inter-channel relationships in EEG signals.</li><li>Method novelty: Uses geodesic-distance-based edge weights between EEG channels and employs GCN architecture with linear layer sequence adjustment for optimal performance.</li><li>Strong empirical evidence: Outperformed baseline BENDR model across all three downstream tasks (MMI, P300, ERN) with up to 31.4% improvement on MMI task.</li></ul>
-      <p><strong>Unique contribution:</strong> First foundation model for EEG that integrates Graph Neural Networks to capture inter-channel relationships alongside temporal dynamics, demonstrating superior performance across multiple downstream tasks.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>GEFM addresses a key limitation in existing EEG foundation models by incorporating inter-channel relationships alongside temporal dynamics. The model combines Graph Neural Networks (GNNs) with a masked autoencoder architecture, treating EEG channels as graph nodes with edge weights based on geodesic distances. Through extensive experiments across three downstream tasks using three GNN architectures (GCN, GAT, GraphSAGE) and two sequence length adjustment strategies, GEFM demonstrated consistent improvements over baseline methods, particularly when using GCN with edge weights and a linear layer for sequence adjustment.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p> </p>
-    </article>
-    </section>
+    <section id='controls' class='controls'></section>
+    <p id='results-meta' class='small'></p>
+    <section id='results'></section>
   </main>
   <script src='../../assets/site.js'></script>
 </body></html>

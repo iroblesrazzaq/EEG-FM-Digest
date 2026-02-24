@@ -2,22 +2,15 @@
 <html><head><meta charset='utf-8'><title>EEG-FM Digest 2023-05</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
-  <main>
-    <h1>EEG Foundation Model Digest — 2023-05</h1>
+  <main id='digest-app' class='container' data-view='month' data-month='2023-05' data-manifest-json='../../data/months.json' data-month-json='../../digest/2023-05/papers.json'>
+    <div class='header'>
+      <h1>May 2023 Digest</h1>
+      <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a></p>
+    </div>
     <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
-    <p>Top picks: 2305.10351</p>
-    <section><h2>new_model</h2>
-    <article class='paper-card' id='2305.10351'>
-      <h3><a href='http://arxiv.org/abs/2305.10351v1'>BIOT: Cross-data Biosignal Learning in the Wild</a></h3>
-      <div class='meta'>2023-05-10 · Chaoqi Yang, M. Brandon Westover, Jimeng Sun</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: BIOT enables cross-data learning with mismatched channels, variable lengths, and missing values through unified biosignal tokenization.</li><li>Strong empirical performance: Outperforms baselines on EEG seizure detection (3% improvement) and other biosignal tasks, with pre-training bringing up to 4% additional gains.</li><li>Versatile applications: Supports supervised learning, learning with missing data, and both unsupervised and supervised pre-training across diverse biosignal datasets.</li></ul>
-      <p><strong>Unique contribution:</strong> First biosignal transformer model that can handle mismatched channels, variable lengths, and missing values through a unified tokenization approach enabling cross-data learning.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>BIOT addresses the challenge of training deep learning models on heterogeneous biosignal datasets by introducing a novel tokenization strategy that converts diverse biosignals into unified &quot;biosignal sentences.&quot; The model uses a linear transformer architecture to capture complex token interactions while maintaining computational efficiency. Comprehensive evaluations on EEG, ECG, and human activity sensory signals demonstrate that BIOT outperforms strong baselines in standard supervised learning settings and shows particular robustness when handling missing channels or segments. The model also enables effective knowledge transfer through both unsupervised and supervised pre-training across different data sources.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p><a href='https://github.com/ycq091044/BIOT'>code</a> </p>
-    </article>
-    </section>
+    <section id='controls' class='controls'></section>
+    <p id='results-meta' class='small'></p>
+    <section id='results'></section>
   </main>
   <script src='../../assets/site.js'></script>
 </body></html>

@@ -2,80 +2,15 @@
 <html><head><meta charset='utf-8'><title>EEG-FM Digest 2025-08</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
-  <main>
-    <h1>EEG Foundation Model Digest — 2025-08</h1>
+  <main id='digest-app' class='container' data-view='month' data-month='2025-08' data-manifest-json='../../data/months.json' data-month-json='../../digest/2025-08/papers.json'>
+    <div class='header'>
+      <h1>August 2025 Digest</h1>
+      <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a></p>
+    </div>
     <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
-    <p>Top picks: 2508.17742, 2509.00314, 2508.20705, 2508.15716, 2508.14086</p>
-    <section><h2>benchmark</h2>
-    <article class='paper-card' id='2508.17742'>
-      <h3><a href='http://arxiv.org/abs/2508.17742v2'>EEG-FM-Bench: A Comprehensive Benchmark for the Systematic Evaluation of EEG Foundation Models</a></h3>
-      <div class='meta'>2025-08-25 · Wei Xiong, Jiangtong Li, Jie Li, Kun Zhu, Changjun Jiang</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model benchmark: EEG-FM-Bench integrates 14 datasets across 10 paradigms with standardized protocols</li><li>Multi-task learning acts as critical regularizer to mitigate overfitting in data-scarce EEG contexts</li><li>Compact architectures with domain-specific inductive biases consistently outperform significantly larger models</li></ul>
-      <p><strong>Unique contribution:</strong> EEG-FM-Bench is the first comprehensive benchmark that combines standardized evaluation protocols with diagnostic analysis tools for EEG foundation models, enabling fair comparison and interpretable advances in the field.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>EEG-FM-Bench addresses the lack of standardized evaluation protocols for EEG foundation models by providing a unified benchmark system. The benchmark integrates 14 datasets across 10 EEG paradigms and incorporates diverse experimental settings including multiple fine-tuning strategies, task organizations, and classifier configurations. It also provides tools for gradient and representation analysis. Our experiments reveal critical insights: multi-task learning acts as a regularizer to mitigate overfitting in data-scarce EEG contexts, pre-training efficiency is limited by gradient conflicts between reconstruction objectives and downstream tasks, and model scaling deviates from typical laws as compact architectures with domain-specific inductive biases outperform larger models.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>Benchmark</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p><a href='https://github.com/xw1216/EEG-FM-Bench'>code</a> </p>
-    </article>
-    </section><section><h2>new_model</h2>
-    <article class='paper-card' id='2508.04956'>
-      <h3><a href='http://arxiv.org/abs/2508.04956v1'>MENDR: Manifold Explainable Neural Data Representations</a></h3>
-      <div class='meta'>2025-08-07 · Matthew Chen, Micky Nnamdi, Justin Shao, Andrew Hornback, Hongyun Huang, Ben Tamo, Yishan Zhong, Benoit Marteau, Wenqi Shi, May Dongmei Wang</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: MENDR learns symmetric positive definite matrix embeddings through wavelet decomposition and manifold attention for interpretable clinical EEG analysis.</li><li>Method novelty: Combines GNN-based spatial harmonization with Riemannian Manifold Transformer architecture using dual-task self-supervised learning (leave-one-out contrastive + masked autoencoder reconstruction).</li><li>Strong evidence: Achieves near state-of-the-art performance on multiple clinical EEG tasks (TUAB, TUEV, ISRUC, MoBI, Seed-V) with substantially fewer parameters than existing models.</li></ul>
-      <p><strong>Unique contribution:</strong> MENDR introduces the first Riemannian EEG foundation model that learns SPD matrix embeddings through wavelet decomposition and manifold attention, achieving near state-of-the-art performance with significantly fewer parameters while providing geometric ellipsoid visualizations for clinical interpretability.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>MENDR addresses key limitations in current EEG foundation models by introducing a Riemannian Manifold Transformer architecture that learns symmetric positive definite (SPD) matrix embeddings of EEG signals. The model processes EEG data through discrete wavelet packet transforms into multi-resolution coefficients, then uses a GNN-based spatial harmonizer to ensure fixed electrode layouts via spline interpolation. MENDR is pretrained on over 4,000 hours of EEG data using a dual-task self-supervised objective combining leave-one-out contrastive learning and masked autoencoder reconstruction. The model achieves near state-of-the-art performance with substantially fewer parameters than existing approaches, while providing geometric ellipsoid visualizations of embeddings for clinical interpretability.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2508.14086'>
-      <h3><a href='http://arxiv.org/abs/2508.14086v3'>EEGDM: EEG Representation Learning via Generative Diffusion Model</a></h3>
-      <div class='meta'>2025-08-13 · Jia Hong Puah, Sim Kuan Goh, Ziwei Zhang, Zixuan Ye, Chow Khuen Chan, Kheng Seang Lim, Si Lei Fong, Kok Sin Woon, Cuntai Guan</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: EEGDM uses generative diffusion models with structured state-space architecture for EEG representation learning</li><li>Novel SSMDP architecture captures temporal dynamics through bidirectional state-space modeling and DDPM training</li><li>Achieves state-of-the-art performance on TUEV and CHB-MIT datasets while being 19× smaller than existing EEG foundation models</li></ul>
-      <p><strong>Unique contribution:</strong> EEGDM is the first work to extend diffusion models beyond signal generation and data augmentation for EEG, introducing SSMDP for temporal dynamics capture and LFT for latent representation fusion, achieving state-of-the-art performance with significantly reduced model size.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>EEGDM proposes a novel framework for learning meaningful representations from raw EEG signals using generative diffusion models. The method addresses the challenge of limited annotations and high signal variability in EEG by developing a structured state-space model for diffusion pretraining (SSMDP) that captures temporal dynamics, followed by a latent fusion transformer (LFT) for downstream classification tasks. Unlike existing EEG foundation models that rely on masking-based pretraining with transformers, EEGDM leverages the denoising diffusion probabilistic model (DDPM) framework to learn representations through a forward noise injection process and reverse denoising process. The approach was evaluated on multi-event datasets including TUEV (interictal epileptiform discharges) and CHB-MIT (seizure detection), demonstrating superior performance compared to state-of-the-art methods while using approximately 19× fewer parameters than current EEG foundation models.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Diffusion</span> <span class='chip chip-backbone' title='backbone'>Mamba-SSM</span> <span class='chip chip-objective' title='objective'>Discrete Code Prediction</span> <span class='chip chip-tokenization' title='tokenization'>Latent Tokens</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p><a href='https://github.com/jhpuah/EEGDM'>code</a> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2508.20705'>
-      <h3><a href='http://arxiv.org/abs/2508.20705v2'>EEGDM: Learning EEG Representation with Latent Diffusion Model</a></h3>
-      <div class='meta'>2025-08-28 · Shaocong Wang, Tong Liu, Yihan Li, Ming Li, Kairui Wen, Pei Yang, Wenqi Ji, Minjing Yu, Yong-Jin Liu</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: EEGDM leverages latent diffusion models for self-supervised EEG representation learning, capturing global dynamics and long-range dependencies.</li><li>Novel method: Incorporates channel augmentation and PCA-based latent space operations to enhance conditional information, enable robust EEG signal reconstruction, and improve cross-dataset generalizability.</li><li>Strong evidence: Achieves competitive performance across diverse downstream tasks including event classification, abnormal detection, motor imagery, cognitive load assessment, and emotion recognition.</li></ul>
-      <p><strong>Unique contribution:</strong> EEGDM introduces the first diffusion model-based approach for self-supervised EEG representation learning, using EEG signal generation as the self-supervised objective to capture rich EEG semantics.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>EEGDM proposes a novel self-supervised framework that leverages latent diffusion models to generate EEG signals as an objective, addressing the limitation of masked reconstruction methods in capturing global dynamics and long-range dependencies. The framework incorporates an EEG encoder that distills raw signals and their channel augmentations into a compact representation, acting as conditional information to guide the diffusion model for generating EEG signals. This design endows EEGDM with a compact latent space that not only offers ample control over the generative process but also can be leveraged for downstream tasks. Experimental results show that EEGDM reconstructs high-quality EEG signals, learns robust representations, and achieves competitive performance across diverse downstream tasks.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Diffusion</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Latent Tokens</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p> </p>
-    </article>
-    
-
-    <article class='paper-card' id='2509.00314'>
-      <h3><a href='http://arxiv.org/abs/2509.00314v1'>CoMET: A Contrastive-Masked Brain Foundation Model for Universal EEG Representation</a></h3>
-      <div class='meta'>2025-08-30 · Ang Li, Zikai Wang, Liuyin Yang, Zhenyu Wang, Tianheng Xu, Honglin Hu, Marc M. Van Hulle</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: CoMET combines masked autoencoder with contrastive learning to extract universal EEG representations across diverse tasks.</li><li>Novel mirror-scale augmentation: Generates positive views that preserve global correlations while avoiding token-level similarity, addressing volume conduction limitations.</li><li>State-of-the-art results: Achieves SOTA performance on ten downstream datasets including motor imagery, emotion recognition, and clinical applications, with scaling law compliance.</li></ul>
-      <p><strong>Unique contribution:</strong> CoMET introduces mirror-scale augmentation and a contrastive-masked framework that effectively merges local reconstruction with global discrimination, overcoming the attention collapse and local similarity limitations of prior EEG foundation models.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>CoMET addresses limitations in existing EEG foundation models by integrating masked autoencoder (MAE) with a novel contrastive learning framework. Traditional masked reconstruction methods overly focus on local channel correlations due to volume conduction, while contrastive learning suffers from attention collapse. CoMET employs mirror-scale augmentation to generate positive views that preserve global correlations while avoiding token-level similarity, and uses a momentum encoder with InfoNCE loss to strengthen global discrimination. The model is pre-trained on over 3000 subjects with 1M+ samples and achieves state-of-the-art performance on ten diverse downstream datasets, demonstrating superior ability to capture both local and global discriminative EEG features.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p> </p>
-    </article>
-    </section><section><h2>survey</h2>
-    <article class='paper-card' id='2508.15716'>
-      <h3><a href='http://arxiv.org/abs/2508.15716v2'>Foundation Models for Cross-Domain EEG Analysis Application: A Survey</a></h3>
-      <div class='meta'>2025-08-21 · Hongqi Li, Yitong Chen, Yujuan Wang, Weihang Ni, Haodong Zhang</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>First comprehensive survey of foundation models pre-trained on non-EEG data applied to EEG analysis</li><li>Systematic taxonomy covering native EEG decoding, EEG-to-text, EEG-to-vision, EEG-to-audio, and multimodal fusion</li><li>Highlights cross-domain generalization, interpretability challenges, and future research directions</li></ul>
-      <p><strong>Unique contribution:</strong> Presents the first comprehensive modality-oriented taxonomy for foundation models in EEG analysis, systematically organizing research advances across five output modality domains.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>This survey presents the first comprehensive modality-oriented taxonomy for foundation models in EEG analysis, systematically organizing research advances based on output modalities including native EEG decoding, EEG-text, EEG-vision, EEG-audio, and broader multimodal frameworks. The paper rigorously analyzes each category&#x27;s research ideas, theoretical foundations, and architectural innovations, while highlighting open challenges such as model interpretability, cross-domain generalization, and real-world applicability in EEG-based systems. By unifying this dispersed field, the work provides a reference framework for future methodology development and accelerates the translation of EEG foundation models into scalable, interpretable, and online actionable solutions.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>Survey</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-tokenization' title='tokenization'>Latent Tokens</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p> </p>
-    </article>
-    </section>
+    <section id='controls' class='controls'></section>
+    <p id='results-meta' class='small'></p>
+    <section id='results'></section>
   </main>
   <script src='../../assets/site.js'></script>
 </body></html>

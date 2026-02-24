@@ -2,22 +2,15 @@
 <html><head><meta charset='utf-8'><title>EEG-FM Digest 2024-01</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
-  <main>
-    <h1>EEG Foundation Model Digest — 2024-01</h1>
+  <main id='digest-app' class='container' data-view='month' data-month='2024-01' data-manifest-json='../../data/months.json' data-month-json='../../digest/2024-01/papers.json'>
+    <div class='header'>
+      <h1>January 2024 Digest</h1>
+      <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a></p>
+    </div>
     <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
-    <p>Top picks: 2401.10278</p>
-    <section><h2>new_model</h2>
-    <article class='paper-card' id='2401.10278'>
-      <h3><a href='http://arxiv.org/abs/2401.10278v1'>EEGFormer: Towards Transferable and Interpretable Large-Scale EEG Foundation Model</a></h3>
-      <div class='meta'>2024-01-11 · Yuqi Chen, Kan Ren, Kaitao Song, Yansen Wang, Yifan Wang, Dongsheng Li, Lili Qiu</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: EEGFormer uses vector-quantized pretraining on 1.7TB of unlabeled EEG data to learn universal representations.</li><li>Novel pretraining strategy: Integrates discrete representation learning with reconstruction loss, enhancing both performance and interpretability.</li><li>Strong empirical evidence: Achieves 15.8% improvement on Neonate dataset and 14.1% on TUSZ under AUPRC, with interpretable seizure localization via codebook analysis.</li></ul>
-      <p><strong>Unique contribution:</strong> EEGFormer is the first large-scale EEG foundation model that combines vector-quantized pretraining with interpretable discrete representations, enabling transferable performance across diverse EEG tasks.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>EEGFormer introduces a vector-quantized pretraining strategy for EEG data, leveraging a large-scale 1.7TB Temple University EEG Corpus to learn universal representations. Unlike prior work that pretrains on individual datasets for single downstream tasks, EEGFormer learns from abundant unlabeled data across multiple tasks, enabling better generalization and transferability. The model uses a Transformer encoder to generate patch embeddings, which are quantized into discrete tokens via a vector quantizer. These tokens are then decoded to reconstruct the input, with the codebook providing interpretability. Extensive experiments on five downstream tasks (TUAB, TUAR, TUSL, TUSZ, Neonate) demonstrate superior performance, especially in transfer settings. The learned codebook also enables interpretable seizure localization via n-gram features and a naive Bayes classifier.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Discrete Code Prediction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p> </p>
-    </article>
-    </section>
+    <section id='controls' class='controls'></section>
+    <p id='results-meta' class='small'></p>
+    <section id='results'></section>
   </main>
   <script src='../../assets/site.js'></script>
 </body></html>

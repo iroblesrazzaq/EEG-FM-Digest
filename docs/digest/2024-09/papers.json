@@ -1,326 +1,463 @@
-[
-  {
-    "arxiv_id_base": "2409.07480",
-    "categories": [
-      "eess.SP",
-      "cs.AI",
-      "cs.LG"
-    ],
-    "data_scale": {
-      "channels": 20.0,
-      "datasets": [
-        "TUEG",
-        "TUAB",
-        "NMT",
-        "TUSZ",
-        "TUEV"
+{
+  "month": "2024-09",
+  "papers": [
+    {
+      "arxiv_id": "2409.07480v4",
+      "arxiv_id_base": "2409.07480",
+      "authors": [
+        "Sam Gijsen",
+        "Kerstin Ritter"
       ],
-      "eeg_hours": null,
-      "subjects": 15144.0
+      "categories": [
+        "eess.SP",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2409.07480v4",
+        "pdf": "https://arxiv.org/pdf/2409.07480v4"
+      },
+      "published_date": "2024-09-02",
+      "summary": {
+        "arxiv_id_base": "2409.07480",
+        "categories": [
+          "eess.SP",
+          "cs.AI",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 20.0,
+          "datasets": [
+            "TUEG",
+            "TUAB",
+            "NMT",
+            "TUSZ",
+            "TUEV"
+          ],
+          "eeg_hours": null,
+          "subjects": 15144.0
+        },
+        "detailed_summary": "This paper pioneers EEG-language models (ELMs) by aligning functional brain data with medical textual information for the first time. The authors propose sub-unit alignment through timeseries cropping and text segmentation, combined with a multiple instance learning extension to address misalignment between irrelevant EEG or text segments. Their multimodal models significantly improve over EEG-only models across four clinical evaluations and enable zero-shot classification as well as retrieval of both neural signals and reports. The approach demonstrates considerable progress for clinical applications, particularly in scenarios with few labels.",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "NMT",
+            "TUSZ",
+            "TUEV"
+          ],
+          "headline_results": [
+            "TUAB 1% labels: 83.10% balanced accuracy",
+            "TUAB 100% labels: 87.11% balanced accuracy",
+            "Zero-shot classification: 84.31% F1-score",
+            "NMT 1% labels: 69.49% AUROC"
+          ],
+          "tasks": [
+            "pathology detection",
+            "seizure detection",
+            "event classification",
+            "zero-shot classification",
+            "retrieval"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: CEReBrO ELM-MIL achieves state-of-the-art pathology detection with 84.42% balanced accuracy on TUAB using linear probing",
+          "Novel multimodal alignment: Combines timeseries cropping and text segmentation with multiple instance learning to address data misalignment",
+          "Zero-shot capabilities: Enables classification and retrieval of neural signals and reports without explicit labels, improving label efficiency by up to 9.7%"
+        ],
+        "limitations": [
+          "Limited by availability of paired EEG-report datasets",
+          "Computational constraints prevented scaling model sizes",
+          "Potential sensitivity to frequency of specific pathology in reports",
+          "Possible biases from language models affecting multimodal pretraining"
+        ],
+        "method": {
+          "architecture": "Residual CNN with transformer-based language encoder",
+          "finetuning": "Linear probing for pathology detection",
+          "objective": "Contrastive learning with multiple instance learning extension",
+          "pretraining": "Multimodal alignment of EEG crops with segmented clinical reports"
+        },
+        "notes": "{\"chars\": 83601, \"error\": null, \"pages\": 25, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=22426",
+        "one_liner": "EEG-language models (ELMs) trained on 15,000 EEGs and clinical reports enable zero-shot classification and retrieval of neural signals.",
+        "open_source": {
+          "code_url": "https://github.com/SamGijsen/ELM",
+          "license": "unknown",
+          "weights_url": "pretrained models available"
+        },
+        "paper_type": "new_model",
+        "published_date": "2024-09-02",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "EEG-Language Pretraining for Highly Label-Efficient Clinical Phenotyping",
+        "unique_contribution": "The paper introduces EEG-language models that combine multimodal alignment with timeseries cropping and text segmentation, enabling zero-shot classification and retrieval of neural signals and reports for the first time.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EEG-Language Pretraining for Highly Label-Efficient Clinical Phenotyping",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "EEG-language models (ELMs) explicitly proposed",
+          "Pretrained on 15000 EEGs for clinical phenotyping",
+          "Zero-shot classification and retrieval of neural signals"
+        ]
+      }
     },
-    "detailed_summary": "This paper pioneers EEG-language models (ELMs) by aligning functional brain data with medical textual information for the first time. The authors propose sub-unit alignment through timeseries cropping and text segmentation, combined with a multiple instance learning extension to address misalignment between irrelevant EEG or text segments. Their multimodal models significantly improve over EEG-only models across four clinical evaluations and enable zero-shot classification as well as retrieval of both neural signals and reports. The approach demonstrates considerable progress for clinical applications, particularly in scenarios with few labels.",
-    "evaluation": {
-      "benchmarks": [
-        "TUAB",
-        "NMT",
-        "TUSZ",
-        "TUEV"
+    {
+      "arxiv_id": "2409.12454v1",
+      "arxiv_id_base": "2409.12454",
+      "authors": [
+        "Enze Shi",
+        "Kui Zhao",
+        "Qilong Yuan",
+        "Jiaqi Wang",
+        "Huawen Hu",
+        "Sigang Yu",
+        "Shu Zhang"
       ],
-      "headline_results": [
-        "TUAB 1% labels: 83.10% balanced accuracy",
-        "TUAB 100% labels: 87.11% balanced accuracy",
-        "Zero-shot classification: 84.31% F1-score",
-        "NMT 1% labels: 69.49% AUROC"
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "eess.SP"
       ],
-      "tasks": [
-        "pathology detection",
-        "seizure detection",
-        "event classification",
-        "zero-shot classification",
-        "retrieval"
-      ]
+      "links": {
+        "abs": "http://arxiv.org/abs/2409.12454v1",
+        "pdf": "https://arxiv.org/pdf/2409.12454v1"
+      },
+      "published_date": "2024-09-19",
+      "summary": {
+        "arxiv_id_base": "2409.12454",
+        "categories": [
+          "cs.LG",
+          "cs.AI",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "MAYO",
+            "FNUSA",
+            "SEED",
+            "SleepEDFx"
+          ],
+          "eeg_hours": 26000.0,
+          "subjects": 15000.0
+        },
+        "detailed_summary": "FoME addresses the challenges of EEG signal heterogeneity and limited labeled data by introducing a foundation model pre-trained on a diverse 1.7TB dataset of scalp and intracranial EEG recordings. The model employs two key innovations: time-frequency fusion embedding and adaptive time-lateral attention scaling (ATLAS) mechanism. These components synergistically capture complex temporal and spectral EEG dynamics, enabling robust multi-channel modeling. Evaluations across four downstream tasks demonstrate superior performance in classification and forecasting applications, achieving state-of-the-art results.",
+        "evaluation": {
+          "benchmarks": [
+            "MAYO",
+            "FNUSA",
+            "SEED",
+            "SleepEDFx"
+          ],
+          "headline_results": [
+            "State-of-the-art performance across all four downstream tasks"
+          ],
+          "tasks": [
+            "Seizure classification",
+            "Emotion recognition",
+            "Sleep stage classification",
+            "Signal forecasting/imputation"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: FoME pre-trained on 1.7TB diverse EEG dataset with 745M parameters for 1,096k steps",
+          "Novel time-frequency fusion embedding and ATLAS mechanism capture complex temporal-spectral dynamics across heterogeneous EEG data",
+          "Achieves state-of-the-art performance across four downstream tasks including seizure classification, emotion recognition, and signal forecasting"
+        ],
+        "limitations": [
+          "Pre-training dataset underrepresents certain EEG modalities like emotion-related, sleep, and motor imagery data",
+          "Limited representation from cognitive domains like working memory tasks",
+          "Underutilization of invasive EEG data which typically offers higher signal-to-noise ratios",
+          "Current scale (745M parameters) constrained by available pre-training data",
+          "Capabilities for long-term forecasting remain unexplored"
+        ],
+        "method": {
+          "architecture": "Transformer-based with time-frequency fusion embedding and adaptive temporal-lateral attention scaling (ATLAS)",
+          "finetuning": "Fine-tuned for classification, forecasting, and imputation tasks",
+          "objective": "Masked signal reconstruction",
+          "pretraining": "Pre-trained on 1.7TB heterogeneous EEG dataset"
+        },
+        "notes": "{\"chars\": 56993, \"error\": null, \"pages\": 11, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=15791",
+        "one_liner": "FoME is a large-scale foundation model for EEG that uses adaptive temporal-lateral attention scaling to achieve state-of-the-art performance across multiple downstream tasks.",
+        "open_source": {
+          "code_url": "https://github.com/1061413241/FoME",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2024-09-19",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "FoME: A Foundation Model for EEG using Adaptive Temporal-Lateral Attention Scaling",
+        "unique_contribution": "FoME introduces adaptive temporal-lateral attention scaling (ATLAS) that dynamically adapts to changing temporal and spatial patterns across diverse EEG data streams, enabling robust multi-channel modeling without requiring uniform topological rules or custom channel encodings for each dataset.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "FoME: A Foundation Model for EEG using Adaptive Temporal-Lateral Attention Scaling",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "EEG is central modality",
+          "Explicitly proposes EEG foundation model (FoME)",
+          "Pretrained on large diverse EEG dataset (1.7TB) for broad transfer",
+          "Evaluates on multiple downstream tasks demonstrating FM utility"
+        ]
+      }
     },
-    "key_points": [
-      "New EEG foundation model: CEReBrO ELM-MIL achieves state-of-the-art pathology detection with 84.42% balanced accuracy on TUAB using linear probing",
-      "Novel multimodal alignment: Combines timeseries cropping and text segmentation with multiple instance learning to address data misalignment",
-      "Zero-shot capabilities: Enables classification and retrieval of neural signals and reports without explicit labels, improving label efficiency by up to 9.7%"
-    ],
-    "limitations": [
-      "Limited by availability of paired EEG-report datasets",
-      "Computational constraints prevented scaling model sizes",
-      "Potential sensitivity to frequency of specific pathology in reports",
-      "Possible biases from language models affecting multimodal pretraining"
-    ],
-    "method": {
-      "architecture": "Residual CNN with transformer-based language encoder",
-      "finetuning": "Linear probing for pathology detection",
-      "objective": "Contrastive learning with multiple instance learning extension",
-      "pretraining": "Multimodal alignment of EEG crops with segmented clinical reports"
+    {
+      "arxiv_id": "2409.14021v1",
+      "arxiv_id_base": "2409.14021",
+      "authors": [
+        "Ling Wang",
+        "Chen Wu",
+        "Lin Wang"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2409.14021v1",
+        "pdf": "https://arxiv.org/pdf/2409.14021v1"
+      },
+      "published_date": "2024-09-21",
+      "summary": {
+        "arxiv_id_base": "2409.14021",
+        "categories": [
+          "cs.CV",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 128.0,
+          "datasets": [
+            "EEG-image dataset"
+          ],
+          "eeg_hours": null,
+          "subjects": 6.0
+        },
+        "detailed_summary": "BrainDreamer introduces a novel end-to-end language-guided generative framework that generates high-quality, reasoning-coherent images from EEG brain signals. The method addresses limitations of prior work by proposing a two-stage pipeline: first, a mask-based triple contrastive learning strategy aligns EEG, text, and image embeddings in CLIP embedding space; second, an EEG adapter injects EEG embeddings into a pre-trained Stable Diffusion model using FiLM modulation. This approach effectively eliminates noise from non-invasive EEG acquisition and achieves precise mapping between EEG and image modalities. The framework can accept textual descriptions (e.g., color, position) to achieve controllable image generation, mimicking human reasoning processes where language description supplements visual imagination.",
+        "evaluation": {
+          "benchmarks": [
+            "DreamDiffusion baseline"
+          ],
+          "headline_results": [
+            "ECA: 44.5% vs 29.9% (DreamDiffusion)",
+            "CLIP Similarity: 68.1% vs 55.8% (DreamDiffusion)",
+            "Real-world user study confirms EEG-text interaction effectiveness"
+          ],
+          "tasks": [
+            "EEG-to-image generation",
+            "Controllable image generation"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: BrainDreamer generates high-quality, reasoning-coherent images from EEG brain signals while incorporating textual descriptions for controllability.",
+          "Core method/evidence: Proposes mask-based triple contrastive learning to align EEG, text, and image embeddings, and uses FiLM-based EEG adapter to inject EEG embeddings into Stable Diffusion with lower computational overhead than cross-attention methods.",
+          "Main practical takeaway: Extensive experiments show BrainDreamer significantly outperforms prior arts in generation quality and quantitative performance, with real-world user study confirming effectiveness of EEG-text interaction for coherent image generation."
+        ],
+        "limitations": [
+          "Instance mismatch issues in generated images where main subjects are incorrectly identified",
+          "Insufficient coloring problems where only partial objects are colored as specified in text descriptions",
+          "Limited to fixed montage topology with 128 channels",
+          "Requires fine-tuning of EEG encoder for real-world data adaptation",
+          "Small user study sample size (2 participants) limits generalizability of real-world results"
+        ],
+        "method": {
+          "architecture": "Stable Diffusion with FiLM-based EEG adapter",
+          "finetuning": "EEG encoder fine-tuning for real-world data adaptation",
+          "objective": "Mask-based triple contrastive learning for EEG-text-image alignment",
+          "pretraining": "Pre-trained Stable Diffusion model"
+        },
+        "notes": "{\"chars\": 50210, \"error\": null, \"pages\": 10, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=14100",
+        "one_liner": "BrainDreamer is a novel end-to-end language-guided generative framework that generates high-quality, reasoning-coherent images from EEG brain signals while incorporating textual descriptions for controllability.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2024-09-21",
+        "tags": {
+          "backbone": [
+            "diffusion"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "BrainDreamer: Reasoning-Coherent and Controllable Image Generation from EEG Brain Signals via Language Guidance",
+        "unique_contribution": "BrainDreamer is the first framework to generate reasoning-coherent and controllable images from EEG brain signals by combining EEG embeddings with textual descriptions through a novel mask-based triple contrastive learning strategy and FiLM-based EEG adapter.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "BrainDreamer: Reasoning-Coherent and Controllable Image Generation from EEG Brain Signals via Language Guidance",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "EEG is central modality",
+          "Proposes novel EEG-FM framework (BrainDreamer)",
+          "Uses EEG embeddings for controllable image generation",
+          "Includes multimodal alignment (EEG, text, image)"
+        ]
+      }
     },
-    "notes": "{\"chars\": 83601, \"error\": null, \"pages\": 25, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=22426",
-    "one_liner": "EEG-language models (ELMs) trained on 15,000 EEGs and clinical reports enable zero-shot classification and retrieval of neural signals.",
-    "open_source": {
-      "code_url": "https://github.com/SamGijsen/ELM",
-      "license": "unknown",
-      "weights_url": "pretrained models available"
-    },
-    "paper_type": "new_model",
-    "published_date": "2024-09-02",
-    "tags": {
-      "backbone": [
-        "transformer"
+    {
+      "arxiv_id": "2410.07190v1",
+      "arxiv_id_base": "2410.07190",
+      "authors": [
+        "Tim Bary",
+        "Benoit Macq"
       ],
-      "objective": [
-        "contrastive"
+      "categories": [
+        "eess.SP",
+        "cs.LG"
       ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "fixed-montage"
-      ]
-    },
-    "title": "EEG-Language Pretraining for Highly Label-Efficient Clinical Phenotyping",
-    "unique_contribution": "The paper introduces EEG-language models that combine multimodal alignment with timeseries cropping and text segmentation, enabling zero-shot classification and retrieval of neural signals and reports for the first time.",
-    "used_fulltext": true
+      "links": {
+        "abs": "http://arxiv.org/abs/2410.07190v1",
+        "pdf": "https://arxiv.org/pdf/2410.07190v1"
+      },
+      "published_date": "2024-09-23",
+      "summary": {
+        "arxiv_id_base": "2410.07190",
+        "categories": [
+          "eess.SP",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 20.0,
+          "datasets": [
+            "Temple University Seizure Detection Corpus"
+          ],
+          "eeg_hours": null,
+          "subjects": 580.0
+        },
+        "detailed_summary": "This paper proposes a novel approach to pre-train transformers on unlabeled EEG data by creating labeled datasets through three signal alterations: white-noise replacement, channel shuffling, and channel mixing. The method is tested on an eyes-open/eyes-closed classification task and then applied to epileptic seizure forecasting using the Temple University Seizure Detection Corpus. Results show that pre-trained models converge significantly faster (50% reduction in fine-tuning epochs) and achieve higher accuracy (90.93% to 92.16%) and AUC (0.9648 to 0.9702) compared to non-pre-trained models.",
+        "evaluation": {
+          "benchmarks": [
+            "Temple University Seizure Detection Corpus"
+          ],
+          "headline_results": [
+            "92.16% accuracy",
+            "0.9702 AUC",
+            "50% reduction in fine-tuning epochs"
+          ],
+          "tasks": [
+            "EO/EC classification",
+            "Epileptic seizure forecasting"
+          ]
+        },
+        "key_points": [
+          "New EEG pre-training method: generate labeled datasets from unlabeled EEG via signal alterations to accelerate transformer training.",
+          "Channel shuffling pre-training yields fastest convergence and best validation loss on EO/EC task.",
+          "Pre-trained models achieve 92.16% accuracy and 0.9702 AUC on seizure forecasting, outperforming non-pre-trained models."
+        ],
+        "limitations": [
+          "Pre-training effectiveness needs validation across diverse EEG datasets and tasks",
+          "Performance gains may vary with different model architectures, especially smaller ones",
+          "Hybrid pre-training methods (combining multiple alterations) were not fully optimized"
+        ],
+        "method": {
+          "architecture": "Multi-channel Vision Transformer (MViT)",
+          "finetuning": "Supervised fine-tuning on labeled EEG tasks",
+          "objective": "Binary classification of altered vs. real EEG signals",
+          "pretraining": "Self-supervised pre-training on generated datasets"
+        },
+        "notes": "{\"chars\": 30801, \"error\": null, \"pages\": 6, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=9025",
+        "one_liner": "New EEG pre-training method: generate labeled datasets from unlabeled EEG via signal alterations to accelerate transformer training.",
+        "open_source": {
+          "code_url": "https://github.com/tbary/EEGPreTrainingDatasets",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2024-09-23",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Designing Pre-training Datasets from Unlabeled Data for EEG Classification with Transformers",
+        "unique_contribution": "Introduces a method to create pre-training datasets from unlabeled EEG by altering signals to teach frequency behavior and channel correlations, enabling faster and more accurate transformer training.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Designing Pre-training Datasets from Unlabeled Data for EEG Classification with Transformers",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "EEG is central modality",
+          "Presents method for pretraining transformers on EEG",
+          "Focuses on reusable EEG representations for transfer",
+          "Demonstrates improved performance via pretraining"
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 4,
+    "candidates": 12,
+    "summarized": 4
   },
-  {
-    "arxiv_id_base": "2409.12454",
-    "categories": [
-      "cs.LG",
-      "cs.AI",
-      "eess.SP"
-    ],
-    "data_scale": {
-      "channels": null,
-      "datasets": [
-        "MAYO",
-        "FNUSA",
-        "SEED",
-        "SleepEDFx"
-      ],
-      "eeg_hours": 26000.0,
-      "subjects": 15000.0
-    },
-    "detailed_summary": "FoME addresses the challenges of EEG signal heterogeneity and limited labeled data by introducing a foundation model pre-trained on a diverse 1.7TB dataset of scalp and intracranial EEG recordings. The model employs two key innovations: time-frequency fusion embedding and adaptive time-lateral attention scaling (ATLAS) mechanism. These components synergistically capture complex temporal and spectral EEG dynamics, enabling robust multi-channel modeling. Evaluations across four downstream tasks demonstrate superior performance in classification and forecasting applications, achieving state-of-the-art results.",
-    "evaluation": {
-      "benchmarks": [
-        "MAYO",
-        "FNUSA",
-        "SEED",
-        "SleepEDFx"
-      ],
-      "headline_results": [
-        "State-of-the-art performance across all four downstream tasks"
-      ],
-      "tasks": [
-        "Seizure classification",
-        "Emotion recognition",
-        "Sleep stage classification",
-        "Signal forecasting/imputation"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: FoME pre-trained on 1.7TB diverse EEG dataset with 745M parameters for 1,096k steps",
-      "Novel time-frequency fusion embedding and ATLAS mechanism capture complex temporal-spectral dynamics across heterogeneous EEG data",
-      "Achieves state-of-the-art performance across four downstream tasks including seizure classification, emotion recognition, and signal forecasting"
-    ],
-    "limitations": [
-      "Pre-training dataset underrepresents certain EEG modalities like emotion-related, sleep, and motor imagery data",
-      "Limited representation from cognitive domains like working memory tasks",
-      "Underutilization of invasive EEG data which typically offers higher signal-to-noise ratios",
-      "Current scale (745M parameters) constrained by available pre-training data",
-      "Capabilities for long-term forecasting remain unexplored"
-    ],
-    "method": {
-      "architecture": "Transformer-based with time-frequency fusion embedding and adaptive temporal-lateral attention scaling (ATLAS)",
-      "finetuning": "Fine-tuned for classification, forecasting, and imputation tasks",
-      "objective": "Masked signal reconstruction",
-      "pretraining": "Pre-trained on 1.7TB heterogeneous EEG dataset"
-    },
-    "notes": "{\"chars\": 56993, \"error\": null, \"pages\": 11, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=15791",
-    "one_liner": "FoME is a large-scale foundation model for EEG that uses adaptive temporal-lateral attention scaling to achieve state-of-the-art performance across multiple downstream tasks.",
-    "open_source": {
-      "code_url": "https://github.com/1061413241/FoME",
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2024-09-19",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "masked-reconstruction"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
-    },
-    "title": "FoME: A Foundation Model for EEG using Adaptive Temporal-Lateral Attention Scaling",
-    "unique_contribution": "FoME introduces adaptive temporal-lateral attention scaling (ATLAS) that dynamically adapts to changing temporal and spatial patterns across diverse EEG data streams, enabling robust multi-channel modeling without requiring uniform topological rules or custom channel encodings for each dataset.",
-    "used_fulltext": true
-  },
-  {
-    "arxiv_id_base": "2409.14021",
-    "categories": [
-      "cs.CV",
-      "cs.AI"
-    ],
-    "data_scale": {
-      "channels": 128.0,
-      "datasets": [
-        "EEG-image dataset"
-      ],
-      "eeg_hours": null,
-      "subjects": 6.0
-    },
-    "detailed_summary": "BrainDreamer introduces a novel end-to-end language-guided generative framework that generates high-quality, reasoning-coherent images from EEG brain signals. The method addresses limitations of prior work by proposing a two-stage pipeline: first, a mask-based triple contrastive learning strategy aligns EEG, text, and image embeddings in CLIP embedding space; second, an EEG adapter injects EEG embeddings into a pre-trained Stable Diffusion model using FiLM modulation. This approach effectively eliminates noise from non-invasive EEG acquisition and achieves precise mapping between EEG and image modalities. The framework can accept textual descriptions (e.g., color, position) to achieve controllable image generation, mimicking human reasoning processes where language description supplements visual imagination.",
-    "evaluation": {
-      "benchmarks": [
-        "DreamDiffusion baseline"
-      ],
-      "headline_results": [
-        "ECA: 44.5% vs 29.9% (DreamDiffusion)",
-        "CLIP Similarity: 68.1% vs 55.8% (DreamDiffusion)",
-        "Real-world user study confirms EEG-text interaction effectiveness"
-      ],
-      "tasks": [
-        "EEG-to-image generation",
-        "Controllable image generation"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model: BrainDreamer generates high-quality, reasoning-coherent images from EEG brain signals while incorporating textual descriptions for controllability.",
-      "Core method/evidence: Proposes mask-based triple contrastive learning to align EEG, text, and image embeddings, and uses FiLM-based EEG adapter to inject EEG embeddings into Stable Diffusion with lower computational overhead than cross-attention methods.",
-      "Main practical takeaway: Extensive experiments show BrainDreamer significantly outperforms prior arts in generation quality and quantitative performance, with real-world user study confirming effectiveness of EEG-text interaction for coherent image generation."
-    ],
-    "limitations": [
-      "Instance mismatch issues in generated images where main subjects are incorrectly identified",
-      "Insufficient coloring problems where only partial objects are colored as specified in text descriptions",
-      "Limited to fixed montage topology with 128 channels",
-      "Requires fine-tuning of EEG encoder for real-world data adaptation",
-      "Small user study sample size (2 participants) limits generalizability of real-world results"
-    ],
-    "method": {
-      "architecture": "Stable Diffusion with FiLM-based EEG adapter",
-      "finetuning": "EEG encoder fine-tuning for real-world data adaptation",
-      "objective": "Mask-based triple contrastive learning for EEG-text-image alignment",
-      "pretraining": "Pre-trained Stable Diffusion model"
-    },
-    "notes": "{\"chars\": 50210, \"error\": null, \"pages\": 10, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=14100",
-    "one_liner": "BrainDreamer is a novel end-to-end language-guided generative framework that generates high-quality, reasoning-coherent images from EEG brain signals while incorporating textual descriptions for controllability.",
-    "open_source": {
-      "code_url": null,
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2024-09-21",
-    "tags": {
-      "backbone": [
-        "diffusion"
-      ],
-      "objective": [
-        "contrastive"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "latent-tokens"
-      ],
-      "topology": [
-        "fixed-montage"
-      ]
-    },
-    "title": "BrainDreamer: Reasoning-Coherent and Controllable Image Generation from EEG Brain Signals via Language Guidance",
-    "unique_contribution": "BrainDreamer is the first framework to generate reasoning-coherent and controllable images from EEG brain signals by combining EEG embeddings with textual descriptions through a novel mask-based triple contrastive learning strategy and FiLM-based EEG adapter.",
-    "used_fulltext": true
-  },
-  {
-    "arxiv_id_base": "2410.07190",
-    "categories": [
-      "eess.SP",
-      "cs.LG"
-    ],
-    "data_scale": {
-      "channels": 20.0,
-      "datasets": [
-        "Temple University Seizure Detection Corpus"
-      ],
-      "eeg_hours": null,
-      "subjects": 580.0
-    },
-    "detailed_summary": "This paper proposes a novel approach to pre-train transformers on unlabeled EEG data by creating labeled datasets through three signal alterations: white-noise replacement, channel shuffling, and channel mixing. The method is tested on an eyes-open/eyes-closed classification task and then applied to epileptic seizure forecasting using the Temple University Seizure Detection Corpus. Results show that pre-trained models converge significantly faster (50% reduction in fine-tuning epochs) and achieve higher accuracy (90.93% to 92.16%) and AUC (0.9648 to 0.9702) compared to non-pre-trained models.",
-    "evaluation": {
-      "benchmarks": [
-        "Temple University Seizure Detection Corpus"
-      ],
-      "headline_results": [
-        "92.16% accuracy",
-        "0.9702 AUC",
-        "50% reduction in fine-tuning epochs"
-      ],
-      "tasks": [
-        "EO/EC classification",
-        "Epileptic seizure forecasting"
-      ]
-    },
-    "key_points": [
-      "New EEG pre-training method: generate labeled datasets from unlabeled EEG via signal alterations to accelerate transformer training.",
-      "Channel shuffling pre-training yields fastest convergence and best validation loss on EO/EC task.",
-      "Pre-trained models achieve 92.16% accuracy and 0.9702 AUC on seizure forecasting, outperforming non-pre-trained models."
-    ],
-    "limitations": [
-      "Pre-training effectiveness needs validation across diverse EEG datasets and tasks",
-      "Performance gains may vary with different model architectures, especially smaller ones",
-      "Hybrid pre-training methods (combining multiple alterations) were not fully optimized"
-    ],
-    "method": {
-      "architecture": "Multi-channel Vision Transformer (MViT)",
-      "finetuning": "Supervised fine-tuning on labeled EEG tasks",
-      "objective": "Binary classification of altered vs. real EEG signals",
-      "pretraining": "Self-supervised pre-training on generated datasets"
-    },
-    "notes": "{\"chars\": 30801, \"error\": null, \"pages\": 6, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=9025",
-    "one_liner": "New EEG pre-training method: generate labeled datasets from unlabeled EEG via signal alterations to accelerate transformer training.",
-    "open_source": {
-      "code_url": "https://github.com/tbary/EEGPreTrainingDatasets",
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "new_model",
-    "published_date": "2024-09-23",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "contrastive"
-      ],
-      "paper_type": [
-        "new-model"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "fixed-montage"
-      ]
-    },
-    "title": "Designing Pre-training Datasets from Unlabeled Data for EEG Classification with Transformers",
-    "unique_contribution": "Introduces a method to create pre-training datasets from unlabeled EEG by altering signals to teach frequency behavior and channel correlations, enabling faster and more accurate transformer training.",
-    "used_fulltext": true
-  }
-]
+  "top_picks": [
+    "2409.12454",
+    "2410.07190",
+    "2409.14021",
+    "2409.07480"
+  ]
+}

@@ -2,22 +2,15 @@
 <html><head><meta charset='utf-8'><title>EEG-FM Digest 2025-01</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
-  <main>
-    <h1>EEG Foundation Model Digest — 2025-01</h1>
+  <main id='digest-app' class='container' data-view='month' data-month='2025-01' data-manifest-json='../../data/months.json' data-month-json='../../digest/2025-01/papers.json'>
+    <div class='header'>
+      <h1>January 2025 Digest</h1>
+      <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a></p>
+    </div>
     <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
-    <p>Top picks: 2501.10885</p>
-    <section><h2>new_model</h2>
-    <article class='paper-card' id='2501.10885'>
-      <h3><a href='http://arxiv.org/abs/2501.10885v4'>CEReBrO: Compact Encoder for Representations of Brain Oscillations Using Efficient Alternating Attention</a></h3>
-      <div class='meta'>2025-01-18 · Alexandru Dimofte, Glenn Anta Bucagu, Thorir Mar Ingolfsson, Xiaying Wang, Andrea Cossettini, Luca Benini, Yawei Li</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>New EEG foundation model: CEReBrO achieves state-of-the-art performance with 2× speed improvement and 6× less memory using alternating attention.</li><li>Alternating attention mechanism jointly models intra-channel temporal dynamics and inter-channel spatial correlations, enabling efficient processing of long EEG sequences.</li><li>Pre-trained on 20,000+ hours of public EEG data, CEReBrO sets new benchmarks in emotion and seizure detection while maintaining competitive performance in anomaly classification and gait prediction.</li></ul>
-      <p><strong>Unique contribution:</strong> CEReBrO introduces alternating attention for EEG modeling, achieving 2× speed improvement and 6× memory reduction while maintaining state-of-the-art performance across multiple EEG tasks.</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>CEReBrO introduces a compact EEG foundation model that addresses key limitations in current approaches: sub-optimal EEG signal modeling, large model sizes, and reliance on private datasets. The model uses a novel tokenization scheme that represents EEG signals at per-channel patch granularity and employs an alternating attention mechanism that jointly models intra-channel temporal dynamics and inter-channel spatial correlations. This design achieves 2× speed improvement with 6× less memory compared to standard self-attention. Pre-trained on over 20,000 hours of publicly available scalp EEG recordings from the Temple University EEG Corpus with diverse channel configurations, CEReBrO sets new benchmarks in emotion detection and seizure detection tasks while maintaining competitive performance in anomaly classification and gait prediction.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
-      <p> </p>
-    </article>
-    </section>
+    <section id='controls' class='controls'></section>
+    <p id='results-meta' class='small'></p>
+    <section id='results'></section>
   </main>
   <script src='../../assets/site.js'></script>
 </body></html>

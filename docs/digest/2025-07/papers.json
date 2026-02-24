@@ -1,162 +1,243 @@
-[
-  {
-    "arxiv_id_base": "2507.09882",
-    "categories": [
-      "cs.LG"
-    ],
-    "data_scale": {
-      "channels": null,
-      "datasets": [
-        "13"
+{
+  "month": "2025-07",
+  "papers": [
+    {
+      "arxiv_id": "2507.09882v2",
+      "arxiv_id_base": "2507.09882",
+      "authors": [
+        "Jiamin Wu",
+        "Zichen Ren",
+        "Junyu Wang",
+        "Pengyu Zhu",
+        "Yonghao Song",
+        "Mianxin Liu",
+        "Qihao Zheng",
+        "Lei Bai",
+        "Wanli Ouyang",
+        "Chunfeng Song"
       ],
-      "eeg_hours": null,
-      "subjects": null
-    },
-    "detailed_summary": "AdaBrain-Bench addresses the critical gap in standardized evaluation frameworks for brain foundation models by providing a comprehensive benchmark that systematically assesses their generalizability across 7 key BCI applications spanning cognitive state assessment, human augmentation, and clinical monitoring. The benchmark introduces a modular adaptation pipeline with standardized preprocessing, flexible transfer strategies, and multi-dimensional evaluation metrics across cross-subject, multi-subject, and few-shot transfer settings. By evaluating recently published foundation models (BIOT, EEGPT, LaBraM, CBraMod) alongside traditional supervised approaches on 13 diverse EEG datasets, the study reveals that large-scale self-supervised pretraining significantly enhances cross-subject generalization, with LaBraM and CBraMod consistently outperforming traditional models. The work also identifies key factors affecting performance including pretraining scale, channel compatibility, and normalization strategies, while highlighting remaining challenges in emotion recognition and motor imagery tasks.",
-    "evaluation": {
-      "benchmarks": [],
-      "headline_results": [],
-      "tasks": [
-        "Cross-subject transfer (models trained on subset of subjects, tested on unseen subjects)",
-        "multi-subject adaptation (models trained on multiple subjects, tested on same cohort different sessions)",
-        "few-shot transfer (models fine-tuned with limited samples, sampling ratios [0.02, 0.05, 0.1, 0.3, 0.5])"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model benchmark: AdaBrain-Bench evaluates brain foundation models across 7 BCI applications using 13 diverse datasets and 3 transfer settings.",
-      "Core method/evidence: Large-scale self-supervised pretraining (LaBraM, CBraMod) consistently outperforms traditional supervised models in cross-subject transfer, with gains up to 10% in accuracy.",
-      "Main practical takeaway: Expanding training cohort size and using z-score normalization are effective strategies for improving cross-subject generalization of brain foundation models."
-    ],
-    "limitations": [
-      "Cannot cover all BCI tasks and models due to rapidly evolving field",
-      "Focuses on representative models rather than exhaustive coverage",
-      "Some tasks like emotion recognition and motor imagery show suboptimal performance",
-      "Limited to publicly available datasets",
-      "Evaluation settings may not capture all real-world deployment scenarios"
-    ],
-    "method": {
-      "architecture": "Standardized EEG preprocessing (band-pass filtering, notch filtering, resampling, z-score normalization) + modular adaptation pipeline with full fine-tuning and linear probing strategies + specialized task heads for classification, regression, and retrieval tasks",
-      "finetuning": null,
-      "objective": null,
-      "pretraining": null
-    },
-    "notes": "{\"chars\": 81276, \"error\": null, \"pages\": 28, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=21981",
-    "one_liner": "Large-scale standardized benchmark for evaluating brain foundation models across diverse BCI tasks and transfer settings.",
-    "open_source": {
-      "code_url": "Yes - benchmark pipeline available on GitHub repository with MIT License",
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "benchmark",
-    "published_date": "2025-07-14",
-    "tags": {
-      "backbone": [
-        "transformer"
+      "categories": [
+        "cs.LG"
       ],
-      "objective": [
-        "masked-reconstruction",
-        "contrastive"
-      ],
-      "paper_type": [
-        "benchmark"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "channel-flexible"
-      ]
+      "links": {
+        "abs": "http://arxiv.org/abs/2507.09882v2",
+        "pdf": "https://arxiv.org/pdf/2507.09882v2"
+      },
+      "published_date": "2025-07-14",
+      "summary": {
+        "arxiv_id_base": "2507.09882",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "13"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "AdaBrain-Bench addresses the critical gap in standardized evaluation frameworks for brain foundation models by providing a comprehensive benchmark that systematically assesses their generalizability across 7 key BCI applications spanning cognitive state assessment, human augmentation, and clinical monitoring. The benchmark introduces a modular adaptation pipeline with standardized preprocessing, flexible transfer strategies, and multi-dimensional evaluation metrics across cross-subject, multi-subject, and few-shot transfer settings. By evaluating recently published foundation models (BIOT, EEGPT, LaBraM, CBraMod) alongside traditional supervised approaches on 13 diverse EEG datasets, the study reveals that large-scale self-supervised pretraining significantly enhances cross-subject generalization, with LaBraM and CBraMod consistently outperforming traditional models. The work also identifies key factors affecting performance including pretraining scale, channel compatibility, and normalization strategies, while highlighting remaining challenges in emotion recognition and motor imagery tasks.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": [
+            "Cross-subject transfer (models trained on subset of subjects, tested on unseen subjects)",
+            "multi-subject adaptation (models trained on multiple subjects, tested on same cohort different sessions)",
+            "few-shot transfer (models fine-tuned with limited samples, sampling ratios [0.02, 0.05, 0.1, 0.3, 0.5])"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model benchmark: AdaBrain-Bench evaluates brain foundation models across 7 BCI applications using 13 diverse datasets and 3 transfer settings.",
+          "Core method/evidence: Large-scale self-supervised pretraining (LaBraM, CBraMod) consistently outperforms traditional supervised models in cross-subject transfer, with gains up to 10% in accuracy.",
+          "Main practical takeaway: Expanding training cohort size and using z-score normalization are effective strategies for improving cross-subject generalization of brain foundation models."
+        ],
+        "limitations": [
+          "Cannot cover all BCI tasks and models due to rapidly evolving field",
+          "Focuses on representative models rather than exhaustive coverage",
+          "Some tasks like emotion recognition and motor imagery show suboptimal performance",
+          "Limited to publicly available datasets",
+          "Evaluation settings may not capture all real-world deployment scenarios"
+        ],
+        "method": {
+          "architecture": "Standardized EEG preprocessing (band-pass filtering, notch filtering, resampling, z-score normalization) + modular adaptation pipeline with full fine-tuning and linear probing strategies + specialized task heads for classification, regression, and retrieval tasks",
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 81276, \"error\": null, \"pages\": 28, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=21981",
+        "one_liner": "Large-scale standardized benchmark for evaluating brain foundation models across diverse BCI tasks and transfer settings.",
+        "open_source": {
+          "code_url": "Yes - benchmark pipeline available on GitHub repository with MIT License",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2025-07-14",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "AdaBrain-Bench: Benchmarking Brain Foundation Models for Brain-Computer Interface Applications",
+        "unique_contribution": "First comprehensive, standardized benchmark framework that unifies evaluation of brain foundation models across diverse BCI tasks with systematic assessment of transfer generalizability in cross-subject, multi-subject, and few-shot settings.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "AdaBrain-Bench: Benchmarking Brain Foundation Models for Brain-Computer Interface Applications",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "explicitly benchmarks brain foundation models for BCI",
+          "focuses on EEG as central modality",
+          "evaluates transfer/generalization across BCI tasks"
+        ]
+      }
     },
-    "title": "AdaBrain-Bench: Benchmarking Brain Foundation Models for Brain-Computer Interface Applications",
-    "unique_contribution": "First comprehensive, standardized benchmark framework that unifies evaluation of brain foundation models across diverse BCI tasks with systematic assessment of transfer generalizability in cross-subject, multi-subject, and few-shot settings.",
-    "used_fulltext": true
+    {
+      "arxiv_id": "2507.11783v3",
+      "arxiv_id_base": "2507.11783",
+      "authors": [
+        "Gayal Kuruppu",
+        "Neeraj Wagh",
+        "Vaclav Kremen",
+        "Sandipan Pati",
+        "Gregory Worrell",
+        "Yogatheesan Varatharajah"
+      ],
+      "categories": [
+        "eess.SP",
+        "cs.AI",
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2507.11783v3",
+        "pdf": "https://arxiv.org/pdf/2507.11783v3"
+      },
+      "published_date": "2025-07-15",
+      "summary": {
+        "arxiv_id_base": "2507.11783",
+        "categories": [
+          "eess.SP",
+          "cs.AI",
+          "cs.LG",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Temple University Hospital EEG Corpus",
+            "CHB-MIT",
+            "MAYO",
+            "FNUSA",
+            "Brain TreeBank",
+            "Sleep-EDFx",
+            "SEED Series",
+            "multiple others"
+          ],
+          "eeg_hours": 878398.0,
+          "subjects": null
+        },
+        "detailed_summary": "This paper conducts a comprehensive review of ten early EEG foundation models (EEG-FMs) developed between 2021 and 2024. The authors analyze these models across three fundamental pillars: input data representation, self-supervised modeling, and evaluation strategies. They find that most EEG-FMs adopt transformer-based architectures with masked reconstruction pretraining on multivariate time series EEG data. However, evaluations remain heterogeneous and limited, making it difficult to assess practical utility. The review identifies key research gaps including the need for standardized benchmarks, better understanding of preprocessing effects, long temporal context modeling, and trustworthy evaluation metrics. The authors propose future directions focusing on benchmark development, technical advances like privacy-preserving learning, and application development through interdisciplinary collaboration.",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "TUEV"
+          ],
+          "headline_results": [
+            "Heterogeneous task selection across studies",
+            "Most studies focus on in-distribution fine-tuning rather than out-of-distribution robustness"
+          ],
+          "tasks": [
+            "Downstream task performance after fine-tuning",
+            "Limited out-of-distribution evaluations",
+            "Few-shot and linear probing rarely reported"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model survey: Reviews ten early EEG-FMs analyzing their architecture, pretraining, and evaluation approaches.",
+          "Most models use transformer backbones with masked reconstruction pretraining on multivariate time series EEG data.",
+          "Evaluations remain heterogeneous and limited, with most studies focusing on in-distribution fine-tuning rather than out-of-distribution robustness."
+        ],
+        "limitations": [
+          "Limited out-of-distribution evaluations",
+          "Heterogeneous evaluation tasks preventing direct comparison",
+          "Minimal preprocessing and artifact handling",
+          "Short temporal context (90 seconds or less)",
+          "Weak evidence for data and model scaling benefits",
+          "Limited trustworthy modeling and interpretability analyses"
+        ],
+        "method": {
+          "architecture": "Transformer-based architectures with masked reconstruction pretraining on multivariate time series EEG data; some models use spectral representations or time-frequency inputs; minimal preprocessing (bandpass filtering, resampling); positional encoding for spatial/temporal information",
+          "finetuning": "Downstream task performance after fine-tuning",
+          "objective": "Masked reconstruction pretraining",
+          "pretraining": "Multivariate time series EEG data with minimal preprocessing"
+        },
+        "notes": "{\"chars\": 140462, \"error\": null, \"pages\": 35, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=36919",
+        "one_liner": "Critical review of ten early EEG foundation models, identifying key trends, research gaps, and future directions.",
+        "open_source": {
+          "code_url": "Some models provide code (BrainBERT, Neuro-GPT, LaBraM, NeuroLM, Brant, BIOT, FoME, BrainWave)",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "survey",
+        "published_date": "2025-07-15",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "survey"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "EEG Foundation Models: A Critical Review of Current Progress and Future Directions",
+        "unique_contribution": "Provides the first critical, holistic review of EEG foundation models that goes beyond technical components to examine data representation, evaluation rigor, and real-world translational requirements.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EEG Foundation Models: A Critical Review of Current Progress and Future Directions",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "explicitly reviews EEG foundation models (EEG-FMs)",
+          "focuses on self-supervised EEG encoders for robust feature extraction",
+          "identifies future directions for EEG-FM development"
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 2,
+    "candidates": 17,
+    "summarized": 2
   },
-  {
-    "arxiv_id_base": "2507.11783",
-    "categories": [
-      "eess.SP",
-      "cs.AI",
-      "cs.LG",
-      "q-bio.NC"
-    ],
-    "data_scale": {
-      "channels": null,
-      "datasets": [
-        "Temple University Hospital EEG Corpus",
-        "CHB-MIT",
-        "MAYO",
-        "FNUSA",
-        "Brain TreeBank",
-        "Sleep-EDFx",
-        "SEED Series",
-        "multiple others"
-      ],
-      "eeg_hours": 878398.0,
-      "subjects": null
-    },
-    "detailed_summary": "This paper conducts a comprehensive review of ten early EEG foundation models (EEG-FMs) developed between 2021 and 2024. The authors analyze these models across three fundamental pillars: input data representation, self-supervised modeling, and evaluation strategies. They find that most EEG-FMs adopt transformer-based architectures with masked reconstruction pretraining on multivariate time series EEG data. However, evaluations remain heterogeneous and limited, making it difficult to assess practical utility. The review identifies key research gaps including the need for standardized benchmarks, better understanding of preprocessing effects, long temporal context modeling, and trustworthy evaluation metrics. The authors propose future directions focusing on benchmark development, technical advances like privacy-preserving learning, and application development through interdisciplinary collaboration.",
-    "evaluation": {
-      "benchmarks": [
-        "TUAB",
-        "TUEV"
-      ],
-      "headline_results": [
-        "Heterogeneous task selection across studies",
-        "Most studies focus on in-distribution fine-tuning rather than out-of-distribution robustness"
-      ],
-      "tasks": [
-        "Downstream task performance after fine-tuning",
-        "Limited out-of-distribution evaluations",
-        "Few-shot and linear probing rarely reported"
-      ]
-    },
-    "key_points": [
-      "New EEG foundation model survey: Reviews ten early EEG-FMs analyzing their architecture, pretraining, and evaluation approaches.",
-      "Most models use transformer backbones with masked reconstruction pretraining on multivariate time series EEG data.",
-      "Evaluations remain heterogeneous and limited, with most studies focusing on in-distribution fine-tuning rather than out-of-distribution robustness."
-    ],
-    "limitations": [
-      "Limited out-of-distribution evaluations",
-      "Heterogeneous evaluation tasks preventing direct comparison",
-      "Minimal preprocessing and artifact handling",
-      "Short temporal context (90 seconds or less)",
-      "Weak evidence for data and model scaling benefits",
-      "Limited trustworthy modeling and interpretability analyses"
-    ],
-    "method": {
-      "architecture": "Transformer-based architectures with masked reconstruction pretraining on multivariate time series EEG data; some models use spectral representations or time-frequency inputs; minimal preprocessing (bandpass filtering, resampling); positional encoding for spatial/temporal information",
-      "finetuning": "Downstream task performance after fine-tuning",
-      "objective": "Masked reconstruction pretraining",
-      "pretraining": "Multivariate time series EEG data with minimal preprocessing"
-    },
-    "notes": "{\"chars\": 140462, \"error\": null, \"pages\": 35, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=36919",
-    "one_liner": "Critical review of ten early EEG foundation models, identifying key trends, research gaps, and future directions.",
-    "open_source": {
-      "code_url": "Some models provide code (BrainBERT, Neuro-GPT, LaBraM, NeuroLM, Brant, BIOT, FoME, BrainWave)",
-      "license": null,
-      "weights_url": null
-    },
-    "paper_type": "survey",
-    "published_date": "2025-07-15",
-    "tags": {
-      "backbone": [
-        "transformer"
-      ],
-      "objective": [
-        "masked-reconstruction"
-      ],
-      "paper_type": [
-        "survey"
-      ],
-      "tokenization": [
-        "time-patch"
-      ],
-      "topology": [
-        "fixed-montage"
-      ]
-    },
-    "title": "EEG Foundation Models: A Critical Review of Current Progress and Future Directions",
-    "unique_contribution": "Provides the first critical, holistic review of EEG foundation models that goes beyond technical components to examine data representation, evaluation rigor, and real-world translational requirements.",
-    "used_fulltext": true
-  }
-]
+  "top_picks": [
+    "2507.11783",
+    "2507.09882"
+  ]
+}

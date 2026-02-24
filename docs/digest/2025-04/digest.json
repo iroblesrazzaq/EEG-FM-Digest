@@ -1,0 +1,28 @@
+{
+  "month": "2025-04",
+  "sections": [
+    {
+      "paper_ids": [
+        "2504.19596",
+        "2504.21214"
+      ],
+      "title": "new_model"
+    },
+    {
+      "paper_ids": [
+        "2504.20069"
+      ],
+      "title": "survey"
+    }
+  ],
+  "stats": {
+    "accepted": 3,
+    "candidates": 10,
+    "summarized": 3
+  },
+  "top_picks": [
+    "2504.21214",
+    "2504.20069",
+    "2504.19596"
+  ]
+}
