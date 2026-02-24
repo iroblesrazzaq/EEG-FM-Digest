@@ -11,32 +11,17 @@
 <p>Next, for all models accepted by the triage LLM, we download the pdf, extract text with PyMuPDF, and run a summary LLM where we extract a summary, bullet points, unique contribution, and tags.</p>
 <p>All triage and summary LLM calls through February 2026 use arcee-ai/trinity-large-preview:free.</p>
 <h2>arXiv Retrieval Keywords</h2>
-<details class='prompt-details keyword-details'>
-<summary>Show keyword sets and query strings</summary>
+<section class='prompt-details keyword-details'>
 <p class='small'>Matching requires one EEG term plus one FM term set in title/abstract.</p>
-<div class='keyword-grid'>
-<section>
-<p><strong>EEG term set</strong> (used in both queries)</p>
-<ul><li><code>eeg</code></li><li><code>electroencephalograph*</code></li><li><code>brainwave*</code></li></ul>
-</section>
-<section>
-<p><strong>FM term set A</strong></p>
-<ul><li><code>&quot;foundation model&quot;</code></li><li><code>pretrain</code></li><li><code>pretrained</code></li><li><code>&quot;self-supervised&quot;</code></li><li><code>&quot;self supervised&quot;</code></li></ul>
-</section>
-<section>
-<p><strong>FM term set B</strong></p>
-<ul><li><code>&quot;representation learning&quot;</code></li><li><code>masked</code></li><li><code>transfer</code></li><li><code>generaliz*</code></li></ul>
-</section>
-</div>
 <p><strong>Query A</strong></p>
 <pre class='prompt-block compact-block'>all:(eeg OR electroencephalograph* OR brainwave*) AND all:(&quot;foundation model&quot; OR pretrain OR pretrained OR &quot;self-supervised&quot; OR &quot;self supervised&quot;)</pre>
 <p><strong>Query B</strong></p>
 <pre class='prompt-block compact-block'>all:(eeg OR electroencephalograph* OR brainwave*) AND all:(&quot;representation learning&quot; OR masked OR transfer OR generaliz*)</pre>
-</details>
+</section>
 <h2>LLM Prompts</h2>
 <p>These are the full prompts used for each stage.</p>
-<details class='prompt-details'>
-<summary>Triage prompt (<code>prompts/triage.md</code>)</summary>
+<section class='prompt-details'>
+<p><strong>Triage prompt</strong> (<code>prompts/triage.md</code>)</p>
 <pre class='prompt-block'>You are a strict-but-recall-oriented classifier for whether an arXiv paper should be included in an EEG Foundation Model (EEG-FM) digest.
 
 Inclusion criteria:
@@ -75,9 +60,9 @@ Decision guidance:
 Input:
 Title: {{TITLE}}
 Abstract: {{ABSTRACT}}</pre>
-</details>
-<details class='prompt-details'>
-<summary>Summary prompt (<code>prompts/summarize.md</code>)</summary>
+</section>
+<section class='prompt-details'>
+<p><strong>Summary prompt</strong> (<code>prompts/summarize.md</code>)</p>
 <pre class='prompt-block'>You are writing a deep structured digest summary for an EEG-FM paper.
 
 Rules:
@@ -134,7 +119,7 @@ Strict typing constraints:
 
 Input:
 {{INPUT_JSON}}</pre>
-</details>
+</section>
 </section>
 </main>
 </body></html>

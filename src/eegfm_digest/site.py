@@ -227,8 +227,7 @@ def render_process_page() -> str:
 <section class='process-content'>
 {paragraphs}
 <h2>arXiv Retrieval Keywords</h2>
-<details class='prompt-details keyword-details'>
-<summary>Show keyword sets and query strings</summary>
+<section class='prompt-details keyword-details'>
 <p class='small'>Matching requires one EEG term plus one FM term set in title/abstract.</p>
 <div class='keyword-grid'>
 <section>
@@ -248,17 +247,17 @@ def render_process_page() -> str:
 <pre class='prompt-block compact-block'>{html.escape(QUERY_A)}</pre>
 <p><strong>Query B</strong></p>
 <pre class='prompt-block compact-block'>{html.escape(QUERY_B)}</pre>
-</details>
+</section>
 <h2>LLM Prompts</h2>
 <p>These are the full prompts used for each stage.</p>
-<details class='prompt-details'>
-<summary>Triage prompt (<code>prompts/triage.md</code>)</summary>
+<section class='prompt-details'>
+<p><strong>Triage prompt</strong> (<code>prompts/triage.md</code>)</p>
 <pre class='prompt-block'>{triage_prompt}</pre>
-</details>
-<details class='prompt-details'>
-<summary>Summary prompt (<code>prompts/summarize.md</code>)</summary>
+</section>
+<section class='prompt-details'>
+<p><strong>Summary prompt</strong> (<code>prompts/summarize.md</code>)</p>
 <pre class='prompt-block'>{summary_prompt}</pre>
-</details>
+</section>
 </section>
 </main>
 </body></html>

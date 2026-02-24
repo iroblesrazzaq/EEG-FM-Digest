@@ -340,12 +340,6 @@ button:hover {
   padding: 8px 10px;
 }
 
-.prompt-details summary {
-  cursor: pointer;
-  color: #0b57d0;
-  font-weight: 600;
-}
-
 .prompt-block {
   margin: 8px 0 4px 0;
   padding: 10px;
