@@ -1,0 +1,70 @@
+<!doctype html>
+<html><head><meta charset='utf-8'><title>EEG-FM Digest 2026-01</title>
+<link rel='stylesheet' href='../../assets/style.css'></head>
+<body>
+  <main>
+    <h1>EEG Foundation Model Digest — 2026-01</h1>
+    <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
+    <p>Top picks: 2601.17883, 2601.06134, 2601.22197, 2601.07877, 2601.00573</p>
+    <section><h2>benchmark</h2>
+    <article class='paper-card' id='2601.00573'>
+      <h3><a href='http://arxiv.org/abs/2601.00573v1'>Benchmarking ERP Analysis: Manual Features, Deep Learning, and Foundation Models</a></h3>
+      <div class='meta'>2026-01-02 · Yihe Wang, Zhiqiao Kang, Bohan Chen, Yu Zhang, Xiang Zhang</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New benchmark study comparing manual features, deep learning, and EEG foundation models for ERP analysis across 12 datasets and two tasks: stimulus classification and brain disease detection.</li><li>EEGConformer achieves best average ranking, while deep learning models trained from scratch generally outperform manual features and existing foundation models.</li><li>Univariate patch embedding strategy proves most effective for ERP-specific Transformer architectures compared to multivariate and whole-variate approaches.</li></ul>
+      <p><strong>Unique contribution:</strong> First comprehensive benchmark systematically comparing manual features, deep learning, and EEG foundation models for ERP analysis, establishing a unified evaluation framework and identifying optimal patch-embedding strategies for ERP-specific Transformers.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper presents a systematic benchmark study evaluating methods for ERP analysis, comparing traditional manual feature extraction, deep learning models, and pre-trained EEG foundation models across two representative tasks—ERP stimulus classification and ERP-based brain disease detection—on 12 publicly available datasets. The study establishes a unified preprocessing pipeline and evaluates 15 different approaches, including 2 manual feature methods, 10 deep learning models, and 3 foundation models. The authors also investigate three patch-embedding strategies within Transformer architectures to identify optimal designs for ERP data. Results show that deep learning models trained from scratch generally outperform manual features, while existing EEG foundation models do not demonstrate clear advantages over supervised models. EEGConformer achieves the best overall performance, and univariate patch embedding proves most effective for ERP-specific Transformers.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>Benchmark</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
+      <p><a href='https://github.com/DL4mHealth/ERP-Benchmark'>code</a> </p>
+    </article>
+    
+
+    <article class='paper-card' id='2601.17883'>
+      <h3><a href='http://arxiv.org/abs/2601.17883v2'>EEG Foundation Models: Progresses, Benchmarking, and Open Problems</a></h3>
+      <div class='meta'>2026-01-25 · Dingkun Liu, Yuheng Chen, Zhu Chen, Zhenyao Cui, Yaozhi Wen, Jiayu An, Jingwei Luo, Dongrui Wu</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model benchmark: Evaluates 12 open-source models across 13 datasets spanning 9 BCI paradigms under standardized protocols.</li><li>Linear probing insufficient: Full-parameter fine-tuning consistently outperforms linear probing, indicating pre-trained encoders cannot be directly used as fixed feature extractors.</li><li>Specialist models remain competitive: Traditional deep learning models trained from scratch achieve higher average decoding accuracy than EEG foundation models.</li></ul>
+      <p><strong>Unique contribution:</strong> First comprehensive benchmark systematically comparing 12 open-source EEG foundation models against specialist baselines across diverse BCI paradigms under standardized protocols.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper presents a comprehensive benchmark for EEG foundation models in brain-computer interfaces (BCIs). The authors first review 50 existing EEG foundation models and organize their design choices into a unified taxonomic framework covering data standardization, model architectures, and self-supervised pre-training strategies. They then evaluate 12 open-source foundation models and competitive specialist baselines across 13 EEG datasets spanning nine BCI paradigms. The benchmark considers both cross-subject generalization under a leave-one-subject-out protocol and rapid calibration under a within-subject few-shot setting. The study compares full-parameter fine-tuning with linear probing to assess the transferability of pre-trained representations, and examines the relationship between model scale and downstream performance. Results indicate that linear probing is frequently insufficient, specialist models trained from scratch remain competitive across many tasks, and larger foundation models do not necessarily yield better generalization performance under current data regimes and training practices.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>Benchmark</span></p>
+      <p><a href='https://github.com/Dingkun0817/EEG-FM-Benchmark'>code</a> </p>
+    </article>
+    </section><section><h2>new_model</h2>
+    <article class='paper-card' id='2601.06134'>
+      <h3><a href='http://arxiv.org/abs/2601.06134v1'>DeeperBrain: A Neuro-Grounded EEG Foundation Model Towards Universal BCI</a></h3>
+      <div class='meta'>2026-01-05 · Jiquan Wang, Sha Zhao, Yangxuan Zhou, Yiming Kang, Shijian Li, Gang Pan</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model: DeeperBrain integrates biophysical inductive biases including volume conduction-aware channel encoding and neurodynamics-aware temporal encoding to learn universal representations.</li><li>Neurophysiologically grounded architecture: The model uses 3D electrode geometry to model spatial mixing and oscillatory/exponential bases to capture slow neural adaptations.</li><li>Dual-objective pretraining: Combines Masked EEG Reconstruction for local fidelity with Neurodynamics Statistics Prediction to enforce alignment with macroscopic brain states.</li></ul>
+      <p><strong>Unique contribution:</strong> DeeperBrain is the first EEG foundation model to explicitly integrate neurophysiological first principles into both architecture and pretraining objectives, achieving superior frozen-probing performance through volume conduction-aware spatial encoding and neurodynamics-aware temporal encoding.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>DeeperBrain addresses the limitations of existing EEG foundation models that rely on end-to-end fine-tuning and struggle under frozen-probing protocols. The model incorporates neurophysiological principles through two key architectural innovations: a volume conduction-aware channel encoding that models spatial mixing via 3D electrode geometry, and a neurodynamics-aware temporal encoding that captures slow adaptations using oscillatory and exponential bases. For pretraining, DeeperBrain employs a dual-objective strategy combining Masked EEG Reconstruction (MER) for local signal fidelity with Neurodynamics Statistics Prediction (NSP) that enforces alignment with macroscopic brain states by predicting interpretable order parameters including spectral power, functional connectivity, cross-frequency coupling, and dynamic complexity. Extensive experiments demonstrate that DeeperBrain achieves state-of-the-art or highly competitive performance under end-to-end fine-tuning while maintaining superior efficacy under frozen-probing protocols, verifying that embedding neuroscientific first principles endows learned representations with the intrinsic universality essential for universal BCI.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
+      <p><a href='https://github.com/DeeperBrain/DeeperBrain'>code</a> <a href='https://huggingface.co/DeeperBrain'>weights</a></p>
+    </article>
+    
+
+    <article class='paper-card' id='2601.07877'>
+      <h3><a href='http://arxiv.org/abs/2601.07877v1'>E^2-LLM: Bridging Neural Signals and Interpretable Affective Analysis</a></h3>
+      <div class='meta'>2026-01-11 · Fei Ma, Han Lin, Yifan Xie, Hongwei Ren, Xiaoyu Shen, Wenbo Ding, Qi Tian</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model: E^2-LLM integrates a pretrained EEG encoder with Qwen-based LLMs through learnable projections for emotion analysis.</li><li>Multi-stage training pipeline: Employs emotion-discriminative pretraining, cross-modal alignment, and instruction tuning with chain-of-thought reasoning.</li><li>Superior zero-shot generalization: Larger variants demonstrate enhanced reliability and generalization to complex reasoning scenarios across seven emotion categories.</li></ul>
+      <p><strong>Unique contribution:</strong> The first MLLM framework that combines physiological EEG signals with LLM reasoning capabilities for interpretable emotion analysis.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>E^2-LLM is the first multimodal large language model framework for interpretable emotion analysis from EEG signals. It integrates a pretrained EEG encoder with Qwen-based LLMs through learnable projection layers, employing a multi-stage training pipeline that encompasses emotion-discriminative pretraining, cross-modal alignment, and instruction tuning with chain-of-thought reasoning. The framework is evaluated on the SEED-VII dataset across seven emotion categories, demonstrating excellent performance on emotion classification, with larger variants showing enhanced reliability and superior zero-shot generalization to complex reasoning scenarios.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-objective' title='objective'>Autoregressive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
+      <p> </p>
+    </article>
+    
+
+    <article class='paper-card' id='2601.22197'>
+      <h3><a href='http://arxiv.org/abs/2601.22197v1'>Neural Signals Generate Clinical Notes in the Wild</a></h3>
+      <div class='meta'>2026-01-29 · Jathurshan Pradeepkumar, Zheng Chen, Jimeng Sun</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model: CELM generates clinical EEG reports at multiple scales including description, background activity, epileptiform abnormalities, events/seizures, and impressions</li><li>Method novelty: Introduces epoch-aggregated tokenization and sequence-aware alignment to handle hour-scale EEG within LLM context limits</li><li>Strongest evidence: Achieves 70%-95% relative improvements in ROUGE-1/METEOR scores over baselines, with 0.43-0.52 generation scores in zero-shot settings</li></ul>
+      <p><strong>Unique contribution:</strong> First end-to-end clinical EEG-to-language foundation model that directly translates raw EEG recordings into multi-scale clinical reports without intermediate phenotype classification or template-based pipelines.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper introduces CELM, the first clinical EEG-to-Language foundation model capable of generating structured clinical reports from long-duration EEG recordings. The authors curate a large-scale dataset of 9,922 clinical reports paired with approximately 11,000 hours of EEG data from 9,048 patients. CELM addresses three key challenges: representing hour-scale EEG within LLM context limits via epoch-aggregated tokenization, preserving long-range temporal dependencies through sequence-aware alignment, and enabling flexible multi-scale report generation via prompt fusion. The model achieves 70%-95% average relative improvements in standard generation metrics (ROUGE-1 and METEOR) when patient history is available, and 0.43-0.52 generation scores in zero-shot settings without patient history, significantly outperforming baselines.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Autoregressive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
+      <p> </p>
+    </article>
+    </section>
+  </main>
+  <script src='../../assets/site.js'></script>
+</body></html>

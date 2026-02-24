@@ -1,6 +1,6 @@
 :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-body { margin: 0; padding: 0; background: #fafafa; color: #111; }
-.container { max-width: 980px; margin: 0 auto; padding: 24px; }
+body { margin: 0; padding: 0; background: #fafafa; color: #111; line-height: 1.55; }
+main, .container { max-width: 980px; margin: 0 auto; padding: 24px; }
 .header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 h1 { margin: 0 0 6px 0; font-size: 24px; }
 .sub { color: #555; font-size: 14px; }
@@ -8,16 +8,38 @@ a { color: #0b57d0; text-decoration: none; }
 a:hover { text-decoration: underline; }
 .section { margin-top: 22px; }
 .section h2 { font-size: 18px; margin: 0 0 10px 0; }
-.card { background: white; border: 1px solid #e6e6e6; border-radius: 12px; padding: 14px 14px; margin: 10px 0; box-shadow: 0 1px 1px rgba(0,0,0,0.03); }
+.card, .paper-card { background: white; border: 1px solid #e6e6e6; border-radius: 12px; padding: 16px; margin: 12px 0; box-shadow: 0 1px 1px rgba(0,0,0,0.03); }
 .title { font-size: 16px; font-weight: 650; margin-bottom: 4px; }
 .authors { color: #555; font-size: 13px; margin-bottom: 8px; }
-.one { margin: 8px 0; }
-.unique { margin: 8px 0; }
-.meta { display: flex; flex-wrap: wrap; gap: 10px; font-size: 13px; color: #333; margin-top: 8px; }
+.one { margin: 10px 0; }
+.unique { margin: 10px 0; }
+.meta { display: flex; flex-wrap: wrap; gap: 10px; font-size: 13px; color: #333; margin: 8px 0 12px 0; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .chip { font-size: 12px; padding: 2px 8px; border: 1px solid #ddd; border-radius: 999px; background: #f6f6f6; color: #333; }
+.chip-paper_type { background: #fdebec; border-color: #f3c9cc; color: #c23b3b; }
+.chip-backbone { background: #eaf3ff; border-color: #cfe1fb; color: #1f5ca8; }
+.chip-objective { background: #e9f7ef; border-color: #ccead8; color: #1f7a4d; }
+.chip-tokenization { background: #f3edff; border-color: #ddd1fb; color: #6d3ebf; }
+.chip-topology { background: #fff4e5; border-color: #f6ddb6; color: #9a5a00; }
 .links { display: flex; gap: 10px; margin-top: 10px; font-size: 13px; }
 hr { border: none; border-top: 1px solid #e6e6e6; margin: 16px 0; }
 .search { margin-top: 10px; }
 .search input { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 14px; }
 .small { font-size: 12px; color: #666; }
+
+.paper-card p { margin: 10px 0; }
+.summary-points { margin: 8px 0 12px 20px; padding: 0; }
+.summary-points li { margin: 6px 0; }
+.summary-detail { margin: 10px 0 12px 0; }
+.summary-detail summary { cursor: pointer; color: #0b57d0; font-weight: 600; }
+.summary-detail p { margin-top: 8px; color: #333; }
+
+.digest-about {
+  margin: 12px 0 16px 0;
+  padding: 12px 14px;
+  border: 1px dashed #cfcfcf;
+  border-radius: 10px;
+  background: #fff;
+}
+.digest-about h2 { margin: 0 0 6px 0; font-size: 16px; }
+.digest-about p { margin: 0; color: #444; }

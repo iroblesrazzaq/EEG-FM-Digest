@@ -1,0 +1,76 @@
+[
+  {
+    "arxiv_id_base": "2204.03272",
+    "categories": [
+      "cs.LG",
+      "eess.SP"
+    ],
+    "data_scale": {
+      "channels": 1.0,
+      "datasets": [
+        "SleepEDF",
+        "SHHS"
+      ],
+      "eeg_hours": null,
+      "subjects": 78.0
+    },
+    "detailed_summary": "This paper proposes mulEEG, a novel multi-view self-supervised learning method for unsupervised EEG representation learning. The method aims to effectively utilize complementary information across multiple views (time-series and spectrogram) to learn better representations. The authors introduce a diverse loss function that further encourages complementary information across multiple views. The method with no access to labels beats supervised training while outperforming multi-view baseline methods on transfer learning experiments carried out on sleep-staging tasks. The authors posit that their method was able to learn better representations by using complementary multi-views.",
+    "evaluation": {
+      "benchmarks": [
+        "SleepEDF",
+        "SHHS"
+      ],
+      "headline_results": [
+        "Outperforms supervised training and baselines on transfer learning experiments."
+      ],
+      "tasks": [
+        "sleep staging"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: mulEEG uses multi-view self-supervised learning to learn effective EEG representations without labels.",
+      "Method novelty: Introduces diverse loss to encourage complementary information across time-series and spectrogram views.",
+      "Strong evidence: Outperforms supervised training and baselines on transfer learning experiments for sleep staging."
+    ],
+    "limitations": [
+      "Limited to sleep staging tasks",
+      "Uses only single-channel EEG",
+      "Requires large amounts of unlabeled data for pre-training"
+    ],
+    "method": {
+      "architecture": "mulEEG uses multi-view self-supervised learning with time-series and spectrogram views of EEG signals. It introduces diverse loss to encourage complementary information across views. The method uses contrastive loss on time-series, spectrogram, and concatenated features.",
+      "finetuning": null,
+      "objective": null,
+      "pretraining": null
+    },
+    "notes": "{\"chars\": 32887, \"error\": null, \"pages\": 13, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=9468",
+    "one_liner": "mulEEG is a novel multi-view self-supervised learning method for EEG representation learning that outperforms supervised training on sleep staging tasks.",
+    "open_source": {
+      "code_url": "https://github.com/likith012/mulEEG",
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2022-04-07",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "contrastive"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "fixed-montage"
+      ]
+    },
+    "title": "mulEEG: A Multi-View Representation Learning on EEG Signals",
+    "unique_contribution": "mulEEG introduces a novel multi-view self-supervised learning method for EEG representation learning that outperforms supervised training on sleep staging tasks.",
+    "used_fulltext": true
+  }
+]

@@ -1,0 +1,230 @@
+[
+  {
+    "arxiv_id_base": "2512.12210",
+    "categories": [
+      "cs.LG"
+    ],
+    "data_scale": {
+      "channels": null,
+      "datasets": [
+        "32"
+      ],
+      "eeg_hours": 2500.0,
+      "subjects": null
+    },
+    "detailed_summary": "EEG-DLite is a data distillation framework that enables efficient pre-training of large EEG foundation models by selectively removing noisy and redundant samples from large EEG datasets. The framework encodes EEG segments into compact latent representations using a self-supervised autoencoder, then filters out outliers and minimizes redundancy to create a smaller yet informative subset. Through extensive experiments, training on only 5% of a 2,500-hour dataset curated with EEG-DLite yields performance comparable to, and in some cases better than, training on the full dataset across multiple downstream tasks. This represents the first systematic study of pre-training data distillation in the context of EEG foundation models.",
+    "evaluation": {
+      "benchmarks": [],
+      "headline_results": [
+        "Training on 5% of a 2,500-hour dataset achieves comparable or better performance than full dataset training across multiple downstream tasks"
+      ],
+      "tasks": [
+        "TUEV (6-class classification)",
+        "TUAB (binary classification)",
+        "SEED-V (5-class emotion recognition)",
+        "MoBI (continuous regression)"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model training efficiency method: EEG-DLite distills large EEG datasets to enable efficient pre-training with only 5% of the data.",
+      "Core method novelty: Uses self-supervised autoencoder to compress EEG segments into latent representations, then applies outlier filtering and diversity sampling to select informative subsets.",
+      "Strongest evidence: Training on 5% of a 2,500-hour dataset achieves comparable or better performance than full dataset training across multiple downstream tasks, reducing GPU pre-training time from 30 hours to 2 hours."
+    ],
+    "limitations": [
+      "Dataset distillation effectiveness may vary with different EEG signal characteristics and noise levels",
+      "Computational intensity of generative approaches like M3D makes them impractical for large-scale EEG datasets",
+      "Subject variance becomes significant after diversity sampling, potentially affecting model generalization across subjects",
+      "Framework requires careful tuning of outlier removal threshold and distillation ratio parameters",
+      "Limited evaluation on clinical EEG datasets with specific diagnostic applications"
+    ],
+    "method": {
+      "architecture": null,
+      "finetuning": null,
+      "objective": null,
+      "pretraining": null
+    },
+    "notes": "{\"chars\": 36936, \"error\": null, \"pages\": 9, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=10677",
+    "one_liner": "EEG-DLite distills large EEG datasets to enable efficient foundation model training with only 5% of the data.",
+    "open_source": {
+      "code_url": "https://github.com/t170815518/EEG-DLite",
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-12-13",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction",
+        "contrastive"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "fixed-montage"
+      ]
+    },
+    "title": "EEG-DLite: Dataset Distillation for Efficient Large EEG Model Training",
+    "unique_contribution": "First data distillation framework tailored for large-scale EEG foundation model pre-training, achieving comparable or superior performance using only 5% of the original training data.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2512.15250",
+    "categories": [
+      "cs.LG",
+      "cs.AI"
+    ],
+    "data_scale": {
+      "channels": 14.0,
+      "datasets": [
+        "PhysioNet/Computing in Cardiology Challenge 2021",
+        "DREAMER"
+      ],
+      "eeg_hours": null,
+      "subjects": 23.0
+    },
+    "detailed_summary": "This paper presents a multi-modal physiological signal analysis framework that adapts the CBraMod encoder for large-scale self-supervised ECG pretraining, introducing a dual-masking strategy to capture both intra-lead temporal patterns and inter-lead spatial dependencies. The approach utilizes a pre-trained CBraMod encoder for EEG and pre-trains a symmetric ECG encoder, equipping each modality with rich foundational representations that are then fused via simple embedding concatenation. Evaluated on emotion recognition using the DREAMER dataset, the method achieves near state-of-the-art performance across valence, arousal, and dominance dimensions, demonstrating that carefully designed physiological encoders with straightforward fusion can substantially improve downstream performance despite limited multi-modal supervision.",
+    "evaluation": {
+      "benchmarks": [
+        "DREAMER dataset"
+      ],
+      "headline_results": [
+        "Achieves competitive performance with AUC scores of 84.79 (arousal), 86.69 (dominance), and 68.69 (valence), ranking best and second-best respectively among compared methods."
+      ],
+      "tasks": [
+        "emotion recognition"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: CEReBrO leverages CBraMod encoder for large-scale self-supervised ECG pretraining with dual-masking strategy to capture intra- and inter-lead dependencies.",
+      "Method novelty: Combines pre-trained CBraMod EEG encoder with self-supervised pretraining of symmetric ECG encoder, using simple embedding concatenation for effective cross-modal learning.",
+      "Strong evidence: Achieves near state-of-the-art emotion recognition performance on DREAMER dataset with AUC scores of 84.79 (arousal) and 86.69 (dominance), ranking best and second-best respectively."
+    ],
+    "limitations": [
+      "Fusion strategy relies on simple embedding concatenation which may not fully exploit fine-grained temporal or cross-modal dependencies",
+      "Evaluation is constrained to emotion recognition task, leaving open questions regarding generalization to broader physiological applications and more diverse populations",
+      "Limited to subject-independent 3:1:1 train/validation/test splitting which may not capture all variability in real-world deployment scenarios"
+    ],
+    "method": {
+      "architecture": "Adapts CBraMod transformer architecture for ECG pretraining with dual-masking strategy (patch masking and channel masking) to capture intra-lead temporal patterns and inter-lead spatial dependencies.",
+      "finetuning": null,
+      "objective": "Uses self-supervised pretraining on 88,253 12-lead ECG recordings from PhysioNet Challenge 2021 dataset.",
+      "pretraining": "Combines pre-trained CBraMod EEG encoder with self-supervised pretrained ECG encoder, fusing representations via simple embedding concatenation followed by classification head."
+    },
+    "notes": "{\"chars\": 21110, \"error\": null, \"pages\": 8, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=6628",
+    "one_liner": "New EEG foundation model: CEReBrO leverages CBraMod encoder for large-scale self-supervised ECG pretraining with dual-masking strategy to capture intra- and inter-lead dependencies.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-12-17",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "Leveraging Foundational Models and Simple Fusion for Multi-modal Physiological Signal Analysis",
+    "unique_contribution": "The paper introduces a dual-masking strategy for ECG pretraining that captures both intra-lead temporal patterns and inter-lead spatial dependencies, combined with simple embedding concatenation fusion that achieves near state-of-the-art emotion recognition performance.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2512.19097",
+    "categories": [
+      "cs.LG",
+      "cs.AI"
+    ],
+    "data_scale": {
+      "channels": 1600000.0,
+      "datasets": [
+        "Multiple EEG/iEEG datasets"
+      ],
+      "eeg_hours": 59300.0,
+      "subjects": 17700.0
+    },
+    "detailed_summary": "DIVER-1 introduces the first systematic scaling law analysis for electrophysiological foundation models (EFMs), revealing that performance is dominated by data scale and training duration rather than model parameter count. The authors train models up to 1.82 billion parameters on 59.3k hours of EEG and iEEG data from 17.7k+ subjects, demonstrating that smaller models trained longer outperform larger models trained briefly under fixed compute budgets. This challenges the \"bigger is better\" heuristic from language models and provides actionable guidance for efficient EFM development. DIVER-1 achieves state-of-the-art performance across established EEG and iEEG benchmarks, including Neuroprobe and MAYO datasets.",
+    "evaluation": {
+      "benchmarks": [
+        "State-of-the-art performance across all major EEG/iEEG benchmarks",
+        "Outperforms BrainBERT, PopT, Brant, CBraMod, and LaBraM baselines"
+      ],
+      "headline_results": [
+        "Achieves SOTA AUROC scores on Neuroprobe binary-label tasks",
+        "Superior performance on MAYO seizure detection",
+        "Competitive results on FACED, PhysioNet-MI, and MentalArithmetic datasets"
+      ],
+      "tasks": [
+        "Neuroprobe (15 iEEG tasks)",
+        "MAYO (seizure detection)",
+        "FACED (emotion recognition)",
+        "PhysioNet-MI (motor imagery)",
+        "MentalArithmetic (cognitive workload)"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model family: DIVER-1 trained on 59.3k hours (54k EEG + 5.3k iEEG) across 1.6M channel-hours from 17.7k+ subjects, scaling up to 1.82B parameters",
+      "Novel scaling insights: Performance dominated by data scale and training duration, not model size - smaller models trained longer outperform larger models trained briefly under fixed compute",
+      "State-of-the-art results: Achieves SOTA performance across established EEG and iEEG benchmarks including Neuroprobe and MAYO datasets"
+    ],
+    "limitations": [
+      "Scaling analysis focused on EEG and iEEG modalities - may not generalize to other neuroimaging modalities",
+      "Performance improvements plateau for very large models due to data-constrained regime",
+      "Requires substantial computational resources for pretraining despite efficiency insights",
+      "Distribution shift between pretraining data (adult) and some downstream tasks (pediatric)"
+    ],
+    "method": {
+      "architecture": "Transformer-based with MOIRAI blocks, spatio-temporal conditional positional embeddings (STCPE), and multi-domain reconstruction objectives",
+      "finetuning": "Linear probing and full finetuning on established EEG/iEEG downstream benchmarks",
+      "objective": "Masked patch reconstruction across time series, FFT, and STFT domains",
+      "pretraining": "Self-supervised pretraining on 59.3k hours of diverse EEG/iEEG data with 50% random patch masking"
+    },
+    "notes": "{\"chars\": 151681, \"error\": null, \"pages\": 52, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=39745",
+    "one_liner": "DIVER-1 is a family of EEG/iEEG foundation models trained on 59.3k hours of diverse electrophysiological data, achieving state-of-the-art performance across established benchmarks.",
+    "open_source": {
+      "code_url": "https://anonymous.4open.science/r/DIVER-1",
+      "license": "To be determined",
+      "weights_url": "Planned release under open-science framework"
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-12-22",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "DIVER-1 : Deep Integration of Vast Electrophysiological Recordings at Scale",
+    "unique_contribution": "The first systematic scaling law analysis for EFMs that reveals data-constrained characteristics fundamentally different from language models, combined with DIVER-1 models achieving state-of-the-art performance on the largest and most diverse electrophysiological corpus to date.",
+    "used_fulltext": true
+  }
+]

@@ -1,0 +1,83 @@
+[
+  {
+    "arxiv_id_base": "2401.10278",
+    "categories": [
+      "eess.SP",
+      "cs.AI",
+      "cs.LG",
+      "cs.MM",
+      "q-bio.NC"
+    ],
+    "data_scale": {
+      "channels": null,
+      "datasets": [
+        "TUH Corpus"
+      ],
+      "eeg_hours": null,
+      "subjects": null
+    },
+    "detailed_summary": "EEGFormer introduces a vector-quantized pretraining strategy for EEG data, leveraging a large-scale 1.7TB Temple University EEG Corpus to learn universal representations. Unlike prior work that pretrains on individual datasets for single downstream tasks, EEGFormer learns from abundant unlabeled data across multiple tasks, enabling better generalization and transferability. The model uses a Transformer encoder to generate patch embeddings, which are quantized into discrete tokens via a vector quantizer. These tokens are then decoded to reconstruct the input, with the codebook providing interpretability. Extensive experiments on five downstream tasks (TUAB, TUAR, TUSL, TUSZ, Neonate) demonstrate superior performance, especially in transfer settings. The learned codebook also enables interpretable seizure localization via n-gram features and a naive Bayes classifier.",
+    "evaluation": {
+      "benchmarks": [],
+      "headline_results": [
+        "15.8% improvement on Neonate dataset under AUPRC",
+        "14.1% improvement on TUSZ under AUPRC",
+        "Strong performance across AUROC and macro-AUROC metrics"
+      ],
+      "tasks": [
+        "TUAB (normal/abnormal detection)",
+        "TUAR (artifact classification)",
+        "TUSL (slowing events)",
+        "TUSZ (seizure detection)",
+        "Neonate (neonatal seizure detection)"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: EEGFormer uses vector-quantized pretraining on 1.7TB of unlabeled EEG data to learn universal representations.",
+      "Novel pretraining strategy: Integrates discrete representation learning with reconstruction loss, enhancing both performance and interpretability.",
+      "Strong empirical evidence: Achieves 15.8% improvement on Neonate dataset and 14.1% on TUSZ under AUPRC, with interpretable seizure localization via codebook analysis."
+    ],
+    "limitations": [
+      "Codebook size and model complexity increase with larger datasets, potentially limiting scalability.",
+      "Interpretability relies on post-hoc analysis (e.g., n-gram features), which may not fully capture complex patterns.",
+      "Transferability to highly specialized or small datasets may still require task-specific fine-tuning.",
+      "No explicit discussion of computational efficiency or inference speed.",
+      "Limited evaluation on non-TUH datasets beyond Neonate."
+    ],
+    "method": {
+      "architecture": "Transformer encoder with vector quantization",
+      "finetuning": "Fine-tuning on downstream tasks using pretrained encoder/decoder",
+      "objective": "Reconstruction with discrete codebook learning",
+      "pretraining": "Vector-quantized pretraining on 1.7TB TUH Corpus"
+    },
+    "notes": "{\"chars\": 26452, \"error\": null, \"pages\": 6, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=8027",
+    "one_liner": "EEGFormer is a novel foundation model for EEG that uses vector-quantized pretraining on large-scale unlabeled data to learn universal, transferable, and interpretable representations.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2024-01-11",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "discrete-code-prediction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "EEGFormer: Towards Transferable and Interpretable Large-Scale EEG Foundation Model",
+    "unique_contribution": "EEGFormer is the first large-scale EEG foundation model that combines vector-quantized pretraining with interpretable discrete representations, enabling transferable performance across diverse EEG tasks.",
+    "used_fulltext": true
+  }
+]

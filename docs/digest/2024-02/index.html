@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset='utf-8'><title>EEG-FM Digest 2024-02</title>
+<link rel='stylesheet' href='../../assets/style.css'></head>
+<body>
+  <main>
+    <h1>EEG Foundation Model Digest — 2024-02</h1>
+    <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
+    <p>Top picks: 2403.03222, 2402.17772</p>
+    <section><h2>new_model</h2>
+    <article class='paper-card' id='2403.03222'>
+      <h3><a href='http://arxiv.org/abs/2403.03222v1'>Knowledge-guided EEG Representation Learning</a></h3>
+      <div class='meta'>2024-02-15 · Aditya Kommineni, Kleanthis Avramidis, Richard Leahy, Shrikanth Narayanan</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model: Knowledge-guided S4 using state-space architecture for efficient EEG representation learning.</li><li>Novel knowledge-guided objective: Combines reconstruction loss with frequency band power estimation to incorporate domain knowledge.</li><li>Strong empirical results: Outperforms transformer-based baselines on motor movement and motor imagery tasks while using ~100x fewer parameters.</li></ul>
+      <p><strong>Unique contribution:</strong> Introduces a knowledge-guided pre-training objective for EEG that combines reconstruction loss with frequency band power estimation, achieving better performance with fewer parameters than transformer-based approaches.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper proposes a self-supervised learning framework for EEG representation learning using a state-space model (S4) architecture. The key novelty is a knowledge-guided pre-training objective that incorporates domain-specific EEG features (frequency band power) alongside traditional reconstruction loss. The model is pre-trained on a large clinical EEG corpus (69,410 recordings, ~16,000 hours) and evaluated on two downstream tasks: motor movement (MMI dataset) and motor imagery (BCI IV 2A dataset). Results show improved performance compared to transformer-based baselines while using significantly fewer parameters (~13M vs 1B).</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Mamba-SSM</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
+      <p> </p>
+    </article>
+    
+
+    <article class='paper-card' id='2402.17772'>
+      <h3><a href='http://arxiv.org/abs/2402.17772v2'>EEG2Rep: Enhancing Self-supervised EEG Representation Through Informative Masked Inputs</a></h3>
+      <div class='meta'>2024-02-17 · Navid Mohammadi Foumani, Geoffrey Mackellar, Soheila Ghane, Saad Irtza, Nam Nguyen, Mahsa Salehi</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model: EEG2Rep uses semantic subsequence preserving masking and latent space reconstruction to generate rich semantic representations</li><li>Core method novelty: Instead of reconstructing raw EEG, EEG2Rep predicts masked inputs in abstract representation space, eliminating noise and amplitude range issues</li><li>Strongest evidence: EEG2Rep significantly outperforms state-of-the-art methods on 6 diverse EEG tasks and demonstrates robustness to noise</li></ul>
+      <p><strong>Unique contribution:</strong> EEG2Rep is the first self-supervised EEG representation learning approach that predicts masked inputs in latent space using semantic subsequence preserving masking, addressing the fundamental challenges of noise, amplitude variability, and lack of segmentation in EEG data.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>EEG2Rep addresses three key challenges in EEG representation learning: low signal-to-noise ratio, wide amplitude ranges due to inter-subject variability, and lack of explicit segmentation in continuous sequences. The model introduces two core innovations: (1) predicting masked inputs in latent representation space rather than raw EEG space, and (2) using a novel semantic subsequence preserving (SSP) masking method that provides informative masked inputs. EEG2Rep significantly outperforms state-of-the-art methods on 6 diverse EEG tasks with subject variability, demonstrating improved semantic quality of representations and robustness to noise.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Latent Tokens</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
+      <p><a href='https://github.com/Navidfoumani/EEG2Rep'>code</a> </p>
+    </article>
+    </section>
+  </main>
+  <script src='../../assets/site.js'></script>
+</body></html>

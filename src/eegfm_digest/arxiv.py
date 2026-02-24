@@ -117,6 +117,16 @@ def fetch_query(
                     resp = client.get(ARXIV_API_URL, params=params)
                     resp.raise_for_status()
                     break
+                except httpx.HTTPStatusError as exc:
+                    status = exc.response.status_code if exc.response is not None else None
+                    retryable = status == 429 or (status is not None and status >= 500)
+                    attempt += 1
+                    if (not retryable) or attempt > retries:
+                        raise RuntimeError(
+                            f"arXiv request failed after {attempt} attempts "
+                            f"(status={status}, start={start}, max_results={chunk})"
+                        ) from exc
+                    time.sleep(retry_backoff_seconds * (2 ** (attempt - 1)))
                 except (httpx.ReadTimeout, httpx.TransportError) as exc:
                     attempt += 1
                     if attempt > retries:

@@ -36,6 +36,24 @@ python -m eegfm_digest.run --month 2025-01 --force
 
 `--no-site` runs backend-only mode: outputs and SQLite are updated, `docs/` is untouched.
 
+## Batch runs (all months or one month)
+Use the batch runner to triage multiple months first, then summarize accepted papers:
+```bash
+python -m eegfm_digest.batch --config configs/batch_all_months.json
+python -m eegfm_digest.batch --config configs/batch_single_month.json
+```
+
+Wrapper scripts:
+```bash
+./scripts/run_batch_all.sh
+./scripts/run_batch_month.sh 2025-02
+```
+
+How incremental weekly runs work:
+- Keep `triage_force=false` and `summary_force=false`.
+- Keep `sync_cache_from_outputs=true`.
+- Re-run the same month config; previously seen `arxiv_id_base` rows are reused from SQLite / existing JSONL and only new papers trigger LLM calls.
+
 ## How to test
 Run all tests:
 ```bash

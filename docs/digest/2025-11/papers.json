@@ -1,0 +1,685 @@
+[
+  {
+    "arxiv_id_base": "2511.13733",
+    "categories": [
+      "eess.SP",
+      "cs.LG",
+      "q-bio.NC"
+    ],
+    "data_scale": {
+      "channels": null,
+      "datasets": [
+        "DEAP",
+        "SEED",
+        "MIBCI",
+        "BCIC4-1",
+        "EEGMat",
+        "STEW",
+        "EDF",
+        "HMC",
+        "TUAB",
+        "TUEV",
+        "Dataset 11",
+        "Dataset 12",
+        "Dataset 13",
+        "Dataset 14",
+        "Dataset 15",
+        "Dataset 16",
+        "Dataset 17"
+      ],
+      "eeg_hours": null,
+      "subjects": null
+    },
+    "detailed_summary": "THD-BAR addresses the challenge of learning universal EEG representations by introducing a Brain Topology Hierarchy (BTH) that establishes a multi-scale spatial order for EEG channels. This hierarchy enables a redefinition of autoregressive learning as \"next-scale-time prediction,\" effectively capturing both spatial and temporal dynamics. The framework includes a Topology-Hierarchical Vector Quantized-Variational Autoencoder (THVQ-VAE) for multi-scale tokenization and an enhanced Brain Autoregressive (BAR) module with specialized masking strategies. Pre-trained on 17 diverse EEG datasets and validated on 10 downstream datasets spanning 5 tasks, THD-BAR consistently outperforms existing methods, demonstrating superior generalization and modeling capabilities.",
+    "evaluation": {
+      "benchmarks": [
+        "DEAP",
+        "SEED",
+        "MIBCI",
+        "BCIC4-1",
+        "EEGMat",
+        "STEW",
+        "EDF",
+        "HMC",
+        "TUAB",
+        "TUEV"
+      ],
+      "headline_results": [
+        "Consistently outperforms existing methods across 9 of 10 evaluated downstream EEG datasets"
+      ],
+      "tasks": [
+        "emotion recognition",
+        "motor imagery recognition",
+        "mental workload recognition",
+        "sleeping stage recognition",
+        "epilepsy recognition"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: THD-BAR leverages a Brain Topology Hierarchy to capture multi-scale spatial and temporal dynamics.",
+      "Novel autoregressive framework: Introduces \"next-scale-time prediction\" strategy to model complex spatio-temporal dependencies.",
+      "Extensive validation: Pre-trained on 17 datasets and evaluated on 10 downstream tasks, consistently outperforming existing methods."
+    ],
+    "limitations": [
+      "Current multi-modal integration primarily serves instruction-based fine-tuning",
+      "Deeper fusion with other physiological signals or richer contextual data remains an area for expansion",
+      "Model efficiency for real-time BCI applications needs improvement through compression techniques"
+    ],
+    "method": {
+      "architecture": "Transformer-based autoregressive model with Topology-Hierarchical Vector Quantized-Variational Autoencoder (THVQ-VAE)",
+      "finetuning": "Fine-tuned on 10 downstream EEG datasets across 5 tasks",
+      "objective": "Autoregressive next-scale-time prediction",
+      "pretraining": "Pre-trained on 17 diverse EEG datasets"
+    },
+    "notes": "{\"chars\": 63881, \"error\": null, \"pages\": 19, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=17615",
+    "one_liner": "THD-BAR introduces a novel autoregressive framework for EEG that leverages a Brain Topology Hierarchy to capture multi-scale spatial and temporal dynamics.",
+    "open_source": {
+      "code_url": "https://github.com/thdbar/THD-BAR",
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-11-05",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "autoregressive"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "discrete-tokens"
+      ],
+      "topology": [
+        "fixed-montage"
+      ]
+    },
+    "title": "THD-BAR: Topology Hierarchical Derived Brain Autoregressive Modeling for EEG Generic Representations",
+    "unique_contribution": "THD-BAR introduces the Brain Topology Hierarchy (BTH) to redefine autoregressive learning for EEG as \"next-scale-time prediction,\" enabling simultaneous modeling of spatial and temporal dynamics.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2511.05863",
+    "categories": [
+      "cs.LG",
+      "cs.AI"
+    ],
+    "data_scale": {
+      "channels": null,
+      "datasets": [
+        "DEAP",
+        "SEED",
+        "SEED-IV",
+        "MAHNOB-HCI",
+        "AMIGOS",
+        "MPED",
+        "BP4D",
+        "KMU-IEMOCAP"
+      ],
+      "eeg_hours": null,
+      "subjects": 293.0
+    },
+    "detailed_summary": "EMOD addresses the challenge of generalizing EEG-based emotion recognition across heterogeneous datasets by proposing a unified pretraining framework. The key innovation is projecting diverse emotion labels (discrete and continuous) into a shared Valence-Arousal space and using soft-weighted supervised contrastive learning to encourage emotionally similar samples to cluster in the latent space. To handle varying EEG formats, EMOD employs a flexible backbone with a Triple-Domain Encoder (temporal, spectral, spatial) followed by a Spatial-Temporal Transformer. The model is pretrained on 8 public EEG datasets and evaluated on 3 benchmark datasets, achieving state-of-the-art performance while using significantly fewer parameters than existing foundation models.",
+    "evaluation": {
+      "benchmarks": [
+        "FACED",
+        "SEED-V",
+        "SEED"
+      ],
+      "headline_results": [
+        "Achieves state-of-the-art performance on three benchmark datasets with BACC, Kappa, and WF1 metrics"
+      ],
+      "tasks": [
+        "emotion recognition"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: EMOD learns generalizable and emotion-aware representations from heterogeneous datasets using V-A guided contrastive learning.",
+      "Unified emotion representation: Projects discrete and continuous emotion labels into shared V-A space with soft-weighted contrastive loss for semantic alignment.",
+      "Flexible architecture: Triple-Domain Encoder with Spatial-Temporal Transformer captures temporal, spectral, and spatial features across diverse EEG formats."
+    ],
+    "limitations": [
+      "Requires V-A mapping for datasets with discrete emotion labels",
+      "Performance depends on quality of V-A space construction",
+      "Limited to emotion recognition tasks, not general EEG applications",
+      "Pretraining requires multiple heterogeneous datasets",
+      "May not generalize to EEG datasets with very different acquisition protocols"
+    ],
+    "method": {
+      "architecture": "Triple-Domain Encoder (temporal, spectral, spatial) + Spatial-Temporal Transformer with relative temporal encoding",
+      "finetuning": "Fine-tuned on specific emotion recognition tasks with task-specific heads",
+      "objective": "V-A guided soft-weighted supervised contrastive learning",
+      "pretraining": "Pretrained on 8 public EEG datasets with diverse emotion annotation schemes"
+    },
+    "notes": "{\"chars\": 44515, \"error\": null, \"pages\": 9, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=12675",
+    "one_liner": "EMOD is a unified EEG emotion representation framework that leverages V-A guided contrastive learning to achieve state-of-the-art performance across heterogeneous datasets.",
+    "open_source": {
+      "code_url": "https://github.com/cyn4396/EMOD",
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-11-08",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "contrastive"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "EMOD: A Unified EEG Emotion Representation Framework Leveraging V-A Guided Contrastive Learning",
+    "unique_contribution": "EMOD is the first framework to unify heterogeneous EEG emotion datasets through V-A guided contrastive learning, enabling semantically aligned representation learning across datasets with different annotation schemes and formats.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2511.08444",
+    "categories": [
+      "cs.LG"
+    ],
+    "data_scale": {
+      "channels": 62.0,
+      "datasets": [
+        "SEED",
+        "DEAP",
+        "DREAMER"
+      ],
+      "eeg_hours": null,
+      "subjects": null
+    },
+    "detailed_summary": "This paper addresses the challenge of profound dataset heterogeneity in EEG-based emotion recognition, where varying channel configurations and subject variability hinder generalizable models. The authors propose 'One Model for All', a universal pre-training framework that decouples learning into two stages: (1) univariate pre-training via self-supervised contrastive learning on individual channels, enabled by a Unified Channel Schema (UCS) that leverages the union of channels across datasets; and (2) multivariate fine-tuning using a novel 'ART' (Adaptive Resampling Transformer) and 'GAT' (Graph Attention Network) architecture to capture complex spatio-temporal dependencies. Experiments demonstrate that universal pre-training is essential for stabilizing training and achieving substantial performance gains, with the framework achieving new state-of-the-art results on SEED (99.27%), DEAP (93.69%), and DREAMER (93.93%), as well as superior cross-dataset transfer performance.",
+    "evaluation": {
+      "benchmarks": [
+        "SEED",
+        "DEAP",
+        "DREAMER"
+      ],
+      "headline_results": [
+        "SEED: 99.27%",
+        "DEAP: 93.69%",
+        "DREAMER: 93.93%"
+      ],
+      "tasks": [
+        "Emotion recognition"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: 'One Model for All' framework achieves SOTA performance (99.27% SEED, 93.69% DEAP, 93.93% DREAMER) through universal pre-training.",
+      "Core method novelty: Decoupled learning with univariate pre-training via contrastive learning and multivariate fine-tuning using ART-GAT architecture.",
+      "Strongest evidence: Universal pre-training prevents training collapse and provides +7.65% gain on DEAP vs scratch, with GAT module critical for handling high-noise data (+22.19% over GCN)."
+    ],
+    "limitations": [
+      "Pre-training requires access to multiple heterogeneous datasets simultaneously",
+      "Cross-dataset transfer performance depends on channel overlap between source and target datasets",
+      "Framework complexity may limit practical deployment in resource-constrained settings",
+      "Evaluation focused on within-subject protocol, limiting assessment of true cross-subject generalization",
+      "No explicit comparison with larger foundation models or scaling experiments"
+    ],
+    "method": {
+      "architecture": "ART (Adaptive Resampling Transformer) + GAT (Graph Attention Network)",
+      "finetuning": "Multivariate fine-tuning with ART-GAT architecture",
+      "objective": "Contrastive learning",
+      "pretraining": "Univariate pre-training on individual channels with Unified Channel Schema"
+    },
+    "notes": "{\"chars\": 76913, \"error\": null, \"pages\": 16, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=20919",
+    "one_liner": "Universal pre-training framework for EEG emotion recognition across heterogeneous datasets using contrastive learning and adaptive architecture.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-11-11",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "contrastive"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "One Model for All: Universal Pre-training for EEG based Emotion Recognition across Heterogeneous Datasets and Paradigms",
+    "unique_contribution": "The paper introduces a decoupled pre-training and fine-tuning paradigm with a Unified Channel Schema that enables effective universal pre-training across heterogeneous EEG datasets, achieving SOTA performance and cross-dataset transfer.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2511.08861",
+    "categories": [
+      "cs.LG",
+      "cs.HC"
+    ],
+    "data_scale": {
+      "channels": 0.0,
+      "datasets": [
+        "dataset1",
+        "dataset2",
+        "dataset3",
+        "dataset4",
+        "dataset5",
+        "dataset6",
+        "dataset7"
+      ],
+      "eeg_hours": 0.0,
+      "subjects": 0.0
+    },
+    "detailed_summary": "EEG-X addresses two fundamental challenges in EEG analysis: variability across datasets caused by differences in recording devices and configurations, and the low signal-to-noise ratio (SNR) of EEG signals. The model introduces a novel location-based channel embedding that encodes spatial information and improves generalization across domains by allowing the model to handle varying channel numbers, combinations, and recording lengths. To enhance robustness against noise, EEG-X employs a noise-aware masking and reconstruction strategy in both raw and latent spaces, reconstructing denoised signals obtained through artifact removal rather than raw noisy signals. Additionally, EEG-X introduces a dictionary-inspired convolutional transformation (DiCT) layer that projects signals into a structured feature space before computing reconstruction loss, reducing noise sensitivity and capturing frequency- and shape-aware similarities. Experiments on datasets collected from diverse devices show that EEG-X outperforms state-of-the-art methods across multiple downstream EEG tasks and excels in cross-domain settings where pre-trained and downstream datasets differ in electrode layouts.",
+    "evaluation": {
+      "benchmarks": [
+        "dataset1",
+        "dataset2",
+        "dataset3",
+        "dataset4",
+        "dataset5",
+        "dataset6",
+        "dataset7"
+      ],
+      "headline_results": [
+        "state-of-the-art performance across all tasks",
+        "strong generalization in cross-domain settings",
+        "robustness to device variability"
+      ],
+      "tasks": [
+        "emotion detection",
+        "mental workload classification",
+        "abnormal EEG classification",
+        "epileptiform classification"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: EEG-X achieves state-of-the-art performance across diverse tasks and datasets through device-agnostic and noise-robust representation learning.",
+      "Novel location-based channel embedding: Encodes electrode positions and their neighborhoods, preserving brain-region similarity and enabling robust transfer across devices with different channel layouts.",
+      "Noise-aware reconstruction with DiCT: Reconstructs artifact-removed signals in both raw and latent spaces using a dictionary-inspired convolutional transformation layer that reduces noise sensitivity and captures frequency- and shape-aware similarities."
+    ],
+    "limitations": [
+      "Performance depends on the quality of artifact removal preprocessing",
+      "Requires large-scale unlabeled EEG data for pretraining",
+      "May not generalize to extremely rare or novel EEG patterns",
+      "Computational resources needed for training large foundation models",
+      "Evaluation focused on specific EEG tasks and may not cover all clinical applications"
+    ],
+    "method": {
+      "architecture": "transformer with location-based channel embedding",
+      "finetuning": "supervised finetuning on downstream EEG tasks",
+      "objective": "dual self-supervised learning with latent space self-reconstruction and noise-aware raw space reconstruction",
+      "pretraining": "unsupervised pretraining on diverse EEG datasets"
+    },
+    "notes": "{\"chars\": 62996, \"error\": null, \"pages\": 21, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=17355",
+    "one_liner": "EEG-X is a foundation model for EEG that achieves state-of-the-art performance across diverse tasks and datasets through device-agnostic and noise-robust representation learning.",
+    "open_source": {
+      "code_url": "https://github.com/Emotiv/EEG-X",
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-11-12",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "EEG-X: Device-Agnostic and Noise-Robust Foundation Model for EEG",
+    "unique_contribution": "EEG-X introduces a device-agnostic and noise-robust foundation model for EEG that combines location-based channel embeddings, noise-aware reconstruction in both raw and latent spaces, and a dictionary-inspired convolutional transformation layer to achieve state-of-the-art performance across diverse EEG tasks and datasets.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2511.11940",
+    "categories": [
+      "cs.LG",
+      "eess.SP"
+    ],
+    "data_scale": {
+      "channels": 25.0,
+      "datasets": [
+        "You Snooze You Win Challenge Dataset",
+        "Temple University Hospital EEG Corpus"
+      ],
+      "eeg_hours": null,
+      "subjects": 16373.0
+    },
+    "detailed_summary": "Self-supervised learning (SSL) for EEG has largely relied on masked reconstruction strategies like MAE, which capture local temporal patterns but miss long-range dependencies. This paper introduces PARS (Pairwise Relative Shift) pretraining, a novel pretext task that predicts relative temporal shifts between randomly sampled EEG window pairs. Unlike reconstruction-based methods, PARS encourages encoders to learn representations that capture relative temporal composition and long-range dependencies inherent in neural signals. Through comprehensive evaluation on various EEG decoding tasks, PARS-pretrained transformers consistently outperform existing pretraining strategies in both label-efficient and transfer learning settings, establishing a new paradigm for self-supervised EEG representation learning.",
+    "evaluation": {
+      "benchmarks": [
+        "YSYW",
+        "EESM17",
+        "TUAB",
+        "TUSZ",
+        "PhysioNet-MI"
+      ],
+      "headline_results": [
+        "PARS outperforms MAE, MP3, DropPos on clinical sleep staging with limited labels",
+        "PARS achieves best or second-best performance across 4 diverse EEG datasets"
+      ],
+      "tasks": [
+        "sleep staging",
+        "abnormal detection",
+        "seizure detection",
+        "motor imagery"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: PARS pretraining predicts relative temporal shifts between randomly sampled EEG window pairs to capture long-range dependencies.",
+      "Method novelty: Uses cross-attention decoder to estimate pairwise temporal distances while masking positional information to avoid trivial solutions.",
+      "Strongest evidence: PARS consistently outperforms MAE, MP3, and DropPos across sleep staging, abnormal detection, seizure detection, and motor imagery tasks in both label-efficient and transfer learning settings."
+    ],
+    "limitations": [
+      "Limited to single-channel pretraining, requiring additional architecture for multi-channel adaptation",
+      "Computationally intensive due to combinatorial pairwise distance estimation",
+      "Performance on seizure detection similar to MAE, suggesting complementary local features may be needed",
+      "Requires careful hyperparameter tuning for masking ratio and patch sampling strategy",
+      "Limited evaluation on non-clinical EEG datasets beyond the four tested domains"
+    ],
+    "method": {
+      "architecture": "Transformer encoder with 12.7M parameters (8 blocks, 8 heads, 512 hidden dim)",
+      "finetuning": "Multi-channel adaptation via spatial cross-attention, weighted cross-entropy loss",
+      "objective": "Pairwise relative shift prediction between randomly sampled EEG patches",
+      "pretraining": "1000 epochs on combined clinical EEG datasets using MSE loss"
+    },
+    "notes": "{\"chars\": 41568, \"error\": null, \"pages\": 13, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=11757",
+    "one_liner": "PARS pretraining predicts relative temporal shifts between EEG window pairs to capture long-range dependencies.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-11-14",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "contrastive"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "fixed-montage"
+      ]
+    },
+    "title": "Learning the relative composition of EEG signals using pairwise relative shift pretraining",
+    "unique_contribution": "PARS pretraining introduces a novel pretext task that predicts relative temporal shifts between EEG window pairs, enabling transformers to capture long-range dependencies and relative temporal composition better than existing masked reconstruction approaches.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2511.16828",
+    "categories": [
+      "cs.LG",
+      "cs.AI"
+    ],
+    "data_scale": {
+      "channels": null,
+      "datasets": [
+        "BCIC-2A",
+        "BCIC-2B",
+        "SEED",
+        "PhysioNet-MI"
+      ],
+      "eeg_hours": null,
+      "subjects": 142.0
+    },
+    "detailed_summary": "ManifoldFormer addresses a fundamental limitation in existing EEG foundation models by explicitly modeling neural signals on Riemannian manifolds rather than treating them as generic Euclidean time series. The architecture integrates three cascaded innovations: a Riemannian VAE that learns compact manifold embeddings while preserving geometric structure through hypersphere and hyperbolic projections, a geometric Transformer with geodesic-aware attention mechanisms that operate directly on neural manifolds using manifold distances instead of Euclidean distances, and a dynamics predictor leveraging neural ODEs with manifold constraints to model smooth neural state evolution. Extensive evaluation across four public datasets demonstrates substantial improvements over state-of-the-art methods, with 4.6-4.8% higher accuracy and 6.2-10.2% higher Cohen's Kappa, while maintaining robust cross-subject generalization. The geometric approach reveals meaningful neural patterns consistent with neurophysiological principles, establishing geometric constraints as essential for effective EEG foundation models.",
+    "evaluation": {
+      "benchmarks": [
+        "BCIC-2A",
+        "BCIC-2B",
+        "SEED",
+        "PhysioNet-MI"
+      ],
+      "headline_results": [
+        "4.6-4.8% higher accuracy",
+        "6.2-10.2% higher Cohen's Kappa"
+      ],
+      "tasks": [
+        "motor imagery",
+        "emotion recognition"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: ManifoldFormer introduces geometric deep learning by modeling neural signals on Riemannian manifolds rather than Euclidean space.",
+      "Novel geometric architecture: Integrates Riemannian VAE for manifold embedding, geometric Transformer with geodesic-aware attention, and neural ODE dynamics predictor.",
+      "Strong empirical results: Achieves 4.6-4.8% higher accuracy and 6.2-10.2% higher Cohen's Kappa across four public EEG datasets compared to state-of-the-art methods."
+    ],
+    "limitations": [
+      "Requires careful manifold selection (hypersphere vs hyperbolic) for different EEG tasks",
+      "Computational complexity higher than standard Euclidean approaches due to geodesic calculations",
+      "Limited evaluation on only four public datasets, may not generalize to all EEG paradigms",
+      "No explicit discussion of computational requirements or inference speed",
+      "Implementation details for Riemannian operations not fully specified"
+    ],
+    "method": {
+      "architecture": "Riemannian VAE + Geometric Transformer + Neural ODE dynamics predictor",
+      "finetuning": "End-to-end fine-tuning on downstream tasks",
+      "objective": "Self-supervised learning with geometric consistency and cross-subject alignment",
+      "pretraining": "Riemannian VAE pretraining (50 epochs), Transformer training (100 epochs), end-to-end fine-tuning (50 epochs)"
+    },
+    "notes": "{\"chars\": 19324, \"error\": null, \"pages\": 5, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=6162",
+    "one_liner": "ManifoldFormer introduces geometric deep learning to EEG foundation models by modeling neural signals on Riemannian manifolds, achieving 4.6-4.8% accuracy gains over state-of-the-art methods.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-11-20",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "contrastive"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "ManifoldFormer: Geometric Deep Learning for Neural Dynamics on Riemannian Manifolds",
+    "unique_contribution": "ManifoldFormer is the first EEG foundation model to explicitly incorporate Riemannian manifold geometry into its architecture, replacing Euclidean assumptions with geodesic-aware mechanisms that better capture the intrinsic structure of neural dynamics.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2511.18571",
+    "categories": [
+      "cs.LG"
+    ],
+    "data_scale": {
+      "channels": null,
+      "datasets": [
+        "unknown"
+      ],
+      "eeg_hours": null,
+      "subjects": null
+    },
+    "detailed_summary": "SAMBA addresses the challenge of long-sequence EEG modeling by introducing a Mamba-based U-shaped encoder-decoder architecture that captures long-range temporal dependencies and spatial variability in EEG data. The model incorporates three key innovations: Temporal Semantic Random Masking for semantic-level sequence reconstruction, a Multi-Head Differential Mamba module to suppress redundancy and emphasize salient temporal structures, and a Spatial-Adaptive Input Embedding that learns unified embeddings in a three-dimensional Euclidean space, enabling robustness across devices. Experiments on thirteen EEG datasets across diverse tasks, electrode configurations, and sequence durations demonstrate that SAMBA consistently outperforms state-of-the-art methods while maintaining low memory consumption and inference time.",
+    "evaluation": {
+      "benchmarks": [
+        "balanced accuracy",
+        "AUROC",
+        "weighted F1 score"
+      ],
+      "headline_results": [
+        "outperforms state-of-the-art methods"
+      ],
+      "tasks": [
+        "motor imagery",
+        "P300 ERP",
+        "emotion detection",
+        "abnormality detection"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: SAMBA leverages Mamba-based architecture to handle long EEG sequences efficiently while maintaining low memory usage.",
+      "Spatial and temporal compatibility: SAMBA's 3D Spatial-Adaptive Input Embedding enables generalization across different electrode montages, and its hierarchical design supports sequences from short to very long durations.",
+      "Superior performance: SAMBA consistently outperforms state-of-the-art methods across thirteen EEG datasets while demonstrating strong representation learnability and cross-domain transferability."
+    ],
+    "limitations": [
+      "Requires pretraining on large-scale EEG data to achieve optimal performance",
+      "May have limited generalization to extremely rare or novel EEG patterns not present in pretraining data",
+      "Computational requirements for pretraining on very long sequences may be substantial"
+    ],
+    "method": {
+      "architecture": "Mamba-based U-shaped encoder-decoder architecture",
+      "finetuning": "Multi-Head Differential Mamba and Spatial-Adaptive Input Embedding",
+      "objective": "self-supervised learning",
+      "pretraining": "Temporal Semantic Random Masking"
+    },
+    "notes": "{\"chars\": 62381, \"error\": null, \"pages\": 19, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=17211",
+    "one_liner": "SAMBA is a self-supervised learning framework with a Mamba-based U-shaped encoder-decoder architecture for long-sequence EEG modeling.",
+    "open_source": {
+      "code_url": "https://github.com/Jiazhen-Hong/SAMBA",
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-11-23",
+    "tags": {
+      "backbone": [
+        "mamba-ssm"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "SAMBA: Toward a Long-Context EEG Foundation Model via Spatial Embedding and Differential Mamba",
+    "unique_contribution": "SAMBA introduces a Mamba-based U-shaped encoder-decoder architecture with Temporal Semantic Random Masking, Multi-Head Differential Mamba, and Spatial-Adaptive Input Embedding to enable efficient long-sequence EEG modeling across diverse electrode montages and recording durations.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2512.08959",
+    "categories": [
+      "cs.LG",
+      "cs.AI"
+    ],
+    "data_scale": {
+      "channels": 19.0,
+      "datasets": [
+        "datasets"
+      ],
+      "eeg_hours": 2000.0,
+      "subjects": 4000.0
+    },
+    "detailed_summary": "This paper introduces EEG-Bench, a comprehensive benchmarking framework designed to evaluate EEG-based foundation models in clinical applications. The benchmark spans 11 well-defined diagnostic tasks across 14 publicly available EEG datasets, including epilepsy, schizophrenia, Parkinson's disease, OCD, and mild traumatic brain injury. It features minimal preprocessing, standardized evaluation protocols, and enables side-by-side comparisons of classical baselines and modern foundation models. The authors conduct the first comprehensive comparison of EEG foundation models and classical baselines in clinical settings, finding that while foundation models achieve strong performance in certain settings, simpler models often remain competitive, particularly under clinical distribution shifts. All datasets and code are released in a reproducible, plug-and-play format to accelerate research in clinical EEG modeling.",
+    "evaluation": {
+      "benchmarks": [
+        "balanced accuracy",
+        "weighted F1 score"
+      ],
+      "headline_results": [
+        "LaBraM excels in abnormal EEG detection (0.838 balanced accuracy)",
+        "Classical models like LDA outperform on mild traumatic brain injury classification",
+        "Foundation models struggle with epilepsy detection and sleep staging"
+      ],
+      "tasks": [
+        "abnormal/abnormal EEG detection",
+        "epilepsy detection",
+        "Parkinson's disease classification",
+        "OCD",
+        "mTBI",
+        "schizophrenia",
+        "binary artifact detection",
+        "multiclass artifact detection",
+        "sleep staging",
+        "seizure detection"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model benchmark: EEG-Bench evaluates 11 clinical diagnostic tasks across 14 public datasets spanning epilepsy, schizophrenia, Parkinson's disease, OCD, and mild traumatic brain injury.",
+      "Core method/evidence: Comprehensive comparison of classical baselines (LDA, SVM) with foundation models (BENDR, Neuro-GPT, LaBraM) shows LaBraM excels in abnormal EEG detection (0.838 balanced accuracy) while simpler models remain competitive in low-data regimes.",
+      "Main practical takeaway: Foundation models show task-dependent performance - LaBraM performs well on most tasks but struggles with epilepsy detection and sleep staging, while classical models like LDA outperform on mild traumatic brain injury classification."
+    ],
+    "limitations": [
+      "Limited model suite includes only a few standard ML pipelines and foundation models, missing specialized models for individual tasks like seizure detection and sleep staging",
+      "Foundation models struggle with highly imbalanced datasets like epilepsy detection and tasks requiring long-range temporal context like sleep staging",
+      "Models require significant computational resources (270 hours on A100 GPU and 16 AMD EPYC 7742 CPUs for full evaluation)",
+      "Channel compatibility issues require zero-padding or arbitrary channel mapping for models requiring fixed channel sets"
+    ],
+    "method": {
+      "architecture": "Standardized evaluation framework with minimal preprocessing (resampling to 200 Hz, bandpass filtering 0.1-75 Hz, notch filtering), classical baselines using LDA/SVM with Brainfeatures-extracted handcrafted features, and foundation models (BENDR, Neuro-GPT, LaBraM) fine-tuned on segmented EEG chunks for long recordings.",
+      "finetuning": "Standardized evaluation framework with minimal preprocessing (resampling to 200 Hz, bandpass filtering 0.1-75 Hz, notch filtering), classical baselines using LDA/SVM with Brainfeatures-extracted handcrafted features, and foundation models (BENDR, Neuro-GPT, LaBraM) fine-tuned on segmented EEG chunks for long recordings.",
+      "objective": "Standardized evaluation framework with minimal preprocessing (resampling to 200 Hz, bandpass filtering 0.1-75 Hz, notch filtering), classical baselines using LDA/SVM with Brainfeatures-extracted handcrafted features, and foundation models (BENDR, Neuro-GPT, LaBraM) fine-tuned on segmented EEG chunks for long recordings.",
+      "pretraining": "Standardized evaluation framework with minimal preprocessing (resampling to 200 Hz, bandpass filtering 0.1-75 Hz, notch filtering), classical baselines using LDA/SVM with Brainfeatures-extracted handcrafted features, and foundation models (BENDR, Neuro-GPT, LaBraM) fine-tuned on segmented EEG chunks for long recordings."
+    },
+    "notes": "{\"chars\": 54328, \"error\": null, \"pages\": 20, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=14929",
+    "one_liner": "Unified benchmarking framework for evaluating EEG foundation models across 11 clinical diagnostic tasks using 14 public datasets.",
+    "open_source": {
+      "code_url": "https://github.com/ETH-DISCO/EEG-Bench",
+      "license": "GNU GPL v3.0",
+      "weights_url": null
+    },
+    "paper_type": "benchmark",
+    "published_date": "2025-11-28",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction",
+        "contrastive"
+      ],
+      "paper_type": [
+        "benchmark"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "fixed-montage",
+        "channel-flexible"
+      ]
+    },
+    "title": "EEG-Bench: A Benchmark for EEG Foundation Models in Clinical Applications",
+    "unique_contribution": "First unified benchmarking framework that systematically evaluates EEG foundation models across diverse clinical tasks and datasets, revealing that simpler models can be competitive with foundation models in clinical settings.",
+    "used_fulltext": true
+  }
+]

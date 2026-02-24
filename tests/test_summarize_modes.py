@@ -158,3 +158,70 @@ def test_summarize_uses_slices_when_count_tokens_fails():
     payload = _payload_from_prompt(llm.prompts[0])
     assert "fulltext" not in payload
     assert "fulltext_slices" in payload
+
+
+def test_summarize_normalizes_paper_type_and_numeric_fields():
+    schema = load_schema(Path("schemas/summary.json"))
+
+    class ListPaperTypeLLM(CaptureLLM):
+        def generate(self, prompt, schema=None):  # noqa: ANN001
+            self.prompts.append(prompt)
+            return json.dumps(
+                {
+                    "paper_type": ["eeg-fm"],
+                    "one_liner": "Compact EEG FM summary.",
+                    "detailed_summary": (
+                        "This paper proposes a compact EEG foundation model architecture with "
+                        "efficient attention for long sequences and broad transfer. "
+                        "It demonstrates improved efficiency and competitive results across tasks."
+                    ),
+                    "unique_contribution": "Efficient alternating attention for EEG FM scaling.",
+                    "key_points": ["Single point only"],
+                    "data_scale": {
+                        "datasets": ["Dataset-A"],
+                        "subjects": "10k+",
+                        "eeg_hours": "20000+",
+                        "channels": "64",
+                    },
+                    "method": {
+                        "architecture": "Transformer",
+                        "objective": "Masked prediction",
+                        "pretraining": "Self-supervised",
+                        "finetuning": "Linear probe",
+                    },
+                    "evaluation": {
+                        "tasks": ["classification"],
+                        "benchmarks": ["Benchmark-A"],
+                        "headline_results": ["Improved AUROC"],
+                    },
+                    "open_source": {"code_url": None, "weights_url": None, "license": None},
+                    "tags": {
+                        "paper_type": ["eeg-fm"],
+                        "backbone": ["transformer"],
+                        "objective": ["masked-reconstruction"],
+                        "tokenization": ["time-patch"],
+                        "topology": ["channel-flexible"],
+                    },
+                    "limitations": ["limited cohorts", "single data source"],
+                }
+            )
+
+    llm = ListPaperTypeLLM(token_result=50)
+    out = summarize_paper(
+        paper=PAPER,
+        triage=TRIAGE,
+        raw_fulltext="long full text",
+        fulltext_slices=SLICES,
+        used_fulltext=True,
+        notes="meta",
+        llm=llm,
+        prompt_template="PAYLOAD:\n{{INPUT_JSON}}",
+        repair_template="schema={{SCHEMA_JSON}} bad={{BAD_OUTPUT}}",
+        schema=schema,
+        max_input_tokens=100,
+    )
+    assert out["paper_type"] == "new_model"
+    assert out["data_scale"]["subjects"] == 10000.0
+    assert out["data_scale"]["eeg_hours"] == 20000.0
+    assert out["data_scale"]["channels"] == 64.0
+    assert len(out["key_points"]) >= 2

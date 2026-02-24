@@ -1,0 +1,157 @@
+[
+  {
+    "arxiv_id_base": "2405.19373",
+    "categories": [
+      "eess.SP",
+      "cs.LG"
+    ],
+    "data_scale": {
+      "channels": 62.0,
+      "datasets": [
+        "SEED",
+        "SEED-V"
+      ],
+      "eeg_hours": null,
+      "subjects": 31.0
+    },
+    "detailed_summary": "This paper proposes Mood Reader, a pre-trained model based multimodal cross-scale fusion architecture for cross-subject emotion recognition from EEG signals. The model leverages masked brain signal modeling to learn universal latent representations from large-scale EEG data, and employs an interlinked spatial-temporal attention mechanism to process Differential Entropy features extracted from EEG. A multi-level fusion layer integrates discriminative features across different dimensions and modalities, maximizing their advantages. Extensive experiments on public datasets demonstrate Mood Reader's superior performance in cross-subject emotion recognition tasks, outperforming state-of-the-art methods.",
+    "evaluation": {
+      "benchmarks": [
+        "SEED",
+        "SEED-V"
+      ],
+      "headline_results": [
+        "Outperforms state-of-the-art methods including DGCNN, RGNN, SOGNN, and BFE-Net"
+      ],
+      "tasks": [
+        "cross-subject emotion recognition"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: Mood Reader uses pre-training on large-scale EEG data to learn universal latent representations for cross-subject emotion recognition.",
+      "Interlinked spatial-temporal attention: The model employs an attention-based interlinked spatial-temporal mechanism to capture complex dynamics of EEG signals and their compensatory relationships.",
+      "Multi-level fusion: A multi-level fusion layer integrates discriminative features across different dimensions and modalities, maximizing their advantages for emotion recognition."
+    ],
+    "limitations": [
+      "Limited to specific EEG datasets (SEED and SEED-V)",
+      "Performance may vary across different emotion recognition tasks",
+      "Requires large-scale pre-training data for optimal performance"
+    ],
+    "method": {
+      "architecture": "Pre-training with masked brain signal modeling on large-scale EEG data, interlinked spatial-temporal attention mechanism for DE feature processing, multi-level fusion layer for multimodal cross-scale feature integration.",
+      "finetuning": null,
+      "objective": null,
+      "pretraining": "Masked brain signal modeling on large-scale EEG data"
+    },
+    "notes": "{\"chars\": 40982, \"error\": null, \"pages\": 15, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=11819",
+    "one_liner": "Pre-trained model based multimodal Mood Reader for cross-subject emotion recognition using interlinked spatial-temporal attention.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2024-05-28",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "fixed-montage"
+      ]
+    },
+    "title": "Multi-modal Mood Reader: Pre-trained Model Empowers Cross-Subject Emotion Recognition",
+    "unique_contribution": "Mood Reader introduces a novel multi-modal cross-scale fusion model that integrates pre-trained EEG representations with interlinked spatial-temporal attention for cross-subject emotion recognition.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2405.18765",
+    "categories": [
+      "cs.LG"
+    ],
+    "data_scale": {
+      "channels": 0.0,
+      "datasets": [
+        "unknown"
+      ],
+      "eeg_hours": 2500.0,
+      "subjects": 0.0
+    },
+    "detailed_summary": "LaBraM addresses the challenge of limited generalizability in current EEG deep learning models by proposing a unified foundation model that can handle diverse EEG datasets with varying channels and lengths. The model segments raw EEG signals into channel patches and uses vector-quantized neural spectrum prediction to train a semantically rich neural tokenizer that encodes continuous raw EEG channel patches into compact neural codes. LaBraM is then pre-trained by predicting the original neural codes for masked EEG channel patches. The model was pre-trained on about 2,500 hours of various types of EEG signals from around 20 datasets and validated on multiple downstream tasks including abnormal detection, event type classification, emotion recognition, and gait prediction, where it outperforms all compared SOTA methods. The approach enables cross-dataset learning and demonstrates that large-scale unsupervised pre-training can learn universal EEG representations that generalize across different BCI tasks.",
+    "evaluation": {
+      "benchmarks": [
+        "TUAB",
+        "TUEV",
+        "SEED-V",
+        "MoBI"
+      ],
+      "headline_results": [
+        "0.8258 balanced accuracy on TUAB",
+        "0.6616 balanced accuracy on TUEV",
+        "0.4102 accuracy on SEED-V",
+        "strong correlation scores on MoBI"
+      ],
+      "tasks": [
+        "abnormal detection",
+        "event type classification",
+        "emotion recognition",
+        "gait prediction"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: LaBraM learns universal EEG representations through unsupervised pre-training on 2,500+ hours of diverse EEG data from 20+ datasets.",
+      "Cross-dataset learning capability: The model handles varying electrode configurations and time lengths through patch segmentation and spatial embeddings, enabling one pre-trained model to adapt to any downstream dataset.",
+      "SOTA performance across tasks: LaBraM outperforms all compared methods on abnormal detection, event type classification, emotion recognition, and gait prediction, with the largest 369M parameter model achieving the best results."
+    ],
+    "limitations": [
+      "Model size still small compared to large vision/language models, with 369M parameters being the largest for BCI but far from state-of-the-art in other domains",
+      "Requires full fine-tuning for downstream tasks, which is computationally and memory intensive",
+      "Trained only on unimodal EEG data without incorporating other modalities like images, language, or physiological signals",
+      "Performance improvements suggest potential for further scaling, but current data volume (2,500 hours) may be insufficient for largest model configurations"
+    ],
+    "method": {
+      "architecture": "neural Transformer",
+      "finetuning": "full fine-tuning for downstream tasks",
+      "objective": "masked EEG modeling pre-training",
+      "pretraining": "vector-quantized neural spectrum prediction with symmetric masking"
+    },
+    "notes": "{\"chars\": 90448, \"error\": null, \"pages\": 22, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=24297",
+    "one_liner": "LaBraM is a foundation model for EEG that learns universal representations through unsupervised pre-training on 2,500+ hours of diverse EEG data and achieves SOTA performance on multiple downstream BCI tasks.",
+    "open_source": {
+      "code_url": "https://github.com/935963004/LaBraM",
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2024-05-29",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "discrete-tokens"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI",
+    "unique_contribution": "LaBraM is the first large-scale foundation model for EEG that learns universal representations through unsupervised pre-training on over 2,500 hours of diverse EEG data, enabling cross-dataset learning and achieving SOTA performance across multiple BCI tasks.",
+    "used_fulltext": true
+  }
+]

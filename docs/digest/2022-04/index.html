@@ -1,0 +1,23 @@
+<!doctype html>
+<html><head><meta charset='utf-8'><title>EEG-FM Digest 2022-04</title>
+<link rel='stylesheet' href='../../assets/style.css'></head>
+<body>
+  <main>
+    <h1>EEG Foundation Model Digest — 2022-04</h1>
+    <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
+    <p>Top picks: 2204.03272</p>
+    <section><h2>new_model</h2>
+    <article class='paper-card' id='2204.03272'>
+      <h3><a href='http://arxiv.org/abs/2204.03272v1'>mulEEG: A Multi-View Representation Learning on EEG Signals</a></h3>
+      <div class='meta'>2022-04-07 · Vamsi Kumar, Likith Reddy, Shivam Kumar Sharma, Kamalakar Dadi, Chiranjeevi Yarra, Bapi S. Raju, Srijithesh Rajendran</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model: mulEEG uses multi-view self-supervised learning to learn effective EEG representations without labels.</li><li>Method novelty: Introduces diverse loss to encourage complementary information across time-series and spectrogram views.</li><li>Strong evidence: Outperforms supervised training and baselines on transfer learning experiments for sleep staging.</li></ul>
+      <p><strong>Unique contribution:</strong> mulEEG introduces a novel multi-view self-supervised learning method for EEG representation learning that outperforms supervised training on sleep staging tasks.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper proposes mulEEG, a novel multi-view self-supervised learning method for unsupervised EEG representation learning. The method aims to effectively utilize complementary information across multiple views (time-series and spectrogram) to learn better representations. The authors introduce a diverse loss function that further encourages complementary information across multiple views. The method with no access to labels beats supervised training while outperforming multi-view baseline methods on transfer learning experiments carried out on sleep-staging tasks. The authors posit that their method was able to learn better representations by using complementary multi-views.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
+      <p><a href='https://github.com/likith012/mulEEG'>code</a> </p>
+    </article>
+    </section>
+  </main>
+  <script src='../../assets/site.js'></script>
+</body></html>

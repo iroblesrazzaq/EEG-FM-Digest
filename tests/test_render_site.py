@@ -16,6 +16,11 @@ def test_month_page_snapshot():
                 "This paper proposes a reusable EEG foundation model backbone for cross-task transfer. "
                 "Its key novelty is a compact architecture that preserves performance while reducing compute."
             ),
+            "key_points": [
+                "Introduces an EEG foundation model for cross-task transfer.",
+                "Uses a compact backbone to reduce runtime cost.",
+                "Shows competitive performance across benchmarks.",
+            ],
             "unique_contribution": "A unique thing",
             "tags": {
                 "paper_type": ["eeg-fm"],

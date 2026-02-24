@@ -1,0 +1,83 @@
+<!doctype html>
+<html><head><meta charset='utf-8'><title>EEG-FM Digest 2025-05</title>
+<link rel='stylesheet' href='../../assets/style.css'></head>
+<body>
+  <main>
+    <h1>EEG Foundation Model Digest — 2025-05</h1>
+    <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
+    <p>Top picks: 2505.23107, 2505.23042, 2505.21507, 2505.18185, 2505.16724</p>
+    <section><h2>new_model</h2>
+    <article class='paper-card' id='2505.06291'>
+      <h3><a href='http://arxiv.org/abs/2505.06291v1'>ALFEE: Adaptive Large Foundation Model for EEG Representation</a></h3>
+      <div class='meta'>2025-05-07 · Wei Xiong, Junming Lin, Jiangtong Li, Jie Li, Changjun Jiang</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model: ALFEE employs hybrid attention to separate channel-wise feature aggregation from temporal dynamics modeling, enabling robust EEG representation with variable channel configurations.</li><li>Multi-task, multi-channel, multi-scale pretraining: ALFEE optimizes four complementary tasks—task prediction, channel mask reconstruction, temporal mask reconstruction, and temporal forecasting—enhanced by power spectral density features for frequency domain reconstruction.</li><li>Extensive experimental validation: After 25,000 hours of pretraining, ALFEE demonstrates superior performance across six downstream EEG tasks compared to existing foundation models, validating the scaling law in EEG signal representation.</li></ul>
+      <p><strong>Unique contribution:</strong> ALFEE introduces a hybrid attention architecture that separates channel-wise feature aggregation from temporal dynamics modeling, enabling robust EEG representation with variable channel configurations.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>ALFEE introduces a novel hybrid transformer architecture with two-stage optimization to address key challenges in EEG foundation modeling, including variable channel counts, insufficient channel-temporal supervision, and domain gaps between pretraining and downstream tasks. The framework employs a channel encoder for adaptive compression of variable channel information, a temporal encoder for task-guided evolution modeling, and a hybrid decoder for reconstruction in both temporal and frequency domains. During pretraining, ALFEE optimizes four complementary tasks—task prediction, channel mask reconstruction, temporal mask reconstruction, and temporal forecasting—enhanced by power spectral density features. Fine-tuning uses a full-model adaptation strategy with task-specific token dictionaries and cross-attention layers. Extensive experiments on 25,000 hours of pretraining data and six downstream tasks demonstrate superior performance over existing models.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-objective' title='objective'>Autoregressive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
+      <p><a href='https://github.com/xw1216/ALFEE'>code</a> </p>
+    </article>
+    
+
+    <article class='paper-card' id='2505.21507'>
+      <h3><a href='http://arxiv.org/abs/2505.21507v1'>Automatic detection of abnormal clinical EEG: comparison of a finetuned foundation model with two deep learning models</a></h3>
+      <div class='meta'>2025-05-13 · Aurore Bussalb, François Le Gac, Guillaume Jubien, Mohamed Rahmouni, Ruggero G. Bettinardi, Pedro Marinho R. de Oliveira, Phillipe Derambure, Nicolas Gaspard, Jacques Jonas, Louis Maillard, Laurent Vercueil, Hervé Vespignani, Philippe Laval, Laurent Koessler, Ulysse Gimenez</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model: BioSerenity-E1 finetuned achieves highest balanced accuracy (89.19-94.63%) across three test datasets.</li><li>Method novelty: Leverages masked self-supervised pretraining on 4,000 hours of EEG, then finetunes on 2,500 recordings.</li><li>Strong evidence: Outperforms CNN-LSTM and Transformer models, especially with limited training data (&lt;85 EEG hours).</li></ul>
+      <p><strong>Unique contribution:</strong> Demonstrates that finetuning a pretrained EEG foundation model (BioSerenity-E1) achieves superior classification performance compared to training deep learning models from scratch, particularly with smaller datasets.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper compares BioSerenity-E1, a foundation model pretrained via masked self-supervised learning on clinical EEG, with two deep learning models (CNN-LSTM and Transformer) for classifying 20-minute EEG recordings as normal or abnormal. All models were trained/finetuned on 2,500 EEGs and evaluated on three datasets: a large multicenter dataset (n=4,480), a small expert-annotated dataset (n=198), and the public TUAB evaluation set (n=276). BioSerenity-E1 finetuned achieved the highest balanced accuracy across all datasets (89.19% on dataset A, 94.63% on dataset B, 82.25% on TUAB), demonstrating superior performance and robustness, especially with limited training data.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
+      <p> </p>
+    </article>
+    
+
+    <article class='paper-card' id='2505.18185'>
+      <h3><a href='http://arxiv.org/abs/2505.18185v3'>BrainOmni: A Brain Foundation Model for Unified EEG and MEG Signals</a></h3>
+      <div class='meta'>2025-05-18 · Qinfan Xiao, Ziyun Cui, Chi Zhang, Siqi Chen, Wen Wu, Andrew Thwaites, Alexandra Woolgar, Bowen Zhou, Chao Zhang</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model: BrainOmni jointly pretrains on 1,997h EEG and 656h MEG data to learn unified brain signal representations.</li><li>Core method/evidence: Introduces BrainTokenizer with novel Sensor Encoder that encodes physical sensor properties, enabling compatibility across devices and modalities.</li><li>Main practical takeaway: Outperforms existing foundation models and task-specific baselines on diverse downstream tasks while generalizing to unseen EEG/MEG devices.</li></ul>
+      <p><strong>Unique contribution:</strong> BrainOmni is the first foundation model to support both EEG and MEG signals, incorporating large-scale MEG pretraining and introducing a novel Sensor Encoder that enables device-agnostic modeling through physical sensor property encoding.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper introduces BrainOmni, the first foundation model designed to generalize across heterogeneous EEG and MEG recordings. The key innovation is BrainTokenizer, a novel tokenizer that quantizes spatiotemporal brain activity into discrete representations using a Sensor Encoder that encodes physical sensor properties (spatial layout, orientation, type) rather than relying on inconsistent naming conventions. This enables compatibility across devices and modalities. BrainOmni learns unified semantic embeddings through self-supervised pretraining on 1,997 hours of EEG and 656 hours of MEG data. Experiments demonstrate that BrainOmni outperforms both existing foundation models and state-of-the-art task-specific models across a range of downstream tasks, generalizes effectively to unseen devices, and consistently benefits from joint EEG-MEG training.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Discrete Tokens</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
+      <p><a href='https://github.com/OpenTSLab/BrainOmni'>code</a> </p>
+    </article>
+    
+
+    <article class='paper-card' id='2505.16724'>
+      <h3><a href='http://arxiv.org/abs/2505.16724v2'>Advancing Brainwave Modeling with a Codebook-Based Foundation Model</a></h3>
+      <div class='meta'>2025-05-22 · Konstantinos Barmpas, Na Lee, Yannis Panagakis, Dimitrios A. Adamos, Nikolaos Laskaris, Stefanos Zafeiriou</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>LaBraM++ introduces a mathematically principled tokenizer that resolves phase representation discontinuities in existing EEG foundation models.</li><li>Replaces direct phase loss with sine/cosine phase loss functions, achieving 6% better performance than LaBraM on four BCI tasks while demonstrating lower training loss.</li><li>Achieves competitive performance against other open-source LBMs while providing a more stable training foundation for future EEG foundation model development.</li></ul>
+      <p><strong>Unique contribution:</strong> LaBraM++ resolves the fundamental mathematical flaw in EEG foundation models by replacing discontinuous phase loss with sine/cosine phase representations that preserve the circular topology of neural oscillations while enabling stable gradient-based optimization.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>LaBraM++ is an enhanced Large Brainwave Foundation Model that addresses fundamental mathematical limitations in existing EEG foundation models, particularly the discontinuous phase representation that causes optimization instability. The key innovation is replacing the direct phase loss function with sine/cosine phase loss functions that preserve the circular topology of neural oscillations while enabling stable gradient-based learning. This modification, grounded in signal processing theory, allows the model to better capture the full informational content of neural oscillations. Beyond the tokenizer improvement, LaBraM++ incorporates Common Average Reference and Z-scoring to reduce noise, enhanced temporal and spatial embeddings for heterogeneous EEG configurations, and a redesigned training procedure. When pre-trained on the same datasets as LaBraM and evaluated on four diverse BCI tasks (motor imagery, memory, sleep, and eyes open/closed), LaBraM++ achieves 6% better overall performance while demonstrating lower training loss, indicating more effective optimization.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Discrete Tokens</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
+      <p> </p>
+    </article>
+    
+
+    <article class='paper-card' id='2505.23042'>
+      <h3><a href='http://arxiv.org/abs/2505.23042v1'>From Theory to Application: Fine-Tuning Large EEG Model with Real-World Stress Data</a></h3>
+      <div class='meta'>2025-05-29 · Siwen Wang, Shitou Zhang, Wan-Lin Chen, Dung Truong, Tzyy-Ping Jung</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model application: Fine-tuning LaBraM on real-world classroom stress data achieves 90.47% balanced accuracy with a 5-second window.</li><li>Method novelty: Shows LEMs pretrained on large-scale EEG data can generalize to real-world environments, outperforming traditional stress classifiers in both accuracy and inference efficiency.</li><li>Strong evidence: Robustness testing across multiple random seeds and channel count experiments confirm model effectiveness while highlighting current limitations.</li></ul>
+      <p><strong>Unique contribution:</strong> Demonstrates that fine-tuning a foundation EEG model (LaBraM) on real-world classroom stress data achieves state-of-the-art performance with minimal window length, validating LEMs&#x27; applicability beyond controlled clinical settings.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper evaluates the real-world applicability of Large EEG Models (LEMs) by fine-tuning LaBraM, a foundation EEG model pretrained on over 2,500 hours of EEG data, on a stress classification dataset collected from 18 graduate students in a classroom setting. Unlike prior work focused on controlled clinical environments, this study demonstrates that fine-tuned LEMs can effectively process real-world EEG data, achieving 90.47% balanced accuracy with just a 5-second window. The results significantly outperform traditional stress classifiers and highlight the potential of shifting from model-centric to data-centric design in brain-computer interface applications.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Discrete Tokens</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
+      <p> </p>
+    </article>
+    
+
+    <article class='paper-card' id='2505.23107'>
+      <h3><a href='http://arxiv.org/abs/2505.23107v1'>EAD: An EEG Adapter for Automated Classification</a></h3>
+      <div class='meta'>2025-05-29 · Pushapdeep Singh, Jyoti Nigam, Medicherla Vamsi Krishna, Arnav Bhavsar, Aditya Nigam</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG adapter framework: EAD automatically adapts foundational EEG models to varying channel configurations without manual preprocessing.</li><li>Achieves 99.33% accuracy on EEG-ImageNet and 92.31% on BrainLat, outperforming existing methods.</li><li>Demonstrates zero-shot classification capability, validating strong generalization to unseen EEG classes.</li></ul>
+      <p><strong>Unique contribution:</strong> EAD introduces an automatic channel distillation adapter that enables end-to-end EEG classification across varying channel configurations without manual preprocessing, achieving state-of-the-art performance on both stimulus-based and resting-state EEG tasks.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper introduces EEG Adapter (EAD), a flexible framework designed to address the challenge of EEG signal classification across varying channel configurations and acquisition devices. EAD leverages a recent foundational EEG model (LaBraM) and introduces an adapter network that automatically distills EEG signals into a format compatible with the foundational model, eliminating the need for manual channel alignment. The framework is evaluated on two diverse datasets: EEG-ImageNet (stimulus-based visual decoding) and BrainLat (resting-state clinical diagnosis), achieving state-of-the-art accuracies of 99.33% and 92.31% respectively. The authors also demonstrate zero-shot classification capability on EEG-ImageNet, showcasing the model&#x27;s generalization to unseen classes.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
+      <p> </p>
+    </article>
+    </section>
+  </main>
+  <script src='../../assets/site.js'></script>
+</body></html>

@@ -1,0 +1,79 @@
+[
+  {
+    "arxiv_id_base": "2403.11772",
+    "categories": [
+      "cs.LG",
+      "cs.AI"
+    ],
+    "data_scale": {
+      "channels": 62.0,
+      "datasets": [
+        "lee2019 dataset"
+      ],
+      "eeg_hours": null,
+      "subjects": 54.0
+    },
+    "detailed_summary": "This exploratory study introduces Signal-JEPA, a Joint Embedding Predictive Architecture tailored for EEG signal representation. The key innovation is a domain-specific spatial block masking strategy that masks EEG channels within a radius of a randomly chosen central channel, enabling dynamic spatial filtering. The framework includes three novel downstream architectures for BCI tasks (motor imagery, ERP, SSVEP) and is evaluated on a 54-subject dataset. Results show that longer pre-training examples (16s) significantly improve downstream performance, while spatial filtering in the fine-tuning stage proves critical for accurate classification. The approach achieves state-of-the-art results on two of three BCI paradigms tested.",
+    "evaluation": {
+      "benchmarks": [
+        "lee2019 dataset"
+      ],
+      "headline_results": [
+        "97% AUC (state-of-the-art) for ERP",
+        "94% accuracy (state-of-the-art) for SSVEP",
+        "65% accuracy (below state-of-the-art) for MI"
+      ],
+      "tasks": [
+        "motor imagery",
+        "ERP",
+        "SSVEP"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: Signal-JEPA introduces a novel spatial block masking strategy for EEG self-supervised learning",
+      "Achieves state-of-the-art performance on ERP and SSVEP BCI tasks, with spatial filtering proving critical for downstream accuracy",
+      "Longer pre-training examples (16s) significantly improve performance compared to shorter windows"
+    ],
+    "limitations": [
+      "Limited dataset size (54 subjects) may constrain contextual encoder performance",
+      "No clear trend observed between different mask radii on downstream performance",
+      "Underperforms on motor imagery task compared to state-of-the-art Riemannian geometry approaches",
+      "Evaluation focused on last 7 subjects rather than full dataset, potentially biasing results"
+    ],
+    "method": {
+      "architecture": "JEPA with CNN local encoder + transformer contextual encoder",
+      "finetuning": "three downstream architectures with full/new fine-tuning strategies",
+      "objective": "masked reconstruction with spatial block masking",
+      "pretraining": "self-supervised learning on 40 subjects with 1s/4s/16s examples"
+    },
+    "notes": "{\"chars\": 32925, \"error\": null, \"pages\": 6, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=9622",
+    "one_liner": "Signal-JEPA introduces a novel spatial block masking strategy for EEG self-supervised learning, enabling effective cross-dataset transfer.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2024-03-18",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "fixed-montage"
+      ]
+    },
+    "title": "S-JEPA: towards seamless cross-dataset transfer through dynamic spatial attention",
+    "unique_contribution": "Signal-JEPA introduces a novel spatial block masking strategy for EEG self-supervised learning, enabling effective cross-dataset transfer.",
+    "used_fulltext": true
+  }
+]

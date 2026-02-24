@@ -41,8 +41,8 @@
     "key_points": {
       "type": "array",
       "items": { "type": "string", "minLength": 3 },
-      "minItems": 3,
-      "maxItems": 8
+      "minItems": 2,
+      "maxItems": 3
     },
     "data_scale": {
       "type": "object",
@@ -93,7 +93,7 @@
       "properties": {
         "paper_type": {
           "type": "array",
-          "items": { "type": "string", "enum": ["eeg-fm", "post-training", "benchmark", "survey"] },
+          "items": { "type": "string", "enum": ["new-model", "post-training", "benchmark", "survey"] },
           "uniqueItems": true,
           "maxItems": 2
         },

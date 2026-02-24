@@ -21,12 +21,24 @@ Required output keys checklist:
 - `data_scale`, `method`, `evaluation`, `open_source`, `tags`, `limitations`
 - `used_fulltext`, `notes`
 
+Important disambiguation:
+- `paper_type` is a SINGLE string from schema enum (`new_model|benchmark|survey|method|application|other`).
+- `tags.paper_type` is an ARRAY chosen from `allowed_tags.paper_type`.
+- For paper-type tag naming, use `new-model` (not `eeg-fm`).
+
 What to focus on:
 - unique_contribution: a single crisp sentence describing what is new.
 - detailed_summary: 2-4 sentences that clearly explain:
   1) what the paper proposes,
   2) what is novel compared with typical prior work,
   3) what evidence is presented (dataset/task/result level) if available.
+- key_points: 2-3 concise bullet-style points for UI display.
+  The first bullet MUST state what the paper is, starting with paper type in natural wording, e.g.,
+  "New EEG foundation model: CEReBrO ..."
+  Do not use templated labels like "What it is:", "Core method/evidence:", or "Main practical takeaway:".
+  Remaining bullet(s) should cover method novelty and strongest concrete evidence/result.
+  Avoid copying `unique_contribution` verbatim; partial semantic overlap is allowed.
+  Also avoid repeating the same opening clause between `key_points` and `unique_contribution`.
 - data_scale: datasets, subjects, eeg_hours, channels (if present)
 - method: architecture + objective + pretraining + finetuning (if present)
 - evaluation: tasks/benchmarks/headline results (if present)
@@ -34,7 +46,7 @@ What to focus on:
 
 Strict typing constraints:
 - `data_scale.subjects`, `data_scale.eeg_hours`, `data_scale.channels` must be number or null (never strings like "10k+" or "64ch").
-- `key_points` must have 3-8 items.
+- `key_points` must have 2-3 items.
 - `limitations` must have 2-8 items.
 - `tags.<category>` arrays must contain only values from `allowed_tags.<category>`, max 2 values each.
 - `used_fulltext` must be boolean.

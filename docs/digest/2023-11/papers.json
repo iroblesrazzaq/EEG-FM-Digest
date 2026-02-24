@@ -1,0 +1,78 @@
+[
+  {
+    "arxiv_id_base": "2311.03764",
+    "categories": [
+      "cs.LG",
+      "eess.SP"
+    ],
+    "data_scale": {
+      "channels": 22.0,
+      "datasets": [
+        "TUH EEG corpus",
+        "BCI Competition IV Dataset 2a"
+      ],
+      "eeg_hours": 5656.0,
+      "subjects": 9.0
+    },
+    "detailed_summary": "Neuro-GPT addresses the scarcity and heterogeneity of EEG data for Brain-Computer Interface (BCI) tasks by proposing a foundation model consisting of an EEG encoder and a GPT model. The model is pre-trained on the large-scale TUH EEG dataset using a self-supervised masked reconstruction task, where fixed-length EEG chunks are treated as tokens and the GPT model learns to predict masked chunks. The EEG encoder, incorporating convolutional and transformer layers, extracts spatio-temporal features from raw EEG signals to provide denoised embeddings for the GPT model. The pre-trained model is then fine-tuned on a motor imagery classification task using the BCI Competition IV Dataset 2a with only 9 subjects available, demonstrating significant performance improvements compared to training from scratch and outperforming previous methods like BENDR.",
+    "evaluation": {
+      "benchmarks": [
+        "BCI Competition IV Dataset 2a"
+      ],
+      "headline_results": [
+        "4-class classification accuracy: 0.645 ± 0.104 (Encoder-only fine-tuning)",
+        "vs. training from scratch: 0.606 ± 0.098",
+        "vs. BENDR: 0.426"
+      ],
+      "tasks": [
+        "motor imagery classification"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: Neuro-GPT combines an EEG encoder with a GPT decoder for self-supervised pre-training on large-scale EEG data.",
+      "Novel masked reconstruction objective: The model learns to predict masked EEG chunks, capturing temporal correlations across different time scales.",
+      "Strong empirical validation: Fine-tuning on motor imagery classification with 9 subjects shows significant performance gains over training from scratch and previous methods."
+    ],
+    "limitations": [
+      "Limited evaluation to only one downstream task (motor imagery classification)",
+      "Fine-tuning strategies show varying performance, with Encoder+GPT performing worse than Encoder-only",
+      "Channel resampling required to match pre-training and downstream dataset configurations",
+      "Zero-padding used for sequences shorter than expected length during fine-tuning"
+    ],
+    "method": {
+      "architecture": "EEG encoder (convolutional + transformer layers) + GPT decoder",
+      "finetuning": "motor imagery classification on BCI 2a dataset (9 subjects)",
+      "objective": "masked reconstruction",
+      "pretraining": "self-supervised on TUH EEG corpus (5656 hours, 14,987 subjects)"
+    },
+    "notes": "{\"chars\": 23625, \"error\": null, \"pages\": 5, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=7159",
+    "one_liner": "Neuro-GPT is a foundation model for EEG that combines an EEG encoder with a GPT decoder, pre-trained on large-scale EEG data via masked reconstruction and fine-tuned for motor imagery classification.",
+    "open_source": {
+      "code_url": "https://github.com/wenhui0206/NeuroGPT",
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2023-11-07",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "fixed-montage"
+      ]
+    },
+    "title": "Neuro-GPT: Towards A Foundation Model for EEG",
+    "unique_contribution": "Neuro-GPT introduces a novel foundation model architecture for EEG that combines an EEG encoder with a GPT decoder, pre-trained on large-scale EEG data via masked reconstruction to address data scarcity and heterogeneity challenges in BCI tasks.",
+    "used_fulltext": true
+  }
+]

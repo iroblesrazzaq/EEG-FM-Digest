@@ -1,0 +1,46 @@
+<!doctype html>
+<html><head><meta charset='utf-8'><title>EEG-FM Digest 2025-04</title>
+<link rel='stylesheet' href='../../assets/style.css'></head>
+<body>
+  <main>
+    <h1>EEG Foundation Model Digest — 2025-04</h1>
+    <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
+    <p>Top picks: 2504.21214, 2504.20069, 2504.19596</p>
+    <section><h2>new_model</h2>
+    <article class='paper-card' id='2504.19596'>
+      <h3><a href='http://arxiv.org/abs/2504.19596v2'>Towards Robust Multimodal Physiological Foundation Models: Handling Arbitrary Missing Modalities</a></h3>
+      <div class='meta'>2025-04-28 · Wei-Bang Jiang, Xi Fu, Yi Ding, Cuntai Guan</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New multimodal physiological foundation model: PhysioOmni handles EEG, ECG, EOG, and EMG signals while maintaining compatibility with arbitrary missing modalities at inference.</li><li>Decoupled tokenization and masked pre-training: The model learns both modality-invariant and modality-specific representations through a shared codebook and private codebooks, enabling robust multimodal learning.</li><li>State-of-the-art performance with robustness: PhysioOmni achieves SOTA results across four BCI tasks while demonstrating strong resilience to missing modalities through prototype alignment and modality-specific prediction.</li></ul>
+      <p><strong>Unique contribution:</strong> PhysioOmni is the first foundation model for multimodal physiological signals that explicitly handles arbitrary missing modalities through a combination of decoupled tokenization, masked signal pre-training, and resilient fine-tuning with prototype alignment.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>PhysioOmni addresses the challenge of building universal multimodal physiological foundation models that can generalize across datasets and handle missing modalities at inference. The model introduces a decoupled multimodal tokenizer that disentangles modality-invariant and modality-specific features using shared and private codebooks, enabling masked signal pre-training to learn generic representations. During fine-tuning, PhysioOmni employs homogeneous representation mapping, prototype alignment, and modality-specific prediction to maintain robust performance when some modalities are missing. Extensive experiments on four BCI tasks—emotion recognition, sleep stage classification, motor prediction, and mental workload detection—demonstrate state-of-the-art performance across both unimodal and multimodal settings while maintaining strong robustness to missing modalities.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Discrete Tokens</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
+      <p> </p>
+    </article>
+    
+
+    <article class='paper-card' id='2504.21214'>
+      <h3><a href='http://arxiv.org/abs/2504.21214v2'>Pretraining Large Brain Language Model for Active BCI: Silent Speech</a></h3>
+      <div class='meta'>2025-04-29 · Jinzhao Zhou, Zehong Cao, Yiqun Duan, Connor Barkley, Daniel Leong, Xiaowei Jiang, Quoc-Toan Nguyen, Ziyi Zhao, Thomas Do, Yu-Cheng Chang, Sheng-Fu Liang, Chin-teng Lin</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model: LBLM with 22M parameters pretrained on 120+ hours of silent speech EEG data from 12 subjects</li><li>Novel FSTP pretraining: Autoregressive prediction of future EEG waves and spectral components in both time and frequency domains</li><li>Strong empirical results: Achieves 39.6% word-level and 47.0% semantic-level accuracy in cross-session evaluation, outperforming baselines by 5.4-7.3%</li></ul>
+      <p><strong>Unique contribution:</strong> Proposes FSTP, the first self-supervised pretraining paradigm for EEG that predicts future signals and spectral components autoregressively, enabling effective silent speech decoding without external modalities.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper introduces LBLM, a 22-million-parameter model pretrained on over 120 hours of EEG data from 12 subjects performing silent speech tasks. Unlike existing EEG pretraining methods that rely on masked reconstruction, LBLM uses a novel Future Spectro-Temporal Prediction (FSTP) paradigm that autoregressively predicts future EEG signals and their spectral components in both time and frequency domains. The model achieves state-of-the-art performance on word-level (39.6%) and semantic-level (47.0%) classification tasks in challenging cross-session settings, outperforming fully-supervised and pretrained baselines by significant margins.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Autoregressive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
+      <p> </p>
+    </article>
+    </section><section><h2>survey</h2>
+    <article class='paper-card' id='2504.20069'>
+      <h3><a href='http://arxiv.org/abs/2504.20069v2'>A Simple Review of EEG Foundation Models: Datasets, Advancements and Future Perspectives</a></h3>
+      <div class='meta'>2025-04-24 · Junhong Lai, Jiyu Wei, Lin Yao, Yueming Wang</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>Survey of 14 first-generation EEG foundation models analyzing their architectures, pretraining strategies, and downstream applications</li><li>Comprehensive analysis of pretraining datasets (up to 13.79TB) and downstream task diversity across clinical and cognitive domains</li><li>Identifies critical research gaps including need for standardized benchmarks, better preprocessing understanding, and improved model interpretability</li></ul>
+      <p><strong>Unique contribution:</strong> Provides the first comprehensive critical analysis of first-generation EEG-FMs, systematically reviewing 14 models and identifying key research gaps and future directions for the field.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper provides a systematic review of 14 early EEG foundation models (EEG-FMs), which are self-supervised models designed to learn robust EEG feature representations without extensive labeled data. The review covers the methodologies of these models, including their architectures (primarily transformers and CNNs), pretraining strategies, and downstream applications. It analyzes the datasets used for pretraining (totaling up to 13.79TB in some cases) and downstream tasks across various domains like seizure detection, emotion recognition, and sleep staging. The paper identifies key research gaps including the need for standardized benchmarks, better understanding of preprocessing impacts, and improved model interpretability for clinical applications.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>Survey</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-tokenization' title='tokenization'>Discrete Tokens</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
+      <p> </p>
+    </article>
+    </section>
+  </main>
+  <script src='../../assets/site.js'></script>
+</body></html>

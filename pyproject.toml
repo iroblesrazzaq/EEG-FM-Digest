@@ -9,6 +9,7 @@ description = "Monthly EEG Foundation Model digest from arXiv with Gemini triage
 requires-python = ">=3.10"
 dependencies = [
   "httpx>=0.27.0",
+  "python-dotenv>=1.0.1",
   "python-dateutil>=2.9.0",
   "pypdf>=4.2.0",
   "pdfminer.six>=20231228",
@@ -24,6 +25,7 @@ dev = [
 
 [project.scripts]
 eegfm-digest = "eegfm_digest.run:main"
+eegfm-batch = "eegfm_digest.batch:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

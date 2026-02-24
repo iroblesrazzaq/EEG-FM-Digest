@@ -1,0 +1,29 @@
+{
+  "months": [
+    "2024-01",
+    "2024-02",
+    "2024-03",
+    "2024-04",
+    "2024-05",
+    "2024-06",
+    "2024-07",
+    "2024-08",
+    "2024-09",
+    "2024-10",
+    "2024-11",
+    "2024-12"
+  ],
+  "months_from_outputs": false,
+  "no_site": false,
+  "triage_force": false,
+  "summary_force": false,
+  "include_borderline": false,
+  "summary_provider": "gemini",
+  "summary_model": "gemini-2.5-flash",
+  "summary_sleep_seconds": 10.0,
+  "stop_on_rate_limit": true,
+  "sync_cache_from_outputs": true,
+  "max_candidates": null,
+  "max_accepted": null,
+  "env_path": "~/2_cs_projects/env/.env"
+}

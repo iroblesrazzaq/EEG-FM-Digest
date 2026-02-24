@@ -7,7 +7,7 @@ from .llm_gemini import GeminiClient, parse_json_text
 from .triage import validate_json
 
 TAG_TAXONOMY: dict[str, list[str]] = {
-    "paper_type": ["eeg-fm", "post-training", "benchmark", "survey"],
+    "paper_type": ["new-model", "post-training", "benchmark", "survey"],
     "backbone": ["transformer", "mamba-ssm", "moe", "diffusion"],
     "objective": [
         "masked-reconstruction",
@@ -17,6 +17,15 @@ TAG_TAXONOMY: dict[str, list[str]] = {
     ],
     "tokenization": ["time-patch", "latent-tokens", "discrete-tokens"],
     "topology": ["fixed-montage", "channel-flexible", "topology-agnostic"],
+}
+
+
+_PAPER_TYPE_FROM_TAG: dict[str, str] = {
+    "new-model": "new_model",
+    "eeg-fm": "new_model",
+    "post-training": "method",
+    "benchmark": "benchmark",
+    "survey": "survey",
 }
 
 
@@ -86,6 +95,116 @@ def _select_payload(
     }, f"input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens={token_count};max_tokens={max_input_tokens}"
 
 
+def _to_numeric_or_none(value: Any) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, str):
+        raw = value.strip().lower().replace(",", "").replace("+", "")
+        if not raw:
+            return None
+        mult = 1.0
+        if raw.endswith("k"):
+            mult = 1_000.0
+            raw = raw[:-1]
+        try:
+            return float(raw) * mult
+        except ValueError:
+            return None
+    return None
+
+
+def _canonicalize_tag(category: str, value: str) -> str:
+    cleaned = value.strip()
+    if category == "paper_type" and cleaned == "eeg-fm":
+        return "new-model"
+    return cleaned
+
+
+def _normalize_summary_output(
+    data: dict[str, Any],
+    paper: dict[str, Any],
+    used_fulltext: bool,
+    notes: str,
+) -> dict[str, Any]:
+    out = dict(data)
+
+    # Deterministic identity fields come from metadata.
+    out["arxiv_id_base"] = paper["arxiv_id_base"]
+    out["title"] = paper["title"]
+    out["published_date"] = paper["published"][:10]
+    out["categories"] = paper["categories"]
+    out["used_fulltext"] = used_fulltext
+    out["notes"] = notes
+
+    # Disambiguate scalar paper_type from tag-style list values.
+    paper_type = out.get("paper_type")
+    if isinstance(paper_type, list):
+        paper_type = paper_type[0] if paper_type else None
+    if isinstance(paper_type, str):
+        candidate = paper_type.strip()
+        if candidate in _PAPER_TYPE_FROM_TAG:
+            out["paper_type"] = _PAPER_TYPE_FROM_TAG[candidate]
+        else:
+            out["paper_type"] = candidate
+
+    tags = out.get("tags")
+    if not isinstance(tags, dict):
+        tags = {}
+    normalized_tags: dict[str, list[str]] = {}
+    for category, allowed in TAG_TAXONOMY.items():
+        raw_values = tags.get(category, [])
+        if isinstance(raw_values, str):
+            raw_values = [raw_values]
+        if not isinstance(raw_values, list):
+            raw_values = []
+        filtered: list[str] = []
+        for value in raw_values:
+            value_str = _canonicalize_tag(category, str(value))
+            if value_str in allowed and value_str not in filtered:
+                filtered.append(value_str)
+            if len(filtered) >= 2:
+                break
+        normalized_tags[category] = filtered
+    out["tags"] = normalized_tags
+
+    if not isinstance(out.get("paper_type"), str) and normalized_tags["paper_type"]:
+        out["paper_type"] = _PAPER_TYPE_FROM_TAG.get(normalized_tags["paper_type"][0], "other")
+
+    key_points = out.get("key_points", [])
+    if isinstance(key_points, str):
+        key_points = [key_points]
+    if not isinstance(key_points, list):
+        key_points = []
+    clean_points = [str(p).strip() for p in key_points if str(p).strip()]
+    clean_points = clean_points[:3]
+    if len(clean_points) < 2:
+        fallback_points = [
+            str(out.get("one_liner", "")).strip(),
+            str(out.get("unique_contribution", "")).strip(),
+        ]
+        for fallback in fallback_points:
+            if fallback and fallback not in clean_points:
+                clean_points.append(fallback)
+            if len(clean_points) >= 2:
+                break
+    out["key_points"] = clean_points
+
+    data_scale = out.get("data_scale", {})
+    if not isinstance(data_scale, dict):
+        data_scale = {}
+    data_scale["datasets"] = (
+        data_scale.get("datasets", []) if isinstance(data_scale.get("datasets", []), list) else []
+    )
+    data_scale["subjects"] = _to_numeric_or_none(data_scale.get("subjects"))
+    data_scale["eeg_hours"] = _to_numeric_or_none(data_scale.get("eeg_hours"))
+    data_scale["channels"] = _to_numeric_or_none(data_scale.get("channels"))
+    out["data_scale"] = data_scale
+
+    return out
+
+
 def summarize_paper(
     paper: dict[str, Any],
     triage: dict[str, Any],
@@ -113,8 +232,12 @@ def summarize_paper(
     raw = llm.generate(prompt, schema=schema)
     try:
         data = parse_json_text(raw)
-        data["used_fulltext"] = used_fulltext
-        data["notes"] = merged_notes
+        data = _normalize_summary_output(
+            data=data,
+            paper=paper,
+            used_fulltext=used_fulltext,
+            notes=merged_notes,
+        )
         validate_json(data, schema)
         return data
     except Exception:
@@ -125,8 +248,12 @@ def summarize_paper(
         try:
             repaired = llm.generate(repair_prompt, schema=schema)
             data = parse_json_text(repaired)
-            data["used_fulltext"] = used_fulltext
-            data["notes"] = merged_notes
+            data = _normalize_summary_output(
+                data=data,
+                paper=paper,
+                used_fulltext=used_fulltext,
+                notes=merged_notes,
+            )
             validate_json(data, schema)
             return data
         except Exception:

@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset='utf-8'><title>EEG-FM Digest 2024-10</title>
+<link rel='stylesheet' href='../../assets/style.css'></head>
+<body>
+  <main>
+    <h1>EEG Foundation Model Digest — 2024-10</h1>
+    <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
+    <p>Top picks: 2410.19779, 2410.19842</p>
+    <section><h2>new_model</h2>
+    <article class='paper-card' id='2410.19779'>
+      <h3><a href='http://arxiv.org/abs/2410.19779v2'>BrainGPT: Unleashing the Potential of EEG Generalist Foundation Model by Autoregressive Pre-training</a></h3>
+      <div class='meta'>2024-10-14 · Tongtian Yue, Xuange Gao, Shuning Xue, Yepeng Tang, Longteng Guo, Jie Jiang, Jing Liu</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model: BrainGPT introduces the first generalist EEG foundation model using autoregressive pre-training and electrode-wise modeling to unify diverse EEG datasets.</li><li>Electrode-wise modeling strategy: Treats each electrode as an independent sample, enabling integration of up to 138 electrodes and arbitrary combinations for flexible data processing.</li><li>Multi-task transfer learning: Introduces a learnable electrode graph network shared across tasks, demonstrating confirmed multi-task compatibility and synergistic performance improvements.</li></ul>
+      <p><strong>Unique contribution:</strong> BrainGPT is the first generalist EEG foundation model that unifies diverse EEG datasets through electrode-wise modeling and autoregressive pre-training, achieving state-of-the-art performance across multiple tasks while demonstrating confirmed multi-task compatibility and synergy.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>BrainGPT addresses the limitations of specialist EEG models by introducing an electrode-wise modeling strategy that treats each electrode as an independent sample, enabling integration of diverse EEG datasets with up to 138 electrodes. It employs autoregressive pre-training instead of traditional masked autoencoder approaches, capturing temporal dependencies through next-token prediction. The model scales up to 1.1B parameters and introduces a multi-task transfer learning paradigm using a learnable electrode graph network shared across tasks. BrainGPT demonstrates broad compatibility with various signal acquisition devices, subjects, and tasks, outperforming existing specialist models across 12 benchmarks spanning 5 distinct tasks.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Autoregressive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
+      <p> </p>
+    </article>
+    
+
+    <article class='paper-card' id='2410.19842'>
+      <h3><a href='http://arxiv.org/abs/2410.19842v1'>Contrastive random lead coding for channel-agnostic self-supervision of biosignals</a></h3>
+      <div class='meta'>2024-10-21 · Thea Brüsch, Mikkel N. Schmidt, Tommy S. Alstrøm</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model: CEReBrO uses CRLC for channel-agnostic self-supervision, outperforming state-of-the-art on EEG tasks.</li><li>Method novelty: CRLC creates positive pairs by randomly sampling subsets of input channels, avoiding reliance on augmentations or temporal segments.</li><li>Strongest evidence: CRLC surpasses state-of-the-art reference models on EEG tasks and achieves comparable results on ECG tasks in the channel-agnostic setting.</li></ul>
+      <p><strong>Unique contribution:</strong> CRLC enables channel-agnostic self-supervision by using random subsets of channels as positive pairs, outperforming state-of-the-art methods on EEG tasks.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper introduces contrastive random lead coding (CRLC), a method for creating positive pairs in contrastive learning of multivariate biosignals without relying on augmentations or temporal segments. CRLC randomly samples subsets of input channels to form positive pairs, enabling channel-agnostic self-supervision. The approach is validated on EEG and ECG data, showing superior performance compared to competing strategies, especially in the channel-agnostic setting. For EEG tasks, CRLC surpasses the current state-of-the-art reference model, while for ECG it achieves comparable results. The method leverages a message passing neural network (MPNN) to extract inter-channel information, making the model flexible across varying channel configurations.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
+      <p><a href='https://github.com/theabrusch/Multiview_TS_SSL'>code</a> </p>
+    </article>
+    </section>
+  </main>
+  <script src='../../assets/site.js'></script>
+</body></html>

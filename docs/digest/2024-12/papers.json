@@ -1,0 +1,189 @@
+[
+  {
+    "arxiv_id_base": "2412.07236",
+    "categories": [
+      "eess.SP",
+      "cs.AI",
+      "cs.LG",
+      "q-bio.NC"
+    ],
+    "data_scale": {
+      "channels": 19.0,
+      "datasets": [
+        "TUEG"
+      ],
+      "eeg_hours": 9000.0,
+      "subjects": 14987.0
+    },
+    "detailed_summary": "CBraMod addresses key challenges in EEG foundation models by introducing a criss-cross transformer architecture that separately models spatial and temporal dependencies through parallel attention mechanisms, rather than treating all EEG patches equally. The model employs asymmetric conditional positional encoding (ACPE) that dynamically learns spatial relationships among patches, making it adaptable to diverse EEG formats and referencing schemes. Pre-trained on the large TUEG corpus (over 9000 hours of EEG data), CBraMod achieves state-of-the-art performance across 10 downstream BCI tasks spanning emotion recognition, motor imagery classification, sleep staging, seizure detection, and other applications, demonstrating strong generalizability across datasets from different institutions.",
+    "evaluation": {
+      "benchmarks": [
+        "FACED",
+        "SEED-V",
+        "PhysioNet-MI",
+        "SHU-MI",
+        "ISRUC",
+        "CHB-MIT",
+        "BCIC2020-3",
+        "Mumtaz2016",
+        "SEED-VIG",
+        "MentalArithmetic",
+        "TUEV",
+        "TUAB"
+      ],
+      "headline_results": [
+        "State-of-the-art performance across all 10 downstream tasks",
+        "Superior generalization across datasets from different institutions",
+        "Effective modeling of heterogeneous spatial-temporal dependencies"
+      ],
+      "tasks": [
+        "emotion recognition",
+        "motor imagery classification",
+        "sleep staging",
+        "seizure detection",
+        "imagined speech classification",
+        "mental disorder diagnosis",
+        "vigilance estimation",
+        "mental stress detection",
+        "event type classification",
+        "abnormal detection"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: CBraMod uses criss-cross transformer architecture with parallel spatial and temporal attention to model heterogeneous EEG dependencies",
+      "Strong empirical validation: Achieves state-of-the-art performance across 10 downstream BCI tasks (12 public datasets) including emotion recognition, motor imagery, and seizure detection",
+      "Innovative positional encoding: Asymmetric conditional positional encoding dynamically adapts to diverse EEG formats and referencing schemes"
+    ],
+    "limitations": [
+      "Pre-training data filtering is crude, resulting in significant reduction of available data",
+      "Higher parameter count and computational complexity compared to non-foundation models",
+      "Limited exploration of scaling laws at billion-level data and model sizes due to computational constraints",
+      "Insufficient exploration of leveraging large models from other domains (vision, language) for EEG signal understanding"
+    ],
+    "method": {
+      "architecture": "Criss-cross transformer backbone with parallel spatial and temporal attention mechanisms",
+      "finetuning": "Fine-tuned on 10 downstream BCI tasks across 12 public datasets",
+      "objective": "Patch-based masked EEG reconstruction pre-training objective",
+      "pretraining": "Pre-trained on TUEG corpus (9000+ hours of EEG data)"
+    },
+    "notes": "{\"chars\": 133714, \"error\": null, \"pages\": 37, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=35372",
+    "one_liner": "CBraMod is a novel EEG foundation model that uses criss-cross transformer architecture and asymmetric positional encoding to achieve state-of-the-art performance across 10 downstream BCI tasks.",
+    "open_source": {
+      "code_url": "https://github.com/wjq-learning/CBraMod",
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2024-12-10",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "CBraMod: A Criss-Cross Brain Foundation Model for EEG Decoding",
+    "unique_contribution": "CBraMod introduces a novel criss-cross transformer architecture with parallel spatial and temporal attention mechanisms, combined with asymmetric conditional positional encoding, to effectively model the heterogeneous dependencies in EEG signals while maintaining adaptability to diverse channel configurations.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2412.11695",
+    "categories": [
+      "cs.LG"
+    ],
+    "data_scale": {
+      "channels": null,
+      "datasets": [
+        "SleepEDF",
+        "EMG",
+        "ECG",
+        "PPG",
+        "HAR",
+        "Epilepsy",
+        "Gesture",
+        "FDB"
+      ],
+      "eeg_hours": null,
+      "subjects": null
+    },
+    "detailed_summary": "CiTrus introduces a convolution-transformer hybrid architecture specifically designed for bio-signal transfer learning, addressing the challenge of limited labeled data in downstream tasks. The model combines a 3-layer residual convolutional encoder with a PatchTST transformer, enabling effective learning of both local frequency features and temporal relationships. A key innovation is the frequency-based masked auto-encoding pre-training task, where the model predicts spectrogram representations of masked patches rather than raw time-series signals, explicitly encouraging frequency-domain learning. The work also introduces a novel fine-tuning strategy that resamples downstream datasets to match the pre-training sampling frequency, avoiding interpolation artifacts. Extensive experiments across eight bio-signal datasets demonstrate that CiTrus outperforms previous methods, particularly in low-data regimes, with transformer-based models showing the most significant gains from pre-training.",
+    "evaluation": {
+      "benchmarks": [
+        "SleepEDF",
+        "EMG",
+        "ECG",
+        "PPG",
+        "HAR",
+        "Epilepsy",
+        "Gesture",
+        "FDB"
+      ],
+      "headline_results": [
+        "outperforms previous methods in low-data regimes",
+        "transformer-based models show significant gains from pre-training"
+      ],
+      "tasks": [
+        "bio-signal transfer learning"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: CiTrus combines convolutional and transformer architectures with frequency-based masked auto-encoding for bio-signal transfer learning",
+      "Convolutional components excel in low-data regimes due to parameter efficiency and frequency-domain inductive bias",
+      "Frequency-based pre-training and multimodal approaches significantly improve performance, especially for transformer-based models"
+    ],
+    "limitations": [
+      "Performance gains vary significantly across datasets and data regimes",
+      "Transformer-based models require more data to learn temporal relationships compared to convolutional models",
+      "Multimodal pre-training can degrade performance when only single modality is available during fine-tuning",
+      "Variance across test folds is much higher than across random seeds, requiring extensive cross-validation",
+      "Model complexity may limit deployment on resource-constrained devices",
+      "Pre-training benefits are minimal for datasets where baseline performance is already high",
+      "Frequency-based pre-training performs best only for lowest and highest data regimes, not consistently across all regimes"
+    ],
+    "method": {
+      "architecture": "Convolution-transformer hybrid (CiTrus) with 3-layer residual CNN encoder + PatchTST transformer",
+      "finetuning": "frequency-matching fine-tuning strategy",
+      "objective": "frequency-based masked auto-encoding pre-training",
+      "pretraining": "multimodal pre-training with EEG+EOG"
+    },
+    "notes": "{\"chars\": 92781, \"error\": null, \"pages\": 27, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=24842",
+    "one_liner": "CiTrus is a convolution-transformer hybrid model with frequency-based masked auto-encoding that achieves state-of-the-art performance on low-data bio-signal transfer learning tasks.",
+    "open_source": {
+      "code_url": "https://github.com/mims-harvard/TFC-pretraining/tree/main",
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2024-12-16",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "CiTrus: Squeezing Extra Performance out of Low-data Bio-signal Transfer Learning",
+    "unique_contribution": "CiTrus is the first convolution-transformer hybrid model with frequency-based masked auto-encoding specifically designed for bio-signal transfer learning, achieving state-of-the-art performance by combining frequency-domain learning with temporal relationship modeling.",
+    "used_fulltext": true
+  }
+]

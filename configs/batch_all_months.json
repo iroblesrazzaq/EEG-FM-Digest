@@ -1,0 +1,16 @@
+{
+  "months": [],
+  "months_from_outputs": true,
+  "no_site": false,
+  "triage_force": false,
+  "summary_force": false,
+  "include_borderline": false,
+  "summary_provider": "gemini",
+  "summary_model": "gemini-2.5-flash",
+  "summary_sleep_seconds": 10.0,
+  "stop_on_rate_limit": true,
+  "sync_cache_from_outputs": true,
+  "max_candidates": null,
+  "max_accepted": null,
+  "env_path": "~/2_cs_projects/env/.env"
+}

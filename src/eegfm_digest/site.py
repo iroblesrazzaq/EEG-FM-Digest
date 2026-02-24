@@ -2,8 +2,49 @@ from __future__ import annotations
 
 import html
 import json
+import re
 from pathlib import Path
 from typing import Any
+
+
+_TAG_LABELS: dict[str, dict[str, str]] = {
+    "paper_type": {
+        "new-model": "New Model",
+        "eeg-fm": "New Model",
+        "post-training": "Post-Training",
+        "benchmark": "Benchmark",
+        "survey": "Survey",
+    },
+    "backbone": {
+        "transformer": "Transformer",
+        "mamba-ssm": "Mamba-SSM",
+        "moe": "MoE",
+        "diffusion": "Diffusion",
+    },
+    "objective": {
+        "masked-reconstruction": "Masked Reconstruction",
+        "autoregressive": "Autoregressive",
+        "contrastive": "Contrastive",
+        "discrete-code-prediction": "Discrete Code Prediction",
+    },
+    "tokenization": {
+        "time-patch": "Time Patch",
+        "latent-tokens": "Latent Tokens",
+        "discrete-tokens": "Discrete Tokens",
+    },
+    "topology": {
+        "fixed-montage": "Fixed Montage",
+        "channel-flexible": "Channel Flexible",
+        "topology-agnostic": "Topology Agnostic",
+    },
+}
+
+
+def _tag_value_label(category: str, value: str) -> str:
+    mapping = _TAG_LABELS.get(category, {})
+    if value in mapping:
+        return mapping[value]
+    return value.replace("-", " ").title()
 
 
 def _tag_chips(summary: dict[str, Any]) -> str:
@@ -16,12 +57,34 @@ def _tag_chips(summary: dict[str, Any]) -> str:
         if not isinstance(values, list):
             continue
         for value in values:
+            value_str = str(value).strip()
             chips.append(
-                f"<span class='chip'>{html.escape(str(category))}:{html.escape(str(value))}</span>"
+                "<span "
+                f"class='chip chip-{html.escape(category)}' "
+                f"title='{html.escape(category.replace('_', ' '))}'>"
+                f"{html.escape(_tag_value_label(category, value_str))}"
+                "</span>"
             )
     if not chips:
         return ""
-    return f"<p>{' '.join(chips)}</p>"
+    return f"<p class='chips'>{' '.join(chips)}</p>"
+
+
+def _summary_points(summary: dict[str, Any]) -> str:
+    points = summary.get("key_points", [])
+    if not isinstance(points, list):
+        return ""
+    bullets = [str(point).strip() for point in points if str(point).strip()][:3]
+    if not bullets:
+        return ""
+    items = "".join(f"<li>{html.escape(point)}</li>" for point in bullets)
+    return f"<ul class='summary-points'>{items}</ul>"
+
+
+def _compact_detail(detail: str) -> str:
+    # Light normalization prevents giant wall-of-text rendering.
+    compact = re.sub(r"\s+", " ", detail).strip()
+    return compact
 
 
 def _card(summary: dict[str, Any], meta: dict[str, Any]) -> str:
@@ -35,19 +98,35 @@ def _card(summary: dict[str, Any], meta: dict[str, Any]) -> str:
     weights_link = (
         f"<a href='{html.escape(os_info['weights_url'])}'>weights</a>" if os_info.get("weights_url") else ""
     )
-    detail = html.escape(summary.get("detailed_summary", summary["one_liner"]))
+    detail = html.escape(_compact_detail(summary.get("detailed_summary", summary["one_liner"])))
+    points_html = _summary_points(summary)
     tag_html = _tag_chips(summary)
+    detail_html = (
+        f"<details class='summary-detail'><summary>Detailed summary</summary><p>{detail}</p></details>"
+        if detail
+        else ""
+    )
     return f"""
     <article class='paper-card' id='{html.escape(summary['arxiv_id_base'])}'>
       <h3><a href='{abs_url}'>{title}</a></h3>
-      <div class='meta'>{html.escape(summary['published_date'])} · {html.escape(summary['paper_type'])} · {html.escape(authors)}</div>
-      <p><strong>One-liner:</strong> {html.escape(summary['one_liner'])}</p>
-      <p><strong>Summary:</strong> {detail}</p>
+      <div class='meta'>{html.escape(summary['published_date'])} · {html.escape(authors)}</div>
+      <p><strong>Summary Highlights:</strong></p>
+      {points_html}
       <p><strong>Unique contribution:</strong> {html.escape(summary['unique_contribution'])}</p>
+      {detail_html}
       {tag_html}
       <p>{code_link} {weights_link}</p>
     </article>
     """
+
+
+def _about_digest_block() -> str:
+    return (
+        "<section class='digest-about'>"
+        "<h2>About This Digest</h2>"
+        "<p>[why i made digest, how it works]</p>"
+        "</section>"
+    )
 
 
 def render_month_page(month: str, summaries: list[dict[str, Any]], metadata: dict[str, dict[str, Any]], digest: dict[str, Any]) -> str:
@@ -63,6 +142,7 @@ def render_month_page(month: str, summaries: list[dict[str, Any]], metadata: dic
 <body>
   <main>
     <h1>EEG Foundation Model Digest — {html.escape(month)}</h1>
+    {_about_digest_block()}
     <p>Top picks: {html.escape(top_picks)}</p>
     {''.join(sections_html)}
   </main>
@@ -82,6 +162,7 @@ def render_home_page(months: list[str]) -> str:
 <link rel='stylesheet' href='assets/style.css'></head><body>
 <main>
 <h1>EEG Foundation Model Digest</h1>
+{_about_digest_block()}
 <p>Latest month: <a href='{latest_link}'>{latest}</a></p>
 <h2>Archive</h2>
 <ul>{links}</ul>

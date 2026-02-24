@@ -1,0 +1,75 @@
+[
+  {
+    "arxiv_id_base": "2211.02625",
+    "categories": [
+      "eess.SP",
+      "cs.LG"
+    ],
+    "data_scale": {
+      "channels": 6.0,
+      "datasets": [
+        "PhysioNet 2018 Challenge"
+      ],
+      "eeg_hours": 7000.0,
+      "subjects": 994.0
+    },
+    "detailed_summary": "This paper proposes MAEEG, a masked auto-encoder for EEG representation learning that addresses the challenge of limited labeled EEG data. The model learns representations by reconstructing masked EEG features using a transformer architecture, inspired by both BENDR and computer vision MAE models. The authors demonstrate that MAEEG pretraining significantly improves sleep stage classification accuracy by approximately 5% when only small numbers of labels are available. They also systematically investigate how different masking strategies during pretraining affect downstream performance, finding that higher masking rates with more concentrated masks yield better results.",
+    "evaluation": {
+      "benchmarks": [
+        "Comparison with BENDR and supervised baseline"
+      ],
+      "headline_results": [
+        "Approximately 5% accuracy improvement over baselines with limited labels"
+      ],
+      "tasks": [
+        "Sleep stage classification (5 classes: wake, N1, N2, N3, REM)"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: MAEEG uses masked auto-encoding with transformers to learn EEG representations from unlabeled data.",
+      "Novel masking strategy: Higher masking rates (75%) with concentrated masks during pretraining yield better downstream sleep classification performance.",
+      "Strong empirical results: MAEEG achieves approximately 5% accuracy improvement in sleep stage classification when labels are scarce."
+    ],
+    "limitations": [
+      "Computational cost similar to BENDR due to masking in latent space",
+      "May only learn to reconstruct slow signal variations rather than fine-grained details",
+      "Results sensitive to subject variance and label imbalance in small datasets",
+      "Performance depends heavily on pretraining sample length and masking strategy"
+    ],
+    "method": {
+      "architecture": "Transformer encoder with convolutional encoder/decoder",
+      "finetuning": "Linear classifier added on contextual features with encoder fine-tuning",
+      "objective": "Reconstruction loss between input and reconstructed EEG signals",
+      "pretraining": "Masked auto-encoding on unlabeled EEG data"
+    },
+    "notes": "{\"chars\": 26740, \"error\": null, \"pages\": 10, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=7928",
+    "one_liner": "MAEEG is a reconstruction-based self-supervised learning model that learns EEG representations by reconstructing masked EEG features using a transformer architecture.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2022-10-27",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "fixed-montage"
+      ]
+    },
+    "title": "MAEEG: Masked Auto-encoder for EEG Representation Learning",
+    "unique_contribution": "MAEEG introduces a reconstruction-based self-supervised learning approach for EEG that learns representations by reconstructing masked features using a transformer, achieving significant improvements in sleep stage classification with limited labels.",
+    "used_fulltext": true
+  }
+]

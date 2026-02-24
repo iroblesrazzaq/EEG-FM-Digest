@@ -1,0 +1,239 @@
+[
+  {
+    "arxiv_id_base": "2411.16155",
+    "categories": [
+      "cs.LG",
+      "cs.AI",
+      "eess.SP"
+    ],
+    "data_scale": {
+      "channels": 19.0,
+      "datasets": [
+        "MDD",
+        "TUAB"
+      ],
+      "eeg_hours": null,
+      "subjects": 103.0
+    },
+    "detailed_summary": "This paper proposes EEG-GraphAdapter (EGA), a parameter-efficient fine-tuning (PEFT) approach designed to address the computational cost and data scarcity challenges in fine-tuning large-scale EEG foundation models for both temporal and spatial features. EGA is integrated into a pre-trained temporal backbone model (BENDR) as a GNN-based module, freezing the backbone and allowing only the adapter to be fine-tuned. This enables the effective acquisition of EEG spatial representations, significantly reducing computational overhead and data requirements. Experimental evaluations on two healthcare-related downstream tasks—Major Depressive Disorder (MDD) and Abnormality Detection (TUAB)—show that EGA improves performance by up to 16.1% in F1-score compared with the backbone BENDR model, highlighting its potential for scalable and accurate EEG-based predictions.",
+    "evaluation": {
+      "benchmarks": [
+        "BENDR baseline"
+      ],
+      "headline_results": [
+        "Up to 16.1% F1-score improvement on TUAB",
+        "12.8% F1-score improvement on MDD"
+      ],
+      "tasks": [
+        "Major Depressive Disorder classification",
+        "Abnormality Detection"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model adapter: EEG-GraphAdapter (EGA) integrates GNN-based modules with pre-trained temporal backbone models to capture spatial relationships between EEG sensors.",
+      "Method novelty: EGA freezes the pre-trained backbone model and fine-tunes only the GNN adapter, achieving up to 16.1% improvement in F1-score on healthcare tasks while reducing computational cost.",
+      "Strong evidence: Experiments on MDD and TUAB datasets demonstrate EGA's effectiveness, with GAT-based EGA achieving 12.8% higher F1-score on MDD and GraphSAGE-based EGA achieving 16.1% improvement on TUAB compared to baseline BENDR."
+    ],
+    "limitations": [
+      "Computational speedup was only 17% due to data loading overhead, not proportional to parameter reduction",
+      "Performance varies significantly depending on GNN architecture choice (GAT best for MDD, GraphSAGE best for TUAB)",
+      "Limited evaluation to only two healthcare tasks, broader applicability needs verification",
+      "Requires standard 10-20 electrode configuration preprocessing",
+      "Does not address potential catastrophic forgetting in backbone model"
+    ],
+    "method": {
+      "architecture": "GNN-based adapter (GCN, GraphSAGE, or GAT) integrated with BENDR backbone",
+      "finetuning": "Fine-tune only GNN adapter while freezing backbone",
+      "objective": "Parameter-efficient fine-tuning with frozen backbone",
+      "pretraining": "BENDR pre-trained on large-scale EEG data"
+    },
+    "notes": "{\"chars\": 36729, \"error\": null, \"pages\": 14, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=10538",
+    "one_liner": "EEG-GraphAdapter (EGA) is a parameter-efficient fine-tuning approach that integrates a GNN-based module with pre-trained EEG foundation models to capture spatial relationships between EEG sensors.",
+    "open_source": {
+      "code_url": "https://github.com/SPOClab-ca/BENDR",
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2024-11-25",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "fixed-montage"
+      ]
+    },
+    "title": "Graph Adapter of EEG Foundation Models for Parameter Efficient Fine Tuning",
+    "unique_contribution": "We propose EEG-GraphAdapter (EGA), a parameter-efficient fine-tuning approach that integrates a GNN-based module with pre-trained EEG foundation models to capture spatial relationships between EEG sensors while significantly reducing computational overhead and data requirements.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2411.19230",
+    "categories": [
+      "cs.LG",
+      "cs.AI"
+    ],
+    "data_scale": {
+      "channels": null,
+      "datasets": [
+        "EMBARC dataset",
+        "Healthy Brain Network dataset"
+      ],
+      "eeg_hours": null,
+      "subjects": 2062.0
+    },
+    "detailed_summary": "This paper addresses the challenge of leveraging extensive unlabeled high-density EEG data to improve performance in scenarios with limited labeled low-density EEG data. The authors formulate this as a graph transfer learning and knowledge distillation problem, proposing EEG-DisGCMAE - a unified pre-trained graph contrastive masked autoencoder distiller. The approach introduces a novel unified graph self-supervised pre-training paradigm that seamlessly integrates graph contrastive pre-training with graph masked autoencoder pre-training. Additionally, they propose a graph topology distillation loss function that allows a lightweight student model trained on low-density data to learn from a teacher model trained on high-density data during both pre-training and fine-tuning. This method effectively handles missing electrodes through contrastive distillation and is validated across four classification tasks using two clinical EEG datasets.",
+    "evaluation": {
+      "benchmarks": [
+        "EMBARC dataset",
+        "Healthy Brain Network dataset"
+      ],
+      "headline_results": [
+        "AUROC: 84.8-87.4%",
+        "Accuracy: 85.4-87.8%"
+      ],
+      "tasks": [
+        "Major Depressive Disorder classification",
+        "Autism Spectrum Disorder classification",
+        "Sex classification",
+        "Depression severity classification"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: EEG-DisGCMAE that unifies graph contrastive and masked autoencoder pre-training for EEG analysis",
+      "Novel graph topology distillation loss enables effective knowledge transfer from high-density to low-density EEG data",
+      "Validated across four clinical classification tasks with significant performance improvements over state-of-the-art methods"
+    ],
+    "limitations": [
+      "Requires high-density EEG data for teacher model training",
+      "Performance depends on quality of graph construction from EEG signals",
+      "Limited to specific electrode configurations (10-20 system)",
+      "Computational complexity of graph pre-training",
+      "May not generalize well to EEG systems with significantly different electrode layouts"
+    ],
+    "method": {
+      "architecture": "Graph Neural Networks (GNNs) - both Graph Transformer and vanilla GCNs",
+      "finetuning": "Downstream classification with Cross-Entropy loss and graph topology distillation",
+      "objective": "Unified graph self-supervised pre-training combining contrastive and generative objectives",
+      "pretraining": "Graph Contrastive Masked Autoencoder Pre-training (GCMAE-PT)"
+    },
+    "notes": "{\"chars\": 79680, \"error\": null, \"pages\": 20, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=21569",
+    "one_liner": "Unified graph pre-training framework combining contrastive and masked autoencoder methods for EEG distillation.",
+    "open_source": {
+      "code_url": "https://github.com/weixinxu666/EEG_DisGCMAE",
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2024-11-28",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction",
+        "contrastive"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "fixed-montage"
+      ]
+    },
+    "title": "Pre-Training Graph Contrastive Masked Autoencoders are Strong Distillers for EEG",
+    "unique_contribution": "The paper introduces the first unified graph pre-training framework that combines contrastive and masked autoencoder methods for EEG analysis, along with a novel graph topology distillation loss for transferring knowledge from high-density to low-density EEG data.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2411.19507",
+    "categories": [
+      "cs.LG",
+      "eess.SP"
+    ],
+    "data_scale": {
+      "channels": 19.0,
+      "datasets": [
+        "datasets"
+      ],
+      "eeg_hours": null,
+      "subjects": 10000.0
+    },
+    "detailed_summary": "GEFM addresses a key limitation in existing EEG foundation models by incorporating inter-channel relationships alongside temporal dynamics. The model combines Graph Neural Networks (GNNs) with a masked autoencoder architecture, treating EEG channels as graph nodes with edge weights based on geodesic distances. Through extensive experiments across three downstream tasks using three GNN architectures (GCN, GAT, GraphSAGE) and two sequence length adjustment strategies, GEFM demonstrated consistent improvements over baseline methods, particularly when using GCN with edge weights and a linear layer for sequence adjustment.",
+    "evaluation": {
+      "benchmarks": [
+        "Accuracy",
+        "AUROC"
+      ],
+      "headline_results": [
+        "31.4% improvement on MMI task",
+        "Consistent improvements across all three downstream tasks"
+      ],
+      "tasks": [
+        "MMI",
+        "P300",
+        "ERN"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: GEFM integrates Graph Neural Networks with masked autoencoder to capture both temporal dynamics and inter-channel relationships in EEG signals.",
+      "Method novelty: Uses geodesic-distance-based edge weights between EEG channels and employs GCN architecture with linear layer sequence adjustment for optimal performance.",
+      "Strong empirical evidence: Outperformed baseline BENDR model across all three downstream tasks (MMI, P300, ERN) with up to 31.4% improvement on MMI task."
+    ],
+    "limitations": [
+      "Limited to 19 EEG channels from 10/20 system",
+      "Only tested on three specific downstream tasks",
+      "Sequence length adjustment may introduce information loss",
+      "GNN architectures without edge weight support showed poor performance",
+      "Limited comparison with other recent EEG foundation models like MAEEG and Neuro-GPT"
+    ],
+    "method": {
+      "architecture": "Graph Neural Networks with masked autoencoder",
+      "finetuning": "fine-tuned for downstream tasks",
+      "objective": "masked reconstruction",
+      "pretraining": "masked autoencoder pre-training with geodesic-distance-based edge weights"
+    },
+    "notes": "{\"chars\": 38542, \"error\": null, \"pages\": 7, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=11048",
+    "one_liner": "Graph-Enhanced EEG Foundation Model (GEFM) integrates Graph Neural Networks with a masked autoencoder to capture both temporal dynamics and inter-channel relationships in EEG signals.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2024-11-29",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "fixed-montage"
+      ]
+    },
+    "title": "GEFM: Graph-Enhanced EEG Foundation Model",
+    "unique_contribution": "First foundation model for EEG that integrates Graph Neural Networks to capture inter-channel relationships alongside temporal dynamics, demonstrating superior performance across multiple downstream tasks.",
+    "used_fulltext": true
+  }
+]

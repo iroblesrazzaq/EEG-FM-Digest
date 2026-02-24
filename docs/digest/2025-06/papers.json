@@ -1,0 +1,589 @@
+[
+  {
+    "arxiv_id_base": "2506.01867",
+    "categories": [
+      "q-bio.NC",
+      "eess.SP"
+    ],
+    "data_scale": {
+      "channels": 8.0,
+      "datasets": [
+        "Temple University Hospital EEG corpus"
+      ],
+      "eeg_hours": 26496.0,
+      "subjects": 14979.0
+    },
+    "detailed_summary": "This paper introduces a novel self-supervised pre-training method for EEG foundation models, adapting the HuBERT framework from speech processing to multi-channel EEG data. The model is trained on over 1,100 days of EEG data from 14,979 participants using a two-stage masked prediction approach with k-means clustering. The architecture uses a transformer-based design with eight EEG channels, optimized for real-time operation with minimal preprocessing. The model demonstrates strong performance on standard BCI tasks (P300, motor imagery) and shows ability to learn individual variability and alpha rhythm features, though it doesn't yet exceed state-of-the-art results on BCI benchmarks.",
+    "evaluation": {
+      "benchmarks": [
+        "Dataset A (55 participants)",
+        "Dataset B (109 participants)",
+        "Dataset C (12 participants)"
+      ],
+      "headline_results": [
+        "Above-chance performance on all BCI tasks",
+        "near-ceiling performance on participant recognition and eyes open/closed detection"
+      ],
+      "tasks": [
+        "P300 speller",
+        "motor imagery",
+        "participant recognition",
+        "eyes open/closed detection"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: CEReBrO adapts HuBERT framework for self-supervised pre-training on 14,979 participants' EEG data.",
+      "Method novelty: Two-stage masked prediction with k-means clustering, optimized for real-time use with minimal preprocessing and eight channels.",
+      "Strong evidence: Model achieves above-chance performance on BCI benchmarks and learns individual variability and alpha rhythm features."
+    ],
+    "limitations": [
+      "Model performance doesn't exceed current state-of-the-art on BCI benchmarks",
+      "Pre-training data from hospital setting may not capture BCI-specific features",
+      "Limited to eight EEG channels, which may constrain spatial resolution",
+      "No evaluation of potential artifact learning (eye movements, etc.)",
+      "Real-time performance and latency not explicitly characterized"
+    ],
+    "method": {
+      "architecture": "transformer-based with 6 conv layers + 12 transformer encoder layers",
+      "finetuning": "leave-one-participant-out cross-validation on 3 BCI benchmark datasets",
+      "objective": "masked reconstruction with k-means clustering (100 classes stage 1, 500 classes stage 2)",
+      "pretraining": "self-supervised on Temple University Hospital EEG corpus (1,104 days, 14,979 participants)"
+    },
+    "notes": "{\"chars\": 31848, \"error\": null, \"pages\": 6, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=9325",
+    "one_liner": "EEG foundation model pre-training method inspired by HuBERT for BCI tasks and electrophysiological feature learning.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-06-02",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "fixed-montage"
+      ]
+    },
+    "title": "EEG Foundation Models for BCI Learn Diverse Features of Electrophysiology",
+    "unique_contribution": "First EEG foundation model using HuBERT-inspired self-supervised pre-training that learns both BCI task features and broader electrophysiological components like alpha rhythms and individual variability.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2506.06353",
+    "categories": [
+      "eess.SP",
+      "cs.AI",
+      "cs.ET",
+      "cs.HC",
+      "cs.LG"
+    ],
+    "data_scale": {
+      "channels": null,
+      "datasets": [],
+      "eeg_hours": null,
+      "subjects": null
+    },
+    "detailed_summary": "This survey systematically reviews recent advancements in applying large language models (LLMs) to electroencephalography (EEG) analysis. It organizes the literature into four domains: (1) LLM-inspired foundation models for EEG representation learning, (2) EEG-to-language decoding, (3) cross-modal generation including image and 3D object synthesis, and (4) clinical applications and dataset management tools. The survey highlights how transformer-based architectures adapted through fine-tuning, few-shot, and zero-shot learning have enabled EEG-based models to perform complex tasks such as natural language generation, semantic interpretation, and diagnostic assistance. By presenting a structured overview of modeling strategies, system designs, and application areas, this work serves as a foundational resource for future work to bridge natural language processing and neural signal analysis through language models.",
+    "evaluation": {
+      "benchmarks": [],
+      "headline_results": [],
+      "tasks": []
+    },
+    "key_points": [
+      "Comprehensive survey of LLM applications in EEG analysis across four domains: foundation models, decoding, cross-modal generation, and clinical applications.",
+      "Highlights transformer-based architectures adapted through fine-tuning, few-shot, and zero-shot learning for complex EEG tasks.",
+      "Organizes recent studies into structured taxonomy with detailed tables covering tasks, datasets, methods, and model types."
+    ],
+    "limitations": [
+      "Survey nature means no original experimental results or novel model development",
+      "Coverage limited to studies available up to publication date (June 2025)",
+      "Focus on English-language literature may miss relevant non-English research",
+      "No quantitative meta-analysis of performance across different approaches",
+      "Limited discussion of real-time implementation challenges for clinical deployment"
+    ],
+    "method": {
+      "architecture": "Transformer-based architectures adapted through fine-tuning, few-shot learning, and zero-shot learning for EEG analysis across four domains.",
+      "finetuning": null,
+      "objective": null,
+      "pretraining": null
+    },
+    "notes": "{\"chars\": 74261, \"error\": null, \"pages\": 19, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=20201",
+    "one_liner": "Comprehensive survey and taxonomy of LLM applications in EEG analysis across four domains.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "survey",
+    "published_date": "2025-06-02",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction",
+        "autoregressive"
+      ],
+      "paper_type": [
+        "survey"
+      ],
+      "tokenization": [
+        "time-patch",
+        "latent-tokens"
+      ],
+      "topology": [
+        "fixed-montage",
+        "channel-flexible"
+      ]
+    },
+    "title": "Large Language Models for EEG: A Comprehensive Survey and Taxonomy",
+    "unique_contribution": "Provides the first comprehensive taxonomy and systematic review of LLM applications in EEG analysis, organizing recent studies into four distinct domains and highlighting adaptation strategies across the emerging field.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2506.09110",
+    "categories": [
+      "cs.LG"
+    ],
+    "data_scale": {
+      "channels": 19.0,
+      "datasets": [
+        "TUEG"
+      ],
+      "eeg_hours": 9246.0,
+      "subjects": 1109545.0
+    },
+    "detailed_summary": "CodeBrain addresses key limitations in existing EEG foundation models by introducing a two-stage architecture. The first stage employs a TFDual-Tokenizer that decouples heterogeneous temporal and frequency EEG signals into discrete tokens, expanding the representation space and enabling domain-specific interpretability by aligning tokens with neural events and spectral rhythms. The second stage uses a multi-scale EEGSSM architecture that combines structured global convolution with sliding window attention to efficiently capture both sparse long-range and local dependencies, reflecting the brain's small-world topology. Pretrained on the largest public EEG corpus (TUEG), CodeBrain achieves strong generalization across 8 downstream tasks and 10 datasets under distribution shifts, supported by comprehensive ablations, scaling-law analyses, and interpretability evaluations.",
+    "evaluation": {
+      "benchmarks": [
+        "Cohen's Kappa",
+        "Weighted F1",
+        "Balanced Accuracy",
+        "AUROC",
+        "AUC-PR"
+      ],
+      "headline_results": [
+        "Strong generalization under distribution shifts",
+        "Achieves state-of-the-art performance across 8 downstream tasks"
+      ],
+      "tasks": [
+        "emotion recognition",
+        "sleep staging",
+        "motor imagery",
+        "seizure detection"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: CodeBrain introduces a two-stage architecture with decoupled temporal-frequency tokenization and brain-inspired multi-scale modeling.",
+      "Domain-specific interpretability: TFDual-Tokenizer expands representation space and aligns tokens with neural events and spectral rhythms.",
+      "Multi-scale architecture: EEGSSM combines structured global convolution with sliding window attention to capture both long-range and local dependencies efficiently."
+    ],
+    "limitations": [
+      "Limited by the quality and diversity of pretraining data",
+      "May require substantial computational resources for pretraining",
+      "Interpretability analyses are qualitative and need further validation",
+      "Performance on rare classes may be suboptimal due to data imbalance",
+      "Channel robustness testing is limited to random masking scenarios"
+    ],
+    "method": {
+      "architecture": "Two-stage architecture: (1) TFDual-Tokenizer with separate temporal/frequency codebooks for discrete tokenization and domain-specific interpretability; (2) EEGSSM with structured global convolution and sliding window attention for efficient multi-scale dependency modeling.",
+      "finetuning": "Fine-tuned on 8 downstream tasks across 10 datasets",
+      "objective": "Discrete code prediction",
+      "pretraining": "Pretrained on TUEG, the largest public EEG corpus"
+    },
+    "notes": "{\"chars\": 110108, \"error\": null, \"pages\": 43, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=29220",
+    "one_liner": "CodeBrain introduces a two-stage EEG foundation model with decoupled temporal-frequency tokenization and brain-inspired multi-scale architecture for improved interpretability and generalization.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-06-10",
+    "tags": {
+      "backbone": [
+        "mamba-ssm"
+      ],
+      "objective": [
+        "discrete-code-prediction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "discrete-tokens"
+      ],
+      "topology": [
+        "topology-agnostic"
+      ]
+    },
+    "title": "CodeBrain: Towards Decoupled Interpretability and Multi-Scale Architecture for EEG Foundation Model",
+    "unique_contribution": "CodeBrain is the first EEG foundation model to decouple temporal and frequency EEG signals into domain-specific discrete tokens while integrating a brain-inspired multi-scale architecture for efficient global and local dependency modeling.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2507.14141",
+    "categories": [
+      "eess.SP",
+      "cs.AI",
+      "cs.LG"
+    ],
+    "data_scale": {
+      "channels": 19.0,
+      "datasets": [
+        "TUEG"
+      ],
+      "eeg_hours": 30000.0,
+      "subjects": 14987.0
+    },
+    "detailed_summary": "DIVER-0 addresses critical limitations in existing EEG foundation models by introducing unified spatio-temporal attention that captures complex brain dynamics while maintaining channel permutation equivariance. The model combines Rotary Position Embedding (RoPE) for temporal relationships with binary attention biases for channel differentiation, enabling robust generalization across diverse electrode configurations. A key innovation is the Sliding Temporal Conditional Positional Encoding (STCPE), which preserves both temporal translation equivariance and channel permutation equivariance, allowing the model to adapt to arbitrary electrode configurations unseen during pretraining. Experimental results demonstrate that DIVER-0 achieves competitive performance on emotion recognition and motor imagery tasks using only 10% of the pretraining data while maintaining consistent results across all channel permutation conditions.",
+    "evaluation": {
+      "benchmarks": [
+        "FACED",
+        "PhysioNet-MI"
+      ],
+      "headline_results": [
+        "59.2% balanced accuracy on FACED emotion recognition",
+        "62.8% balanced accuracy on PhysioNet-MI motor imagery"
+      ],
+      "tasks": [
+        "Emotion recognition",
+        "Motor imagery"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: DIVER-0 achieves competitive performance on emotion recognition and motor imagery tasks using only 10% of pretraining data while maintaining strict channel permutation equivariance.",
+      "Unified spatio-temporal attention: Combines Rotary Position Embedding for temporal relationships with binary attention biases for channel differentiation, capturing complex brain dynamics more effectively than segregated spatial-temporal processing.",
+      "Sliding Temporal Conditional Positional Encoding: Introduces STCPE that preserves both temporal translation equivariance and channel permutation equivariance, enabling robust generalization to arbitrary electrode configurations unseen during pretraining."
+    ],
+    "limitations": [
+      "Limited evaluation to only two downstream datasets (FACED and PhysioNet-MI)",
+      "Performance on motor imagery tasks suggests spatially constrained attention may be more suitable for localized cortical processes",
+      "Ablation studies show some configurations achieve slightly higher performance on motor imagery, indicating potential task-specific optimization needs",
+      "Relies on binary attention biases which may sacrifice detailed channel-specific discrimination for permutation equivariance",
+      "Full potential not explored with complete TUEG corpus (only 10% used in experiments)"
+    ],
+    "method": {
+      "architecture": "Transformer-based with unified spatio-temporal attention",
+      "finetuning": "Emotion recognition and motor imagery tasks",
+      "objective": "Masked patch reconstruction",
+      "pretraining": "10% of TUEG corpus"
+    },
+    "notes": "{\"chars\": 41638, \"error\": null, \"pages\": 11, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=11861",
+    "one_liner": "DIVER-0 is a novel EEG foundation model that achieves competitive performance with only 10% of pretraining data while maintaining strict channel permutation equivariance for robust cross-dataset generalization.",
+    "open_source": {
+      "code_url": "https://github.com/cha-lab/DIVER-0",
+      "license": "Unknown",
+      "weights_url": "https://github.com/cha-lab/DIVER-0"
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-06-13",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "DIVER-0 : A Fully Channel Equivariant EEG Foundation Model",
+    "unique_contribution": "DIVER-0 introduces unified spatio-temporal attention with binary attention biases and STCPE to achieve strict channel permutation equivariance while maintaining competitive performance with minimal pretraining data.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2506.16056",
+    "categories": [
+      "cs.LG",
+      "cs.AI"
+    ],
+    "data_scale": {
+      "channels": null,
+      "datasets": [],
+      "eeg_hours": null,
+      "subjects": null
+    },
+    "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+    "evaluation": {
+      "benchmarks": [],
+      "headline_results": [],
+      "tasks": []
+    },
+    "key_points": [
+      "unknown",
+      "unknown",
+      "unknown"
+    ],
+    "limitations": [
+      "unknown",
+      "summary_json_error"
+    ],
+    "method": {
+      "architecture": null,
+      "finetuning": null,
+      "objective": null,
+      "pretraining": null
+    },
+    "notes": "{\"chars\": 68526, \"error\": null, \"pages\": 34, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=18745;summary_json_error",
+    "one_liner": "Summary unavailable due to JSON validation failure.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "other",
+    "published_date": "2025-06-19",
+    "tags": {
+      "backbone": [],
+      "objective": [],
+      "paper_type": [],
+      "tokenization": [],
+      "topology": []
+    },
+    "title": "CRIA: A Cross-View Interaction and Instance-Adapted Pre-training Framework for Generalizable EEG Representations",
+    "unique_contribution": "unknown",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2506.17068",
+    "categories": [
+      "q-bio.NC",
+      "cs.ET",
+      "eess.SP"
+    ],
+    "data_scale": {
+      "channels": null,
+      "datasets": [],
+      "eeg_hours": null,
+      "subjects": null
+    },
+    "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+    "evaluation": {
+      "benchmarks": [],
+      "headline_results": [],
+      "tasks": []
+    },
+    "key_points": [
+      "unknown",
+      "unknown",
+      "unknown"
+    ],
+    "limitations": [
+      "unknown",
+      "summary_json_error"
+    ],
+    "method": {
+      "architecture": null,
+      "finetuning": null,
+      "objective": null,
+      "pretraining": null
+    },
+    "notes": "{\"chars\": 77176, \"error\": null, \"pages\": 20, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=20744;summary_json_error",
+    "one_liner": "Summary unavailable due to JSON validation failure.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "other",
+    "published_date": "2025-06-20",
+    "tags": {
+      "backbone": [],
+      "objective": [],
+      "paper_type": [],
+      "tokenization": [],
+      "topology": []
+    },
+    "title": "Cross-Modal Epileptic Signal Harmonization: Frequency Domain Mapping Quantization for Pre-training a Unified Neurophysiological Transformer",
+    "unique_contribution": "unknown",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2506.20354",
+    "categories": [
+      "cs.LG",
+      "cs.AI"
+    ],
+    "data_scale": {
+      "channels": null,
+      "datasets": [
+        "SWEC iEEG",
+        "MAYO",
+        "FNUSA",
+        "Brain TreeBank"
+      ],
+      "eeg_hours": 10000.0,
+      "subjects": 68.0
+    },
+    "detailed_summary": "This paper introduces MVPFormer, a generative foundation model for human electrophysiology, powered by a novel multi-variate parallel attention (MVPA) mechanism. MVPFormer is trained on the SWEC iEEG dataset, the largest publicly available iEEG corpus to date with nearly 10,000 hours of recordings. The model demonstrates expert-level performance in seizure detection across multiple institutional datasets and achieves state-of-the-art results on four Brain TreeBank iEEG decoding tasks. MVPA enables flexible and efficient modeling of time-series data with varying channel counts and configurations by disentangling content, temporal, and spatial attention. The work establishes MVPFormer as the first open-source, open-weights, and open-data iEEG foundation model with SOTA clinical performance.",
+    "evaluation": {
+      "benchmarks": [
+        "SWEC iEEG",
+        "Brain TreeBank"
+      ],
+      "headline_results": [
+        "Kappa score of 0.57 on seizure detection",
+        "SOTA performance on four Brain TreeBank tasks"
+      ],
+      "tasks": [
+        "Seizure detection",
+        "Brain TreeBank iEEG decoding"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: MVPFormer uses multi-variate parallel attention (MVPA) to achieve expert-level seizure detection and SOTA performance on iEEG tasks.",
+      "Novel attention mechanism: MVPA disentangles content, temporal, and spatial attention, enabling flexible modeling of time-series with varying channel counts and configurations.",
+      "Largest iEEG dataset: Releases the SWEC iEEG dataset, comprising nearly 10,000 hours of recordings from heterogeneous clinical sources, supporting community foundation model efforts."
+    ],
+    "limitations": [
+      "The SWEC iEEG dataset, while large, may not be sufficient to fully train very large models according to scaling laws.",
+      "The model's performance may be affected by the quality of the data, as high-quality data is crucial for optimal performance.",
+      "The model is developed for research purposes and may not be used for diagnostic purposes."
+    ],
+    "method": {
+      "architecture": "MVPFormer with MVPA",
+      "finetuning": "LoRA for downstream classification tasks",
+      "objective": "Generative pre-training with contrastive loss",
+      "pretraining": "Trained on SWEC iEEG dataset"
+    },
+    "notes": "{\"chars\": 144420, \"error\": null, \"pages\": 59, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=38149",
+    "one_liner": "MVPFormer is the first open-source, open-weights, and open-data iEEG foundation model with SOTA clinical performance.",
+    "open_source": {
+      "code_url": "https://github.com/IBM/multi-variate-parallel-transformer",
+      "license": "open-source",
+      "weights_url": "open-weights"
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-06-25",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "autoregressive"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "A foundation model with multi-variate parallel attention to generate neuronal activity",
+    "unique_contribution": "Introduces MVPA, a novel self-attention mechanism that disentangles content, temporal, and spatial attention, enabling flexible and efficient modeling of heterogeneous time-series data, and applies it to build MVPFormer, the first open-source, open-weights, and open-data iEEG foundation model with SOTA clinical performance.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2506.23075",
+    "categories": [
+      "cs.HC",
+      "cs.LG",
+      "eess.SP",
+      "q-bio.NC"
+    ],
+    "data_scale": {
+      "channels": 0.0,
+      "datasets": [
+        "datasets"
+      ],
+      "eeg_hours": 9000.0,
+      "subjects": 0.0
+    },
+    "detailed_summary": "CSBrain addresses a fundamental limitation in existing EEG foundation models: their reliance on scale-agnostic dense modeling inherited from NLP and vision, which fails to capture the intrinsic cross-scale spatiotemporal structure of neural activity. The model introduces two key innovations: Cross-scale Spatiotemporal Tokenization (CST), which aggregates multi-scale features from localized temporal windows and anatomical brain regions into compact scale-aware tokens, and Structured Sparse Attention (SSA), which captures cross-window and cross-region dependencies while eliminating spurious correlations. These components are alternately stacked to progressively integrate multi-scale dependencies. Extensive experiments across 11 representative EEG tasks and 16 public datasets demonstrate that CSBrain consistently outperforms both task-specific models and strong foundation model baselines, establishing cross-scale modeling as a key inductive bias for generalized EEG decoding.",
+    "evaluation": {
+      "benchmarks": [
+        "datasets"
+      ],
+      "headline_results": [
+        "balanced accuracy",
+        "Cohen's kappa",
+        "weighted F1",
+        "AUC-PR",
+        "AUROC",
+        "Pearson correlation",
+        "R2 score",
+        "RMSE"
+      ],
+      "tasks": [
+        "motor imagery classification",
+        "emotion recognition",
+        "seizure detection",
+        "sleep staging",
+        "imagined speech classification",
+        "vigilance estimation",
+        "mental stress detection",
+        "mental disorder diagnosis",
+        "event type classification",
+        "abnormal detection",
+        "slowing event classification"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: CSBrain introduces cross-scale spatiotemporal modeling for generalized brain decoding across diverse tasks.",
+      "Novel architecture: Combines Cross-scale Spatiotemporal Tokenization (CST) with Structured Sparse Attention (SSA) to capture multi-scale neural patterns while avoiding spurious dependencies.",
+      "Strong empirical results: Achieves state-of-the-art performance across 11 tasks and 16 datasets, outperforming both task-specific and foundation model baselines."
+    ],
+    "limitations": [
+      "Computational resource constraints limit exploration of scaling behavior at the scale of vision-language or language-only models",
+      "Open question remains about how much EEG data is sufficient to pretrain high-quality foundation models",
+      "Sparse, noisy, and heterogeneous nature of EEG datasets requires further work on large-scale dataset unification and normalization"
+    ],
+    "method": {
+      "architecture": "Cross-scale Spatiotemporal Tokenization (CST) aggregates multi-scale features from localized temporal windows and anatomical brain regions into compact scale-aware tokens. Structured Sparse Attention (SSA) captures cross-window and cross-region dependencies while eliminating spurious correlations. CST and SSA are alternately stacked for L layers to progressively integrate cross-scale spatiotemporal dependencies.",
+      "finetuning": null,
+      "objective": null,
+      "pretraining": null
+    },
+    "notes": "{\"chars\": 127123, \"error\": null, \"pages\": 37, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=33573",
+    "one_liner": "CSBrain introduces cross-scale spatiotemporal modeling to EEG foundation models, achieving state-of-the-art performance across 11 tasks and 16 datasets.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2025-06-29",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "fixed-montage"
+      ]
+    },
+    "title": "CSBrain: A Cross-scale Spatiotemporal Brain Foundation Model for EEG Decoding",
+    "unique_contribution": "CSBrain is the first EEG foundation model to explicitly model cross-scale spatiotemporal structure through alternating CST and SSA modules, achieving state-of-the-art performance across diverse brain decoding tasks.",
+    "used_fulltext": true
+  }
+]

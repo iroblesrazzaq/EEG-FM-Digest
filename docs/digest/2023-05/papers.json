@@ -1,0 +1,89 @@
+[
+  {
+    "arxiv_id_base": "2305.10351",
+    "categories": [
+      "eess.SP",
+      "cs.AI",
+      "cs.LG"
+    ],
+    "data_scale": {
+      "channels": 0.0,
+      "datasets": [
+        "CHB-MIT",
+        "PTB-XL",
+        "HAR",
+        "TUAB",
+        "TUEV",
+        "Other datasets"
+      ],
+      "eeg_hours": 0.0,
+      "subjects": 0.0
+    },
+    "detailed_summary": "BIOT addresses the challenge of training deep learning models on heterogeneous biosignal datasets by introducing a novel tokenization strategy that converts diverse biosignals into unified \"biosignal sentences.\" The model uses a linear transformer architecture to capture complex token interactions while maintaining computational efficiency. Comprehensive evaluations on EEG, ECG, and human activity sensory signals demonstrate that BIOT outperforms strong baselines in standard supervised learning settings and shows particular robustness when handling missing channels or segments. The model also enables effective knowledge transfer through both unsupervised and supervised pre-training across different data sources.",
+    "evaluation": {
+      "benchmarks": [
+        "CHB-MIT",
+        "PTB-XL",
+        "HAR",
+        "TUAB",
+        "TUEV"
+      ],
+      "headline_results": [
+        "CHB-MIT seizure detection: 3% improvement in balanced accuracy over baselines",
+        "Pre-trained models: Up to 4% additional improvements on downstream tasks"
+      ],
+      "tasks": [
+        "EEG seizure detection",
+        "ECG arrhythmia detection",
+        "Human activity recognition",
+        "Multi-class seizure type classification",
+        "Abnormal EEG detection"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: BIOT enables cross-data learning with mismatched channels, variable lengths, and missing values through unified biosignal tokenization.",
+      "Strong empirical performance: Outperforms baselines on EEG seizure detection (3% improvement) and other biosignal tasks, with pre-training bringing up to 4% additional gains.",
+      "Versatile applications: Supports supervised learning, learning with missing data, and both unsupervised and supervised pre-training across diverse biosignal datasets."
+    ],
+    "limitations": [
+      "Requires careful hyperparameter tuning for sampling rate, token length, and overlap",
+      "Performance sensitive to frequency band requirements of specific tasks",
+      "Linear attention approximation may lose some modeling capacity compared to full attention"
+    ],
+    "method": {
+      "architecture": "Transformer with linear attention",
+      "finetuning": "Fine-tuning on downstream tasks with different formats",
+      "objective": "Masked reconstruction (unsupervised), supervised classification",
+      "pretraining": "Joint pre-training on multiple unlabeled biosignal datasets"
+    },
+    "notes": "{\"chars\": 65859, \"error\": null, \"pages\": 19, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=18056",
+    "one_liner": "BIOT is a foundational transformer model for biosignals that enables cross-data learning with mismatched channels, variable lengths, and missing values.",
+    "open_source": {
+      "code_url": "https://github.com/ycq091044/BIOT",
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2023-05-10",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "BIOT: Cross-data Biosignal Learning in the Wild",
+    "unique_contribution": "First biosignal transformer model that can handle mismatched channels, variable lengths, and missing values through a unified tokenization approach enabling cross-data learning.",
+    "used_fulltext": true
+  }
+]

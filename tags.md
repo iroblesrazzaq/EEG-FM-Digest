@@ -1,7 +1,7 @@
 
 ### Paper type
 
-* `eeg-fm`
+* `new-model`
 * `post-training`
 * `benchmark`
 * `survey`

@@ -1,0 +1,47 @@
+<!doctype html>
+<html><head><meta charset='utf-8'><title>EEG-FM Digest 2025-12</title>
+<link rel='stylesheet' href='../../assets/style.css'></head>
+<body>
+  <main>
+    <h1>EEG Foundation Model Digest — 2025-12</h1>
+    <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
+    <p>Top picks: 2512.19097, 2512.12210, 2512.15250</p>
+    <section><h2>new_model</h2>
+    <article class='paper-card' id='2512.12210'>
+      <h3><a href='http://arxiv.org/abs/2512.12210v2'>EEG-DLite: Dataset Distillation for Efficient Large EEG Model Training</a></h3>
+      <div class='meta'>2025-12-13 · Yuting Tang, Weibang Jiang, Shanglin Li, Yong Li, Chenyu Liu, Xinliang Zhou, Yi Ding, Cuntai Guan</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model training efficiency method: EEG-DLite distills large EEG datasets to enable efficient pre-training with only 5% of the data.</li><li>Core method novelty: Uses self-supervised autoencoder to compress EEG segments into latent representations, then applies outlier filtering and diversity sampling to select informative subsets.</li><li>Strongest evidence: Training on 5% of a 2,500-hour dataset achieves comparable or better performance than full dataset training across multiple downstream tasks, reducing GPU pre-training time from 30 hours to 2 hours.</li></ul>
+      <p><strong>Unique contribution:</strong> First data distillation framework tailored for large-scale EEG foundation model pre-training, achieving comparable or superior performance using only 5% of the original training data.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>EEG-DLite is a data distillation framework that enables efficient pre-training of large EEG foundation models by selectively removing noisy and redundant samples from large EEG datasets. The framework encodes EEG segments into compact latent representations using a self-supervised autoencoder, then filters out outliers and minimizes redundancy to create a smaller yet informative subset. Through extensive experiments, training on only 5% of a 2,500-hour dataset curated with EEG-DLite yields performance comparable to, and in some cases better than, training on the full dataset across multiple downstream tasks. This represents the first systematic study of pre-training data distillation in the context of EEG foundation models.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-objective' title='objective'>Contrastive</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
+      <p><a href='https://github.com/t170815518/EEG-DLite'>code</a> </p>
+    </article>
+    
+
+    <article class='paper-card' id='2512.15250'>
+      <h3><a href='http://arxiv.org/abs/2512.15250v1'>Leveraging Foundational Models and Simple Fusion for Multi-modal Physiological Signal Analysis</a></h3>
+      <div class='meta'>2025-12-17 · Youssef Ghallab, Omar Iraqy, Mohamed Kandil, Mohamed Ashraf, Saadeldine Eletter, Morougue Ghazal, Ayman Khalafallah, Nagwa El-Makky</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model: CEReBrO leverages CBraMod encoder for large-scale self-supervised ECG pretraining with dual-masking strategy to capture intra- and inter-lead dependencies.</li><li>Method novelty: Combines pre-trained CBraMod EEG encoder with self-supervised pretraining of symmetric ECG encoder, using simple embedding concatenation for effective cross-modal learning.</li><li>Strong evidence: Achieves near state-of-the-art emotion recognition performance on DREAMER dataset with AUC scores of 84.79 (arousal) and 86.69 (dominance), ranking best and second-best respectively.</li></ul>
+      <p><strong>Unique contribution:</strong> The paper introduces a dual-masking strategy for ECG pretraining that captures both intra-lead temporal patterns and inter-lead spatial dependencies, combined with simple embedding concatenation fusion that achieves near state-of-the-art emotion recognition performance.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper presents a multi-modal physiological signal analysis framework that adapts the CBraMod encoder for large-scale self-supervised ECG pretraining, introducing a dual-masking strategy to capture both intra-lead temporal patterns and inter-lead spatial dependencies. The approach utilizes a pre-trained CBraMod encoder for EEG and pre-trains a symmetric ECG encoder, equipping each modality with rich foundational representations that are then fused via simple embedding concatenation. Evaluated on emotion recognition using the DREAMER dataset, the method achieves near state-of-the-art performance across valence, arousal, and dominance dimensions, demonstrating that carefully designed physiological encoders with straightforward fusion can substantially improve downstream performance despite limited multi-modal supervision.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
+      <p> </p>
+    </article>
+    
+
+    <article class='paper-card' id='2512.19097'>
+      <h3><a href='http://arxiv.org/abs/2512.19097v2'>DIVER-1 : Deep Integration of Vast Electrophysiological Recordings at Scale</a></h3>
+      <div class='meta'>2025-12-22 · Danny Dongyeop Han, Yonghyeon Gwon, Ahhyun Lucy Lee, Taeyang Lee, Seong Jin Lee, Jubin Choi, Sebin Lee, Jihyun Bang, Seungju Lee, David Keetae Park, Shinjae Yoo, Chun Kee Chung, Jiook Cha</div>
+      <p><strong>Summary Highlights:</strong></p>
+      <ul class='summary-points'><li>New EEG foundation model family: DIVER-1 trained on 59.3k hours (54k EEG + 5.3k iEEG) across 1.6M channel-hours from 17.7k+ subjects, scaling up to 1.82B parameters</li><li>Novel scaling insights: Performance dominated by data scale and training duration, not model size - smaller models trained longer outperform larger models trained briefly under fixed compute</li><li>State-of-the-art results: Achieves SOTA performance across established EEG and iEEG benchmarks including Neuroprobe and MAYO datasets</li></ul>
+      <p><strong>Unique contribution:</strong> The first systematic scaling law analysis for EFMs that reveals data-constrained characteristics fundamentally different from language models, combined with DIVER-1 models achieving state-of-the-art performance on the largest and most diverse electrophysiological corpus to date.</p>
+      <details class='summary-detail'><summary>Detailed summary</summary><p>DIVER-1 introduces the first systematic scaling law analysis for electrophysiological foundation models (EFMs), revealing that performance is dominated by data scale and training duration rather than model parameter count. The authors train models up to 1.82 billion parameters on 59.3k hours of EEG and iEEG data from 17.7k+ subjects, demonstrating that smaller models trained longer outperform larger models trained briefly under fixed compute budgets. This challenges the &quot;bigger is better&quot; heuristic from language models and provides actionable guidance for efficient EFM development. DIVER-1 achieves state-of-the-art performance across established EEG and iEEG benchmarks, including Neuroprobe and MAYO datasets.</p></details>
+      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Channel Flexible</span></p>
+      <p><a href='https://anonymous.4open.science/r/DIVER-1'>code</a> <a href='Planned release under open-science framework'>weights</a></p>
+    </article>
+    </section>
+  </main>
+  <script src='../../assets/site.js'></script>
+</body></html>

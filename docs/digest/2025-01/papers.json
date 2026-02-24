@@ -1,77 +1,73 @@
 [
   {
     "arxiv_id_base": "2501.10885",
-    "title": "CEReBrO: Compact Encoder for Representations of Brain Oscillations Using Efficient Alternating Attention",
-    "published_date": "2025-01-18",
     "categories": [
       "cs.LG"
     ],
-    "paper_type": "new_model",
-    "one_liner": "CEReBrO introduces a compact EEG foundation model with alternating attention that achieves 2x speed and 6x memory improvements over standard self-attention while setting new benchmarks in emotion and seizure detection.",
-    "detailed_summary": "CEReBrO addresses key limitations in current EEG foundation models by introducing a compact encoder with alternating attention mechanism that jointly models intra-channel temporal dynamics and inter-channel spatial correlations. The model uses per-channel patch tokenization and achieves 2x speed improvement with 6x less memory compared to standard self-attention. Pre-trained on over 20,000 hours of publicly available scalp EEG recordings from the Temple University EEG Corpus (TUEG) with diverse channel configurations, CEReBrO offers three model sizes (3.6M, 40M, and 85M parameters) that set new benchmarks in emotion detection and seizure detection tasks while maintaining competitive performance in anomaly classification and gait prediction. The alternating attention mechanism enables efficient processing of long EEG sequences and high-channel-count data, making it particularly suitable for deployment on resource-constrained devices.",
-    "unique_contribution": "Introduces alternating attention mechanism that achieves 2x speed improvement and 6x memory reduction compared to standard self-attention while maintaining competitive performance across multiple EEG tasks.",
-    "key_points": [
-      "Alternating attention mechanism jointly models intra-channel temporal dynamics and inter-channel spatial correlations",
-      "Achieves 2x speed improvement and 6x memory reduction compared to standard self-attention",
-      "Pre-trained on 20,000+ hours of public EEG data from TUEG corpus with diverse channel configurations",
-      "Three model sizes (3.6M, 40M, 85M parameters) suitable for edge deployment",
-      "Sets new benchmarks in emotion detection and seizure detection tasks",
-      "Uses per-channel patch tokenization for granular modeling of temporal dynamics",
-      "Handles varying channel numbers through learnable padding tokens",
-      "Demonstrates superior performance on public benchmarks including anomaly classification and gait prediction"
-    ],
     "data_scale": {
+      "channels": null,
       "datasets": [
-        "TUEG",
-        "TUAB",
-        "SEED",
-        "Neonate",
-        "MoBI"
+        "Temple University EEG Corpus (TUEG)"
       ],
-      "subjects": 10000,
-      "eeg_hours": 20000,
-      "channels": 64
+      "eeg_hours": 20000.0,
+      "subjects": 10000.0
     },
-    "method": {
-      "architecture": "Transformer encoder with alternating attention",
-      "objective": "Masked autoencoding (MAE)",
-      "pretraining": "Self-supervised on public EEG data",
-      "finetuning": "Linear probing and full fine-tuning"
-    },
+    "detailed_summary": "CEReBrO introduces a compact EEG foundation model that addresses key limitations in current approaches: sub-optimal EEG signal modeling, large model sizes, and reliance on private datasets. The model uses a novel tokenization scheme that represents EEG signals at per-channel patch granularity and employs an alternating attention mechanism that jointly models intra-channel temporal dynamics and inter-channel spatial correlations. This design achieves 2× speed improvement with 6× less memory compared to standard self-attention. Pre-trained on over 20,000 hours of publicly available scalp EEG recordings from the Temple University EEG Corpus with diverse channel configurations, CEReBrO sets new benchmarks in emotion detection and seizure detection tasks while maintaining competitive performance in anomaly classification and gait prediction.",
     "evaluation": {
-      "tasks": [
-        "emotion detection",
-        "seizure detection",
-        "anomaly classification",
-        "gait prediction"
-      ],
       "benchmarks": [
-        "SEED",
-        "Neonate",
-        "TUAB",
-        "MoBI"
+        "SEED dataset",
+        "Neonate dataset",
+        "TUAB dataset",
+        "MoBI dataset"
       ],
       "headline_results": [
-        "68.21% accuracy (85M parameters) in emotion detection",
-        "0.875 AUROC (85M parameters) in seizure detection",
-        "81.67% accuracy (85M parameters) in anomaly classification",
-        "0.3118 R2 score (85M parameters) in gait prediction"
+        "68.21% accuracy, 0.6845 F1 score (85M parameters)",
+        "0.875 AUROC (85M parameters)",
+        "81.67% balanced accuracy, 0.9049 AUPR (85M parameters)",
+        "0.3118 R² score, 0.1209 RMSE (85M parameters)"
+      ],
+      "tasks": [
+        "Emotion detection",
+        "Seizure detection",
+        "Anomaly classification",
+        "Gait prediction"
       ]
     },
+    "key_points": [
+      "New EEG foundation model: CEReBrO achieves state-of-the-art performance with 2× speed improvement and 6× less memory using alternating attention.",
+      "Alternating attention mechanism jointly models intra-channel temporal dynamics and inter-channel spatial correlations, enabling efficient processing of long EEG sequences.",
+      "Pre-trained on 20,000+ hours of public EEG data, CEReBrO sets new benchmarks in emotion and seizure detection while maintaining competitive performance in anomaly classification and gait prediction."
+    ],
+    "limitations": [
+      "Alternating attention mechanism may be less effective for spectrogram representations compared to raw waveforms",
+      "Model performance still lags behind specialized models on some tasks (e.g., STATENET on seizure detection)",
+      "Requires careful hyperparameter tuning for different EEG tasks and datasets",
+      "Limited evaluation on extremely long EEG sequences beyond typical clinical recordings"
+    ],
+    "method": {
+      "architecture": "Transformer encoder with alternating attention mechanism",
+      "finetuning": "Fine-tuning with global mean pooling for classification",
+      "objective": "Masked autoencoding on raw EEG waveforms",
+      "pretraining": "Pre-training on Temple University EEG Corpus"
+    },
+    "notes": "{\"chars\": 60305, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=16809",
+    "one_liner": "New EEG foundation model: CEReBrO achieves state-of-the-art performance with 2× speed improvement and 6× less memory using alternating attention.",
     "open_source": {
       "code_url": null,
-      "weights_url": null,
-      "license": null
+      "license": null,
+      "weights_url": null
     },
+    "paper_type": "new_model",
+    "published_date": "2025-01-18",
     "tags": {
-      "paper_type": [
-        "eeg-fm"
-      ],
       "backbone": [
         "transformer"
       ],
       "objective": [
         "masked-reconstruction"
+      ],
+      "paper_type": [
+        "new-model"
       ],
       "tokenization": [
         "time-patch"
@@ -80,14 +76,8 @@
         "channel-flexible"
       ]
     },
-    "limitations": [
-      "Performance on spectrograms slightly worse than waveforms",
-      "Limited to maximum 64 channels due to practical constraints",
-      "No explicit comparison with other efficient attention alternatives",
-      "Memory usage still significant for very long sequences",
-      "No ablation study on different patch sizes"
-    ],
-    "used_fulltext": true,
-    "notes": "{\"chars\": 60305, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=16596"
+    "title": "CEReBrO: Compact Encoder for Representations of Brain Oscillations Using Efficient Alternating Attention",
+    "unique_contribution": "CEReBrO introduces alternating attention for EEG modeling, achieving 2× speed improvement and 6× memory reduction while maintaining state-of-the-art performance across multiple EEG tasks.",
+    "used_fulltext": true
   }
 ]

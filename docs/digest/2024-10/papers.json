@@ -1,0 +1,158 @@
+[
+  {
+    "arxiv_id_base": "2410.19779",
+    "categories": [
+      "eess.SP",
+      "cs.LG"
+    ],
+    "data_scale": {
+      "channels": 138.0,
+      "datasets": [
+        "12"
+      ],
+      "eeg_hours": null,
+      "subjects": null
+    },
+    "detailed_summary": "BrainGPT addresses the limitations of specialist EEG models by introducing an electrode-wise modeling strategy that treats each electrode as an independent sample, enabling integration of diverse EEG datasets with up to 138 electrodes. It employs autoregressive pre-training instead of traditional masked autoencoder approaches, capturing temporal dependencies through next-token prediction. The model scales up to 1.1B parameters and introduces a multi-task transfer learning paradigm using a learnable electrode graph network shared across tasks. BrainGPT demonstrates broad compatibility with various signal acquisition devices, subjects, and tasks, outperforming existing specialist models across 12 benchmarks spanning 5 distinct tasks.",
+    "evaluation": {
+      "benchmarks": [
+        "12 benchmarks"
+      ],
+      "headline_results": [
+        "State-of-the-art performance across all tasks"
+      ],
+      "tasks": [
+        "Emotion Recognition",
+        "Motor Imagery",
+        "Mental Workload",
+        "Sleeping Stage",
+        "Cross Modality"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: BrainGPT introduces the first generalist EEG foundation model using autoregressive pre-training and electrode-wise modeling to unify diverse EEG datasets.",
+      "Electrode-wise modeling strategy: Treats each electrode as an independent sample, enabling integration of up to 138 electrodes and arbitrary combinations for flexible data processing.",
+      "Multi-task transfer learning: Introduces a learnable electrode graph network shared across tasks, demonstrating confirmed multi-task compatibility and synergistic performance improvements."
+    ],
+    "limitations": [
+      "Limited discussion of computational requirements for large-scale deployment",
+      "No explicit comparison with other foundation model approaches on cross-dataset generalization",
+      "Potential domain mismatch issues when transferring from seizure data to general EEG tasks not fully addressed"
+    ],
+    "method": {
+      "architecture": "Electrode Temporal Encoder (ETE) with transformer backbone",
+      "finetuning": "Multi-task transfer learning with Task-shared Electrode Graph (TEG) network",
+      "objective": "Autoregressive next-token prediction",
+      "pretraining": "Electrode-wise pre-training on diverse EEG datasets"
+    },
+    "notes": "{\"chars\": 53041, \"error\": null, \"pages\": 10, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=14937",
+    "one_liner": "BrainGPT is the first generalist EEG foundation model using autoregressive pre-training to achieve state-of-the-art performance across 12 benchmarks spanning 5 tasks.",
+    "open_source": {
+      "code_url": null,
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2024-10-14",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "autoregressive"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "BrainGPT: Unleashing the Potential of EEG Generalist Foundation Model by Autoregressive Pre-training",
+    "unique_contribution": "BrainGPT is the first generalist EEG foundation model that unifies diverse EEG datasets through electrode-wise modeling and autoregressive pre-training, achieving state-of-the-art performance across multiple tasks while demonstrating confirmed multi-task compatibility and synergy.",
+    "used_fulltext": true
+  },
+  {
+    "arxiv_id_base": "2410.19842",
+    "categories": [
+      "eess.SP",
+      "cs.LG"
+    ],
+    "data_scale": {
+      "channels": 20.0,
+      "datasets": [
+        "Physionet Challenge 2018 (EEG)",
+        "SleepEDFx (EEG)",
+        "MASS (EEG)",
+        "Physionet Challenge 2021 (ECG)"
+      ],
+      "eeg_hours": null,
+      "subjects": 62.0
+    },
+    "detailed_summary": "This paper introduces contrastive random lead coding (CRLC), a method for creating positive pairs in contrastive learning of multivariate biosignals without relying on augmentations or temporal segments. CRLC randomly samples subsets of input channels to form positive pairs, enabling channel-agnostic self-supervision. The approach is validated on EEG and ECG data, showing superior performance compared to competing strategies, especially in the channel-agnostic setting. For EEG tasks, CRLC surpasses the current state-of-the-art reference model, while for ECG it achieves comparable results. The method leverages a message passing neural network (MPNN) to extract inter-channel information, making the model flexible across varying channel configurations.",
+    "evaluation": {
+      "benchmarks": [
+        "State-of-the-art reference models"
+      ],
+      "headline_results": [
+        "Outperforms state-of-the-art on EEG tasks",
+        "Achieves comparable results on ECG tasks in the channel-agnostic setting"
+      ],
+      "tasks": [
+        "SleepEDFx (2-channel EEG)",
+        "MASS (20-channel EEG)",
+        "Physionet Challenge 2021 (ECG)"
+      ]
+    },
+    "key_points": [
+      "New EEG foundation model: CEReBrO uses CRLC for channel-agnostic self-supervision, outperforming state-of-the-art on EEG tasks.",
+      "Method novelty: CRLC creates positive pairs by randomly sampling subsets of input channels, avoiding reliance on augmentations or temporal segments.",
+      "Strongest evidence: CRLC surpasses state-of-the-art reference models on EEG tasks and achieves comparable results on ECG tasks in the channel-agnostic setting."
+    ],
+    "limitations": [
+      "CRLC performance on ECG is comparable but not superior to state-of-the-art",
+      "Model size (5.9 × 10⁴ parameters) smaller than state-of-the-art (9.0 × 10⁷ parameters)",
+      "Requires at least 2 input channels for fine-tuning",
+      "Ablation study shows MPNN impact is less significant for EEG than ECG",
+      "Relies on synthetic data for controlled experiments"
+    ],
+    "method": {
+      "architecture": "Channel-agnostic model with convolutional encoder + MPNN",
+      "finetuning": "Fine-tuned on SleepEDFx (2-channel EEG), MASS (20-channel EEG), and Physionet Challenge 2021 (ECG)",
+      "objective": "CRLC creates positive pairs by randomly sampling channel subsets",
+      "pretraining": "NT-Xent and TS2Vec losses"
+    },
+    "notes": "{\"chars\": 70357, \"error\": null, \"pages\": 13, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=19331",
+    "one_liner": "CRLC enables channel-agnostic self-supervision of biosignals by using random subsets of channels as positive pairs.",
+    "open_source": {
+      "code_url": "https://github.com/theabrusch/Multiview_TS_SSL",
+      "license": null,
+      "weights_url": null
+    },
+    "paper_type": "new_model",
+    "published_date": "2024-10-21",
+    "tags": {
+      "backbone": [
+        "transformer"
+      ],
+      "objective": [
+        "contrastive"
+      ],
+      "paper_type": [
+        "new-model"
+      ],
+      "tokenization": [
+        "time-patch"
+      ],
+      "topology": [
+        "channel-flexible"
+      ]
+    },
+    "title": "Contrastive random lead coding for channel-agnostic self-supervision of biosignals",
+    "unique_contribution": "CRLC enables channel-agnostic self-supervision by using random subsets of channels as positive pairs, outperforming state-of-the-art methods on EEG tasks.",
+    "used_fulltext": true
+  }
+]
