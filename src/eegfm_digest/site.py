@@ -227,17 +227,28 @@ def render_process_page() -> str:
 <section class='process-content'>
 {paragraphs}
 <h2>arXiv Retrieval Keywords</h2>
-<p>The retrieval step requires EEG terms plus one of two foundation-model term sets in title/abstract matching.</p>
-<p><strong>EEG term set</strong> (used in both queries):</p>
+<details class='prompt-details keyword-details'>
+<summary>Show keyword sets and query strings</summary>
+<p class='small'>Matching requires one EEG term plus one FM term set in title/abstract.</p>
+<div class='keyword-grid'>
+<section>
+<p><strong>EEG term set</strong> (used in both queries)</p>
 {_keyword_list_html(_EEG_KEYWORDS)}
-<p><strong>FM term set A</strong>:</p>
+</section>
+<section>
+<p><strong>FM term set A</strong></p>
 {_keyword_list_html(_FM_KEYWORDS_SET_A)}
-<p><strong>FM term set B</strong>:</p>
+</section>
+<section>
+<p><strong>FM term set B</strong></p>
 {_keyword_list_html(_FM_KEYWORDS_SET_B)}
+</section>
+</div>
 <p><strong>Query A</strong></p>
-<pre class='prompt-block'>{html.escape(QUERY_A)}</pre>
+<pre class='prompt-block compact-block'>{html.escape(QUERY_A)}</pre>
 <p><strong>Query B</strong></p>
-<pre class='prompt-block'>{html.escape(QUERY_B)}</pre>
+<pre class='prompt-block compact-block'>{html.escape(QUERY_B)}</pre>
+</details>
 <h2>LLM Prompts</h2>
 <p>These are the full prompts used for each stage.</p>
 <details class='prompt-details'>

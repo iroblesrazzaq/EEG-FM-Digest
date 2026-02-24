@@ -354,8 +354,32 @@ button:hover {
   background: #f8f8f8;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+  max-height: 420px;
+  overflow: auto;
   font-size: 12px;
   line-height: 1.5;
+}
+
+.compact-block {
+  max-height: 140px;
+}
+
+.keyword-details {
+  margin-bottom: 14px;
+}
+
+.keyword-grid {
+  display: grid;
+  gap: 8px 12px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.keyword-grid section p {
+  margin-bottom: 6px;
+}
+
+.keyword-grid ul {
+  margin-top: 0;
 }
 
 .year-block {
