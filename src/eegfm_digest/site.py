@@ -197,7 +197,7 @@ def _about_digest_block(process_href: str) -> str:
         "<section class='digest-about'>"
         "<h2>About This Digest</h2>"
         f"<p>{html.escape(_SHORT_BLURB)}</p>"
-        f"<p class='small'><a href='{html.escape(process_href)}'>Detailed process and architecture</a></p>"
+        f"<p class='small'><a href='{html.escape(process_href)}'>Read the detailed process and prompt design</a></p>"
         "</section>"
     )
 
@@ -214,16 +214,52 @@ def _keyword_list_html(items: list[str]) -> str:
     return f"<ul>{values}</ul>"
 
 
+def _nav_html(
+    home_href: str,
+    explore_href: str,
+    process_href: str,
+    active_tab: str,
+) -> str:
+    tabs = [
+        ("home", "Monthly Digest", home_href),
+        ("explore", "Explore", explore_href),
+        ("process", "Process", process_href),
+    ]
+    links = "".join(
+        (
+            f"<a class='site-nav-link{' active' if key == active_tab else ''}' "
+            f"href='{html.escape(href)}'>{html.escape(label)}</a>"
+        )
+        for key, label, href in tabs
+    )
+    return (
+        "<header class='site-shell'>"
+        "<div class='site-shell-inner'>"
+        "<div class='site-brand'>"
+        "<p class='site-kicker'>EEG Literature</p>"
+        "<p class='site-title'>EEG Foundation Model Digest</p>"
+        "</div>"
+        f"<nav class='site-nav'>{links}</nav>"
+        "</div>"
+        "</header>"
+    )
+
+
 def render_process_page() -> str:
     paragraphs = "\n".join(f"<p>{html.escape(text)}</p>" for text in _PROCESS_DETAILS_PARAGRAPHS)
     triage_prompt = html.escape(_load_prompt_text(Path("prompts/triage.md")))
     summary_prompt = html.escape(_load_prompt_text(Path("prompts/summarize.md")))
+    nav = _nav_html("../index.html", "../explore/index.html", "../process/index.html", "process")
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>Digest Process</title>
 <link rel='stylesheet' href='../assets/style.css'></head><body>
+{nav}
 <main class='container process-page'>
+<section class='hero-banner process-hero'>
+<p class='hero-kicker'>Pipeline Blueprint</p>
 <h1>How This Digest Works</h1>
-<p class='sub'><a href='../index.html'>Back to main page</a> · <a href='../explore/index.html'>Explore all papers</a></p>
+<p class='sub'>Query design, triage policy, and summary prompts used for monthly generation.</p>
+</section>
 <section class='process-content'>
 {paragraphs}
 <h2>arXiv Retrieval Keywords</h2>
@@ -283,15 +319,18 @@ def render_month_page(
     month_json = html.escape(f"../../digest/{month}/papers.json")
     manifest_json = html.escape("../../data/months.json")
     month_title = html.escape(_month_label(month))
+    nav = _nav_html("../../index.html", "../../explore/index.html", "../../process/index.html", "home")
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>EEG-FM Digest {html.escape(month)}</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
+  {nav}
   <main id='digest-app' class='container' data-view='month' data-month='{month_attr}' data-manifest-json='{manifest_json}' data-month-json='{month_json}'>
-    <div class='header'>
+    <section class='hero-banner month-hero'>
+      <p class='hero-kicker'>Monthly Digest</p>
       <h1>{month_title} Digest</h1>
       <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a> · <a href='../../process/index.html'>Process details</a></p>
-    </div>
+    </section>
     {_about_digest_block("../../process/index.html")}
     <section id='controls' class='controls'></section>
     <p id='results-meta' class='small'></p>
@@ -306,14 +345,21 @@ def render_home_page(months: list[str]) -> str:
     latest = months[0] if months else ""
     latest_link = f"digest/{latest}/index.html" if latest else "#"
     fallback_months = html.escape(json.dumps(months, ensure_ascii=False))
+    nav = _nav_html("index.html", "explore/index.html", "process/index.html", "home")
     links = "\n".join(f"<li><a href='digest/{m}/index.html'>{m}</a></li>" for m in months)
+    latest_label = html.escape(_month_label(latest)) if latest else "None"
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>EEG-FM Digest</title>
 <link rel='stylesheet' href='assets/style.css'></head><body>
+{nav}
 <main id='digest-app' class='container' data-view='home' data-month='' data-manifest-json='data/months.json' data-fallback-months='{fallback_months}'>
+<section class='hero-banner home-hero'>
+<p class='hero-kicker'>Monthly Brief</p>
 <h1>EEG Foundation Model Digest</h1>
+<p class='sub'>Track new EEG foundation model papers without sifting manually through arXiv.</p>
+</section>
 {_about_digest_block("process/index.html")}
-<p class='sub'>Latest month: <a href='{latest_link}'>{latest}</a> · <a href='explore/index.html'>Explore all papers</a> · <a href='process/index.html'>Process details</a></p>
+<p class='sub'>Latest month: <a href='{latest_link}'>{latest_label}</a> · <a href='explore/index.html'>Explore all papers</a> · <a href='process/index.html'>Process details</a></p>
 <section id='home-controls' class='controls'></section>
 <section id='home-results'></section>
 <details class='archive-fallback'>
@@ -328,11 +374,17 @@ def render_home_page(months: list[str]) -> str:
 
 def render_explore_page(months: list[str]) -> str:
     fallback_months = html.escape(json.dumps(months, ensure_ascii=False))
+    nav = _nav_html("../index.html", "../explore/index.html", "../process/index.html", "explore")
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>Explore EEG-FM Digest</title>
 <link rel='stylesheet' href='../assets/style.css'></head><body>
+{nav}
 <main id='digest-app' class='container' data-view='explore' data-month='' data-manifest-json='../data/months.json' data-fallback-months='{fallback_months}'>
+<section class='hero-banner explore-hero'>
+<p class='hero-kicker'>Cross-Month Search</p>
 <h1>Explore All Digests</h1>
+<p class='sub'>Filter accepted papers by month, tags, and confidence.</p>
+</section>
 {_about_digest_block("../process/index.html")}
 <p class='sub'><a href='../index.html'>Back to main page</a> · <a href='../process/index.html'>Process details</a></p>
 <section id='controls' class='controls'></section>

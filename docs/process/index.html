@@ -1,9 +1,13 @@
 <!doctype html>
 <html><head><meta charset='utf-8'><title>Digest Process</title>
 <link rel='stylesheet' href='../assets/style.css'></head><body>
+<header class='site-shell'><div class='site-shell-inner'><div class='site-brand'><p class='site-kicker'>EEG Literature</p><p class='site-title'>EEG Foundation Model Digest</p></div><nav class='site-nav'><a class='site-nav-link' href='../index.html'>Monthly Digest</a><a class='site-nav-link' href='../explore/index.html'>Explore</a><a class='site-nav-link active' href='../process/index.html'>Process</a></nav></div></header>
 <main class='container process-page'>
+<section class='hero-banner process-hero'>
+<p class='hero-kicker'>Pipeline Blueprint</p>
 <h1>How This Digest Works</h1>
-<p class='sub'><a href='../index.html'>Back to main page</a> · <a href='../explore/index.html'>Explore all papers</a></p>
+<p class='sub'>Query design, triage policy, and summary prompts used for monthly generation.</p>
+</section>
 <section class='process-content'>
 <p>This digest serves as a monthly update on the current EEG foundation model literature.</p>
 <p>I built it so I can keep up to date with the latest EEG FM papers.</p>
@@ -13,6 +17,20 @@
 <h2>arXiv Retrieval Keywords</h2>
 <section class='prompt-details keyword-details'>
 <p class='small'>Matching requires one EEG term plus one FM term set in title/abstract.</p>
+<div class='keyword-grid'>
+<section>
+<p><strong>EEG term set</strong> (used in both queries)</p>
+<ul><li><code>eeg</code></li><li><code>electroencephalograph*</code></li><li><code>brainwave*</code></li></ul>
+</section>
+<section>
+<p><strong>FM term set A</strong></p>
+<ul><li><code>&quot;foundation model&quot;</code></li><li><code>pretrain</code></li><li><code>pretrained</code></li><li><code>&quot;self-supervised&quot;</code></li><li><code>&quot;self supervised&quot;</code></li></ul>
+</section>
+<section>
+<p><strong>FM term set B</strong></p>
+<ul><li><code>&quot;representation learning&quot;</code></li><li><code>masked</code></li><li><code>transfer</code></li><li><code>generaliz*</code></li></ul>
+</section>
+</div>
 <p><strong>Query A</strong></p>
 <pre class='prompt-block compact-block'>all:(eeg OR electroencephalograph* OR brainwave*) AND all:(&quot;foundation model&quot; OR pretrain OR pretrained OR &quot;self-supervised&quot; OR &quot;self supervised&quot;)</pre>
 <p><strong>Query B</strong></p>
