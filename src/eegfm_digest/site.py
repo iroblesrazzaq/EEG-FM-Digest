@@ -192,12 +192,17 @@ def _month_payload(
     }
 
 
-def _about_digest_block(process_href: str) -> str:
+def _about_digest_block(process_href: str, include_process_cta: bool = False) -> str:
+    cta = (
+        f"<p class='small'><a href='{html.escape(process_href)}'>Read the detailed process and prompt design</a></p>"
+        if include_process_cta
+        else ""
+    )
     return (
         "<section class='digest-about'>"
         "<h2>About This Digest</h2>"
         f"<p>{html.escape(_SHORT_BLURB)}</p>"
-        f"<p class='small'><a href='{html.escape(process_href)}'>Read the detailed process and prompt design</a></p>"
+        f"{cta}"
         "</section>"
     )
 
@@ -236,7 +241,6 @@ def _nav_html(
         "<header class='site-shell'>"
         "<div class='site-shell-inner'>"
         "<div class='site-brand'>"
-        "<p class='site-kicker'>EEG Literature</p>"
         "<p class='site-title'>EEG Foundation Model Digest</p>"
         "</div>"
         f"<nav class='site-nav'>{links}</nav>"
@@ -329,9 +333,9 @@ def render_month_page(
     <section class='hero-banner month-hero'>
       <p class='hero-kicker'>Monthly Digest</p>
       <h1>{month_title} Digest</h1>
-      <p class='sub'><a class='back-link' href='../../index.html'>Back to main page</a> · <a href='../../explore/index.html'>Explore all papers</a> · <a href='../../process/index.html'>Process details</a></p>
+      <p class='sub'>Accepted EEG-FM papers and summaries for this month.</p>
     </section>
-    {_about_digest_block("../../process/index.html")}
+    {_about_digest_block("../../process/index.html", include_process_cta=False)}
     <section id='controls' class='controls'></section>
     <p id='results-meta' class='small'></p>
     <section id='results'></section>
@@ -358,8 +362,8 @@ def render_home_page(months: list[str]) -> str:
 <h1>EEG Foundation Model Digest</h1>
 <p class='sub'>Track new EEG foundation model papers without sifting manually through arXiv.</p>
 </section>
-{_about_digest_block("process/index.html")}
-<p class='sub'>Latest month: <a href='{latest_link}'>{latest_label}</a> · <a href='explore/index.html'>Explore all papers</a> · <a href='process/index.html'>Process details</a></p>
+{_about_digest_block("process/index.html", include_process_cta=False)}
+<p class='sub'>Latest month: <a href='{latest_link}'>{latest_label}</a></p>
 <section id='home-controls' class='controls'></section>
 <section id='home-results'></section>
 <details class='archive-fallback'>
@@ -385,8 +389,7 @@ def render_explore_page(months: list[str]) -> str:
 <h1>Explore All Digests</h1>
 <p class='sub'>Filter accepted papers by month, tags, and confidence.</p>
 </section>
-{_about_digest_block("../process/index.html")}
-<p class='sub'><a href='../index.html'>Back to main page</a> · <a href='../process/index.html'>Process details</a></p>
+{_about_digest_block("../process/index.html", include_process_cta=False)}
 <section id='controls' class='controls'></section>
 <p id='results-meta' class='small'></p>
 <section id='results'></section>
