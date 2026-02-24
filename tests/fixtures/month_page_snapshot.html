@@ -2,22 +2,15 @@
 <html><head><meta charset='utf-8'><title>EEG-FM Digest 2025-01</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
-  <main>
-    <h1>EEG Foundation Model Digest — 2025-01</h1>
+  <main id='digest-app' class='container' data-view='month' data-month='2025-01' data-manifest-json='../../data/months.json' data-month-json='../../digest/2025-01/papers.json'>
+    <div class='header'>
+      <h1>EEG Foundation Model Digest — 2025-01</h1>
+      <p class='sub'><a href='../../index.html'>All months</a></p>
+    </div>
     <section class='digest-about'><h2>About This Digest</h2><p>[why i made digest, how it works]</p></section>
-    <p>Top picks: 2501.00001</p>
-    <section><h2>new_model</h2>
-    <article class='paper-card' id='2501.00001'>
-      <h3><a href='https://arxiv.org/abs/2501.00001'>EEG FM One</a></h3>
-      <div class='meta'>2025-01-04 · Alice, Bob</div>
-      <p><strong>Summary Highlights:</strong></p>
-      <ul class='summary-points'><li>Introduces an EEG foundation model for cross-task transfer.</li><li>Uses a compact backbone to reduce runtime cost.</li><li>Shows competitive performance across benchmarks.</li></ul>
-      <p><strong>Unique contribution:</strong> A unique thing</p>
-      <details class='summary-detail'><summary>Detailed summary</summary><p>This paper proposes a reusable EEG foundation model backbone for cross-task transfer. Its key novelty is a compact architecture that preserves performance while reducing compute.</p></details>
-      <p class='chips'><span class='chip chip-paper_type' title='paper type'>New Model</span> <span class='chip chip-backbone' title='backbone'>Transformer</span> <span class='chip chip-objective' title='objective'>Masked Reconstruction</span> <span class='chip chip-tokenization' title='tokenization'>Time Patch</span> <span class='chip chip-topology' title='topology'>Fixed Montage</span></p>
-      <p><a href='https://code'>code</a> </p>
-    </article>
-    </section>
+    <section id='controls' class='controls'></section>
+    <p id='results-meta' class='small'></p>
+    <section id='results'></section>
   </main>
   <script src='../../assets/site.js'></script>
 </body></html>

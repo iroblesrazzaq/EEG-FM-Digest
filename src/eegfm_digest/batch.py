@@ -442,7 +442,14 @@ def _run_summary_phase_for_month(
 
     if not run_cfg.no_site:
         metadata_map = {c["arxiv_id_base"]: c for c in candidates}
-        write_month_site(cfg.docs_dir, month, summaries, metadata_map, digest)
+        write_month_site(
+            cfg.docs_dir,
+            month,
+            summaries,
+            metadata_map,
+            digest,
+            backend_rows=backend_rows,
+        )
         update_home(cfg.docs_dir)
         local_dir = cfg.docs_dir / "local" / month
         local_dir.mkdir(parents=True, exist_ok=True)

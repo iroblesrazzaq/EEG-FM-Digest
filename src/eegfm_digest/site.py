@@ -2,122 +2,145 @@ from __future__ import annotations
 
 import html
 import json
-import re
 from pathlib import Path
 from typing import Any
 
 
-_TAG_LABELS: dict[str, dict[str, str]] = {
-    "paper_type": {
-        "new-model": "New Model",
-        "eeg-fm": "New Model",
-        "post-training": "Post-Training",
-        "benchmark": "Benchmark",
-        "survey": "Survey",
-    },
-    "backbone": {
-        "transformer": "Transformer",
-        "mamba-ssm": "Mamba-SSM",
-        "moe": "MoE",
-        "diffusion": "Diffusion",
-    },
-    "objective": {
-        "masked-reconstruction": "Masked Reconstruction",
-        "autoregressive": "Autoregressive",
-        "contrastive": "Contrastive",
-        "discrete-code-prediction": "Discrete Code Prediction",
-    },
-    "tokenization": {
-        "time-patch": "Time Patch",
-        "latent-tokens": "Latent Tokens",
-        "discrete-tokens": "Discrete Tokens",
-    },
-    "topology": {
-        "fixed-montage": "Fixed Montage",
-        "channel-flexible": "Channel Flexible",
-        "topology-agnostic": "Topology Agnostic",
-    },
-}
+def _safe_str_list(value: Any) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    return [str(item).strip() for item in value if str(item).strip()]
 
 
-def _tag_value_label(category: str, value: str) -> str:
-    mapping = _TAG_LABELS.get(category, {})
-    if value in mapping:
-        return mapping[value]
-    return value.replace("-", " ").title()
+def _safe_float(value: Any) -> float:
+    try:
+        return float(value)
+    except Exception:
+        return 0.0
 
 
-def _tag_chips(summary: dict[str, Any]) -> str:
-    tags = summary.get("tags")
-    if not isinstance(tags, dict):
-        return ""
-    chips: list[str] = []
-    for category in ("paper_type", "backbone", "objective", "tokenization", "topology"):
-        values = tags.get(category, [])
-        if not isinstance(values, list):
+def _safe_int(value: Any, default: int = 0) -> int:
+    try:
+        return int(value)
+    except Exception:
+        return default
+
+
+def _safe_links(value: Any, arxiv_id_base: str) -> dict[str, str]:
+    if not isinstance(value, dict):
+        value = {}
+    abs_url = str(value.get("abs", "")).strip() or f"https://arxiv.org/abs/{arxiv_id_base}"
+    pdf_url = str(value.get("pdf", "")).strip()
+    links: dict[str, str] = {"abs": abs_url}
+    if pdf_url:
+        links["pdf"] = pdf_url
+    return links
+
+
+def _safe_triage(value: Any) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        value = {}
+    reasons = value.get("reasons", [])
+    if not isinstance(reasons, list):
+        reasons = [str(reasons)]
+    return {
+        "decision": str(value.get("decision", "reject")),
+        "confidence": _safe_float(value.get("confidence", 0.0)),
+        "reasons": [str(item) for item in reasons],
+    }
+
+
+def _summary_failure_reason(row: dict[str, Any]) -> str:
+    pdf = row.get("pdf")
+    if isinstance(pdf, dict):
+        meta = pdf.get("extract_meta")
+        if isinstance(meta, dict):
+            err = str(meta.get("error", "")).strip()
+            if err:
+                return err
+    return "summary_unavailable"
+
+
+def _paper_rows_from_backend(backend_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for row in sorted(backend_rows, key=lambda x: (str(x.get("published", "")), str(x.get("arxiv_id_base", "")))):
+        arxiv_id_base = str(row.get("arxiv_id_base", "")).strip()
+        if not arxiv_id_base:
             continue
-        for value in values:
-            value_str = str(value).strip()
-            chips.append(
-                "<span "
-                f"class='chip chip-{html.escape(category)}' "
-                f"title='{html.escape(category.replace('_', ' '))}'>"
-                f"{html.escape(_tag_value_label(category, value_str))}"
-                "</span>"
-            )
-    if not chips:
-        return ""
-    return f"<p class='chips'>{' '.join(chips)}</p>"
+        triage = _safe_triage(row.get("triage"))
+        if triage["decision"] != "accept":
+            continue
+        summary = row.get("paper_summary")
+        rows.append(
+            {
+                "arxiv_id_base": arxiv_id_base,
+                "arxiv_id": str(row.get("arxiv_id", "")).strip(),
+                "title": str(row.get("title", "")).strip(),
+                "published_date": str(row.get("published", "")).strip()[:10],
+                "authors": _safe_str_list(row.get("authors")),
+                "categories": _safe_str_list(row.get("categories")),
+                "links": _safe_links(row.get("links"), arxiv_id_base),
+                "triage": triage,
+                "summary": summary if isinstance(summary, dict) else None,
+                "summary_failed_reason": None if isinstance(summary, dict) else _summary_failure_reason(row),
+            }
+        )
+    return rows
 
 
-def _summary_points(summary: dict[str, Any]) -> str:
-    points = summary.get("key_points", [])
-    if not isinstance(points, list):
-        return ""
-    bullets = [str(point).strip() for point in points if str(point).strip()][:3]
-    if not bullets:
-        return ""
-    items = "".join(f"<li>{html.escape(point)}</li>" for point in bullets)
-    return f"<ul class='summary-points'>{items}</ul>"
+def _paper_rows_from_summaries(
+    summaries: list[dict[str, Any]],
+    metadata: dict[str, dict[str, Any]],
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for summary in sorted(summaries, key=lambda x: (str(x.get("published_date", "")), str(x.get("arxiv_id_base", "")))):
+        arxiv_id_base = str(summary.get("arxiv_id_base", "")).strip()
+        if not arxiv_id_base:
+            continue
+        meta = metadata.get(arxiv_id_base, {}) if isinstance(metadata.get(arxiv_id_base, {}), dict) else {}
+        rows.append(
+            {
+                "arxiv_id_base": arxiv_id_base,
+                "arxiv_id": str(meta.get("arxiv_id", "")).strip(),
+                "title": str(summary.get("title", "")).strip(),
+                "published_date": str(summary.get("published_date", "")).strip(),
+                "authors": _safe_str_list(meta.get("authors")),
+                "categories": _safe_str_list(summary.get("categories")),
+                "links": _safe_links(meta.get("links"), arxiv_id_base),
+                "triage": {"decision": "accept", "confidence": 0.0, "reasons": []},
+                "summary": summary,
+                "summary_failed_reason": None,
+            }
+        )
+    return rows
 
 
-def _compact_detail(detail: str) -> str:
-    # Light normalization prevents giant wall-of-text rendering.
-    compact = re.sub(r"\s+", " ", detail).strip()
-    return compact
-
-
-def _card(summary: dict[str, Any], meta: dict[str, Any]) -> str:
-    title = html.escape(summary["title"])
-    abs_url = html.escape(meta.get("links", {}).get("abs", "#"))
-    authors = ", ".join(meta.get("authors", []))
-    os_info = summary.get("open_source", {})
-    code_link = (
-        f"<a href='{html.escape(os_info['code_url'])}'>code</a>" if os_info.get("code_url") else ""
-    )
-    weights_link = (
-        f"<a href='{html.escape(os_info['weights_url'])}'>weights</a>" if os_info.get("weights_url") else ""
-    )
-    detail = html.escape(_compact_detail(summary.get("detailed_summary", summary["one_liner"])))
-    points_html = _summary_points(summary)
-    tag_html = _tag_chips(summary)
-    detail_html = (
-        f"<details class='summary-detail'><summary>Detailed summary</summary><p>{detail}</p></details>"
-        if detail
-        else ""
-    )
-    return f"""
-    <article class='paper-card' id='{html.escape(summary['arxiv_id_base'])}'>
-      <h3><a href='{abs_url}'>{title}</a></h3>
-      <div class='meta'>{html.escape(summary['published_date'])} · {html.escape(authors)}</div>
-      <p><strong>Summary Highlights:</strong></p>
-      {points_html}
-      <p><strong>Unique contribution:</strong> {html.escape(summary['unique_contribution'])}</p>
-      {detail_html}
-      {tag_html}
-      <p>{code_link} {weights_link}</p>
-    </article>
-    """
+def _month_payload(
+    month: str,
+    summaries: list[dict[str, Any]],
+    metadata: dict[str, dict[str, Any]],
+    digest: dict[str, Any],
+    backend_rows: list[dict[str, Any]] | None,
+) -> dict[str, Any]:
+    if backend_rows is not None:
+        papers = _paper_rows_from_backend(backend_rows)
+    else:
+        papers = _paper_rows_from_summaries(summaries, metadata)
+    stats = digest.get("stats", {}) if isinstance(digest.get("stats"), dict) else {}
+    top_picks = digest.get("top_picks", []) if isinstance(digest.get("top_picks"), list) else []
+    return {
+        "month": month,
+        "stats": {
+            "candidates": _safe_int(stats.get("candidates", 0), 0),
+            "accepted": _safe_int(stats.get("accepted", len(papers)), len(papers)),
+            "summarized": _safe_int(
+                stats.get("summarized", len([p for p in papers if p.get("summary")])),
+                len([p for p in papers if p.get("summary")]),
+            ),
+        },
+        "top_picks": [str(item) for item in top_picks],
+        "papers": papers,
+    }
 
 
 def _about_digest_block() -> str:
@@ -129,22 +152,29 @@ def _about_digest_block() -> str:
     )
 
 
-def render_month_page(month: str, summaries: list[dict[str, Any]], metadata: dict[str, dict[str, Any]], digest: dict[str, Any]) -> str:
-    by_id = {s["arxiv_id_base"]: s for s in summaries}
-    sections_html: list[str] = []
-    for section in digest.get("sections", []):
-        cards = "\n".join(_card(by_id[pid], metadata.get(pid, {})) for pid in section["paper_ids"] if pid in by_id)
-        sections_html.append(f"<section><h2>{html.escape(section['title'])}</h2>{cards}</section>")
-    top_picks = ", ".join(digest.get("top_picks", []))
+def render_month_page(
+    month: str,
+    summaries: list[dict[str, Any]],
+    metadata: dict[str, dict[str, Any]],
+    digest: dict[str, Any],
+) -> str:
+    del summaries, metadata, digest  # Render path is JSON-driven; data loads client-side.
+    month_attr = html.escape(month)
+    month_json = html.escape(f"../../digest/{month}/papers.json")
+    manifest_json = html.escape("../../data/months.json")
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>EEG-FM Digest {html.escape(month)}</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
 <body>
-  <main>
-    <h1>EEG Foundation Model Digest — {html.escape(month)}</h1>
+  <main id='digest-app' class='container' data-view='month' data-month='{month_attr}' data-manifest-json='{manifest_json}' data-month-json='{month_json}'>
+    <div class='header'>
+      <h1>EEG Foundation Model Digest — {html.escape(month)}</h1>
+      <p class='sub'><a href='../../index.html'>All months</a></p>
+    </div>
     {_about_digest_block()}
-    <p>Top picks: {html.escape(top_picks)}</p>
-    {''.join(sections_html)}
+    <section id='controls' class='controls'></section>
+    <p id='results-meta' class='small'></p>
+    <section id='results'></section>
   </main>
   <script src='../../assets/site.js'></script>
 </body></html>
@@ -153,42 +183,121 @@ def render_month_page(month: str, summaries: list[dict[str, Any]], metadata: dic
 
 def render_home_page(months: list[str]) -> str:
     latest = months[0] if months else ""
-    links = "\n".join(
-        f"<li><a href='digest/{m}/index.html'>{m}</a></li>" for m in months
-    )
     latest_link = f"digest/{latest}/index.html" if latest else "#"
+    fallback_months = html.escape(json.dumps(months, ensure_ascii=False))
+    links = "\n".join(f"<li><a href='digest/{m}/index.html'>{m}</a></li>" for m in months)
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>EEG-FM Digest</title>
 <link rel='stylesheet' href='assets/style.css'></head><body>
-<main>
+<main id='digest-app' class='container' data-view='all' data-month='' data-manifest-json='data/months.json' data-fallback-months='{fallback_months}'>
 <h1>EEG Foundation Model Digest</h1>
 {_about_digest_block()}
-<p>Latest month: <a href='{latest_link}'>{latest}</a></p>
-<h2>Archive</h2>
+<p class='sub'>Latest month: <a href='{latest_link}'>{latest}</a></p>
+<section id='controls' class='controls'></section>
+<p id='results-meta' class='small'></p>
+<section id='results'></section>
+<details class='archive-fallback'>
+<summary>Archive (fallback links)</summary>
 <ul>{links}</ul>
+</details>
 </main>
 <script src='assets/site.js'></script>
 </body></html>
 """
 
 
-def write_month_site(docs_dir: Path, month: str, summaries: list[dict[str, Any]], metadata: dict[str, dict[str, Any]], digest: dict[str, Any]) -> None:
+def write_month_site(
+    docs_dir: Path,
+    month: str,
+    summaries: list[dict[str, Any]],
+    metadata: dict[str, dict[str, Any]],
+    digest: dict[str, Any],
+    backend_rows: list[dict[str, Any]] | None = None,
+) -> None:
     month_dir = docs_dir / "digest" / month
     month_dir.mkdir(parents=True, exist_ok=True)
     (month_dir / "index.html").write_text(
         render_month_page(month, summaries, metadata, digest), encoding="utf-8"
     )
+    payload = _month_payload(month, summaries, metadata, digest, backend_rows)
     (month_dir / "papers.json").write_text(
-        json.dumps(sorted(summaries, key=lambda x: (x["published_date"], x["arxiv_id_base"])), ensure_ascii=False, indent=2)
-        + "\n",
+        json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    (month_dir / "digest.json").write_text(
+        json.dumps(digest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
 
 
+def _month_manifest_item(month_dir: Path) -> dict[str, Any]:
+    month = month_dir.name
+    payload_path = month_dir / "papers.json"
+    payload: Any = {}
+    if payload_path.exists():
+        try:
+            payload = json.loads(payload_path.read_text(encoding="utf-8"))
+        except Exception:
+            payload = {}
+
+    papers: list[dict[str, Any]] = []
+    candidates = 0
+    accepted = 0
+    summarized = 0
+    if isinstance(payload, list):
+        papers = [row for row in payload if isinstance(row, dict)]
+        accepted = len(papers)
+        summarized = len(papers)
+        candidates = len(papers)
+    elif isinstance(payload, dict):
+        paper_rows = payload.get("papers", [])
+        if isinstance(paper_rows, list):
+            papers = [row for row in paper_rows if isinstance(row, dict)]
+        stats = payload.get("stats", {})
+        if isinstance(stats, dict):
+            candidates = _safe_int(stats.get("candidates", 0), 0)
+            accepted = _safe_int(stats.get("accepted", len(papers)), len(papers))
+            summarized = _safe_int(
+                stats.get("summarized", len([p for p in papers if isinstance(p.get("summary"), dict)])),
+                len([p for p in papers if isinstance(p.get("summary"), dict)]),
+            )
+    if candidates == 0:
+        empty_state = "no_candidates"
+    elif accepted == 0:
+        empty_state = "no_accepts"
+    elif summarized == 0:
+        empty_state = "no_summaries"
+    else:
+        empty_state = "has_papers"
+    return {
+        "month": month,
+        "href": f"digest/{month}/index.html",
+        "json_path": f"digest/{month}/papers.json",
+        "stats": {
+            "candidates": candidates,
+            "accepted": accepted,
+            "summarized": summarized,
+        },
+        "empty_state": empty_state,
+    }
+
+
 def update_home(docs_dir: Path) -> None:
-    months = sorted(
-        [p.name for p in (docs_dir / "digest").iterdir() if p.is_dir()],
+    month_dirs = sorted(
+        [p for p in (docs_dir / "digest").iterdir() if p.is_dir()],
+        key=lambda p: p.name,
         reverse=True,
     ) if (docs_dir / "digest").exists() else []
+    months = [p.name for p in month_dirs]
     (docs_dir / "index.html").write_text(render_home_page(months), encoding="utf-8")
+    manifest = {
+        "latest": months[0] if months else None,
+        "months": [_month_manifest_item(month_dir) for month_dir in month_dirs],
+    }
+    data_dir = docs_dir / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    (data_dir / "months.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     (docs_dir / ".nojekyll").write_text("\n", encoding="utf-8")

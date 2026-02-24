@@ -241,7 +241,14 @@ def run_month(
     write_json(month_out / "digest.json", digest)
     if not no_site:
         metadata_map = {c["arxiv_id_base"]: c for c in candidates}
-        write_month_site(cfg.docs_dir, month, summaries, metadata_map, digest)
+        write_month_site(
+            cfg.docs_dir,
+            month,
+            summaries,
+            metadata_map,
+            digest,
+            backend_rows=backend_rows,
+        )
         update_home(cfg.docs_dir)
     db.upsert_run(month, digest["stats"])
     db.close()

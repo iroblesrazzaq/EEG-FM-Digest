@@ -1,38 +1,261 @@
-:root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-body { margin: 0; padding: 0; background: #fafafa; color: #111; line-height: 1.55; }
-main, .container { max-width: 980px; margin: 0 auto; padding: 24px; }
-.header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-h1 { margin: 0 0 6px 0; font-size: 24px; }
-.sub { color: #555; font-size: 14px; }
-a { color: #0b57d0; text-decoration: none; }
-a:hover { text-decoration: underline; }
-.section { margin-top: 22px; }
-.section h2 { font-size: 18px; margin: 0 0 10px 0; }
-.card, .paper-card { background: white; border: 1px solid #e6e6e6; border-radius: 12px; padding: 16px; margin: 12px 0; box-shadow: 0 1px 1px rgba(0,0,0,0.03); }
-.title { font-size: 16px; font-weight: 650; margin-bottom: 4px; }
-.authors { color: #555; font-size: 13px; margin-bottom: 8px; }
-.one { margin: 10px 0; }
-.unique { margin: 10px 0; }
-.meta { display: flex; flex-wrap: wrap; gap: 10px; font-size: 13px; color: #333; margin: 8px 0 12px 0; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-.chip { font-size: 12px; padding: 2px 8px; border: 1px solid #ddd; border-radius: 999px; background: #f6f6f6; color: #333; }
-.chip-paper_type { background: #fdebec; border-color: #f3c9cc; color: #c23b3b; }
-.chip-backbone { background: #eaf3ff; border-color: #cfe1fb; color: #1f5ca8; }
-.chip-objective { background: #e9f7ef; border-color: #ccead8; color: #1f7a4d; }
-.chip-tokenization { background: #f3edff; border-color: #ddd1fb; color: #6d3ebf; }
-.chip-topology { background: #fff4e5; border-color: #f6ddb6; color: #9a5a00; }
-.links { display: flex; gap: 10px; margin-top: 10px; font-size: 13px; }
-hr { border: none; border-top: 1px solid #e6e6e6; margin: 16px 0; }
-.search { margin-top: 10px; }
-.search input { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 14px; }
-.small { font-size: 12px; color: #666; }
+:root {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
 
-.paper-card p { margin: 10px 0; }
-.summary-points { margin: 8px 0 12px 20px; padding: 0; }
-.summary-points li { margin: 6px 0; }
-.summary-detail { margin: 10px 0 12px 0; }
-.summary-detail summary { cursor: pointer; color: #0b57d0; font-weight: 600; }
-.summary-detail p { margin-top: 8px; color: #333; }
+body {
+  margin: 0;
+  padding: 0;
+  background: #fafafa;
+  color: #111;
+  line-height: 1.6;
+}
+
+main,
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+h1 {
+  margin: 0 0 6px 0;
+  font-size: 24px;
+}
+
+a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.sub {
+  color: #555;
+  font-size: 14px;
+}
+
+.small {
+  font-size: 12px;
+  color: #666;
+}
+
+.controls {
+  margin: 16px 0 18px 0;
+}
+
+.control-row {
+  display: grid;
+  grid-template-columns: 2fr repeat(2, minmax(140px, 1fr)) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.control-grow {
+  min-width: 0;
+}
+
+.control span {
+  font-size: 12px;
+  color: #444;
+}
+
+input[type="text"],
+select,
+button {
+  border: 1px solid #d8d8d8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  background: #fff;
+  color: #111;
+}
+
+button {
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button:hover {
+  background: #f6f6f6;
+}
+
+.tag-filter-grid {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.tag-filter {
+  border: 1px solid #e2e2e2;
+  border-radius: 10px;
+  padding: 8px 10px 10px 10px;
+  background: #fff;
+}
+
+.tag-filter legend {
+  font-size: 12px;
+  color: #444;
+  padding: 0 4px;
+  text-transform: capitalize;
+}
+
+.tag-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+.tag-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #333;
+}
+
+.card,
+.paper-card {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin: 14px 0;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03);
+}
+
+.paper-card h3 {
+  margin: 0 0 8px 0;
+  line-height: 1.35;
+}
+
+.paper-card p {
+  margin: 12px 0;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 13px;
+  color: #333;
+  margin: 8px 0 14px 0;
+}
+
+.summary-points {
+  margin: 8px 0 14px 22px;
+  padding: 0;
+}
+
+.summary-points li {
+  margin: 6px 0;
+}
+
+.summary-detail {
+  margin: 12px 0 14px 0;
+}
+
+.summary-detail summary {
+  cursor: pointer;
+  color: #0b57d0;
+  font-weight: 600;
+}
+
+.summary-detail p {
+  margin-top: 8px;
+  color: #333;
+}
+
+.summary-failed {
+  color: #9a3b00;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.chip {
+  font-size: 12px;
+  padding: 2px 8px;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  background: #f6f6f6;
+  color: #333;
+}
+
+.chip-paper_type {
+  background: #fdebec;
+  border-color: #f3c9cc;
+  color: #c23b3b;
+}
+
+.chip-backbone {
+  background: #eaf3ff;
+  border-color: #cfe1fb;
+  color: #1f5ca8;
+}
+
+.chip-objective {
+  background: #e9f7ef;
+  border-color: #ccead8;
+  color: #1f7a4d;
+}
+
+.chip-tokenization {
+  background: #f3edff;
+  border-color: #ddd1fb;
+  color: #6d3ebf;
+}
+
+.chip-topology {
+  background: #fff4e5;
+  border-color: #f6ddb6;
+  color: #9a5a00;
+}
+
+.links {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.empty-state {
+  padding: 14px;
+  border: 1px dashed #d7d7d7;
+  border-radius: 10px;
+  background: #fff;
+  color: #555;
+}
+
+.archive-fallback {
+  margin-top: 18px;
+  font-size: 13px;
+  color: #444;
+}
+
+.archive-fallback ul {
+  margin: 8px 0 0 20px;
+}
 
 .digest-about {
   margin: 12px 0 16px 0;
@@ -41,5 +264,19 @@ hr { border: none; border-top: 1px solid #e6e6e6; margin: 16px 0; }
   border-radius: 10px;
   background: #fff;
 }
-.digest-about h2 { margin: 0 0 6px 0; font-size: 16px; }
-.digest-about p { margin: 0; color: #444; }
+
+.digest-about h2 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+}
+
+.digest-about p {
+  margin: 0;
+  color: #444;
+}
+
+@media (max-width: 900px) {
+  .control-row {
+    grid-template-columns: 1fr;
+  }
+}
