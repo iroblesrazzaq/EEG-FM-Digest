@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from eegfm_digest.config import Config
+from eegfm_digest.db import DigestDB
 from eegfm_digest.pipeline import run_month
 
 
@@ -158,3 +159,114 @@ def test_pipeline_writes_backend_rows_and_skips_site(monkeypatch, tmp_path):
     assert not (tmp_path / "docs").exists()
     assert (cfg.output_dir / "2025-01" / "digest.json").exists()
     assert (cfg.data_dir / "digest.sqlite").exists()
+
+
+def test_pipeline_retries_cached_placeholder_summary(monkeypatch, tmp_path):
+    candidates = [
+        _candidate("2501.01001", "2025-01-03T00:00:00Z", "Accepted Paper"),
+    ]
+
+    monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
+
+    class DummyGemini:
+        def __init__(self, _config):  # noqa: ANN001
+            return None
+
+    monkeypatch.setattr("eegfm_digest.pipeline.GeminiClient", DummyGemini)
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.triage_paper",
+        lambda paper, *_args, **_kwargs: {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "decision": "accept",
+            "confidence": 0.9,
+            "reasons": ["fit"],
+        },
+    )
+
+    def fake_download_pdf(_url, out_path, _rate):  # noqa: ANN001
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_bytes(b"%PDF-1.4")
+        return out_path
+
+    def fake_extract_text(_pdf_path, text_path):  # noqa: ANN001
+        text_path.parent.mkdir(parents=True, exist_ok=True)
+        text_path.write_text("Abstract\nx\n\nMethods\ny\n\nResults\nz", encoding="utf-8")
+        return {"tool": "pypdf", "pages": 1, "chars": 20, "error": None}
+
+    monkeypatch.setattr("eegfm_digest.pipeline.download_pdf", fake_download_pdf)
+    monkeypatch.setattr("eegfm_digest.pipeline.extract_text", fake_extract_text)
+
+    calls = {"summarize": 0}
+
+    def fake_summarize_paper(paper, *_args, **_kwargs):  # noqa: ANN001
+        calls["summarize"] += 1
+        return {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "title": paper["title"],
+            "published_date": paper["published"][:10],
+            "categories": paper["categories"],
+            "paper_type": "method",
+            "one_liner": "Recovered summary.",
+            "detailed_summary": (
+                "This recovered summary now includes concrete method and evaluation details "
+                "from the full paper text and no longer uses placeholder fields."
+            ),
+            "unique_contribution": "Recovered contribution sentence.",
+            "key_points": ["point one", "point two"],
+            "data_scale": {"datasets": [], "subjects": None, "eeg_hours": None, "channels": None},
+            "method": {"architecture": None, "objective": None, "pretraining": None, "finetuning": None},
+            "evaluation": {"tasks": [], "benchmarks": [], "headline_results": []},
+            "open_source": {"code_url": None, "weights_url": None, "license": None},
+            "tags": {"paper_type": [], "backbone": [], "objective": [], "tokenization": [], "topology": []},
+            "limitations": ["l1", "l2"],
+            "used_fulltext": True,
+            "notes": "ok",
+        }
+
+    monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", fake_summarize_paper)
+
+    cfg = Config(
+        gemini_model_triage="triage-model",
+        gemini_model_summary="summary-model",
+        output_dir=tmp_path / "outputs",
+        data_dir=tmp_path / "data",
+        docs_dir=tmp_path / "docs",
+        max_candidates=20,
+        max_accepted=20,
+        arxiv_rate_limit_seconds=0.0,
+        pdf_rate_limit_seconds=0.0,
+    )
+
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    db.upsert_summary(
+        "2025-01",
+        {
+            "arxiv_id_base": "2501.01001",
+            "title": "Accepted Paper",
+            "published_date": "2025-01-03",
+            "categories": ["cs.LG"],
+            "paper_type": "other",
+            "one_liner": "Summary unavailable due to JSON validation failure.",
+            "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+            "unique_contribution": "unknown",
+            "key_points": ["unknown", "unknown", "unknown"],
+            "data_scale": {"datasets": [], "subjects": None, "eeg_hours": None, "channels": None},
+            "method": {"architecture": None, "objective": None, "pretraining": None, "finetuning": None},
+            "evaluation": {"tasks": [], "benchmarks": [], "headline_results": []},
+            "open_source": {"code_url": None, "weights_url": None, "license": None},
+            "tags": {"paper_type": [], "backbone": [], "objective": [], "tokenization": [], "topology": []},
+            "limitations": ["unknown", "summary_json_error"],
+            "used_fulltext": True,
+            "notes": "meta;summary_json_error",
+        },
+    )
+    db.close()
+
+    run_month(cfg, "2025-01", no_site=True)
+
+    assert calls["summarize"] == 1
+    paper_rows = _read_jsonl(cfg.output_dir / "2025-01" / "papers.jsonl")
+    assert len(paper_rows) == 1
+    assert "summary_retry_recovered" in paper_rows[0]["notes"]
+    assert paper_rows[0]["unique_contribution"] == "Recovered contribution sentence."

@@ -464,60 +464,8 @@
         "pdf": "https://arxiv.org/pdf/2506.16056v1"
       },
       "published_date": "2025-06-19",
-      "summary": {
-        "arxiv_id_base": "2506.16056",
-        "categories": [
-          "cs.LG",
-          "cs.AI"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 68526, \"error\": null, \"pages\": 34, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=18745;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2025-06-19",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "CRIA: A Cross-View Interaction and Instance-Adapted Pre-training Framework for Generalizable EEG Representations",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "exception:ConnectError",
       "title": "CRIA: A Cross-View Interaction and Instance-Adapted Pre-training Framework for Generalizable EEG Representations",
       "triage": {
         "confidence": 0.95,
@@ -548,61 +496,8 @@
         "pdf": "https://arxiv.org/pdf/2506.17068v1"
       },
       "published_date": "2025-06-20",
-      "summary": {
-        "arxiv_id_base": "2506.17068",
-        "categories": [
-          "q-bio.NC",
-          "cs.ET",
-          "eess.SP"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 77176, \"error\": null, \"pages\": 20, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=20744;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2025-06-20",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "Cross-Modal Epileptic Signal Harmonization: Frequency Domain Mapping Quantization for Pre-training a Unified Neurophysiological Transformer",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "exception:ConnectError",
       "title": "Cross-Modal Epileptic Signal Harmonization: Frequency Domain Mapping Quantization for Pre-training a Unified Neurophysiological Transformer",
       "triage": {
         "confidence": 0.95,

@@ -142,6 +142,64 @@ def test_write_month_site_payload_includes_summary_failures(tmp_path):
     assert failed["summary_failed_reason"] == "download_or_extract_failed:ClientError"
 
 
+def test_write_month_site_payload_treats_placeholder_summary_as_failed(tmp_path):
+    docs_dir = tmp_path / "docs"
+    month = "2025-01"
+    digest = {
+        "month": month,
+        "stats": {"candidates": 1, "accepted": 1, "summarized": 1},
+        "top_picks": [],
+        "sections": [],
+    }
+    backend_rows = [
+        {
+            "arxiv_id": "2501.00999v1",
+            "arxiv_id_base": "2501.00999",
+            "title": "Placeholder Summary Paper",
+            "published": "2025-01-09T00:00:00Z",
+            "authors": ["Alice"],
+            "categories": ["cs.LG"],
+            "links": {"abs": "https://arxiv.org/abs/2501.00999"},
+            "triage": {"decision": "accept", "confidence": 0.9, "reasons": ["fit"]},
+            "paper_summary": {
+                "arxiv_id_base": "2501.00999",
+                "title": "Placeholder Summary Paper",
+                "published_date": "2025-01-09",
+                "categories": ["cs.LG"],
+                "paper_type": "other",
+                "one_liner": "Summary unavailable due to JSON validation failure.",
+                "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+                "unique_contribution": "unknown",
+                "key_points": ["unknown", "unknown", "unknown"],
+                "data_scale": {"datasets": [], "subjects": None, "eeg_hours": None, "channels": None},
+                "method": {"architecture": None, "objective": None, "pretraining": None, "finetuning": None},
+                "evaluation": {"tasks": [], "benchmarks": [], "headline_results": []},
+                "open_source": {"code_url": None, "weights_url": None, "license": None},
+                "tags": {"paper_type": [], "backbone": [], "objective": [], "tokenization": [], "topology": []},
+                "limitations": ["unknown", "summary_json_error"],
+                "used_fulltext": True,
+                "notes": "meta;summary_json_error;summary_retry_failed",
+            },
+            "pdf": {"downloaded": True, "pdf_path": "a", "text_path": "b", "extract_meta": {"tool": "cached"}},
+        }
+    ]
+
+    write_month_site(
+        docs_dir=docs_dir,
+        month=month,
+        summaries=[],
+        metadata={},
+        digest=digest,
+        backend_rows=backend_rows,
+    )
+
+    payload = json.loads((docs_dir / "digest" / month / "papers.json").read_text(encoding="utf-8"))
+    assert len(payload["papers"]) == 1
+    row = payload["papers"][0]
+    assert row["summary"] is None
+    assert row["summary_failed_reason"] == "summary_retry_failed"
+
+
 def test_update_home_writes_month_manifest(tmp_path):
     docs_dir = tmp_path / "docs"
     month_a = docs_dir / "digest" / "2025-01"

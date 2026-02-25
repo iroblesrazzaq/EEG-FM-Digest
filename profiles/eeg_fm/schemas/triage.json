@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TriageModelOutput",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["decision", "confidence", "reasons"],
+  "properties": {
+    "decision": { "type": "string", "enum": ["accept", "reject", "borderline"] },
+    "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+    "reasons": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 2,
+      "maxItems": 4
+    }
+  }
+}

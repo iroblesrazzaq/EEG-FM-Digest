@@ -1,7 +1,13 @@
 import json
 from pathlib import Path
 
-from eegfm_digest.summarize import summarize_paper
+from eegfm_digest.summarize import (
+    is_placeholder_summary,
+    mark_summary_retry_failed,
+    mark_summary_retry_recovered,
+    should_retry_cached_summary,
+    summarize_paper,
+)
 from eegfm_digest.triage import load_schema
 
 
@@ -225,3 +231,22 @@ def test_summarize_normalizes_paper_type_and_numeric_fields():
     assert out["data_scale"]["eeg_hours"] == 20000.0
     assert out["data_scale"]["channels"] == 64.0
     assert len(out["key_points"]) >= 2
+
+
+def test_placeholder_summary_detection_and_retry_markers():
+    placeholder = {
+        "arxiv_id_base": "2501.10000",
+        "notes": "meta;summary_json_error",
+        "unique_contribution": "unknown",
+        "key_points": ["unknown", "unknown", "unknown"],
+    }
+    assert is_placeholder_summary(placeholder) is True
+    assert should_retry_cached_summary(placeholder) is True
+
+    failed = mark_summary_retry_failed(placeholder, reason="exception:RuntimeError")
+    assert "summary_retry_failed" in failed["notes"]
+    assert "summary_retry_failed_reason=exception:RuntimeError" in failed["notes"]
+    assert should_retry_cached_summary(failed) is False
+
+    recovered = mark_summary_retry_recovered(placeholder)
+    assert "summary_retry_recovered" in recovered["notes"]

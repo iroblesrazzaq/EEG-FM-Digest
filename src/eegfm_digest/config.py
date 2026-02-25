@@ -7,52 +7,64 @@ import os
 
 @dataclass(frozen=True)
 class Config:
-    gemini_model_triage: str
-    gemini_model_summary: str
-    arxiv_rate_limit_seconds: float = 2.0
-    arxiv_connect_timeout_seconds: float = 10.0
-    arxiv_read_timeout_seconds: float = 60.0
-    arxiv_retries: int = 2
-    arxiv_retry_backoff_seconds: float = 2.0
-    pdf_rate_limit_seconds: float = 5.0
+    # Deprecated in BYOM template branch; profile controls model settings.
+    gemini_model_triage: str = ""
+    gemini_model_summary: str = ""
+
+    profiles_dir: Path = Path("profiles")
     output_dir: Path = Path("outputs")
     data_dir: Path = Path("data")
     docs_dir: Path = Path("docs")
-    max_candidates: int = 500
-    max_accepted: int = 80
-    include_borderline: bool = False
-    max_borderline_pdfs: int = 20
-    text_head_chars: int = 80_000
-    text_tail_chars: int = 20_000
-    summary_max_input_tokens: int = 120_000
-    llm_temperature_triage: float = 0.2
-    llm_temperature_summary: float = 0.2
-    llm_max_output_tokens_triage: int = 1024
-    llm_max_output_tokens_summary: int = 2048
+    max_candidates: int | None = None
+    max_accepted: int | None = None
+    include_borderline: bool | None = None
+    max_borderline_pdfs: int | None = None
+    text_head_chars: int | None = None
+    text_tail_chars: int | None = None
+    summary_max_input_tokens: int | None = None
+    llm_temperature_triage: float | None = None
+    llm_temperature_summary: float | None = None
+    llm_max_output_tokens_triage: int | None = None
+    llm_max_output_tokens_summary: int | None = None
 
 
 def load_config() -> Config:
     return Config(
-        gemini_model_triage=os.environ.get("GEMINI_MODEL_TRIAGE", "gemini-3-flash-preview"),
-        gemini_model_summary=os.environ.get("GEMINI_MODEL_SUMMARY", "gemini-3-flash-preview"),
-        arxiv_rate_limit_seconds=float(os.environ.get("ARXIV_RATE_LIMIT_SECONDS", "2")),
-        arxiv_connect_timeout_seconds=float(os.environ.get("ARXIV_CONNECT_TIMEOUT_SECONDS", "10")),
-        arxiv_read_timeout_seconds=float(os.environ.get("ARXIV_READ_TIMEOUT_SECONDS", "60")),
-        arxiv_retries=int(os.environ.get("ARXIV_RETRIES", "2")),
-        arxiv_retry_backoff_seconds=float(os.environ.get("ARXIV_RETRY_BACKOFF_SECONDS", "2")),
-        pdf_rate_limit_seconds=float(os.environ.get("PDF_RATE_LIMIT_SECONDS", "5")),
+        gemini_model_triage=os.environ.get("GEMINI_MODEL_TRIAGE", ""),
+        gemini_model_summary=os.environ.get("GEMINI_MODEL_SUMMARY", ""),
+        profiles_dir=Path(os.environ.get("PROFILES_DIR", "profiles")),
         output_dir=Path(os.environ.get("OUTPUT_DIR", "outputs")),
         data_dir=Path(os.environ.get("DATA_DIR", "data")),
         docs_dir=Path(os.environ.get("DOCS_DIR", "docs")),
-        max_candidates=int(os.environ.get("MAX_CANDIDATES", "500")),
-        max_accepted=int(os.environ.get("MAX_ACCEPTED", "80")),
-        include_borderline=os.environ.get("INCLUDE_BORDERLINE", "false").lower() in {"1", "true", "yes"},
-        max_borderline_pdfs=int(os.environ.get("MAX_BORDERLINE_PDFS", "20")),
-        text_head_chars=int(os.environ.get("TEXT_HEAD_CHARS", "80000")),
-        text_tail_chars=int(os.environ.get("TEXT_TAIL_CHARS", "20000")),
-        summary_max_input_tokens=int(os.environ.get("SUMMARY_MAX_INPUT_TOKENS", "120000")),
-        llm_temperature_triage=float(os.environ.get("LLM_TEMPERATURE_TRIAGE", "0.2")),
-        llm_temperature_summary=float(os.environ.get("LLM_TEMPERATURE_SUMMARY", "0.2")),
-        llm_max_output_tokens_triage=int(os.environ.get("LLM_MAX_OUTPUT_TOKENS_TRIAGE", "1024")),
-        llm_max_output_tokens_summary=int(os.environ.get("LLM_MAX_OUTPUT_TOKENS_SUMMARY", "2048")),
+        max_candidates=int(os.environ["MAX_CANDIDATES"]) if "MAX_CANDIDATES" in os.environ else None,
+        max_accepted=int(os.environ["MAX_ACCEPTED"]) if "MAX_ACCEPTED" in os.environ else None,
+        include_borderline=(
+            os.environ.get("INCLUDE_BORDERLINE", "").lower() in {"1", "true", "yes"}
+            if "INCLUDE_BORDERLINE" in os.environ
+            else None
+        ),
+        max_borderline_pdfs=(
+            int(os.environ["MAX_BORDERLINE_PDFS"]) if "MAX_BORDERLINE_PDFS" in os.environ else None
+        ),
+        text_head_chars=int(os.environ["TEXT_HEAD_CHARS"]) if "TEXT_HEAD_CHARS" in os.environ else None,
+        text_tail_chars=int(os.environ["TEXT_TAIL_CHARS"]) if "TEXT_TAIL_CHARS" in os.environ else None,
+        summary_max_input_tokens=(
+            int(os.environ["SUMMARY_MAX_INPUT_TOKENS"]) if "SUMMARY_MAX_INPUT_TOKENS" in os.environ else None
+        ),
+        llm_temperature_triage=(
+            float(os.environ["LLM_TEMPERATURE_TRIAGE"]) if "LLM_TEMPERATURE_TRIAGE" in os.environ else None
+        ),
+        llm_temperature_summary=(
+            float(os.environ["LLM_TEMPERATURE_SUMMARY"]) if "LLM_TEMPERATURE_SUMMARY" in os.environ else None
+        ),
+        llm_max_output_tokens_triage=(
+            int(os.environ["LLM_MAX_OUTPUT_TOKENS_TRIAGE"])
+            if "LLM_MAX_OUTPUT_TOKENS_TRIAGE" in os.environ
+            else None
+        ),
+        llm_max_output_tokens_summary=(
+            int(os.environ["LLM_MAX_OUTPUT_TOKENS_SUMMARY"])
+            if "LLM_MAX_OUTPUT_TOKENS_SUMMARY" in os.environ
+            else None
+        ),
     )

@@ -1,0 +1,72 @@
+id: generic_demo
+display_name: Generic Topic Digest (Demo)
+
+llm:
+  provider: openai_compatible
+  base_url: ${OPENAI_BASE_URL:https://openrouter.ai/api/v1}
+  api_key_env: OPENROUTER_API_KEY
+  triage_model: ${TRIAGE_MODEL:arcee-ai/trinity-large-preview:free}
+  summary_model: ${SUMMARY_MODEL:arcee-ai/trinity-large-preview:free}
+  temperature_triage: 0.2
+  temperature_summary: 0.2
+  max_output_tokens_triage: 1024
+  max_output_tokens_summary: 2048
+  token_chars_per_token: 4
+  request_timeout_seconds: 180
+
+retrieval:
+  categories:
+    - cs.AI
+    - cs.CL
+    - cs.LG
+    - stat.ML
+  queries:
+    - all:("large language model" OR "foundation model") AND all:(benchmark OR evaluation OR survey OR review)
+    - all:("language model" OR "foundation model") AND all:(transfer OR pretrain OR "self-supervised")
+  rate_limit_seconds: 2.0
+  connect_timeout_seconds: 10.0
+  read_timeout_seconds: 60.0
+  retries: 2
+  retry_backoff_seconds: 2.0
+
+pipeline:
+  max_candidates: 300
+  max_accepted: 60
+  include_borderline: false
+  max_borderline_pdfs: 10
+  pdf_rate_limit_seconds: 5.0
+  text_head_chars: 80000
+  text_tail_chars: 20000
+  summary_max_input_tokens: 100000
+
+summary:
+  allowed_tags:
+    paper_type: [new-model, post-training, benchmark, survey]
+    backbone: [transformer, mamba-ssm, moe, diffusion]
+    objective: [masked-reconstruction, autoregressive, contrastive, discrete-code-prediction]
+    tokenization: [time-patch, latent-tokens, discrete-tokens]
+    topology: [fixed-montage, channel-flexible, topology-agnostic]
+
+site:
+  title: Generic Topic Digest (Demo)
+  nav:
+    home_label: Monthly Digest
+    search_label: Search
+    about_label: About
+  home:
+    about_blurb: This is a demo profile showing how to adapt the digest pipeline to another topic. Adjust retrieval queries, prompts, schemas, and site copy inside this profile folder.
+  process:
+    intro: This demo profile shows the same staged pipeline with profile-configured retrieval terms and model prompts.
+    steps:
+      - First we call the arXiv API using this profile's category + query settings.
+      - Then, we run triage on title/abstract only and return decision, confidence, and reasons.
+      - Next, accepted papers go through PDF extraction and schema-validated structured summaries.
+    footer: This profile is intended as an editable starter template for non-EEG topics.
+    limitations:
+      - Query quality directly determines recall.
+      - Triage decisions depend on prompt quality and model behavior.
+      - Summary quality depends on extracted text quality and schema design.
+    keyword_subtitle: Matching criteria are defined by this profile's retrieval query list.
+    eeg_terms: [replace, these, with, your, domain]
+    fm_terms_a: [topic, terms, for, query, group-a]
+    fm_terms_b: [topic, terms, for, query, group-b]

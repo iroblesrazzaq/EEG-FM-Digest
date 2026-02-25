@@ -53,6 +53,8 @@ How incremental weekly runs work:
 - Keep `triage_force=false` and `summary_force=false`.
 - Keep `sync_cache_from_outputs=true`.
 - Re-run the same month config; previously seen `arxiv_id_base` rows are reused from SQLite / existing JSONL and only new papers trigger LLM calls.
+- Placeholder summaries (for example `summary_json_error` with `unknown` fields) are automatically retried once; if retry fails, notes include `summary_retry_failed`.
+- To explicitly retry previously failed summaries, run that month with `summary_force=true` (or `--force` in single-month mode).
 
 ## How to test
 Run all tests:

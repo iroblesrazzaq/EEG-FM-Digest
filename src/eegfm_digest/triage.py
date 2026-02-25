@@ -6,7 +6,7 @@ from typing import Any
 
 from jsonschema import ValidationError, validate
 
-from .llm_gemini import GeminiClient, parse_json_text
+from .llm_openai_compat import parse_json_text
 
 
 class SchemaValidationError(RuntimeError):
@@ -35,7 +35,7 @@ def _persisted_triage(arxiv_id_base: str, data: dict[str, Any]) -> dict[str, Any
 
 def triage_paper(
     paper: dict[str, Any],
-    llm: GeminiClient,
+    llm: Any,
     prompt_template: str,
     repair_template: str,
     schema: dict[str, Any],

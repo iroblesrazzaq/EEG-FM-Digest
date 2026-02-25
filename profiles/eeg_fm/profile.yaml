@@ -1,0 +1,75 @@
+id: eeg_fm
+display_name: EEG Foundation Model Digest
+
+llm:
+  provider: openai_compatible
+  base_url: ${OPENAI_BASE_URL:https://openrouter.ai/api/v1}
+  api_key_env: OPENROUTER_API_KEY
+  triage_model: ${TRIAGE_MODEL:arcee-ai/trinity-large-preview:free}
+  summary_model: ${SUMMARY_MODEL:arcee-ai/trinity-large-preview:free}
+  temperature_triage: 0.2
+  temperature_summary: 0.2
+  max_output_tokens_triage: 1024
+  max_output_tokens_summary: 2048
+  token_chars_per_token: 4
+  request_timeout_seconds: 180
+
+retrieval:
+  categories:
+    - q-bio.NC
+    - cs.LG
+    - stat.ML
+    - eess.SP
+    - cs.AI
+    - cs.NE
+  queries:
+    - all:(eeg OR electroencephalograph* OR brainwave*) AND all:("foundation model" OR pretrain OR pretrained OR "self-supervised" OR "self supervised")
+    - all:(eeg OR electroencephalograph* OR brainwave*) AND all:("representation learning" OR masked OR transfer OR generaliz*)
+  rate_limit_seconds: 2.0
+  connect_timeout_seconds: 10.0
+  read_timeout_seconds: 60.0
+  retries: 2
+  retry_backoff_seconds: 2.0
+
+pipeline:
+  max_candidates: 500
+  max_accepted: 80
+  include_borderline: false
+  max_borderline_pdfs: 20
+  pdf_rate_limit_seconds: 5.0
+  text_head_chars: 80000
+  text_tail_chars: 20000
+  summary_max_input_tokens: 120000
+
+summary:
+  allowed_tags:
+    paper_type: [new-model, post-training, benchmark, survey]
+    backbone: [transformer, mamba-ssm, moe, diffusion]
+    objective: [masked-reconstruction, autoregressive, contrastive, discrete-code-prediction]
+    tokenization: [time-patch, latent-tokens, discrete-tokens]
+    topology: [fixed-montage, channel-flexible, topology-agnostic]
+
+site:
+  title: EEG Foundation Model Digest
+  nav:
+    home_label: Monthly Digest
+    search_label: Search
+    about_label: About
+  home:
+    about_blurb: This digest serves as a monthly update on the current EEG foundation model literature on arXiv. We filter with arXiv title and abstract keywords, and a triage LLM to decide on papers that qualify. Then, we generate a summary of the entire paper with an LLM. I manually choose the featured paper of the month.
+  process:
+    intro: This digest serves as a monthly update on the current EEG foundation model literature. I built it so I can keep up to date with the latest EEG FM papers. The process is as follows:
+    steps:
+      - First we call the arXiv API to retrieve papers with EEG-FM-related terms in their title and abstract.
+      - Then, we use an LLM on the title and abstract to triage all papers returned by the arXiv search. The model returns a decision (accept, reject, borderline), its confidence, and 2-4 reasons for its decision.
+      - Next, for all models accepted by the triage LLM, we download the PDF, extract text, and run a summary LLM where we extract a summary, bullet points, unique contribution, and tags.
+    footer: All triage and summary LLM calls in this profile use the configured OpenAI-compatible endpoint and models.
+    limitations:
+      - Only checks paper on arXiv.
+      - arXiv keyword search may miss papers.
+      - Triage LLM could misclassify a paper.
+      - Summary LLM is not an expert on the literature, so it relies on the paper to self-identify novelty and importance.
+    keyword_subtitle: Matching requires one EEG term plus one FM term set in title/abstract.
+    eeg_terms: [eeg, electroencephalograph*, brainwave*]
+    fm_terms_a: ['"foundation model"', pretrain, pretrained, '"self-supervised"', '"self supervised"']
+    fm_terms_b: ['"representation learning"', masked, transfer, generaliz*]

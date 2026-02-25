@@ -202,10 +202,10 @@
     {
       "empty_state": "has_papers",
       "featured": {
-        "abs_url": "http://arxiv.org/abs/2502.17464v1",
-        "arxiv_id_base": "2502.17464",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "title": "Large Cognition Model: Towards Pretrained EEG Foundation Model"
+        "abs_url": "http://arxiv.org/abs/2502.17465v1",
+        "arxiv_id_base": "2502.17465",
+        "one_liner": "",
+        "title": "Bridging Brain Signals and Language: A Deep Learning Approach to EEG-to-Text Decoding"
       },
       "href": "digest/2025-02/index.html",
       "json_path": "digest/2025-02/papers.json",

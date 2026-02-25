@@ -22,62 +22,8 @@
         "pdf": "https://arxiv.org/pdf/2502.01678v4"
       },
       "published_date": "2025-02-02",
-      "summary": {
-        "arxiv_id_base": "2502.01678",
-        "categories": [
-          "cs.LG",
-          "cs.AI",
-          "cs.CE",
-          "eess.SP"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 138067, \"error\": null, \"pages\": 32, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=57450;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2025-02-02",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "LEAD: An EEG Foundation Model for Alzheimer's Disease Detection",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "exception:ConnectError",
       "title": "LEAD: An EEG Foundation Model for Alzheimer's Disease Detection",
       "triage": {
         "confidence": 0.95,
@@ -109,60 +55,8 @@
         "pdf": "https://arxiv.org/pdf/2502.06438v2"
       },
       "published_date": "2025-02-10",
-      "summary": {
-        "arxiv_id_base": "2502.06438",
-        "categories": [
-          "cs.LG",
-          "cs.AI"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 37688, \"error\": null, \"pages\": 7, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=12979;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2025-02-10",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "FEMBA: Efficient and Scalable EEG Analysis with a Bidirectional Mamba Foundation Model",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "exception:ConnectError",
       "title": "FEMBA: Efficient and Scalable EEG Analysis with a Bidirectional Mamba Foundation Model",
       "triage": {
         "confidence": 0.95,
@@ -197,61 +91,8 @@
         "pdf": "https://arxiv.org/pdf/2502.17460v2"
       },
       "published_date": "2025-02-10",
-      "summary": {
-        "arxiv_id_base": "2502.17460",
-        "categories": [
-          "eess.SP",
-          "cs.AI",
-          "cs.LG"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 41290, \"error\": null, \"pages\": 7, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=13435;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2025-02-10",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "Finetuning and Quantization of EEG-Based Foundational BioSignal Models on ECG and PPG Data for Blood Pressure Estimation",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "exception:ConnectError",
       "title": "Finetuning and Quantization of EEG-Based Foundational BioSignal Models on ECG and PPG Data for Blood Pressure Estimation",
       "triage": {
         "confidence": 0.9,
@@ -284,61 +125,8 @@
         "pdf": "https://arxiv.org/pdf/2502.17462v1"
       },
       "published_date": "2025-02-10",
-      "summary": {
-        "arxiv_id_base": "2502.17462",
-        "categories": [
-          "eess.SP",
-          "cs.AI",
-          "cs.LG"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 88129, \"error\": null, \"pages\": 48, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=34831;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2025-02-10",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "The Case for Cleaner Biosignals: High-fidelity Neural Compressor Enables Transfer from Cleaner iEEG to Noisier EEG",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "exception:ConnectError",
       "title": "The Case for Cleaner Biosignals: High-fidelity Neural Compressor Enables Transfer from Cleaner iEEG to Noisier EEG",
       "triage": {
         "confidence": 0.9,
@@ -369,61 +157,8 @@
         "pdf": "https://arxiv.org/pdf/2502.17464v1"
       },
       "published_date": "2025-02-11",
-      "summary": {
-        "arxiv_id_base": "2502.17464",
-        "categories": [
-          "eess.SP",
-          "cs.LG",
-          "q-bio.NC"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 28373, \"error\": null, \"pages\": 6, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=9126;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2025-02-11",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "Large Cognition Model: Towards Pretrained EEG Foundation Model",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "exception:ConnectError",
       "title": "Large Cognition Model: Towards Pretrained EEG Foundation Model",
       "triage": {
         "confidence": 0.95,
@@ -457,61 +192,8 @@
         "pdf": "https://arxiv.org/pdf/2502.17465v1"
       },
       "published_date": "2025-02-11",
-      "summary": {
-        "arxiv_id_base": "2502.17465",
-        "categories": [
-          "eess.SP",
-          "cs.CL",
-          "cs.LG"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 71450, \"error\": null, \"pages\": 21, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=20232;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2025-02-11",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "Bridging Brain Signals and Language: A Deep Learning Approach to EEG-to-Text Decoding",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "exception:ConnectError",
       "title": "Bridging Brain Signals and Language: A Deep Learning Approach to EEG-to-Text Decoding",
       "triage": {
         "confidence": 0.9,
@@ -543,61 +225,8 @@
         "pdf": "https://arxiv.org/pdf/2502.16060v4"
       },
       "published_date": "2025-02-22",
-      "summary": {
-        "arxiv_id_base": "2502.16060",
-        "categories": [
-          "cs.LG",
-          "cs.AI",
-          "eess.SP"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 86324, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=29290;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2025-02-22",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "Tokenizing Single-Channel EEG with Time-Frequency Motif Learning",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "exception:ConnectError",
       "title": "Tokenizing Single-Channel EEG with Time-Frequency Motif Learning",
       "triage": {
         "confidence": 0.95,
@@ -634,63 +263,8 @@
         "pdf": "https://arxiv.org/pdf/2502.16794v3"
       },
       "published_date": "2025-02-24",
-      "summary": {
-        "arxiv_id_base": "2502.16794",
-        "categories": [
-          "cs.SD",
-          "cs.AI",
-          "cs.CL",
-          "cs.HC",
-          "eess.AS"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 105707, \"error\": null, \"pages\": 23, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=43654;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2025-02-24",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "AAD-LLM: Neural Attention-Driven Auditory Scene Understanding",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "exception:ConnectError",
       "title": "AAD-LLM: Neural Attention-Driven Auditory Scene Understanding",
       "triage": {
         "confidence": 0.9,
@@ -727,62 +301,8 @@
         "pdf": "https://arxiv.org/pdf/2502.17213v2"
       },
       "published_date": "2025-02-24",
-      "summary": {
-        "arxiv_id_base": "2502.17213",
-        "categories": [
-          "q-bio.NC",
-          "cs.AI",
-          "cs.LG",
-          "eess.SP"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 226764, \"error\": null, \"pages\": 40, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=74585;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2025-02-24",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "Deep Learning-Powered Electrical Brain Signals Analysis: Advancing Neurological Diagnostics",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "exception:ConnectError",
       "title": "Deep Learning-Powered Electrical Brain Signals Analysis: Advancing Neurological Diagnostics",
       "triage": {
         "confidence": 0.9,

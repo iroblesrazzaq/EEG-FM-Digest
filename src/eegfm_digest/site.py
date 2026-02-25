@@ -6,6 +6,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from .summarize import is_placeholder_summary
+
 _SHORT_BLURB = (
     "This digest serves as a monthly update on the current EEG foundation model literature on arXiv. "
     "We filter with arXiv title and abstract keywords, and a triage LLM to decide on papers that qualify. "
@@ -70,6 +72,31 @@ _FM_KEYWORDS_SET_B = [
 ]
 
 
+def _site_dict(site_content: dict[str, Any] | None, key: str) -> dict[str, Any]:
+    if not isinstance(site_content, dict):
+        return {}
+    value = site_content.get(key)
+    return value if isinstance(value, dict) else {}
+
+
+def _site_text(site_content: dict[str, Any] | None, key: str, default: str) -> str:
+    if isinstance(site_content, dict):
+        value = site_content.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return default
+
+
+def _site_list(site_content: dict[str, Any] | None, key: str, default: list[str]) -> list[str]:
+    if isinstance(site_content, dict):
+        value = site_content.get(key)
+        if isinstance(value, list):
+            out = [str(item).strip() for item in value if str(item).strip()]
+            if out:
+                return out
+    return default
+
+
 def _safe_str_list(value: Any) -> list[str]:
     if not isinstance(value, list):
         return []
@@ -125,6 +152,21 @@ def _summary_failure_reason(row: dict[str, Any]) -> str:
     return "summary_unavailable"
 
 
+def _placeholder_failure_reason(summary: dict[str, Any], row: dict[str, Any]) -> str:
+    notes = str(summary.get("notes", "")).strip()
+    for token in notes.split(";"):
+        cleaned = token.strip()
+        if cleaned.startswith("summary_retry_failed_reason="):
+            reason = cleaned.split("=", 1)[1].strip()
+            if reason:
+                return reason
+    if "summary_retry_failed" in notes:
+        return "summary_retry_failed"
+    if "summary_json_error" in notes:
+        return "summary_json_error"
+    return _summary_failure_reason(row)
+
+
 def _paper_rows_from_backend(backend_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for row in sorted(backend_rows, key=lambda x: (str(x.get("published", "")), str(x.get("arxiv_id_base", "")))):
@@ -135,6 +177,13 @@ def _paper_rows_from_backend(backend_rows: list[dict[str, Any]]) -> list[dict[st
         if triage["decision"] != "accept":
             continue
         summary = row.get("paper_summary")
+        summary_out = summary if isinstance(summary, dict) else None
+        summary_failed_reason = None
+        if summary_out is None:
+            summary_failed_reason = _summary_failure_reason(row)
+        elif is_placeholder_summary(summary_out):
+            summary_failed_reason = _placeholder_failure_reason(summary_out, row)
+            summary_out = None
         rows.append(
             {
                 "arxiv_id_base": arxiv_id_base,
@@ -145,8 +194,8 @@ def _paper_rows_from_backend(backend_rows: list[dict[str, Any]]) -> list[dict[st
                 "categories": _safe_str_list(row.get("categories")),
                 "links": _safe_links(row.get("links"), arxiv_id_base),
                 "triage": triage,
-                "summary": summary if isinstance(summary, dict) else None,
-                "summary_failed_reason": None if isinstance(summary, dict) else _summary_failure_reason(row),
+                "summary": summary_out,
+                "summary_failed_reason": summary_failed_reason,
             }
         )
     return rows
@@ -207,7 +256,13 @@ def _month_payload(
     }
 
 
-def _about_digest_block(process_href: str, include_process_cta: bool = False) -> str:
+def _about_digest_block(
+    process_href: str,
+    include_process_cta: bool = False,
+    site_content: dict[str, Any] | None = None,
+) -> str:
+    home_cfg = _site_dict(site_content, "home")
+    about_blurb = _site_text(home_cfg, "about_blurb", _SHORT_BLURB)
     cta = (
         f"<p class='small'><a href='{html.escape(process_href)}'>Read the detailed process and prompt design</a></p>"
         if include_process_cta
@@ -216,7 +271,7 @@ def _about_digest_block(process_href: str, include_process_cta: bool = False) ->
     return (
         "<section class='digest-about'>"
         "<h2>About This Digest</h2>"
-        f"<p>{html.escape(_SHORT_BLURB)}</p>"
+        f"<p>{html.escape(about_blurb)}</p>"
         f"{cta}"
         "</section>"
     )
@@ -239,11 +294,14 @@ def _nav_html(
     explore_href: str,
     process_href: str,
     active_tab: str,
+    site_content: dict[str, Any] | None = None,
 ) -> str:
+    nav_cfg = _site_dict(site_content, "nav")
+    site_title = _site_text(site_content, "title", "EEG Foundation Model Digest")
     tabs = [
-        ("home", "Monthly Digest", home_href),
-        ("explore", "Search", explore_href),
-        ("process", "About", process_href),
+        ("home", _site_text(nav_cfg, "home_label", "Monthly Digest"), home_href),
+        ("explore", _site_text(nav_cfg, "search_label", "Search"), explore_href),
+        ("process", _site_text(nav_cfg, "about_label", "About"), process_href),
     ]
     links = "".join(
         (
@@ -256,7 +314,7 @@ def _nav_html(
         "<header class='site-shell'>"
         "<div class='site-shell-inner'>"
         "<div class='site-brand'>"
-        f"<p class='site-title'><a class='site-title-link' href='{html.escape(home_href)}'>EEG Foundation Model Digest</a></p>"
+        f"<p class='site-title'><a class='site-title-link' href='{html.escape(home_href)}'>{html.escape(site_title)}</a></p>"
         "</div>"
         f"<nav class='site-nav'>{links}</nav>"
         "</div>"
@@ -264,12 +322,36 @@ def _nav_html(
     )
 
 
-def render_process_page() -> str:
-    step_items = "".join(f"<li>{html.escape(text)}</li>" for text in _PROCESS_DETAILS_STEPS)
-    limitation_items = "".join(f"<li>{html.escape(text)}</li>" for text in _PROCESS_LIMITATIONS)
-    triage_prompt = html.escape(_load_prompt_text(Path("prompts/triage.md")))
-    summary_prompt = html.escape(_load_prompt_text(Path("prompts/summarize.md")))
-    nav = _nav_html("../index.html", "../explore/index.html", "../process/index.html", "process")
+def render_process_page(
+    site_content: dict[str, Any] | None = None,
+    triage_prompt_path: Path = Path("prompts/triage.md"),
+    summary_prompt_path: Path = Path("prompts/summarize.md"),
+) -> str:
+    process_cfg = _site_dict(site_content, "process")
+    process_intro = _site_text(process_cfg, "intro", _PROCESS_DETAILS_INTRO)
+    process_steps = _site_list(process_cfg, "steps", _PROCESS_DETAILS_STEPS)
+    process_footer = _site_text(process_cfg, "footer", _PROCESS_DETAILS_FOOTER)
+    process_limitations = _site_list(process_cfg, "limitations", _PROCESS_LIMITATIONS)
+    eeg_terms = _site_list(process_cfg, "eeg_terms", _EEG_KEYWORDS)
+    fm_terms_a = _site_list(process_cfg, "fm_terms_a", _FM_KEYWORDS_SET_A)
+    fm_terms_b = _site_list(process_cfg, "fm_terms_b", _FM_KEYWORDS_SET_B)
+    keyword_subtitle = _site_text(
+        process_cfg,
+        "keyword_subtitle",
+        "Matching requires one EEG term plus one FM term set in title/abstract.",
+    )
+
+    step_items = "".join(f"<li>{html.escape(text)}</li>" for text in process_steps)
+    limitation_items = "".join(f"<li>{html.escape(text)}</li>" for text in process_limitations)
+    triage_prompt = html.escape(_load_prompt_text(triage_prompt_path))
+    summary_prompt = html.escape(_load_prompt_text(summary_prompt_path))
+    nav = _nav_html(
+        "../index.html",
+        "../explore/index.html",
+        "../process/index.html",
+        "process",
+        site_content=site_content,
+    )
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>About</title>
 <link rel='stylesheet' href='../assets/style.css'></head><body>
@@ -277,26 +359,26 @@ def render_process_page() -> str:
 <main class='container process-page'>
 <h1>About This Digest</h1>
 <section class='process-content'>
-<p>{html.escape(_PROCESS_DETAILS_INTRO)}</p>
+<p>{html.escape(process_intro)}</p>
 <ul>{step_items}</ul>
-<p>{html.escape(_PROCESS_DETAILS_FOOTER)}</p>
+<p>{html.escape(process_footer)}</p>
 <h2>Limitations</h2>
 <ul>{limitation_items}</ul>
 <h2>arXiv Retrieval Keywords</h2>
 <section class='prompt-details keyword-details'>
-<p class='small'>Matching requires one EEG term plus one FM term set in title/abstract.</p>
+<p class='small'>{html.escape(keyword_subtitle)}</p>
 <div class='keyword-grid'>
 <section>
 <p><strong>EEG term set</strong> (used in both queries)</p>
-{_keyword_list_html(_EEG_KEYWORDS)}
+{_keyword_list_html(eeg_terms)}
 </section>
 <section>
 <p><strong>FM term set A</strong></p>
-{_keyword_list_html(_FM_KEYWORDS_SET_A)}
+{_keyword_list_html(fm_terms_a)}
 </section>
 <section>
 <p><strong>FM term set B</strong></p>
-{_keyword_list_html(_FM_KEYWORDS_SET_B)}
+{_keyword_list_html(fm_terms_b)}
 </section>
 </div>
 </section>
@@ -329,13 +411,20 @@ def render_month_page(
     summaries: list[dict[str, Any]],
     metadata: dict[str, dict[str, Any]],
     digest: dict[str, Any],
+    site_content: dict[str, Any] | None = None,
 ) -> str:
     del summaries, metadata, digest  # Render path is JSON-driven; data loads client-side.
     month_attr = html.escape(month)
     month_json = html.escape(f"../../digest/{month}/papers.json")
     manifest_json = html.escape("../../data/months.json")
     month_title = html.escape(_month_label(month))
-    nav = _nav_html("../../index.html", "../../explore/index.html", "../../process/index.html", "home")
+    nav = _nav_html(
+        "../../index.html",
+        "../../explore/index.html",
+        "../../process/index.html",
+        "home",
+        site_content=site_content,
+    )
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>EEG-FM Digest {html.escape(month)}</title>
 <link rel='stylesheet' href='../../assets/style.css'></head>
@@ -356,15 +445,21 @@ def render_month_page(
 """
 
 
-def render_home_page(months: list[str]) -> str:
+def render_home_page(months: list[str], site_content: dict[str, Any] | None = None) -> str:
     fallback_months = html.escape(json.dumps(months, ensure_ascii=False))
-    nav = _nav_html("index.html", "explore/index.html", "process/index.html", "home")
+    nav = _nav_html(
+        "index.html",
+        "explore/index.html",
+        "process/index.html",
+        "home",
+        site_content=site_content,
+    )
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>EEG-FM Digest</title>
 <link rel='stylesheet' href='assets/style.css'></head><body>
 {nav}
 <main id='digest-app' class='container' data-view='home' data-month='' data-manifest-json='data/months.json' data-fallback-months='{fallback_months}'>
-{_about_digest_block("process/index.html", include_process_cta=False)}
+{_about_digest_block("process/index.html", include_process_cta=False, site_content=site_content)}
 <section id='home-controls' class='controls'></section>
 <section id='home-results'></section>
 </main>
@@ -373,9 +468,15 @@ def render_home_page(months: list[str]) -> str:
 """
 
 
-def render_explore_page(months: list[str]) -> str:
+def render_explore_page(months: list[str], site_content: dict[str, Any] | None = None) -> str:
     fallback_months = html.escape(json.dumps(months, ensure_ascii=False))
-    nav = _nav_html("../index.html", "../explore/index.html", "../process/index.html", "explore")
+    nav = _nav_html(
+        "../index.html",
+        "../explore/index.html",
+        "../process/index.html",
+        "explore",
+        site_content=site_content,
+    )
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>Search</title>
 <link rel='stylesheet' href='../assets/style.css'></head><body>
@@ -398,11 +499,12 @@ def write_month_site(
     metadata: dict[str, dict[str, Any]],
     digest: dict[str, Any],
     backend_rows: list[dict[str, Any]] | None = None,
+    site_content: dict[str, Any] | None = None,
 ) -> None:
     month_dir = docs_dir / "digest" / month
     month_dir.mkdir(parents=True, exist_ok=True)
     (month_dir / "index.html").write_text(
-        render_month_page(month, summaries, metadata, digest), encoding="utf-8"
+        render_month_page(month, summaries, metadata, digest, site_content=site_content), encoding="utf-8"
     )
     payload = _month_payload(month, summaries, metadata, digest, backend_rows)
     (month_dir / "papers.json").write_text(
@@ -516,20 +618,34 @@ def _month_manifest_item(month_dir: Path) -> dict[str, Any]:
     }
 
 
-def update_home(docs_dir: Path) -> None:
+def update_home(
+    docs_dir: Path,
+    site_content: dict[str, Any] | None = None,
+    triage_prompt_path: Path = Path("prompts/triage.md"),
+    summary_prompt_path: Path = Path("prompts/summarize.md"),
+) -> None:
     month_dirs = sorted(
         [p for p in (docs_dir / "digest").iterdir() if p.is_dir()],
         key=lambda p: p.name,
         reverse=True,
     ) if (docs_dir / "digest").exists() else []
     months = [p.name for p in month_dirs]
-    (docs_dir / "index.html").write_text(render_home_page(months), encoding="utf-8")
+    (docs_dir / "index.html").write_text(render_home_page(months, site_content=site_content), encoding="utf-8")
     explore_dir = docs_dir / "explore"
     explore_dir.mkdir(parents=True, exist_ok=True)
-    (explore_dir / "index.html").write_text(render_explore_page(months), encoding="utf-8")
+    (explore_dir / "index.html").write_text(
+        render_explore_page(months, site_content=site_content), encoding="utf-8"
+    )
     process_dir = docs_dir / "process"
     process_dir.mkdir(parents=True, exist_ok=True)
-    (process_dir / "index.html").write_text(render_process_page(), encoding="utf-8")
+    (process_dir / "index.html").write_text(
+        render_process_page(
+            site_content=site_content,
+            triage_prompt_path=triage_prompt_path,
+            summary_prompt_path=summary_prompt_path,
+        ),
+        encoding="utf-8",
+    )
     manifest = {
         "latest": months[0] if months else None,
         "months": [_month_manifest_item(month_dir) for month_dir in month_dirs],
