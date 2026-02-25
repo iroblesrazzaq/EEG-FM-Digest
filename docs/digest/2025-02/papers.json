@@ -31,50 +31,69 @@
           "eess.SP"
         ],
         "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
+          "channels": 19,
+          "datasets": [
+            "13 datasets (4 AD + 9 non-AD neurological disorders)"
+          ],
+          "eeg_hours": 427.81,
+          "subjects": 2238
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "This paper introduces LEAD, the first large-scale foundation model for EEG-based Alzheimer's disease (AD) detection. The authors address three major challenges in existing EEG-based AD detection methods: the lack of large-scale datasets, limited generalizability across subjects, and difficulty adapting to heterogeneous data. To tackle these issues, they curate the world's largest EEG-AD corpus to date, comprising 2,238 subjects and 427.81 hours of recordings. The proposed LEAD model features a gated temporal-spatial Transformer that can handle EEG recordings with arbitrary lengths, channel configurations, and sampling rates. Additionally, they introduce a subject-regularized training strategy and employ medical contrastive learning for pre-training on 13 datasets (4 AD and 9 non-AD neurological disorders) before fine-tuning on 5 AD datasets. LEAD achieves the best average ranking across all 20 evaluations on 5 downstream datasets, substantially outperforming existing approaches including state-of-the-art EEG foundation models.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "16 baseline methods including 4 SOTA EEG foundation models"
+          ],
+          "headline_results": [
+            "Best average ranking across 20 evaluations; subject-level F1 scores up to 94.32%"
+          ],
+          "tasks": [
+            "5 downstream AD datasets"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: LEAD achieves SOTA subject-level results on 5 downstream AD datasets under challenging subject-independent cross-validation.",
+          "Gated temporal-spatial Transformer: Adapts to EEG recordings with arbitrary lengths, channel configurations, and sampling rates.",
+          "Subject-regularized training: Incorporates subject-level cross-entropy loss and index group shuffling to enhance subject-level feature learning."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Performance on dementia-stage classification (AD vs MCI vs HC) remains limited at approximately 66% subject-level F1 score",
+          "Relies on curated datasets which may not fully represent all demographic variations",
+          "Requires substantial computational resources for pre-training and fine-tuning"
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Gated temporal-spatial Transformer",
+          "finetuning": "Supervised fine-tuning on 5 AD datasets",
+          "objective": "Subject-level AD detection",
+          "pretraining": "Medical contrastive learning on 13 datasets (4 AD + 9 non-AD neurological disorders)"
         },
-        "notes": "{\"chars\": 138067, \"error\": null, \"pages\": 32, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=57450;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 138067, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=36472",
+        "one_liner": "LEAD is the first large-scale EEG foundation model for Alzheimer's disease detection, achieving state-of-the-art performance across multiple datasets.",
         "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
+          "code_url": "https://github.com/DL4mHealth/LEAD",
+          "license": "Unknown",
+          "weights_url": "Available"
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2025-02-02",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
         },
         "title": "LEAD: An EEG Foundation Model for Alzheimer's Disease Detection",
-        "unique_contribution": "unknown",
+        "unique_contribution": "LEAD is the first foundation model for EEG-based Alzheimer's disease detection, trained on the world's largest EEG-AD corpus and achieving state-of-the-art performance across multiple datasets.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -117,49 +136,79 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
+          "datasets": [
+            "TUEG",
+            "TUAB",
+            "TUAR",
+            "TUSL"
+          ],
+          "eeg_hours": 21000.0,
+          "subjects": 5000.0
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "FEMBA (Foundational EEG Mamba + Bidirectional Architecture) addresses the computational inefficiency of transformer-based EEG models by introducing a bidirectional state-space architecture that scales linearly with sequence length. The model is pre-trained on over 21,000 hours of unlabeled EEG from 5,000 subjects using a masked reconstruction objective, then fine-tuned on three downstream tasks: abnormal EEG detection (TUAB), artifact detection (TUAR), and slowing events classification (TUSL). FEMBA achieves competitive performance to transformer models while being 3.5x more computationally efficient and 1.5x more memory efficient, with a tiny 7.8M parameter variant demonstrating viability for wearable applications.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "TUAB",
+            "TUAR",
+            "TUSL"
+          ],
+          "headline_results": [
+            "TUAB: 81.82% balanced accuracy (0.8921 AUROC)",
+            "TUAR: 0.949 AUROC",
+            "efficiency: 3.5x computational reduction, 1.5x memory reduction vs transformers"
+          ],
+          "tasks": [
+            "abnormal EEG detection",
+            "artifact detection",
+            "slowing events classification"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: FEMBA uses bidirectional Mamba architecture to achieve transformer-level performance with linear complexity",
+          "Large-scale pre-training: Trained on 21,000+ hours of unlabeled EEG from 5,000 subjects using masked reconstruction",
+          "Efficient deployment: 7.8M parameter tiny variant achieves 0.949 AUROC on artifact detection with 27x computational reduction"
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Performance evaluation limited to three specific EEG tasks",
+          "No comparison with other emerging efficient architectures beyond transformers",
+          "Potential domain shift when deploying to populations not represented in pre-training data",
+          "No explicit evaluation of model interpretability or clinical explainability",
+          "Limited discussion of robustness to varying electrode montages and channel configurations"
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "bidirectional Mamba (state-space model)",
+          "finetuning": "three downstream tasks: abnormal detection, artifact detection, slowing events",
+          "objective": "masked reconstruction (self-supervised)",
+          "pretraining": "21,000 hours of unlabeled EEG from TUEG corpus"
         },
-        "notes": "{\"chars\": 37688, \"error\": null, \"pages\": 7, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=12979;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 37688, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=10954;max_tokens=1",
+        "one_liner": "FEMBA is a bidirectional Mamba-based foundation model for EEG that achieves transformer-level performance with linear complexity, enabling efficient deployment on resource-constrained devices.",
         "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
+          "code_url": "unknown",
+          "license": "unknown",
+          "weights_url": "unknown"
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2025-02-10",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "mamba-ssm"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
         },
         "title": "FEMBA: Efficient and Scalable EEG Analysis with a Bidirectional Mamba Foundation Model",
-        "unique_contribution": "unknown",
+        "unique_contribution": "FEMBA demonstrates that bidirectional Mamba architectures can match or exceed transformer performance on EEG tasks while providing linear computational scaling, enabling efficient deployment on resource-constrained devices.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -206,49 +255,78 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
+          "datasets": [
+            "MIMIC-III",
+            "VitalDB"
+          ],
           "eeg_hours": null,
-          "subjects": null
+          "subjects": 33000
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "This paper investigates cross-biosignal transfer learning by adapting a transformer-based EEG foundation model (CEReBrO) for blood pressure estimation from ECG and PPG signals. The authors fine-tune the pre-trained EEG model on MIMIC-III and VitalDB datasets, comparing frozen vs. unfrozen backbones and training from scratch vs. pre-trained weights. They achieve near state-of-the-art accuracy (MAE 1.57 mmHg for DBP, 2.72 mmHg for SBP on MIMIC-III) while meeting clinical standards (BHS Grade A, AAMI). Additionally, they apply dynamic INT8 quantization to reduce model size by over 3.5x (from 13.73 MB to 3.83 MB) with negligible performance loss, enabling real-time deployment on resource-constrained wearable devices.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "MIMIC-III",
+            "VitalDB"
+          ],
+          "headline_results": [
+            "MAE_DBP_MIMIC-III: 1.57 mmHg",
+            "MAE_SBP_MIMIC-III: 2.72 mmHg",
+            "MAE_DBP_VitalDB: 1.92 mmHg",
+            "MAE_SBP_VitalDB: 3.14 mmHg",
+            "BHS Grade: A",
+            "AAMI Compliance: Pass"
+          ],
+          "tasks": [
+            "BP estimation (SBP/DBP)"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: CEReBrO pre-trained on EEG successfully fine-tuned for BP estimation from ECG/PPG signals.",
+          "Cross-biosignal transfer: Achieves near state-of-the-art accuracy (MAE 1.57 mmHg DBP, 2.72 mmHg SBP) on MIMIC-III while meeting clinical standards.",
+          "Hardware optimization: Dynamic INT8 quantization reduces model size by 3.5x (13.73 MB to 3.83 MB) with minimal accuracy loss for wearable deployment."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Limited evaluation to two datasets (MIMIC-III, VitalDB) which may not capture full real-world variability",
+          "No extensive ablation on different quantization strategies beyond INT8",
+          "Potential overfitting risk during fine-tuning of large models despite validation techniques",
+          "Real-time deployment on ultra-low-power microcontrollers not yet validated",
+          "Motion artifacts and sensor placement variations not explicitly addressed in evaluation"
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Transformer-based CEReBrO",
+          "finetuning": "ECG/PPG fine-tuning",
+          "objective": "BP regression",
+          "pretraining": "EEG pre-training"
         },
-        "notes": "{\"chars\": 41290, \"error\": null, \"pages\": 7, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=13435;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 41290, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=11855",
+        "one_liner": "EEG-based foundation model fine-tuned for BP estimation from ECG/PPG with quantization for edge deployment.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2025-02-10",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
         },
         "title": "Finetuning and Quantization of EEG-Based Foundational BioSignal Models on ECG and PPG Data for Blood Pressure Estimation",
-        "unique_contribution": "unknown",
+        "unique_contribution": "First demonstration that a large EEG-based foundation model can be effectively fine-tuned for BP estimation from ECG/PPG without additional large-scale pre-training, combined with quantization for edge deployment.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -284,61 +362,8 @@
         "pdf": "https://arxiv.org/pdf/2502.17462v1"
       },
       "published_date": "2025-02-10",
-      "summary": {
-        "arxiv_id_base": "2502.17462",
-        "categories": [
-          "eess.SP",
-          "cs.AI",
-          "cs.LG"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 88129, \"error\": null, \"pages\": 48, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=34831;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2025-02-10",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "The Case for Cleaner Biosignals: High-fidelity Neural Compressor Enables Transfer from Cleaner iEEG to Noisier EEG",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "summary_json_error",
       "title": "The Case for Cleaner Biosignals: High-fidelity Neural Compressor Enables Transfer from Cleaner iEEG to Noisier EEG",
       "triage": {
         "confidence": 0.9,
@@ -377,50 +402,75 @@
           "q-bio.NC"
         ],
         "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
+          "channels": 0,
+          "datasets": [
+            "BCIC-2A",
+            "BCIC-2B",
+            "other datasets"
+          ],
+          "eeg_hours": 0,
+          "subjects": 169
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "This paper introduces the Large Cognition Model (LCM), a transformer-based foundation model for EEG that leverages large-scale self-supervised learning to capture universal EEG representations. Unlike existing approaches, LCM integrates temporal and spectral attention mechanisms and employs a novel contrastive learning framework with masked feature reconstruction. The model demonstrates strong generalization across diverse EEG datasets and tasks, even without extensive pretraining, outperforming state-of-the-art universal EEG models on motor imagery classification benchmarks.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "BCIC-2A",
+            "BCIC-2B"
+          ],
+          "headline_results": [
+            "BCIC-2A: 61.66% Balanced Accuracy, 46.19% Cohen's Kappa, 59.32% Weighted F1/AUROC",
+            "BCIC-2B: 75.23% Balanced Accuracy, 47.31% Cohen's Kappa, 82.44% Weighted F1/AUROC"
+          ],
+          "tasks": [
+            "motor imagery classification"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: LCM uses transformer architecture with temporal and spectral attention for robust EEG representation learning.",
+          "Strong generalization: LCM outperforms existing universal EEG models on motor imagery tasks, even without pretraining.",
+          "Novel contrastive learning: Incorporates spatio-temporal alignment and masked reconstruction for improved feature learning."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "No explicit mention of open-source code or model weights",
+          "Evaluation focused primarily on motor imagery tasks",
+          "No information on computational requirements or inference speed",
+          "Limited discussion of interpretability of learned representations"
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "transformer",
+          "finetuning": "supervised fine-tuning on specific EEG tasks",
+          "objective": "contrastive learning with masked reconstruction",
+          "pretraining": "self-supervised learning on large-scale EEG data"
         },
-        "notes": "{\"chars\": 28373, \"error\": null, \"pages\": 6, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=9126;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 28373, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=8499",
+        "one_liner": "LCM is a transformer-based EEG foundation model using contrastive learning and masked reconstruction to achieve strong cross-dataset generalization.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2025-02-11",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive",
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
         },
         "title": "Large Cognition Model: Towards Pretrained EEG Foundation Model",
-        "unique_contribution": "unknown",
+        "unique_contribution": "LCM introduces a novel contrastive learning framework with spatio-temporal alignment and masked reconstruction, achieving superior cross-dataset generalization without requiring extensive pretraining.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -465,50 +515,74 @@
           "cs.LG"
         ],
         "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
+          "channels": 64.0,
+          "datasets": [
+            "ZuCo"
+          ],
+          "eeg_hours": 10.0,
+          "subjects": 30.0
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "This paper introduces a novel EEG-to-text decoding framework that bridges brain signals and natural language through subject-specific deep representation learning. The approach integrates EEG feature extraction with pre-trained language models (BART and GPT-4) to enable open-vocabulary text generation from brain activity. The framework addresses key limitations of existing closed-vocabulary EEG-to-text systems by incorporating subject-specific learning to handle inter-subject variability and semantic refinement through GPT-4. Evaluated on the ZuCo dataset, the method demonstrates improved performance across BLEU, ROUGE, and BERTScore metrics compared to prior approaches.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "ZuCo dataset"
+          ],
+          "headline_results": [
+            "improved BLEU over prior methods",
+            "improved ROUGE over prior methods",
+            "improved BERTScore over prior methods"
+          ],
+          "tasks": [
+            "EEG-to-text decoding"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: CEReBrO framework for open-vocabulary EEG-to-text decoding using subject-specific deep learning",
+          "Core method/evidence: Achieves state-of-the-art BLEU, ROUGE, and BERTScore on ZuCo dataset through integration of BART and GPT-4 with EEG feature extraction",
+          "Main practical takeaway: Enables personalized brain-to-text communication for individuals with speech impairments through web platform with text-to-speech output"
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Limited subject quantity in evaluation",
+          "Language-specific constraints (English only)",
+          "Computational resource requirements for real-time processing",
+          "Dataset limitations affecting generalizability",
+          "Need for accurate temporal synchronization between EEG and text",
+          "Noise and low spatial resolution inherent to EEG signals"
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "BART + GPT-4 with subject-specific EEG feature extraction",
+          "finetuning": "EEG-to-text adaptation on ZuCo dataset",
+          "objective": "open-vocabulary text generation",
+          "pretraining": "BART pre-trained on text corpora"
         },
-        "notes": "{\"chars\": 71450, \"error\": null, \"pages\": 21, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=20232;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 71450, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=19592;max_tokens=1",
+        "one_liner": "EEG-to-text foundation model using subject-specific deep representation learning and NLP integration.",
         "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
+          "code_url": "web platform available",
+          "license": "unknown",
+          "weights_url": "models available"
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2025-02-11",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "autoregressive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
         },
         "title": "Bridging Brain Signals and Language: A Deep Learning Approach to EEG-to-Text Decoding",
-        "unique_contribution": "unknown",
+        "unique_contribution": "First EEG-to-text foundation model combining subject-specific deep representation learning with open-vocabulary NLP for brain-to-text decoding.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -551,50 +625,81 @@
           "eess.SP"
         ],
         "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
+          "channels": 0.0,
+          "datasets": [
+            "TUEV",
+            "TUAB",
+            "CHB-MIT",
+            "IIIC Seizure"
+          ],
+          "eeg_hours": 0.0,
+          "subjects": 0.0
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "This paper introduces TFM-Tokenizer, a novel framework for learning discrete token vocabularies from single-channel EEG signals by capturing time-frequency motifs. The authors address the challenge of effective EEG tokenization, which remains an open problem in foundation model development. TFM-Tokenizer employs a dual-path architecture with time-frequency masking to learn robust motif representations, making it model-agnostic and compatible with both lightweight transformers and existing foundation models. The framework demonstrates three key benefits: improved accuracy (up to 11% Cohen's Kappa improvement), enhanced generalization as a plug-and-play component for diverse foundation models, and scalability across different EEG devices by operating at the single-channel level rather than relying on the 10-20 system.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "TUEV",
+            "TUAB",
+            "CHB-MIT",
+            "IIIC Seizure"
+          ],
+          "headline_results": [
+            "Up to 11% improvement in Cohen's Kappa",
+            "14% improvement on ear-EEG sleep staging",
+            "4% boost for existing foundation models"
+          ],
+          "tasks": [
+            "EEG classification",
+            "Sleep staging",
+            "Seizure detection"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: TFM-Tokenizer converts single-channel EEG into discrete tokens by capturing time-frequency motifs, enabling flexible adaptation to multi-channel tasks and non-standard EEG devices.",
+          "Novel motif learning architecture: Introduces dual-path encoding with localized spectral window encoder and explicit time-frequency masking to capture band-specific and cross-frequency patterns.",
+          "Strong empirical evidence: Achieves up to 11% improvement in Cohen's Kappa over strong baselines across four diverse EEG benchmarks and 14% improvement on ear-EEG sleep staging tasks."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Performance improvements vary across datasets and tasks",
+          "Requires careful hyperparameter tuning for optimal results",
+          "Evaluation focused primarily on classification tasks rather than generative applications",
+          "Scalability to very long EEG recordings not explicitly addressed",
+          "Potential computational overhead from dual-path architecture"
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "TFM-Tokenizer framework with single-channel EEG tokenization using dual-path architecture (localized spectral window encoder + temporal encoder + temporal transformer) and vector quantization codebook; downstream lightweight transformer with linear attention for multi-channel modeling.",
+          "finetuning": "Multi-channel EEG classification tasks",
+          "objective": "Masked reconstruction of time-frequency motifs",
+          "pretraining": "Single-channel EEG pretraining on multiple datasets"
         },
-        "notes": "{\"chars\": 86324, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=29290;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 86324, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=23244;max_tokens=1",
+        "one_liner": "Novel EEG tokenization framework that learns time-frequency motifs from single-channel signals and improves foundation model performance.",
         "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
+          "code_url": "https://github.com/Jathurshan0330/TFM-Tokenizer",
+          "license": "Unknown",
+          "weights_url": "https://github.com/Jathurshan0330/TFM-Tokenizer"
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2025-02-22",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
         },
         "title": "Tokenizing Single-Channel EEG with Time-Frequency Motif Learning",
-        "unique_contribution": "unknown",
+        "unique_contribution": "First principled framework for learning discrete token vocabularies that capture time-frequency motifs in single-channel EEG signals and directly utilize them as inputs for downstream modeling.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -645,49 +750,75 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
+          "datasets": [
+            "iEEG Clinical Dataset",
+            "Speech-Only Dataset"
+          ],
           "eeg_hours": null,
-          "subjects": null
+          "subjects": 6.0
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "This paper introduces Intention-Informed Auditory Scene Understanding (II-ASU) and presents AAD-LLM, a prototype system that extends an auditory large language model (LLM) by incorporating intracranial electroencephalography (iEEG) recordings to decode which speaker a listener is attending to and refine responses accordingly. The model first predicts the attended speaker from neural activity, then conditions response generation on this inferred attentional state. Evaluated on speaker description, speech transcription and extraction, and question answering in multitalker scenarios, AAD-LLM demonstrates improved alignment with listener intention compared to existing auditory LLMs, both objectively and subjectively.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "iEEG clinical dataset",
+            "speech-only dataset"
+          ],
+          "headline_results": [
+            "Near-oracle performance on transcription and summarization tasks",
+            "Significantly outperforms baseline auditory LLMs in both objective and subjective evaluations"
+          ],
+          "tasks": [
+            "speaker description",
+            "speech transcription",
+            "speech summarization",
+            "free Q&A"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: AAD-LLM extends an auditory LLM with intracranial EEG to decode listener attention in multitalker scenarios.",
+          "Core method/evidence: Speaker prediction from neural signals conditions LLM responses, achieving near-oracle performance on transcription and summarization tasks.",
+          "Main practical takeaway: Intention-informed processing significantly improves alignment with human perception compared to standard auditory LLMs."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Relies on intracranial EEG, limiting practical use",
+          "Experiments focus on controlled two-speaker scenarios",
+          "Speaker prediction accuracy affected when speakers share similar voice characteristics",
+          "Requires additional clinical data for optimal performance"
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "AAD-LLM extends an auditory LLM (Qwen2-Audio) by incorporating intracranial EEG recordings to decode listener attention. The model predicts the attended speaker from neural activity using x-vectors and K-means clustering, then conditions response generation on this inferred attentional state. It uses a Whisper speech encoder and Qwen2 LLM, with LoRA fine-tuning for speaker prediction integration.",
+          "finetuning": "LoRA fine-tuning to integrate speaker prediction from neural signals with the auditory LLM architecture.",
+          "objective": "Decode listener attention from intracranial EEG and condition auditory LLM responses on inferred attentional state to achieve intention-informed auditory scene understanding.",
+          "pretraining": "Not explicitly described; builds upon pre-trained auditory LLM (Qwen2-Audio) with additional neural attention decoding components."
         },
-        "notes": "{\"chars\": 105707, \"error\": null, \"pages\": 23, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=43654;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 105707, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=28190;max_tokens=1",
+        "one_liner": "AAD-LLM integrates intracranial EEG with an auditory LLM to decode listener attention and generate perception-aligned responses in multitalker scenarios.",
         "open_source": {
-          "code_url": null,
+          "code_url": "https://aad-llm.github.io",
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2025-02-24",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "autoregressive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
         },
         "title": "AAD-LLM: Neural Attention-Driven Auditory Scene Understanding",
-        "unique_contribution": "unknown",
+        "unique_contribution": "First system to integrate brain signals into an auditory LLM for attention-driven scene understanding, enabling listener-aligned auditory AI.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -737,24 +868,27 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
+          "datasets": [
+            "46"
+          ],
           "eeg_hours": null,
           "subjects": null
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "This survey systematically examines recent advances in deep learning approaches for EEG/iEEG-based neurological diagnostics, focusing on applications across 7 neurological conditions using 46 datasets. For each condition, it reviews representative methods and their quantitative results, integrating performance comparisons with analyses of data usage, model design, and task-specific adaptations, while highlighting the role of pre-trained multi-task models in achieving scalable, generalizable solutions. The paper proposes a standardized benchmark to evaluate models across diverse datasets and improve reproducibility, emphasizing how recent innovations are transforming neurological diagnostics toward intelligent, adaptable healthcare systems.",
         "evaluation": {
           "benchmarks": [],
           "headline_results": [],
           "tasks": []
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "Comprehensive survey of 450 studies and 46 public datasets across 7 neurological conditions",
+          "Identifies self-supervised learning as key for scalable, generalizable neurodiagnostic solutions",
+          "Proposes BrainBenchmark platform for standardized evaluation and reproducible research"
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Performance metrics vary across studies due to inconsistent evaluation protocols",
+          "Limited real-world clinical deployment data for many proposed methods",
+          "Benchmarking platform still in early stages with limited model/dataset coverage"
         ],
         "method": {
           "architecture": null,
@@ -762,24 +896,26 @@
           "objective": null,
           "pretraining": null
         },
-        "notes": "{\"chars\": 226764, \"error\": null, \"pages\": 40, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=74585;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 226764, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=59050",
+        "one_liner": "Comprehensive review of deep learning for EEG/iEEG-based neurological diagnostics across 7 conditions using 46 datasets.",
         "open_source": {
-          "code_url": null,
+          "code_url": "https://github.com/ZJU-BrainNet/BrainBenchmark",
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "survey",
         "published_date": "2025-02-24",
         "tags": {
           "backbone": [],
           "objective": [],
-          "paper_type": [],
+          "paper_type": [
+            "survey"
+          ],
           "tokenization": [],
           "topology": []
         },
         "title": "Deep Learning-Powered Electrical Brain Signals Analysis: Advancing Neurological Diagnostics",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Establishes the first comprehensive benchmark for EEG/iEEG analysis and identifies self-supervised learning as the optimal paradigm for developing multi-task diagnostic frameworks.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -798,7 +934,7 @@
   "stats": {
     "accepted": 9,
     "candidates": 19,
-    "summarized": 9
+    "summarized": 8
   },
   "top_picks": [
     "2502.17464",

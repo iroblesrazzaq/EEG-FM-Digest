@@ -204,7 +204,7 @@
       "featured": {
         "abs_url": "http://arxiv.org/abs/2502.17464v1",
         "arxiv_id_base": "2502.17464",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "one_liner": "LCM is a transformer-based EEG foundation model using contrastive learning and masked reconstruction to achieve strong cross-dataset generalization.",
         "title": "Large Cognition Model: Towards Pretrained EEG Foundation Model"
       },
       "href": "digest/2025-02/index.html",
@@ -214,7 +214,7 @@
       "stats": {
         "accepted": 9,
         "candidates": 19,
-        "summarized": 9
+        "summarized": 8
       }
     },
     {

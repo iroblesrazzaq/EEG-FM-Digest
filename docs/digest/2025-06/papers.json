@@ -472,24 +472,30 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
+          "datasets": [
+            "Temple University EEG corpus",
+            "CHB-MIT dataset"
+          ],
           "eeg_hours": null,
           "subjects": null
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "This paper proposes CRIA, a novel pre-training framework for EEG representation learning that addresses the challenge of extracting deep features from multi-view EEG data. CRIA introduces an asymmetric three-view interaction mechanism where spectral view is the dominant modality, employing cross-attention to fuse temporal, spectral, and spatial features. The framework uses variable-length and variable-channel coding to handle data heterogeneity across different EEG datasets, and incorporates a view-wise masking pre-training strategy based on information bottleneck principles. Experimental results on the Temple University EEG corpus and CHB-MIT dataset demonstrate that CRIA outperforms existing methods, achieving 57.02% balanced accuracy for multi-class event classification and 80.03% for anomaly detection.",
         "evaluation": {
           "benchmarks": [],
           "headline_results": [],
           "tasks": []
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: CRIA introduces a cross-view interaction and instance-adapted pre-training framework for generalizable EEG representations.",
+          "Method novelty: Employs asymmetric three-view interaction with spectral view as dominant modality and cross-attention mechanism for feature fusion.",
+          "Strongest evidence: Achieves 57.02% balanced accuracy for multi-class event classification and 80.03% for anomaly detection on benchmark datasets."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Practical effects and potential challenges in clinical applications need further exploration",
+          "Impact of diverse pathologic conditions on generalizability not fully characterized",
+          "Trade-off between computational efficiency and interpretability in real-time integration not addressed",
+          "Patient specificity and individual variability not explicitly modeled",
+          "Large-scale pre-training and real-time processing studies still needed"
         ],
         "method": {
           "architecture": null,
@@ -497,24 +503,34 @@
           "objective": null,
           "pretraining": null
         },
-        "notes": "{\"chars\": 68526, \"error\": null, \"pages\": 34, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=18745;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 68526, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=18745;max_tokens=1",
+        "one_liner": "CRIA is a cross-view interaction and instance-adapted pre-training framework for generalizable EEG representations.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2025-06-19",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
         },
         "title": "CRIA: A Cross-View Interaction and Instance-Adapted Pre-training Framework for Generalizable EEG Representations",
-        "unique_contribution": "unknown",
+        "unique_contribution": "CRIA is the first EEG pre-training strategy to model view fusion from a dominant–auxiliary modality perspective, introducing asymmetric three-view lateral interaction with spectral view as dominant modality.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -557,49 +573,79 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
+          "datasets": [
+            "TASMC-UCLA",
+            "CHB-MIT",
+            "MAYO",
+            "others"
+          ],
+          "eeg_hours": 2741.1,
+          "subjects": 1199
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "This paper introduces EpiNT, a novel Transformer-based pre-trained model designed to address the challenges of unified EEG and iEEG analysis. EpiNT employs channel-independent modeling with masked autoencoders (MAE) and vector quantization (VQ), along with a frequency domain mapping quantizer to capture crucial frequency features. Pre-trained on over 2,700 hours of multi-modal clinical neurophysiological data from 1,199 patients, EpiNT outperformed both randomly initialized models and other pre-trained methods on six downstream classification tasks, demonstrating robust representation learning capabilities.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "TASMC-UCLA",
+            "CHB-MIT",
+            "MAYO",
+            "others"
+          ],
+          "headline_results": [
+            "F1_score: 0.925 (TASMC-UCLA), 0.913 (CHB-MIT), 0.965 (MAYO)",
+            "Outperformed MAE-EEG, Brant, MOMENT, PatchTST, and VQ-MTM"
+          ],
+          "tasks": [
+            "seizure detection",
+            "seizure type classification",
+            "sleep staging",
+            "others"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: EpiNT uses masked autoencoders and vector quantization for unified EEG/iEEG analysis",
+          "Novel frequency domain quantizer captures modality-specific spectral features while addressing amplitude and SNR differences",
+          "Strong performance across six clinical tasks with cross-subject generalization on over 2,700 hours of multi-modal data"
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Performance variability across tasks suggests need for task-specific fine-tuning strategies",
+          "Domain shift between pre-training and downstream datasets may affect generalization",
+          "Class imbalance in clinical data presents challenges for robust model training"
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Transformer encoder with masked autoencoders and vector quantization",
+          "finetuning": "Cross-entropy loss with linear-probing, last-layer, or full-parameter tuning",
+          "objective": "Masked signal reconstruction with frequency domain quantization",
+          "pretraining": "Unsupervised pre-training on 2,741.1 hours of EEG/iEEG data from 1,199 patients"
         },
-        "notes": "{\"chars\": 77176, \"error\": null, \"pages\": 20, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=20744;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 77176, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=20647",
+        "one_liner": "EpiNT is a Transformer-based pre-trained model for unified EEG and iEEG analysis using masked autoencoders and vector quantization.",
         "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
+          "code_url": "https://github.com/RunKZhang/EpiNT",
+          "license": "Unknown",
+          "weights_url": "Available"
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2025-06-20",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
         },
         "title": "Cross-Modal Epileptic Signal Harmonization: Frequency Domain Mapping Quantization for Pre-training a Unified Neurophysiological Transformer",
-        "unique_contribution": "unknown",
+        "unique_contribution": "EpiNT is the first pre-trained Transformer model specifically designed for unified EEG and iEEG analysis, addressing modality-specific challenges through channel-independent modeling and frequency domain quantization.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
