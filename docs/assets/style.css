@@ -56,14 +56,21 @@ a:hover {
   margin: 0 auto;
   padding: 12px 24px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: 16px;
-  flex-wrap: wrap;
 }
 
 .site-brand {
   min-width: 0;
+}
+
+.site-shell-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .site-title {
@@ -89,6 +96,72 @@ a:hover {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.site-shell-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.site-byline {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.site-byline strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.site-contact-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.contact-link {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.contact-link svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.contact-link:hover {
+  text-decoration: none;
+  color: var(--accent-deep);
+  border-color: var(--line-strong);
+  background: var(--surface-strong);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
 
 .site-nav-link {
@@ -761,7 +834,18 @@ button:hover {
 @media (max-width: 980px) {
   .site-shell-inner {
     padding: 12px 16px;
-    align-items: center;
+    gap: 12px;
+  }
+
+  .site-shell-top {
+    align-items: flex-start;
+  }
+
+  .site-shell-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding-top: 8px;
   }
 
   main,

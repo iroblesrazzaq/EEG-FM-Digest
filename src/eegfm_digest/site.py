@@ -69,6 +69,62 @@ _FM_KEYWORDS_SET_B = [
     "generaliz*",
 ]
 
+_AUTHOR_NAME = "Ismael Robles-Razzaq"
+_PROJECT_REPO_URL = "https://github.com/iroblesrazzaq/EEG-FM-Digest"
+_PERSONAL_WEBSITE_URL = "https://iroblesrazzaq.github.io/"
+_LINKEDIN_URL = "https://www.linkedin.com/in/ismaelroblesrazzaq"
+_EMAIL_ADDRESS = "ismaelroblesrazzaq@gmail.com"
+
+_ICON_SVGS = {
+    "github": (
+        "<svg viewBox='0 0 24 24' aria-hidden='true'>"
+        "<path d='M12 2C6.477 2 2 6.489 2 12.018c0 4.424 2.865 8.18 6.839 9.504"
+        ".5.092.682-.217.682-.483 0-.237-.009-.866-.014-1.7-2.782.605-3.369-1.344"
+        "-3.369-1.344-.454-1.157-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608"
+        " 1.003.07 1.531 1.031 1.531 1.031.892 1.53 2.341 1.088 2.91.832.091-.647"
+        ".349-1.088.635-1.338-2.221-.252-4.555-1.114-4.555-4.956 0-1.094.39-1.99"
+        " 1.029-2.692-.103-.253-.446-1.272.098-2.651 0 0 .84-.269 2.75 1.028A9.564"
+        " 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.297 2.748-1.028"
+        " 2.748-1.028.546 1.379.203 2.398.1 2.651.64.702 1.027 1.598 1.027 2.692 0"
+        " 3.851-2.337 4.701-4.566 4.949.359.309.678.918.678 1.849 0 1.335-.012 2.413"
+        "-.012 2.741 0 .269.18.58.688.482A10.022 10.022 0 0 0 22 12.018C22 6.489 17.523"
+        " 2 12 2z'/>"
+        "</svg>"
+    ),
+    "website": (
+        "<svg viewBox='0 0 24 24' aria-hidden='true'>"
+        "<path d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm7.93 9h-3.08a15.64 15.64 0 0 0"
+        "-1.14-5.01A8.03 8.03 0 0 1 19.93 11zM12 4.06c1.12 1.3 2.05 3.7 2.4 6.94H9.6c.35-3.24"
+        " 1.28-5.64 2.4-6.94zM4.07 13h3.08c.1 1.74.5 3.44 1.14 5.01A8.03 8.03 0 0 1 4.07 13zm"
+        "3.08-2H4.07a8.03 8.03 0 0 1 4.22-5.01A15.64 15.64 0 0 0 7.15 11zM12 19.94c-1.12-1.3"
+        "-2.05-3.7-2.4-6.94h4.8c-.35 3.24-1.28 5.64-2.4 6.94zM15.71 18.01c.64-1.57 1.04-3.27"
+        " 1.14-5.01h3.08a8.03 8.03 0 0 1-4.22 5.01z'/>"
+        "</svg>"
+    ),
+    "linkedin": (
+        "<svg viewBox='0 0 16 16' aria-hidden='true'>"
+        "<path d='M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0"
+        " .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943"
+        " 12.248V6.169H2.542v7.225h2.401zm-1.2-8.21c.837 0 1.358-.554 1.358-1.248"
+        "-.015-.709-.52-1.248-1.342-1.248S2.4 3.227 2.4 3.936c0 .694.521 1.248"
+        " 1.327 1.248h.016zm4.908 8.21V9.359c0-.216.016-.432.079-.586.173-.431"
+        ".568-.878 1.232-.878.869 0 1.216.663 1.216 1.634v3.865h2.401V9.25c0-2.22"
+        "-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54"
+        " 5.54 0 0 1 .016-.025V6.169H6.251c.03.678 0 7.225 0 7.225h2.4z'/>"
+        "</svg>"
+    ),
+    "email": (
+        "<svg viewBox='0 0 16 16' aria-hidden='true'>"
+        "<path d='M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2"
+        " 2H2a2 2 0 0 1-2-2V4zm2-.5a.5.5 0 0 0-.5.5v.217l6.5 4.062"
+        " 6.5-4.062V4a.5.5 0 0 0-.5-.5H2zm12.5 1.549-4.71 2.944"
+        " 4.71 2.97V5.05zM14.247 12l-5.246-3.311-.734.458a.5.5 0 0"
+        " 1-.53 0l-.734-.458L1.753 12h12.494zM1.5 10.964l4.71-2.97"
+        "-4.71-2.944v5.914z'/>"
+        "</svg>"
+    ),
+}
+
 
 def _safe_str_list(value: Any) -> list[str]:
     if not isinstance(value, list):
@@ -234,6 +290,26 @@ def _keyword_list_html(items: list[str]) -> str:
     return f"<ul>{values}</ul>"
 
 
+def _header_contact_links_html() -> str:
+    items = [
+        ("github", "GitHub repository", _PROJECT_REPO_URL),
+        ("website", "Personal website", _PERSONAL_WEBSITE_URL),
+        ("linkedin", "LinkedIn profile", _LINKEDIN_URL),
+        ("email", f"Email {_EMAIL_ADDRESS}", f"mailto:{_EMAIL_ADDRESS}"),
+    ]
+    links: list[str] = []
+    for icon_name, aria_label, href in items:
+        icon = _ICON_SVGS.get(icon_name, "")
+        if not icon:
+            continue
+        rel = " rel='noopener noreferrer'" if href.startswith("http") else ""
+        links.append(
+            f"<a class='contact-link' href='{html.escape(href)}' aria-label='{html.escape(aria_label)}'"
+            f" title='{html.escape(aria_label)}'{rel}>{icon}<span class='sr-only'>{html.escape(aria_label)}</span></a>"
+        )
+    return "".join(links)
+
+
 def _nav_html(
     home_href: str,
     explore_href: str,
@@ -252,13 +328,20 @@ def _nav_html(
         )
         for key, label, href in tabs
     )
+    contacts = _header_contact_links_html()
     return (
         "<header class='site-shell'>"
         "<div class='site-shell-inner'>"
+        "<div class='site-shell-top'>"
         "<div class='site-brand'>"
         f"<p class='site-title'><a class='site-title-link' href='{html.escape(home_href)}'>EEG Foundation Model Digest</a></p>"
         "</div>"
         f"<nav class='site-nav'>{links}</nav>"
+        "</div>"
+        "<div class='site-shell-meta'>"
+        f"<p class='site-byline'>by <strong>{html.escape(_AUTHOR_NAME)}</strong></p>"
+        f"<div class='site-contact-links'>{contacts}</div>"
+        "</div>"
         "</div>"
         "</header>"
     )
