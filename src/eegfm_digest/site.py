@@ -36,6 +36,17 @@ _PROCESS_DETAILS_FOOTER = (
     "All triage and summary LLM calls through February 2026 use arcee-ai/trinity-large-preview:free."
 )
 
+_PROCESS_LIMITATIONS = [
+    "Only checks paper on arXiv.",
+    "arXiv keyword search may miss papers.",
+    "Triage LLM could misclassify a paper.",
+    (
+        "Summary LLM is not an expert on the literature - one consequence is that it lacks "
+        "the expertise to judge important and novel contributions, so it must rely on the paper "
+        "to accurately self-identify novelty/importance."
+    ),
+]
+
 
 _EEG_KEYWORDS = [
     "eeg",
@@ -255,6 +266,7 @@ def _nav_html(
 
 def render_process_page() -> str:
     step_items = "".join(f"<li>{html.escape(text)}</li>" for text in _PROCESS_DETAILS_STEPS)
+    limitation_items = "".join(f"<li>{html.escape(text)}</li>" for text in _PROCESS_LIMITATIONS)
     triage_prompt = html.escape(_load_prompt_text(Path("prompts/triage.md")))
     summary_prompt = html.escape(_load_prompt_text(Path("prompts/summarize.md")))
     nav = _nav_html("../index.html", "../explore/index.html", "../process/index.html", "process")
@@ -268,6 +280,8 @@ def render_process_page() -> str:
 <p>{html.escape(_PROCESS_DETAILS_INTRO)}</p>
 <ul>{step_items}</ul>
 <p>{html.escape(_PROCESS_DETAILS_FOOTER)}</p>
+<h2>Limitations</h2>
+<ul>{limitation_items}</ul>
 <h2>arXiv Retrieval Keywords</h2>
 <section class='prompt-details keyword-details'>
 <p class='small'>Matching requires one EEG term plus one FM term set in title/abstract.</p>

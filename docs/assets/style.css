@@ -404,6 +404,17 @@ button:hover {
   padding: 10px 14px;
   background: var(--surface-strong);
   border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.year-summary-count {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .home-month-grid {
@@ -448,6 +459,7 @@ button:hover {
   align-items: start;
   justify-content: space-between;
   gap: 10px;
+  pointer-events: none;
 }
 
 .month-card h3 {
@@ -466,6 +478,7 @@ button:hover {
   margin-top: 10px;
   padding-top: 10px;
   border-top: 1px solid var(--line);
+  pointer-events: none;
 }
 
 .featured-title {
@@ -477,6 +490,7 @@ button:hover {
 .featured-paper-link {
   position: relative;
   z-index: 3;
+  pointer-events: auto;
 }
 
 #results-meta {

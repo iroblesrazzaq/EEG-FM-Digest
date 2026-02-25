@@ -702,6 +702,11 @@ function renderHome(app, state) {
 
   const yearBlocks = years
     .map((year) => {
+      const yearPaperCount = groups[year].reduce(
+        (total, row) => total + safeNumber(row?.stats?.accepted, 0),
+        0,
+      );
+      const yearCountText = `${yearPaperCount} ${yearPaperCount === 1 ? "paper" : "papers"}`;
       const cards = groups[year]
         .map((row) => {
           const featured = row.featured;
@@ -734,7 +739,9 @@ function renderHome(app, state) {
         .join("");
       return `
         <details class="year-block"${year === newestYear ? " open" : ""}>
-          <summary class="year-summary">${esc(year)}</summary>
+          <summary class="year-summary"><span>${esc(year)}</span><span class="year-summary-count">${esc(
+            yearCountText,
+          )}</span></summary>
           <div class="home-month-grid">${cards}</div>
         </details>
       `;
