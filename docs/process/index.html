@@ -7,7 +7,9 @@
 <section class='process-content'>
 <p>This digest serves as a monthly update on the current EEG foundation model literature. I built it so I can keep up to date with the latest EEG FM papers, mostly using Codex 5.3. The process is as follows:</p>
 <ul><li>First we call the arXiv API to retrieve papers with EEG-FM-related terms in their title and abstract.</li><li>Then, we use an LLM on the title and abstract to triage all papers returned by the arXiv search. The model returns a decision (accept, reject, borderline), its confidence, and 2-4 reasons for its decision.</li><li>Next, for all models accepted by the triage LLM, we download the pdf, extract text with PyMuPDF, and run a summary LLM where we extract a summary, bullet points, unique contribution, and tags.</li></ul>
-<p>All triage and summary LLM calls through February 2026 use arcee-ai/trinity-large-preview:free.</p>
+<p>All triage and summary LLM calls through February 2026 use arcee-ai/trinity-large-preview:free. I update the digest at least once a month, hopefully every week if I'm diligent.</p>
+<p>This project certainly has some limitations, including but not limited to the following: It only uses arXiv for papers. Papers that don't show up on the arXiv keyword search cannot make it. The triage LLM could misclassify a paper. The summary LLM doesn't know the literature well enough to determine important and novel contributions objectively, so it relies on the paper.</p>
+
 <h2>arXiv Retrieval Keywords</h2>
 <section class='prompt-details keyword-details'>
 <p class='small'>Matching requires one EEG term plus one FM term set in title/abstract.</p>
