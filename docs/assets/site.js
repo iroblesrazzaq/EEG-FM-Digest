@@ -177,6 +177,7 @@ function parseMonthPayload(payload, fallbackMonth) {
       month: String(fallbackMonth || ""),
       stats: normalizeStats({}, papers),
       papers,
+      top_picks: [],
     };
   }
   if (!payload || typeof payload !== "object") {
@@ -184,15 +185,20 @@ function parseMonthPayload(payload, fallbackMonth) {
       month: String(fallbackMonth || ""),
       stats: normalizeStats({}, []),
       papers: [],
+      top_picks: [],
     };
   }
   const month = String(payload.month || fallbackMonth || "");
   const rows = asArray(payload.papers);
   const papers = rows.map((row) => normalizePaper(row, month)).filter((row) => row !== null);
+  const topPicks = asArray(payload.top_picks)
+    .map((item) => String(item || "").trim())
+    .filter(Boolean);
   return {
     month,
     stats: normalizeStats(payload.stats, papers),
     papers,
+    top_picks: topPicks,
   };
 }
 
@@ -409,10 +415,13 @@ function renderTagChips(summary) {
   return `<p class="chips">${chips.join(" ")}</p>`;
 }
 
-function renderPaperCard(paper, view) {
+function renderPaperCard(paper, view, isFeatured) {
   const summary = paper.summary;
   const title = esc(paper.title || paper.arxiv_id_base);
   const absUrl = esc(paper.links?.abs || "#");
+  const featured = Boolean(isFeatured) && view === "month";
+  const cardClass = `paper-card${featured ? " featured-card" : ""}`;
+  const featuredBadge = featured ? '<p class="featured-card-badge">Featured paper</p>' : "";
   const metaParts = [];
   if (view === "explore") {
     metaParts.push(esc(monthDisplayLabel(paper.month)));
@@ -428,7 +437,8 @@ function renderPaperCard(paper, view) {
   if (!summary) {
     const reason = paper.summary_failed_reason || "summary_unavailable";
     return `
-      <article class="paper-card" id="${esc(paper.arxiv_id_base)}">
+      <article class="${cardClass}" id="${esc(paper.arxiv_id_base)}">
+        ${featuredBadge}
         <h3><a href="${absUrl}">${title}</a></h3>
         ${metaHtml}
         <p class="summary-failed"><strong>Summary unavailable.</strong> ${esc(reason)}</p>
@@ -466,7 +476,8 @@ function renderPaperCard(paper, view) {
   const linksHtml = links.length ? `<div class="resource-links">${links.join("")}</div>` : "";
 
   return `
-    <article class="paper-card" id="${esc(paper.arxiv_id_base)}">
+    <article class="${cardClass}" id="${esc(paper.arxiv_id_base)}">
+      ${featuredBadge}
       <h3><a href="${absUrl}">${title}</a></h3>
       ${metaHtml}
       <p><strong>Summary Highlights:</strong></p>
@@ -643,6 +654,14 @@ function renderResults(app, state) {
   }
   filtered = filtered.filter((paper) => matchesTagFilters(paper, state));
   filtered = sortPapers(filtered, state.sortBy);
+  const featuredPaperId = state.view === "month" ? String(state.featuredPaperId || "") : "";
+  if (featuredPaperId) {
+    const featuredIndex = filtered.findIndex((paper) => paper.arxiv_id_base === featuredPaperId);
+    if (featuredIndex > 0) {
+      const [featuredPaper] = filtered.splice(featuredIndex, 1);
+      filtered.unshift(featuredPaper);
+    }
+  }
 
   const baseCount = monthBaseCount(state);
   if (state.view === "month") {
@@ -671,7 +690,9 @@ function renderResults(app, state) {
     return;
   }
 
-  results.innerHTML = filtered.map((paper) => renderPaperCard(paper, state.view)).join("\n");
+  results.innerHTML = filtered
+    .map((paper) => renderPaperCard(paper, state.view, paper.arxiv_id_base === featuredPaperId))
+    .join("\n");
 }
 
 function renderHome(app, state) {
@@ -889,6 +910,7 @@ async function setupDigestApp() {
   }
 
   const papers = [];
+  let featuredPaperId = "";
   if (view === "month") {
     let monthPayload = parseMonthPayload({}, month);
     if (monthJsonPath) {
@@ -899,8 +921,15 @@ async function setupDigestApp() {
         monthPayload = parseMonthPayload({}, month);
       }
     }
-    monthStats[monthPayload.month || month] = monthPayload.stats;
+    const monthKey = monthPayload.month || month;
+    monthStats[monthKey] = monthPayload.stats;
     papers.push(...monthPayload.papers);
+    const manifestMonthRow = manifest.months.find((item) => item && item.month === monthKey);
+    const fallbackFeaturedId =
+      manifestMonthRow && manifestMonthRow.featured
+        ? String(manifestMonthRow.featured.arxiv_id_base || "").trim()
+        : "";
+    featuredPaperId = String(monthPayload.top_picks[0] || fallbackFeaturedId || "").trim();
   }
 
   const state = {
@@ -913,6 +942,7 @@ async function setupDigestApp() {
     query: "",
     sortBy: "published_desc",
     selectedMonth: view === "month" ? month : "all",
+    featuredPaperId,
     selectedTags: Object.fromEntries(TAG_ORDER.map((category) => [category, new Set()])),
     loading:
       view === "month"

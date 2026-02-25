@@ -411,14 +411,10 @@ button:hover {
 }
 
 .year-summary-count {
-  font-size: 12px;
-  color: var(--ink);
-  font-weight: 700;
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 400;
   white-space: nowrap;
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: #fff;
 }
 
 .home-month-grid {
@@ -495,9 +491,29 @@ button:hover {
   animation: rise-in 280ms ease-out;
 }
 
+.paper-card.featured-card {
+  border-color: #ddc9a6;
+  background: #fffdf8;
+  box-shadow: 0 0 0 1px #f1e7d6, 0 12px 24px -28px rgba(60, 42, 18, 0.22);
+}
+
 .paper-card:hover {
   transform: translateY(-1px);
   box-shadow: 0 14px 24px -26px rgba(36, 24, 12, 0.12);
+}
+
+.featured-card-badge {
+  margin: 0 0 10px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #7a5b33;
+  background: #fbf3e4;
+  border: 1px solid #ecd9b6;
+  border-radius: 999px;
+  padding: 4px 10px;
 }
 
 .paper-card p {
