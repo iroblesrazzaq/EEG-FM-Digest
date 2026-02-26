@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import html
 import json
 from datetime import datetime
@@ -516,6 +517,12 @@ def write_month_site(
 def _month_manifest_item(month_dir: Path) -> dict[str, Any]:
     month = month_dir.name
     payload_path = month_dir / "papers.json"
+    month_rev = "missing"
+    if payload_path.exists():
+        try:
+            month_rev = hashlib.sha256(payload_path.read_bytes()).hexdigest()[:16]
+        except Exception:
+            month_rev = "missing"
     payload: Any = {}
     if payload_path.exists():
         try:
@@ -604,6 +611,7 @@ def _month_manifest_item(month_dir: Path) -> dict[str, Any]:
         "month_label": _month_label(month),
         "href": f"digest/{month}/index.html",
         "json_path": f"digest/{month}/papers.json",
+        "month_rev": month_rev,
         "stats": {
             "candidates": candidates,
             "accepted": accepted,

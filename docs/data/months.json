@@ -13,6 +13,7 @@
       "json_path": "digest/2026-02/papers.json",
       "month": "2026-02",
       "month_label": "February 2026",
+      "month_rev": "2be2b3adc0ed4add",
       "stats": {
         "accepted": 6,
         "candidates": 18,
@@ -31,6 +32,7 @@
       "json_path": "digest/2026-01/papers.json",
       "month": "2026-01",
       "month_label": "January 2026",
+      "month_rev": "acb6f985a0a3f3b8",
       "stats": {
         "accepted": 5,
         "candidates": 15,
@@ -49,6 +51,7 @@
       "json_path": "digest/2025-12/papers.json",
       "month": "2025-12",
       "month_label": "December 2025",
+      "month_rev": "d2bc47c8a6a59943",
       "stats": {
         "accepted": 3,
         "candidates": 12,
@@ -67,6 +70,7 @@
       "json_path": "digest/2025-11/papers.json",
       "month": "2025-11",
       "month_label": "November 2025",
+      "month_rev": "d5fcf1bbe70a73b9",
       "stats": {
         "accepted": 8,
         "candidates": 32,
@@ -85,6 +89,7 @@
       "json_path": "digest/2025-10/papers.json",
       "month": "2025-10",
       "month_label": "October 2025",
+      "month_rev": "b676d41be96f3a4e",
       "stats": {
         "accepted": 8,
         "candidates": 26,
@@ -103,6 +108,7 @@
       "json_path": "digest/2025-09/papers.json",
       "month": "2025-09",
       "month_label": "September 2025",
+      "month_rev": "a09908dafaf5c983",
       "stats": {
         "accepted": 8,
         "candidates": 18,
@@ -121,6 +127,7 @@
       "json_path": "digest/2025-08/papers.json",
       "month": "2025-08",
       "month_label": "August 2025",
+      "month_rev": "df691a7ad7f2ff64",
       "stats": {
         "accepted": 6,
         "candidates": 20,
@@ -139,6 +146,7 @@
       "json_path": "digest/2025-07/papers.json",
       "month": "2025-07",
       "month_label": "July 2025",
+      "month_rev": "ab324661790f5291",
       "stats": {
         "accepted": 2,
         "candidates": 17,
@@ -157,6 +165,7 @@
       "json_path": "digest/2025-06/papers.json",
       "month": "2025-06",
       "month_label": "June 2025",
+      "month_rev": "48c2fbfaf22d2191",
       "stats": {
         "accepted": 8,
         "candidates": 20,
@@ -175,6 +184,7 @@
       "json_path": "digest/2025-05/papers.json",
       "month": "2025-05",
       "month_label": "May 2025",
+      "month_rev": "00b7d8ae8af994a1",
       "stats": {
         "accepted": 6,
         "candidates": 14,
@@ -193,6 +203,7 @@
       "json_path": "digest/2025-04/papers.json",
       "month": "2025-04",
       "month_label": "April 2025",
+      "month_rev": "ac8de67b11006b07",
       "stats": {
         "accepted": 3,
         "candidates": 10,
@@ -211,6 +222,7 @@
       "json_path": "digest/2025-03/papers.json",
       "month": "2025-03",
       "month_label": "March 2025",
+      "month_rev": "875ec1ffe039313d",
       "stats": {
         "accepted": 2,
         "candidates": 4,
@@ -229,6 +241,7 @@
       "json_path": "digest/2025-02/papers.json",
       "month": "2025-02",
       "month_label": "February 2025",
+      "month_rev": "e8dd7cddae3ddfa9",
       "stats": {
         "accepted": 9,
         "candidates": 19,
@@ -247,6 +260,7 @@
       "json_path": "digest/2025-01/papers.json",
       "month": "2025-01",
       "month_label": "January 2025",
+      "month_rev": "0b6b2a01c162a0ac",
       "stats": {
         "accepted": 1,
         "candidates": 9,
@@ -265,6 +279,7 @@
       "json_path": "digest/2024-12/papers.json",
       "month": "2024-12",
       "month_label": "December 2024",
+      "month_rev": "dcce7de4189f15c5",
       "stats": {
         "accepted": 2,
         "candidates": 15,
@@ -283,6 +298,7 @@
       "json_path": "digest/2024-11/papers.json",
       "month": "2024-11",
       "month_label": "November 2024",
+      "month_rev": "bad1eb0f54b7ac4a",
       "stats": {
         "accepted": 3,
         "candidates": 16,
@@ -301,6 +317,7 @@
       "json_path": "digest/2024-10/papers.json",
       "month": "2024-10",
       "month_label": "October 2024",
+      "month_rev": "7fe185263ae708b3",
       "stats": {
         "accepted": 2,
         "candidates": 17,
@@ -319,6 +336,7 @@
       "json_path": "digest/2024-09/papers.json",
       "month": "2024-09",
       "month_label": "September 2024",
+      "month_rev": "3457e59e604cdca3",
       "stats": {
         "accepted": 4,
         "candidates": 12,
@@ -337,6 +355,7 @@
       "json_path": "digest/2024-08/papers.json",
       "month": "2024-08",
       "month_label": "August 2024",
+      "month_rev": "9a275b94e4a71d65",
       "stats": {
         "accepted": 2,
         "candidates": 11,
@@ -350,6 +369,7 @@
       "json_path": "digest/2024-07/papers.json",
       "month": "2024-07",
       "month_label": "July 2024",
+      "month_rev": "0297dbde63766b75",
       "stats": {
         "accepted": 0,
         "candidates": 10,
@@ -363,6 +383,7 @@
       "json_path": "digest/2024-06/papers.json",
       "month": "2024-06",
       "month_label": "June 2024",
+      "month_rev": "e2d37aebd9e9e811",
       "stats": {
         "accepted": 0,
         "candidates": 7,
@@ -381,6 +402,7 @@
       "json_path": "digest/2024-05/papers.json",
       "month": "2024-05",
       "month_label": "May 2024",
+      "month_rev": "73a654e0ad00cad6",
       "stats": {
         "accepted": 2,
         "candidates": 7,
@@ -394,6 +416,7 @@
       "json_path": "digest/2024-04/papers.json",
       "month": "2024-04",
       "month_label": "April 2024",
+      "month_rev": "10de7853e7084c5f",
       "stats": {
         "accepted": 0,
         "candidates": 9,
@@ -412,6 +435,7 @@
       "json_path": "digest/2024-03/papers.json",
       "month": "2024-03",
       "month_label": "March 2024",
+      "month_rev": "72bec0bb7c1012e4",
       "stats": {
         "accepted": 1,
         "candidates": 8,
@@ -430,6 +454,7 @@
       "json_path": "digest/2024-02/papers.json",
       "month": "2024-02",
       "month_label": "February 2024",
+      "month_rev": "b5005c65cdb249a7",
       "stats": {
         "accepted": 2,
         "candidates": 6,
@@ -448,6 +473,7 @@
       "json_path": "digest/2024-01/papers.json",
       "month": "2024-01",
       "month_label": "January 2024",
+      "month_rev": "20a5682c8c1043c0",
       "stats": {
         "accepted": 1,
         "candidates": 11,
@@ -461,6 +487,7 @@
       "json_path": "digest/2023-12/papers.json",
       "month": "2023-12",
       "month_label": "December 2023",
+      "month_rev": "2c85d275fd58e09e",
       "stats": {
         "accepted": 0,
         "candidates": 4,
@@ -479,6 +506,7 @@
       "json_path": "digest/2023-11/papers.json",
       "month": "2023-11",
       "month_label": "November 2023",
+      "month_rev": "7f9b56b1c7ad77d7",
       "stats": {
         "accepted": 1,
         "candidates": 13,
@@ -492,6 +520,7 @@
       "json_path": "digest/2023-10/papers.json",
       "month": "2023-10",
       "month_label": "October 2023",
+      "month_rev": "33f504a6faa5516a",
       "stats": {
         "accepted": 0,
         "candidates": 6,
@@ -510,6 +539,7 @@
       "json_path": "digest/2023-09/papers.json",
       "month": "2023-09",
       "month_label": "September 2023",
+      "month_rev": "87f8b54c4abd1a4c",
       "stats": {
         "accepted": 1,
         "candidates": 6,
@@ -523,6 +553,7 @@
       "json_path": "digest/2023-08/papers.json",
       "month": "2023-08",
       "month_label": "August 2023",
+      "month_rev": "dbeffa0d7e0de5b2",
       "stats": {
         "accepted": 0,
         "candidates": 7,
@@ -536,6 +567,7 @@
       "json_path": "digest/2023-07/papers.json",
       "month": "2023-07",
       "month_label": "July 2023",
+      "month_rev": "8b9f4ba353afa23f",
       "stats": {
         "accepted": 0,
         "candidates": 8,
@@ -549,6 +581,7 @@
       "json_path": "digest/2023-06/papers.json",
       "month": "2023-06",
       "month_label": "June 2023",
+      "month_rev": "6e2741719d364cf4",
       "stats": {
         "accepted": 0,
         "candidates": 6,
@@ -567,6 +600,7 @@
       "json_path": "digest/2023-05/papers.json",
       "month": "2023-05",
       "month_label": "May 2023",
+      "month_rev": "6e30315e603489cc",
       "stats": {
         "accepted": 1,
         "candidates": 1,
@@ -580,6 +614,7 @@
       "json_path": "digest/2023-04/papers.json",
       "month": "2023-04",
       "month_label": "April 2023",
+      "month_rev": "7de80653d396ef3e",
       "stats": {
         "accepted": 0,
         "candidates": 3,
@@ -593,6 +628,7 @@
       "json_path": "digest/2023-03/papers.json",
       "month": "2023-03",
       "month_label": "March 2023",
+      "month_rev": "54e0c636c0974386",
       "stats": {
         "accepted": 0,
         "candidates": 4,
@@ -606,6 +642,7 @@
       "json_path": "digest/2023-02/papers.json",
       "month": "2023-02",
       "month_label": "February 2023",
+      "month_rev": "40d73142cb75de97",
       "stats": {
         "accepted": 0,
         "candidates": 3,
@@ -619,6 +656,7 @@
       "json_path": "digest/2023-01/papers.json",
       "month": "2023-01",
       "month_label": "January 2023",
+      "month_rev": "0ae54f16596c326a",
       "stats": {
         "accepted": 0,
         "candidates": 5,
@@ -632,6 +670,7 @@
       "json_path": "digest/2022-12/papers.json",
       "month": "2022-12",
       "month_label": "December 2022",
+      "month_rev": "cc1ac120e94311a0",
       "stats": {
         "accepted": 0,
         "candidates": 6,
@@ -645,6 +684,7 @@
       "json_path": "digest/2022-11/papers.json",
       "month": "2022-11",
       "month_label": "November 2022",
+      "month_rev": "f5dd53bb514fe6f0",
       "stats": {
         "accepted": 0,
         "candidates": 10,
@@ -663,6 +703,7 @@
       "json_path": "digest/2022-10/papers.json",
       "month": "2022-10",
       "month_label": "October 2022",
+      "month_rev": "b1c622c8c174252e",
       "stats": {
         "accepted": 1,
         "candidates": 5,
@@ -676,6 +717,7 @@
       "json_path": "digest/2022-09/papers.json",
       "month": "2022-09",
       "month_label": "September 2022",
+      "month_rev": "b5d0da56a68947ec",
       "stats": {
         "accepted": 0,
         "candidates": 4,
@@ -689,6 +731,7 @@
       "json_path": "digest/2022-08/papers.json",
       "month": "2022-08",
       "month_label": "August 2022",
+      "month_rev": "e8e91a8cafdd1dea",
       "stats": {
         "accepted": 0,
         "candidates": 3,
@@ -702,6 +745,7 @@
       "json_path": "digest/2022-07/papers.json",
       "month": "2022-07",
       "month_label": "July 2022",
+      "month_rev": "13768938b7fe25af",
       "stats": {
         "accepted": 0,
         "candidates": 3,
@@ -715,6 +759,7 @@
       "json_path": "digest/2022-06/papers.json",
       "month": "2022-06",
       "month_label": "June 2022",
+      "month_rev": "58209ca0fab98627",
       "stats": {
         "accepted": 0,
         "candidates": 5,
@@ -728,6 +773,7 @@
       "json_path": "digest/2022-05/papers.json",
       "month": "2022-05",
       "month_label": "May 2022",
+      "month_rev": "0a8698fedd3e6915",
       "stats": {
         "accepted": 0,
         "candidates": 0,
@@ -746,6 +792,7 @@
       "json_path": "digest/2022-04/papers.json",
       "month": "2022-04",
       "month_label": "April 2022",
+      "month_rev": "ebf8cfb62211d171",
       "stats": {
         "accepted": 1,
         "candidates": 4,
@@ -759,6 +806,7 @@
       "json_path": "digest/2022-03/papers.json",
       "month": "2022-03",
       "month_label": "March 2022",
+      "month_rev": "9c6de8b2b877062c",
       "stats": {
         "accepted": 0,
         "candidates": 0,
@@ -772,6 +820,7 @@
       "json_path": "digest/2022-02/papers.json",
       "month": "2022-02",
       "month_label": "February 2022",
+      "month_rev": "81f50b7f9f472b6d",
       "stats": {
         "accepted": 0,
         "candidates": 8,
@@ -785,6 +834,7 @@
       "json_path": "digest/2022-01/papers.json",
       "month": "2022-01",
       "month_label": "January 2022",
+      "month_rev": "35b01df65d13a181",
       "stats": {
         "accepted": 0,
         "candidates": 3,
@@ -798,6 +848,7 @@
       "json_path": "digest/2021-12/papers.json",
       "month": "2021-12",
       "month_label": "December 2021",
+      "month_rev": "49148804eb25a241",
       "stats": {
         "accepted": 0,
         "candidates": 4,
@@ -811,6 +862,7 @@
       "json_path": "digest/2021-11/papers.json",
       "month": "2021-11",
       "month_label": "November 2021",
+      "month_rev": "ec3fc2006aa989c6",
       "stats": {
         "accepted": 0,
         "candidates": 1,
@@ -824,6 +876,7 @@
       "json_path": "digest/2021-10/papers.json",
       "month": "2021-10",
       "month_label": "October 2021",
+      "month_rev": "295c4cd7ca428f1c",
       "stats": {
         "accepted": 0,
         "candidates": 1,
@@ -837,6 +890,7 @@
       "json_path": "digest/2021-09/papers.json",
       "month": "2021-09",
       "month_label": "September 2021",
+      "month_rev": "aa8fc57f8617443c",
       "stats": {
         "accepted": 0,
         "candidates": 5,
@@ -850,6 +904,7 @@
       "json_path": "digest/2021-08/papers.json",
       "month": "2021-08",
       "month_label": "August 2021",
+      "month_rev": "e2c57a514c001ac3",
       "stats": {
         "accepted": 0,
         "candidates": 3,
@@ -863,6 +918,7 @@
       "json_path": "digest/2021-07/papers.json",
       "month": "2021-07",
       "month_label": "July 2021",
+      "month_rev": "4819b923ff7a3984",
       "stats": {
         "accepted": 0,
         "candidates": 3,
@@ -876,6 +932,7 @@
       "json_path": "digest/2021-06/papers.json",
       "month": "2021-06",
       "month_label": "June 2021",
+      "month_rev": "5ab975c2825aa128",
       "stats": {
         "accepted": 0,
         "candidates": 2,
@@ -889,6 +946,7 @@
       "json_path": "digest/2021-05/papers.json",
       "month": "2021-05",
       "month_label": "May 2021",
+      "month_rev": "0b0a09e812908406",
       "stats": {
         "accepted": 0,
         "candidates": 3,
@@ -902,6 +960,7 @@
       "json_path": "digest/2021-04/papers.json",
       "month": "2021-04",
       "month_label": "April 2021",
+      "month_rev": "024b9714c97c3491",
       "stats": {
         "accepted": 0,
         "candidates": 2,
@@ -915,6 +974,7 @@
       "json_path": "digest/2021-03/papers.json",
       "month": "2021-03",
       "month_label": "March 2021",
+      "month_rev": "32b4a6e79c5f69d2",
       "stats": {
         "accepted": 0,
         "candidates": 2,
@@ -928,6 +988,7 @@
       "json_path": "digest/2021-02/papers.json",
       "month": "2021-02",
       "month_label": "February 2021",
+      "month_rev": "55f54718dcf57b93",
       "stats": {
         "accepted": 0,
         "candidates": 3,
@@ -946,6 +1007,7 @@
       "json_path": "digest/2021-01/papers.json",
       "month": "2021-01",
       "month_label": "January 2021",
+      "month_rev": "c11cc399d95fb692",
       "stats": {
         "accepted": 1,
         "candidates": 1,

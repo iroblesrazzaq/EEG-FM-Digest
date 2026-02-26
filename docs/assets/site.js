@@ -32,6 +32,10 @@ const TAG_LABELS = {
   },
 };
 
+const MONTH_CACHE_SCHEMA_VERSION = "v1";
+const MONTH_CACHE_PREFIX = "eegfm:monthPayload";
+const monthPayloadMem = new Map();
+
 function norm(s) {
   return String(s || "").toLowerCase();
 }
@@ -102,6 +106,81 @@ function resolveMonthJsonPath(path, view) {
     return value;
   }
   return view === "explore" ? `../${value}` : value;
+}
+
+function normalizeMonthRev(monthRev) {
+  const value = String(monthRev || "").trim();
+  return value || "legacy";
+}
+
+function buildMonthCacheKey(month, monthRev) {
+  return `${MONTH_CACHE_PREFIX}:${MONTH_CACHE_SCHEMA_VERSION}:${String(month || "").trim()}:${normalizeMonthRev(
+    monthRev,
+  )}`;
+}
+
+function getMonthPayloadFromCache(month, monthRev) {
+  const key = buildMonthCacheKey(month, monthRev);
+  if (monthPayloadMem.has(key)) {
+    return monthPayloadMem.get(key);
+  }
+
+  if (typeof window === "undefined" || !window.sessionStorage) {
+    return null;
+  }
+
+  let raw = null;
+  try {
+    raw = window.sessionStorage.getItem(key);
+  } catch (_err) {
+    return null;
+  }
+  if (raw === null) {
+    return null;
+  }
+
+  try {
+    const payload = JSON.parse(raw);
+    monthPayloadMem.set(key, payload);
+    return payload;
+  } catch (_err) {
+    try {
+      window.sessionStorage.removeItem(key);
+    } catch (_removeErr) {
+      // Ignore storage failures and treat as cache miss.
+    }
+    return null;
+  }
+}
+
+function setMonthPayloadCache(month, monthRev, payload) {
+  const key = buildMonthCacheKey(month, monthRev);
+  monthPayloadMem.set(key, payload);
+  if (typeof window === "undefined" || !window.sessionStorage) {
+    return;
+  }
+  try {
+    window.sessionStorage.setItem(key, JSON.stringify(payload));
+  } catch (_err) {
+    // Ignore storage failures and continue with memory cache only.
+  }
+}
+
+async function loadMonthPayloadCached({ month, jsonPath, view, monthRev }) {
+  const monthKey = String(month || "").trim();
+  const resolvedPath = resolveMonthJsonPath(jsonPath, view);
+  if (!monthKey || !resolvedPath) {
+    return parseMonthPayload({}, monthKey);
+  }
+
+  const cached = getMonthPayloadFromCache(monthKey, monthRev);
+  if (cached !== null) {
+    return parseMonthPayload(cached, monthKey);
+  }
+
+  const raw = await fetchJson(resolvedPath);
+  setMonthPayloadCache(monthKey, monthRev, raw);
+  return parseMonthPayload(raw, monthKey);
 }
 
 function parseFallbackMonths(raw) {
@@ -210,6 +289,7 @@ function normalizeManifest(raw, fallbackMonths) {
       month_label: monthDisplayLabel(month),
       href: `digest/${month}/index.html`,
       json_path: `digest/${month}/papers.json`,
+      month_rev: "legacy",
       stats: { candidates: 0, accepted: 0, summarized: 0 },
       empty_state: "unknown",
       featured: null,
@@ -232,6 +312,7 @@ function normalizeManifest(raw, fallbackMonths) {
         month_label: String(row.month_label || monthDisplayLabel(month)),
         href: String(row.href || `digest/${month}/index.html`),
         json_path: String(row.json_path || `digest/${month}/papers.json`),
+        month_rev: normalizeMonthRev(row.month_rev),
         stats: normalizeStats(row.stats, []),
         empty_state: String(row.empty_state || "unknown"),
         featured:
@@ -844,10 +925,15 @@ async function loadExploreMonthsLazy(app, state, monthRows, view) {
         continue;
       }
       const monthKey = String(item.month || "");
+      const monthRev = normalizeMonthRev(item.month_rev);
       let payload = parseMonthPayload({}, monthKey);
       try {
-        const raw = await fetchJson(resolveMonthJsonPath(item.json_path, view));
-        payload = parseMonthPayload(raw, monthKey);
+        payload = await loadMonthPayloadCached({
+          month: monthKey,
+          jsonPath: item.json_path,
+          view,
+          monthRev,
+        });
       } catch (_err) {
         payload = parseMonthPayload({}, monthKey);
         state.loading.failed += 1;
@@ -912,11 +998,17 @@ async function setupDigestApp() {
   const papers = [];
   let featuredPaperId = "";
   if (view === "month") {
+    const initialMonthRow = manifest.months.find((item) => item && item.month === month);
+    const monthRev = normalizeMonthRev(initialMonthRow?.month_rev);
     let monthPayload = parseMonthPayload({}, month);
     if (monthJsonPath) {
       try {
-        const raw = await fetchJson(monthJsonPath);
-        monthPayload = parseMonthPayload(raw, month);
+        monthPayload = await loadMonthPayloadCached({
+          month,
+          jsonPath: monthJsonPath,
+          view,
+          monthRev,
+        });
       } catch (_err) {
         monthPayload = parseMonthPayload({}, month);
       }

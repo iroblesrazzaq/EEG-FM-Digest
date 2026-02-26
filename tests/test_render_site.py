@@ -1,3 +1,4 @@
+import hashlib
 import json
 from pathlib import Path
 
@@ -181,3 +182,83 @@ def test_update_home_writes_month_manifest(tmp_path):
     month_map = {row["month"]: row for row in manifest["months"]}
     assert month_map["2025-01"]["empty_state"] == "no_accepts"
     assert month_map["2025-02"]["empty_state"] == "has_papers"
+    assert isinstance(month_map["2025-01"]["month_rev"], str)
+    assert month_map["2025-01"]["month_rev"]
+    assert isinstance(month_map["2025-02"]["month_rev"], str)
+    assert month_map["2025-02"]["month_rev"]
+
+
+def test_update_home_changes_only_modified_month_revision(tmp_path):
+    docs_dir = tmp_path / "docs"
+    month_a = docs_dir / "digest" / "2025-01"
+    month_b = docs_dir / "digest" / "2025-02"
+    month_a.mkdir(parents=True, exist_ok=True)
+    month_b.mkdir(parents=True, exist_ok=True)
+
+    payload_a = {
+        "month": "2025-01",
+        "stats": {"candidates": 1, "accepted": 1, "summarized": 1},
+        "papers": [{"arxiv_id_base": "2501.00001", "summary": {"title": "a"}}],
+        "top_picks": ["2501.00001"],
+    }
+    payload_b = {
+        "month": "2025-02",
+        "stats": {"candidates": 1, "accepted": 1, "summarized": 1},
+        "papers": [{"arxiv_id_base": "2502.00001", "summary": {"title": "b"}}],
+        "top_picks": ["2502.00001"],
+    }
+
+    (month_a / "papers.json").write_text(json.dumps(payload_a, sort_keys=True), encoding="utf-8")
+    (month_b / "papers.json").write_text(json.dumps(payload_b, sort_keys=True), encoding="utf-8")
+
+    update_home(docs_dir)
+    manifest_before = json.loads((docs_dir / "data" / "months.json").read_text(encoding="utf-8"))
+    rev_before = {row["month"]: row["month_rev"] for row in manifest_before["months"]}
+
+    payload_a["stats"]["candidates"] = 2
+    (month_a / "papers.json").write_text(json.dumps(payload_a, sort_keys=True), encoding="utf-8")
+
+    update_home(docs_dir)
+    manifest_after = json.loads((docs_dir / "data" / "months.json").read_text(encoding="utf-8"))
+    rev_after = {row["month"]: row["month_rev"] for row in manifest_after["months"]}
+
+    assert rev_before["2025-01"] != rev_after["2025-01"]
+    assert rev_before["2025-02"] == rev_after["2025-02"]
+
+
+def test_update_home_month_revision_matches_payload_hash(tmp_path):
+    docs_dir = tmp_path / "docs"
+    month_dir = docs_dir / "digest" / "2025-01"
+    month_dir.mkdir(parents=True, exist_ok=True)
+    payload_path = month_dir / "papers.json"
+    payload_path.write_text(
+        json.dumps(
+            {
+                "month": "2025-01",
+                "stats": {"candidates": 1, "accepted": 1, "summarized": 1},
+                "papers": [{"arxiv_id_base": "2501.00001", "summary": {"title": "x"}}],
+                "top_picks": ["2501.00001"],
+            },
+            sort_keys=True,
+        ),
+        encoding="utf-8",
+    )
+
+    update_home(docs_dir)
+    manifest = json.loads((docs_dir / "data" / "months.json").read_text(encoding="utf-8"))
+    row = manifest["months"][0]
+    expected = hashlib.sha256(payload_path.read_bytes()).hexdigest()[:16]
+    assert row["month"] == "2025-01"
+    assert row["month_rev"] == expected
+
+
+def test_update_home_month_revision_missing_when_papers_missing(tmp_path):
+    docs_dir = tmp_path / "docs"
+    month_dir = docs_dir / "digest" / "2025-01"
+    month_dir.mkdir(parents=True, exist_ok=True)
+
+    update_home(docs_dir)
+    manifest = json.loads((docs_dir / "data" / "months.json").read_text(encoding="utf-8"))
+    row = manifest["months"][0]
+    assert row["month"] == "2025-01"
+    assert row["month_rev"] == "missing"

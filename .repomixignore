@@ -1,0 +1,11 @@
+# Extra exclusions for repomix (applies in addition to .gitignore)
+
+# Large generated monthly site payloads
+docs/digest/**/papers.json
+docs/digest/**/digest.json
+
+# Generated month pages are reproducible from src/eegfm_digest/site.py
+docs/digest/**/index.html
+
+# Large generated site manifest
+docs/data/months.json

@@ -1,3 +1,4 @@
+import hashlib
 import json
 from pathlib import Path
 
@@ -158,3 +159,117 @@ def test_pipeline_writes_backend_rows_and_skips_site(monkeypatch, tmp_path):
     assert not (tmp_path / "docs").exists()
     assert (cfg.output_dir / "2025-01" / "digest.json").exists()
     assert (cfg.data_dir / "digest.sqlite").exists()
+
+
+def test_pipeline_site_outputs_manifest_month_revision(monkeypatch, tmp_path):
+    candidates = [
+        _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper"),
+    ]
+
+    monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
+
+    class DummyGemini:
+        def __init__(self, _config):  # noqa: ANN001
+            return None
+
+    monkeypatch.setattr("eegfm_digest.pipeline.GeminiClient", DummyGemini)
+
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.triage_paper",
+        lambda paper, *_args, **_kwargs: {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "decision": "accept",
+            "confidence": 0.9,
+            "reasons": ["r1", "r2"],
+        },
+    )
+
+    def fake_download_pdf(_url, out_path, _rate):  # noqa: ANN001
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_bytes(b"%PDF-1.4")
+        return out_path
+
+    def fake_extract_text(_pdf_path, text_path):  # noqa: ANN001
+        text_path.parent.mkdir(parents=True, exist_ok=True)
+        text_path.write_text(
+            "Abstract\nEEG abstract\n\nIntroduction\nIntro\n\nMethods\nMethod\n\nResults\nResult\n\nConclusion\nEnd",
+            encoding="utf-8",
+        )
+        return {"tool": "pypdf", "pages": 1, "chars": 100, "error": None}
+
+    monkeypatch.setattr("eegfm_digest.pipeline.download_pdf", fake_download_pdf)
+    monkeypatch.setattr("eegfm_digest.pipeline.extract_text", fake_extract_text)
+
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.summarize_paper",
+        lambda paper, *_args, **_kwargs: {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "title": paper["title"],
+            "published_date": paper["published"][:10],
+            "categories": paper["categories"],
+            "paper_type": "method",
+            "one_liner": "Concise summary line.",
+            "detailed_summary": (
+                "This work proposes a concise EEG modeling approach with explicit transfer framing "
+                "and reports benchmark gains using pretrained representations."
+            ),
+            "unique_contribution": "Deterministic contribution sentence.",
+            "key_points": ["point one", "point two", "point three"],
+            "data_scale": {
+                "datasets": ["Dataset-A"],
+                "subjects": 10,
+                "eeg_hours": 2.0,
+                "channels": 64,
+            },
+            "method": {
+                "architecture": "Transformer",
+                "objective": "Masked prediction",
+                "pretraining": "Self-supervised",
+                "finetuning": "Linear probe",
+            },
+            "evaluation": {
+                "tasks": ["classification"],
+                "benchmarks": ["Benchmark-A"],
+                "headline_results": ["Improved AUROC"],
+            },
+            "open_source": {"code_url": None, "weights_url": None, "license": None},
+            "tags": {
+                "paper_type": ["eeg-fm"],
+                "backbone": ["transformer"],
+                "objective": ["masked-reconstruction"],
+                "tokenization": ["time-patch"],
+                "topology": ["fixed-montage"],
+            },
+            "limitations": ["limited cohorts", "single dataset"],
+            "used_fulltext": True,
+            "notes": "ok",
+        },
+    )
+
+    cfg = Config(
+        gemini_model_triage="triage-model",
+        gemini_model_summary="summary-model",
+        output_dir=tmp_path / "outputs",
+        data_dir=tmp_path / "data",
+        docs_dir=tmp_path / "docs",
+        max_candidates=20,
+        max_accepted=20,
+        arxiv_rate_limit_seconds=0.0,
+        pdf_rate_limit_seconds=0.0,
+    )
+
+    run_month(cfg, "2025-01", no_site=False)
+
+    manifest_path = cfg.docs_dir / "data" / "months.json"
+    month_payload_path = cfg.docs_dir / "digest" / "2025-01" / "papers.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    month_row = manifest["months"][0]
+    expected_rev = hashlib.sha256(month_payload_path.read_bytes()).hexdigest()[:16]
+
+    assert manifest["latest"] == "2025-01"
+    assert month_row["month"] == "2025-01"
+    assert month_row["month_rev"] == expected_rev
+    assert (cfg.docs_dir / "index.html").exists()
+    assert (cfg.docs_dir / "explore" / "index.html").exists()
+    assert (cfg.docs_dir / "process" / "index.html").exists()
