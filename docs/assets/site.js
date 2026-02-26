@@ -35,6 +35,12 @@ const TAG_LABELS = {
 const MONTH_CACHE_SCHEMA_VERSION = "v1";
 const MONTH_CACHE_PREFIX = "eegfm:monthPayload";
 const monthPayloadMem = new Map();
+const monthCacheStats = {
+  map_hits: 0,
+  session_hits: 0,
+  network_hits: 0,
+  cache_writes: 0,
+};
 
 function norm(s) {
   return String(s || "").toLowerCase();
@@ -122,6 +128,7 @@ function buildMonthCacheKey(month, monthRev) {
 function getMonthPayloadFromCache(month, monthRev) {
   const key = buildMonthCacheKey(month, monthRev);
   if (monthPayloadMem.has(key)) {
+    monthCacheStats.map_hits += 1;
     return monthPayloadMem.get(key);
   }
 
@@ -142,6 +149,7 @@ function getMonthPayloadFromCache(month, monthRev) {
   try {
     const payload = JSON.parse(raw);
     monthPayloadMem.set(key, payload);
+    monthCacheStats.session_hits += 1;
     return payload;
   } catch (_err) {
     try {
@@ -156,6 +164,7 @@ function getMonthPayloadFromCache(month, monthRev) {
 function setMonthPayloadCache(month, monthRev, payload) {
   const key = buildMonthCacheKey(month, monthRev);
   monthPayloadMem.set(key, payload);
+  monthCacheStats.cache_writes += 1;
   if (typeof window === "undefined" || !window.sessionStorage) {
     return;
   }
@@ -179,8 +188,49 @@ async function loadMonthPayloadCached({ month, jsonPath, view, monthRev }) {
   }
 
   const raw = await fetchJson(resolvedPath);
+  monthCacheStats.network_hits += 1;
   setMonthPayloadCache(monthKey, monthRev, raw);
   return parseMonthPayload(raw, monthKey);
+}
+
+function clearMonthMemCache() {
+  monthPayloadMem.clear();
+}
+
+function clearMonthSessionCache() {
+  if (typeof window === "undefined" || !window.sessionStorage) {
+    return;
+  }
+  try {
+    const toRemove = [];
+    for (let i = 0; i < window.sessionStorage.length; i += 1) {
+      const key = window.sessionStorage.key(i);
+      if (key && key.startsWith(MONTH_CACHE_PREFIX)) {
+        toRemove.push(key);
+      }
+    }
+    for (const key of toRemove) {
+      window.sessionStorage.removeItem(key);
+    }
+  } catch (_err) {
+    // Ignore storage failures in test helper.
+  }
+}
+
+function resetMonthCacheStats() {
+  monthCacheStats.map_hits = 0;
+  monthCacheStats.session_hits = 0;
+  monthCacheStats.network_hits = 0;
+  monthCacheStats.cache_writes = 0;
+}
+
+function currentMonthCacheStats() {
+  return {
+    map_hits: monthCacheStats.map_hits,
+    session_hits: monthCacheStats.session_hits,
+    network_hits: monthCacheStats.network_hits,
+    cache_writes: monthCacheStats.cache_writes,
+  };
 }
 
 function parseFallbackMonths(raw) {
@@ -604,7 +654,8 @@ function renderTagGroups(state, tagOptions, compact) {
   return `<div class="${cls}">${groups}</div>`;
 }
 
-function bindTagCheckboxes(controls, state, app) {
+function bindTagCheckboxes(controls, state, app, options = {}) {
+  const submitOnly = Boolean(options.submitOnly);
   controls.addEventListener("change", (event) => {
     const target = event.target;
     if (!target || target.tagName !== "INPUT") {
@@ -624,6 +675,9 @@ function bindTagCheckboxes(controls, state, app) {
     } else {
       selected.delete(value);
     }
+    if (submitOnly) {
+      return;
+    }
     renderResults(app, state);
   });
 }
@@ -640,8 +694,11 @@ function renderExploreControls(app, state) {
     <div class="control-row search-only-row">
       <label class="control control-grow" for="search-input">
         <span>Search</span>
-        <input id="search-input" type="text" value="${esc(state.queryRaw)}" placeholder="title, author, summary, tags">
+        <input id="search-input" data-testid="search-input" type="text" value="${esc(
+          state.queryRaw,
+        )}" placeholder="title, author, summary, tags">
       </label>
+      <button id="search-run-btn" data-testid="search-run-btn" type="button">Search</button>
       <button id="reset-filters" type="button">Clear search</button>
     </div>
     <p class="small filter-help">Tag filters: OR within each category, AND across categories.</p>
@@ -652,8 +709,12 @@ function renderExploreControls(app, state) {
   if (searchInput) {
     searchInput.addEventListener("input", (event) => {
       state.queryRaw = event.target.value || "";
-      state.query = norm(state.queryRaw);
-      renderResults(app, state);
+    });
+  }
+  const runBtn = controls.querySelector("#search-run-btn");
+  if (runBtn) {
+    runBtn.addEventListener("click", () => {
+      void runExploreSearch(app, state);
     });
   }
   const resetBtn = controls.querySelector("#reset-filters");
@@ -668,7 +729,7 @@ function renderExploreControls(app, state) {
       renderResults(app, state);
     });
   }
-  bindTagCheckboxes(controls, state, app);
+  bindTagCheckboxes(controls, state, app, { submitOnly: true });
 }
 
 function renderMonthControls(app, state) {
@@ -723,6 +784,18 @@ function renderResults(app, state) {
   const results = app.querySelector("#results");
   const meta = app.querySelector("#results-meta");
   if (!results || !meta) {
+    return;
+  }
+  if (!results.hasAttribute("data-testid")) {
+    results.setAttribute("data-testid", "results-list");
+  }
+  if (!meta.hasAttribute("data-testid")) {
+    meta.setAttribute("data-testid", "results-meta");
+  }
+
+  if (state.view === "explore" && !state.searchTriggered) {
+    meta.textContent = "Search is ready. Click Search to load papers.";
+    results.innerHTML = "<p class='empty-state'>No search run yet.</p>";
     return;
   }
 
@@ -960,6 +1033,24 @@ async function loadExploreMonthsLazy(app, state, monthRows, view) {
   renderResults(app, state);
 }
 
+async function runExploreSearch(app, state) {
+  if (!state || state.view !== "explore") {
+    return;
+  }
+  if (state.loading && state.loading.active) {
+    return;
+  }
+  state.query = norm(state.queryRaw);
+  state.searchTriggered = true;
+  state.papers = [];
+  state.loading.active = true;
+  state.loading.total = state.monthRows.length;
+  state.loading.loaded = 0;
+  state.loading.failed = 0;
+  renderResults(app, state);
+  await loadExploreMonthsLazy(app, state, state.monthRows, "explore");
+}
+
 async function setupDigestApp() {
   const app = document.getElementById("digest-app");
   if (!app) {
@@ -1035,12 +1126,13 @@ async function setupDigestApp() {
     sortBy: "published_desc",
     selectedMonth: view === "month" ? month : "all",
     featuredPaperId,
+    searchTriggered: view === "month",
     selectedTags: Object.fromEntries(TAG_ORDER.map((category) => [category, new Set()])),
     loading:
       view === "month"
         ? null
         : {
-            active: true,
+            active: false,
             total: manifest.months.length,
             loaded: 0,
             failed: 0,
@@ -1053,9 +1145,18 @@ async function setupDigestApp() {
   } else {
     renderExploreControls(app, state);
     renderResults(app, state);
-    void loadExploreMonthsLazy(app, state, manifest.months, view);
   }
   return true;
+}
+
+if (typeof window !== "undefined") {
+  window.__digestTestHooks = {
+    loadMonthPayloadForTest: (args) => loadMonthPayloadCached(args),
+    getCacheStats: () => currentMonthCacheStats(),
+    clearMemCacheForTest: () => clearMonthMemCache(),
+    clearSessionCacheForTest: () => clearMonthSessionCache(),
+    resetCacheStatsForTest: () => resetMonthCacheStats(),
+  };
 }
 
 function setupLegacySearch() {
