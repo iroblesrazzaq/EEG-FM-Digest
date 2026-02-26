@@ -323,6 +323,28 @@ function clearMonthSessionCache() {
   clearMonthPersistentCache();
 }
 
+function currentMonthCacheEntryCounts() {
+  const mapEntries = monthPayloadMem.size;
+  let localEntries = 0;
+  const local = monthStorage("local");
+  if (local) {
+    try {
+      for (let i = 0; i < local.length; i += 1) {
+        const key = local.key(i);
+        if (key && key.startsWith(MONTH_CACHE_PREFIX)) {
+          localEntries += 1;
+        }
+      }
+    } catch (_err) {
+      // Ignore storage read failures and report best-effort counts.
+    }
+  }
+  return {
+    map_entries: mapEntries,
+    local_entries: localEntries,
+  };
+}
+
 function resetMonthCacheStats() {
   monthCacheStats.map_hits = 0;
   monthCacheStats.local_hits = 0;
@@ -1286,6 +1308,7 @@ if (typeof window !== "undefined") {
   window.__digestTestHooks = {
     loadMonthPayloadForTest: (args) => loadMonthPayloadCached(args),
     getCacheStats: () => currentMonthCacheStats(),
+    getCacheEntryCounts: () => currentMonthCacheEntryCounts(),
     clearMemCacheForTest: () => clearMonthMemCache(),
     clearPersistentCacheForTest: () => clearMonthPersistentCache(),
     clearSessionCacheForTest: () => clearMonthSessionCache(),

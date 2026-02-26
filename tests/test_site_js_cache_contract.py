@@ -11,6 +11,7 @@ def test_site_js_defines_month_cache_primitives():
     assert "function setMonthPayloadCache(month, monthRev, payload)" in site_js
     assert "async function loadMonthPayloadCached({ month, jsonPath, view, monthRev })" in site_js
     assert "function currentMonthCacheStats()" in site_js
+    assert "window.localStorage" in site_js
 
 
 def test_site_js_uses_month_cache_loader_in_month_and_search_paths():
@@ -26,9 +27,26 @@ def test_site_js_exposes_test_hooks_and_submit_driven_search():
     assert "window.__digestTestHooks = {" in site_js
     assert "loadMonthPayloadForTest: (args) => loadMonthPayloadCached(args)" in site_js
     assert "getCacheStats: () => currentMonthCacheStats()" in site_js
+    assert "getCacheEntryCounts: () => currentMonthCacheEntryCounts()" in site_js
     assert "clearMemCacheForTest: () => clearMonthMemCache()" in site_js
+    assert "clearPersistentCacheForTest: () => clearMonthPersistentCache()" in site_js
     assert "clearSessionCacheForTest: () => clearMonthSessionCache()" in site_js
+    assert "function collectExploreTagOptions(state)" in site_js
+    assert "Object.keys(TAG_LABELS[category] || {})" in site_js
     assert 'id="search-run-btn"' in site_js
+    assert 'placeholder="title, author, summary"' in site_js
+    assert 'placeholder="title, author, summary, tags"' not in site_js
     assert "void runExploreSearch(app, state);" in site_js
     assert "await loadExploreMonthsLazy(app, state, state.monthRows, \"explore\");" in site_js
     assert "void loadExploreMonthsLazy(app, state, manifest.months, view);" not in site_js
+    assert 'meta.textContent = "Searching...";' in site_js
+    assert "meta.textContent = `${filtered.length} results`;" in site_js
+    assert "Showing ${filtered.length} of ${baseCount} accepted papers ${scopeLabel}.${loadingMeta}" not in site_js
+    assert "const loadingMeta =" not in site_js
+    assert "const legacySession = monthStorage(\"session\");" in site_js
+    assert "local.setItem(key, JSON.stringify(migratedPayload));" in site_js
+    assert "legacySession.removeItem(key);" in site_js
+    assert "removeCorrupt();" in site_js
+    assert "local.removeItem(key);" in site_js
+    assert "last_run:" in site_js
+    assert "cumulative," in site_js
