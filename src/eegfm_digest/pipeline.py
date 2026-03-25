@@ -4,14 +4,24 @@ import json
 from pathlib import Path
 
 from .arxiv import fetch_month_candidates
+from .cache_meta import (
+    SUMMARY_STAGE_LOGIC_VERSION,
+    TRIAGE_STAGE_LOGIC_VERSION,
+    build_stage_descriptor,
+    build_stage_metadata,
+    is_cache_current,
+)
 from .config import Config
 from .db import DigestDB
 from .llm import LLMCallConfig, build_llm_call, load_api_key
 from .pdf import download_pdf, extract_text, slice_paper_text
 from .render import build_digest, write_json, write_jsonl
 from .site import update_home, write_month_site
-from .summarize import summarize_paper
-from .triage import load_schema, triage_paper
+from .summarize import summarize_paper, summarize_paper_with_meta
+from .triage import load_schema, triage_paper, triage_paper_with_meta
+
+_ORIGINAL_TRIAGE_PAPER = triage_paper
+_ORIGINAL_SUMMARIZE_PAPER = summarize_paper
 
 
 def _read(path: str) -> str:
@@ -37,6 +47,18 @@ def _triage_view(triage: dict[str, object] | None) -> dict[str, object]:
         "confidence": float(triage.get("confidence", 0.0)),
         "reasons": reasons,
     }
+
+
+def _run_triage_call_with_meta(*args, **kwargs) -> tuple[dict[str, object], dict[str, object]]:
+    if triage_paper is not _ORIGINAL_TRIAGE_PAPER:
+        return triage_paper(*args, **kwargs), {"repair_used": False}
+    return triage_paper_with_meta(*args, **kwargs)
+
+
+def _run_summary_call_with_meta(*args, **kwargs) -> tuple[dict[str, object], dict[str, object]]:
+    if summarize_paper is not _ORIGINAL_SUMMARIZE_PAPER:
+        return summarize_paper(*args, **kwargs), {"repair_used": False}
+    return summarize_paper_with_meta(*args, **kwargs)
 
 
 def run_month(
@@ -68,40 +90,68 @@ def run_month(
         db.upsert_paper(month, c)
 
     api_key = load_api_key()
-    triage_llm = build_llm_call(
-        LLMCallConfig(
-            provider="openai",
-            api_key=api_key,
-            model=cfg.llm_model_triage,
-            temperature=cfg.llm_temperature_triage,
-            max_output_tokens=cfg.llm_max_output_tokens_triage,
-            base_url="https://openrouter.ai/api/v1",
-        )
+    triage_llm_config = LLMCallConfig(
+        provider="openrouter",
+        api_key=api_key,
+        model=cfg.llm_model_triage,
+        temperature=cfg.llm_temperature_triage,
+        max_output_tokens=cfg.llm_max_output_tokens_triage,
+        base_url="https://openrouter.ai/api/v1",
     )
-    summary_llm = build_llm_call(
-        LLMCallConfig(
-            provider="openai",
-            api_key=api_key,
-            model=cfg.llm_model_summary,
-            temperature=cfg.llm_temperature_summary,
-            max_output_tokens=cfg.llm_max_output_tokens_summary,
-            base_url="https://openrouter.ai/api/v1",
-        )
+    summary_llm_config = LLMCallConfig(
+        provider="openrouter",
+        api_key=api_key,
+        model=cfg.llm_model_summary,
+        temperature=cfg.llm_temperature_summary,
+        max_output_tokens=cfg.llm_max_output_tokens_summary,
+        base_url="https://openrouter.ai/api/v1",
     )
+    triage_llm = build_llm_call(triage_llm_config)
+    summary_llm = build_llm_call(summary_llm_config)
 
     try:
         triage_prompt = _read("prompts/triage.md")
         summarize_prompt = _read("prompts/summarize.md")
         repair_prompt = _read("prompts/repair_json.md")
+        triage_descriptor = build_stage_descriptor(
+            stage="triage",
+            provider=triage_llm_config.provider,
+            model=triage_llm_config.model,
+            prompt_template=triage_prompt,
+            repair_template=repair_prompt,
+            schema=triage_schema,
+            stage_logic_version=TRIAGE_STAGE_LOGIC_VERSION,
+        )
+        summary_descriptor = build_stage_descriptor(
+            stage="summary",
+            provider=summary_llm_config.provider,
+            model=summary_llm_config.model,
+            prompt_template=summarize_prompt,
+            repair_template=repair_prompt,
+            schema=summary_schema,
+            stage_logic_version=SUMMARY_STAGE_LOGIC_VERSION,
+        )
 
         # Stage 2: triage
         triage_rows: list[dict] = []
         for paper in candidates:
             try:
-                cached = None if force else db.get_triage(paper["arxiv_id_base"])
-                result_raw = cached or triage_paper(
-                    paper, triage_llm, triage_prompt, repair_prompt, triage_schema
-                )
+                cached = None if force else db.get_triage_with_meta(paper["arxiv_id_base"])
+                if cached and is_cache_current(cached.get("meta"), triage_descriptor["cache_version"]):
+                    result_raw = cached["data"]
+                else:
+                    result_raw, triage_call_meta = _run_triage_call_with_meta(
+                        paper, triage_llm, triage_prompt, repair_prompt, triage_schema
+                    )
+                    db.upsert_triage(
+                        month,
+                        result_raw,
+                        meta=build_stage_metadata(
+                            triage_descriptor,
+                            repair_used=bool(triage_call_meta.get("repair_used", False)),
+                            updated_at_source=str(paper.get("updated", "")).strip() or None,
+                        ),
+                    )
                 reasons_raw = result_raw.get("reasons", [])
                 if not isinstance(reasons_raw, list):
                     reasons_raw = [str(reasons_raw)]
@@ -112,7 +162,6 @@ def run_month(
                     "reasons": reasons_raw,
                 }
                 triage_rows.append(result)
-                db.upsert_triage(month, result)
             except Exception as exc:
                 fallback = {
                     "arxiv_id_base": paper["arxiv_id_base"],
@@ -124,7 +173,15 @@ def run_month(
                     ],
                 }
                 triage_rows.append(fallback)
-                db.upsert_triage(month, fallback)
+                db.upsert_triage(
+                    month,
+                    fallback,
+                    meta=build_stage_metadata(
+                        triage_descriptor,
+                        repair_used=False,
+                        updated_at_source=str(paper.get("updated", "")).strip() or None,
+                    ),
+                )
 
         write_jsonl(month_out / "triage.jsonl", sorted(triage_rows, key=lambda x: x["arxiv_id_base"]))
 
@@ -149,10 +206,10 @@ def run_month(
             arxiv_id_base = paper["arxiv_id_base"]
             pdf_state: dict[str, object | None] = _empty_pdf_state()
             try:
-                cached_summary = None if force else db.get_summary(arxiv_id_base)
-                if cached_summary:
-                    summaries.append(cached_summary)
-                    summary_map[arxiv_id_base] = cached_summary
+                cached_summary = None if force else db.get_summary_with_meta(arxiv_id_base)
+                if cached_summary and is_cache_current(cached_summary.get("meta"), summary_descriptor["cache_version"]):
+                    summaries.append(cached_summary["data"])
+                    summary_map[arxiv_id_base] = cached_summary["data"]
                     pdf_map[arxiv_id_base] = pdf_state
                     continue
 
@@ -198,7 +255,7 @@ def run_month(
                         }
 
                 if raw_text.strip():
-                    summary = summarize_paper(
+                    summary, summary_call_meta = _run_summary_call_with_meta(
                         paper=paper,
                         triage=triage_map[arxiv_id_base],
                         raw_fulltext=raw_text,
@@ -217,7 +274,15 @@ def run_month(
                     )
                     summaries.append(summary)
                     summary_map[arxiv_id_base] = summary
-                    db.upsert_summary(month, summary)
+                    db.upsert_summary(
+                        month,
+                        summary,
+                        meta=build_stage_metadata(
+                            summary_descriptor,
+                            repair_used=bool(summary_call_meta.get("repair_used", False)),
+                            updated_at_source=str(paper.get("updated", "")).strip() or None,
+                        ),
+                    )
             except Exception:
                 pass
             pdf_map[arxiv_id_base] = pdf_state

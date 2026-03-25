@@ -6,7 +6,7 @@ from datetime import date
 
 from dateutil.relativedelta import relativedelta
 
-from .config import load_config
+from .config import DEFAULT_OPENROUTER_MODEL, load_config
 from .pipeline import run_month
 
 
@@ -28,6 +28,11 @@ def main() -> None:
     args = parser.parse_args()
 
     cfg = load_config()
+    cfg = replace(
+        cfg,
+        llm_model_triage=DEFAULT_OPENROUTER_MODEL,
+        llm_model_summary=DEFAULT_OPENROUTER_MODEL,
+    )
     if args.max_candidates is not None:
         cfg = replace(cfg, max_candidates=args.max_candidates)
     if args.max_accepted is not None:

@@ -40,6 +40,23 @@ def triage_paper(
     repair_template: str,
     schema: dict[str, Any],
 ) -> dict[str, Any]:
+    result, _meta = triage_paper_with_meta(
+        paper=paper,
+        llm=llm,
+        prompt_template=prompt_template,
+        repair_template=repair_template,
+        schema=schema,
+    )
+    return result
+
+
+def triage_paper_with_meta(
+    paper: dict[str, Any],
+    llm: LLMCaller,
+    prompt_template: str,
+    repair_template: str,
+    schema: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
     prompt = prompt_template.replace("{{TITLE}}", paper["title"]).replace(
         "{{ABSTRACT}}", paper["summary"]
     )
@@ -47,7 +64,7 @@ def triage_paper(
     try:
         data = parse_json_text(raw)
         validate_json(data, schema)
-        return _persisted_triage(paper["arxiv_id_base"], data)
+        return _persisted_triage(paper["arxiv_id_base"], data), {"repair_used": False}
     except Exception:
         repair_prompt = (
             repair_template.replace("{{SCHEMA_JSON}}", json.dumps(schema, ensure_ascii=False))
@@ -57,11 +74,14 @@ def triage_paper(
             repaired = llm.call(repair_prompt, schema=schema).text
             data = parse_json_text(repaired)
             validate_json(data, schema)
-            return _persisted_triage(paper["arxiv_id_base"], data)
+            return _persisted_triage(paper["arxiv_id_base"], data), {"repair_used": True}
         except Exception:
-            return {
-                "arxiv_id_base": paper["arxiv_id_base"],
-                "decision": "reject",
-                "confidence": 0.0,
-                "reasons": ["triage_json_error", "insufficient_valid_output"],
-            }
+            return (
+                {
+                    "arxiv_id_base": paper["arxiv_id_base"],
+                    "decision": "reject",
+                    "confidence": 0.0,
+                    "reasons": ["triage_json_error", "insufficient_valid_output"],
+                },
+                {"repair_used": True},
+            )

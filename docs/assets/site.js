@@ -451,6 +451,8 @@ function parseMonthPayload(payload, fallbackMonth) {
       stats: normalizeStats({}, papers),
       papers,
       top_picks: [],
+      featured_paper_id: undefined,
+      has_featured_paper_id: false,
     };
   }
   if (!payload || typeof payload !== "object") {
@@ -459,6 +461,8 @@ function parseMonthPayload(payload, fallbackMonth) {
       stats: normalizeStats({}, []),
       papers: [],
       top_picks: [],
+      featured_paper_id: undefined,
+      has_featured_paper_id: false,
     };
   }
   const month = String(payload.month || fallbackMonth || "");
@@ -467,11 +471,19 @@ function parseMonthPayload(payload, fallbackMonth) {
   const topPicks = asArray(payload.top_picks)
     .map((item) => String(item || "").trim())
     .filter(Boolean);
+  const hasFeaturedPaperId = Object.prototype.hasOwnProperty.call(payload, "featured_paper_id");
+  const featuredPaperId = hasFeaturedPaperId
+    ? payload.featured_paper_id === null
+      ? null
+      : String(payload.featured_paper_id || "").trim()
+    : undefined;
   return {
     month,
     stats: normalizeStats(payload.stats, papers),
     papers,
     top_picks: topPicks,
+    featured_paper_id: featuredPaperId,
+    has_featured_paper_id: hasFeaturedPaperId,
   };
 }
 
@@ -1267,7 +1279,14 @@ async function setupDigestApp() {
       manifestMonthRow && manifestMonthRow.featured
         ? String(manifestMonthRow.featured.arxiv_id_base || "").trim()
         : "";
-    featuredPaperId = String(monthPayload.top_picks[0] || fallbackFeaturedId || "").trim();
+    if (monthPayload.has_featured_paper_id) {
+      featuredPaperId =
+        monthPayload.featured_paper_id === null
+          ? ""
+          : String(monthPayload.featured_paper_id || "").trim();
+    } else {
+      featuredPaperId = String(monthPayload.top_picks[0] || fallbackFeaturedId || "").trim();
+    }
   }
 
   const state = {

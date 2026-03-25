@@ -86,6 +86,7 @@ _LINKEDIN_URL = "https://www.linkedin.com/in/ismaelroblesrazzaq"
 _EMAIL_ADDRESS = "ismaelroblesrazzaq@gmail.com"
 _ASSET_VERSION = "20260225-1"
 _SITE_TAB_TITLE_BASE = "EEG-FM Digest"
+_FEATURED_PAPERS_PATH = Path("configs/featured_papers.json")
 
 _ICON_SVGS = {
     "github": (
@@ -169,6 +170,27 @@ def _safe_links(value: Any, arxiv_id_base: str) -> dict[str, str]:
     return links
 
 
+def load_featured_paper_overrides(path: Path = _FEATURED_PAPERS_PATH) -> dict[str, str | None]:
+    if not path.exists():
+        return {}
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(raw, dict):
+        raise RuntimeError(f"Invalid featured papers config at {path}: expected object")
+    overrides: dict[str, str | None] = {}
+    for month, value in raw.items():
+        month_key = str(month).strip()
+        if not month_key:
+            continue
+        if value is None:
+            overrides[month_key] = None
+            continue
+        paper_id = str(value).strip()
+        if not paper_id:
+            raise RuntimeError(f"Invalid featured paper override for {month_key}: expected non-empty arXiv id or null")
+        overrides[month_key] = paper_id
+    return overrides
+
+
 def _safe_triage(value: Any) -> dict[str, Any]:
     if not isinstance(value, dict):
         value = {}
@@ -247,12 +269,83 @@ def _paper_rows_from_summaries(
     return rows
 
 
+def _paper_map(rows: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    return {
+        str(row.get("arxiv_id_base", "")).strip(): row
+        for row in rows
+        if isinstance(row, dict) and str(row.get("arxiv_id_base", "")).strip()
+    }
+
+
+def _auto_featured_paper_id(
+    papers: list[dict[str, Any]],
+    top_picks: list[str],
+) -> str | None:
+    paper_map = _paper_map(papers)
+    for paper_id in top_picks:
+        row = paper_map.get(paper_id)
+        if isinstance(row, dict):
+            return paper_id
+    for row in papers:
+        if isinstance(row.get("summary"), dict):
+            return str(row.get("arxiv_id_base", "")).strip() or None
+    if papers:
+        return str(papers[0].get("arxiv_id_base", "")).strip() or None
+    return None
+
+
+def _resolve_featured_paper_id(
+    month: str,
+    papers: list[dict[str, Any]],
+    top_picks: list[str],
+    featured_overrides: dict[str, str | None],
+) -> str | None:
+    if month in featured_overrides:
+        override = featured_overrides[month]
+        if override is None:
+            return None
+        if override not in _paper_map(papers):
+            raise RuntimeError(
+                f"Featured paper override for {month} references missing paper id {override}."
+            )
+        return override
+    return _auto_featured_paper_id(papers, top_picks)
+
+
+def _featured_payload_from_row(featured_row: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not isinstance(featured_row, dict):
+        return None
+    summary = featured_row.get("summary")
+    links = featured_row.get("links", {})
+    featured_id = str(featured_row.get("arxiv_id_base", "")).strip()
+    title = str(featured_row.get("title", "")).strip()
+    if isinstance(summary, dict):
+        title = str(summary.get("title", title)).strip()
+    if not title:
+        title = featured_id
+    abs_url = ""
+    if isinstance(links, dict):
+        abs_url = str(links.get("abs", "")).strip()
+    if not abs_url and featured_id:
+        abs_url = f"https://arxiv.org/abs/{featured_id}"
+    one_liner = ""
+    if isinstance(summary, dict):
+        one_liner = str(summary.get("one_liner", "")).strip()
+    return {
+        "arxiv_id_base": featured_id,
+        "title": title,
+        "one_liner": one_liner,
+        "abs_url": abs_url,
+    }
+
+
 def _month_payload(
     month: str,
     summaries: list[dict[str, Any]],
     metadata: dict[str, dict[str, Any]],
     digest: dict[str, Any],
     backend_rows: list[dict[str, Any]] | None,
+    featured_overrides: dict[str, str | None],
 ) -> dict[str, Any]:
     if backend_rows is not None:
         papers = _paper_rows_from_backend(backend_rows)
@@ -260,6 +353,12 @@ def _month_payload(
         papers = _paper_rows_from_summaries(summaries, metadata)
     stats = digest.get("stats", {}) if isinstance(digest.get("stats"), dict) else {}
     top_picks = digest.get("top_picks", []) if isinstance(digest.get("top_picks"), list) else []
+    featured_paper_id = _resolve_featured_paper_id(
+        month,
+        papers,
+        [str(item) for item in top_picks],
+        featured_overrides,
+    )
     return {
         "month": month,
         "stats": {
@@ -270,6 +369,7 @@ def _month_payload(
                 len([p for p in papers if p.get("summary")]),
             ),
         },
+        "featured_paper_id": featured_paper_id,
         "top_picks": [str(item) for item in top_picks],
         "papers": papers,
     }
@@ -512,13 +612,15 @@ def write_month_site(
     metadata: dict[str, dict[str, Any]],
     digest: dict[str, Any],
     backend_rows: list[dict[str, Any]] | None = None,
+    featured_overrides: dict[str, str | None] | None = None,
 ) -> None:
     month_dir = docs_dir / "digest" / month
     month_dir.mkdir(parents=True, exist_ok=True)
     (month_dir / "index.html").write_text(
         render_month_page(month, summaries, metadata, digest), encoding="utf-8"
     )
-    payload = _month_payload(month, summaries, metadata, digest, backend_rows)
+    overrides = load_featured_paper_overrides() if featured_overrides is None else featured_overrides
+    payload = _month_payload(month, summaries, metadata, digest, backend_rows, overrides)
     (month_dir / "papers.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -529,7 +631,10 @@ def write_month_site(
     )
 
 
-def _month_manifest_item(month_dir: Path) -> dict[str, Any]:
+def _month_manifest_item(
+    month_dir: Path,
+    featured_overrides: dict[str, str | None],
+) -> dict[str, Any]:
     month = month_dir.name
     payload_path = month_dir / "papers.json"
     month_rev = "missing"
@@ -580,47 +685,9 @@ def _month_manifest_item(month_dir: Path) -> dict[str, Any]:
         if isinstance(picks, list):
             top_picks = [str(item) for item in picks if str(item).strip()]
 
-    featured_row: dict[str, Any] | None = None
-    if top_picks:
-        paper_map = {str(row.get("arxiv_id_base", "")): row for row in papers if isinstance(row, dict)}
-        for paper_id in top_picks:
-            row = paper_map.get(paper_id)
-            if isinstance(row, dict):
-                featured_row = row
-                if isinstance(row.get("summary"), dict):
-                    break
-    if featured_row is None:
-        for row in papers:
-            if isinstance(row.get("summary"), dict):
-                featured_row = row
-                break
-    if featured_row is None and papers:
-        featured_row = papers[0]
-
-    featured: dict[str, Any] | None = None
-    if isinstance(featured_row, dict):
-        summary = featured_row.get("summary")
-        links = featured_row.get("links", {})
-        featured_id = str(featured_row.get("arxiv_id_base", "")).strip()
-        title = str(featured_row.get("title", "")).strip()
-        if isinstance(summary, dict):
-            title = str(summary.get("title", title)).strip()
-        if not title:
-            title = featured_id
-        abs_url = ""
-        if isinstance(links, dict):
-            abs_url = str(links.get("abs", "")).strip()
-        if not abs_url and featured_id:
-            abs_url = f"https://arxiv.org/abs/{featured_id}"
-        one_liner = ""
-        if isinstance(summary, dict):
-            one_liner = str(summary.get("one_liner", "")).strip()
-        featured = {
-            "arxiv_id_base": featured_id,
-            "title": title,
-            "one_liner": one_liner,
-            "abs_url": abs_url,
-        }
+    featured_paper_id = _resolve_featured_paper_id(month, papers, top_picks, featured_overrides)
+    featured_row = _paper_map(papers).get(featured_paper_id or "")
+    featured = _featured_payload_from_row(featured_row)
     return {
         "month": month,
         "month_label": _month_label(month),
@@ -637,12 +704,16 @@ def _month_manifest_item(month_dir: Path) -> dict[str, Any]:
     }
 
 
-def update_home(docs_dir: Path) -> None:
+def update_home(
+    docs_dir: Path,
+    featured_overrides: dict[str, str | None] | None = None,
+) -> None:
     month_dirs = sorted(
         [p for p in (docs_dir / "digest").iterdir() if p.is_dir()],
         key=lambda p: p.name,
         reverse=True,
     ) if (docs_dir / "digest").exists() else []
+    overrides = load_featured_paper_overrides() if featured_overrides is None else featured_overrides
     months = [p.name for p in month_dirs]
     (docs_dir / "index.html").write_text(render_home_page(months), encoding="utf-8")
     explore_dir = docs_dir / "explore"
@@ -653,7 +724,7 @@ def update_home(docs_dir: Path) -> None:
     (process_dir / "index.html").write_text(render_process_page(), encoding="utf-8")
     manifest = {
         "latest": months[0] if months else None,
-        "months": [_month_manifest_item(month_dir) for month_dir in month_dirs],
+        "months": [_month_manifest_item(month_dir, overrides) for month_dir in month_dirs],
     }
     data_dir = docs_dir / "data"
     data_dir.mkdir(parents=True, exist_ok=True)

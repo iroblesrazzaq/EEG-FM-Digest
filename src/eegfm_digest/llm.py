@@ -119,7 +119,7 @@ class OpenAICall:
 
 def build_llm_call(config: LLMCallConfig) -> LLMCaller:
     provider = config.provider.strip().lower()
-    if provider == "openai":
+    if provider in {"openai", "openrouter"}:
         return OpenAICall(config)
     raise RuntimeError(f"Unsupported LM provider={config.provider}.")
 

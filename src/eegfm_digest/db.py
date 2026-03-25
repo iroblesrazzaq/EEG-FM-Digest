@@ -27,12 +27,14 @@ class DigestDB:
               arxiv_id_base TEXT PRIMARY KEY,
               month TEXT NOT NULL,
               triage_json TEXT NOT NULL,
+              triage_meta_json TEXT,
               updated_at TEXT DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE IF NOT EXISTS summaries (
               arxiv_id_base TEXT PRIMARY KEY,
               month TEXT NOT NULL,
               summary_json TEXT NOT NULL,
+              summary_meta_json TEXT,
               updated_at TEXT DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE IF NOT EXISTS runs (
@@ -42,7 +44,17 @@ class DigestDB:
             );
             """
         )
+        self._ensure_column("triage", "triage_meta_json", "TEXT")
+        self._ensure_column("summaries", "summary_meta_json", "TEXT")
         self.conn.commit()
+
+    def _ensure_column(self, table: str, column: str, column_type: str) -> None:
+        columns = {
+            str(row["name"])
+            for row in self.conn.execute(f"PRAGMA table_info({table})").fetchall()
+        }
+        if column not in columns:
+            self.conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {column_type}")
 
     def upsert_paper(self, month: str, paper: dict[str, Any]) -> None:
         self.conn.execute(
@@ -59,42 +71,72 @@ class DigestDB:
         self.conn.commit()
 
     def get_triage(self, arxiv_id_base: str) -> dict[str, Any] | None:
-        row = self.conn.execute(
-            "SELECT triage_json FROM triage WHERE arxiv_id_base=?", (arxiv_id_base,)
-        ).fetchone()
-        return json.loads(row["triage_json"]) if row else None
+        record = self.get_triage_with_meta(arxiv_id_base)
+        return record["data"] if record else None
 
-    def upsert_triage(self, month: str, triage: dict[str, Any]) -> None:
+    def get_triage_with_meta(self, arxiv_id_base: str) -> dict[str, Any] | None:
+        row = self.conn.execute(
+            "SELECT triage_json, triage_meta_json FROM triage WHERE arxiv_id_base=?", (arxiv_id_base,)
+        ).fetchone()
+        if not row:
+            return None
+        return {
+            "data": json.loads(row["triage_json"]),
+            "meta": json.loads(row["triage_meta_json"]) if row["triage_meta_json"] else None,
+        }
+
+    def upsert_triage(self, month: str, triage: dict[str, Any], meta: dict[str, Any] | None = None) -> None:
         self.conn.execute(
             """
-            INSERT INTO triage(arxiv_id_base, month, triage_json)
-            VALUES (?, ?, ?)
+            INSERT INTO triage(arxiv_id_base, month, triage_json, triage_meta_json)
+            VALUES (?, ?, ?, ?)
             ON CONFLICT(arxiv_id_base) DO UPDATE SET
               month=excluded.month,
               triage_json=excluded.triage_json,
+              triage_meta_json=excluded.triage_meta_json,
               updated_at=CURRENT_TIMESTAMP
             """,
-            (triage["arxiv_id_base"], month, json.dumps(triage, ensure_ascii=False)),
+            (
+                triage["arxiv_id_base"],
+                month,
+                json.dumps(triage, ensure_ascii=False),
+                json.dumps(meta, ensure_ascii=False, sort_keys=True) if meta is not None else None,
+            ),
         )
         self.conn.commit()
 
     def get_summary(self, arxiv_id_base: str) -> dict[str, Any] | None:
-        row = self.conn.execute(
-            "SELECT summary_json FROM summaries WHERE arxiv_id_base=?", (arxiv_id_base,)
-        ).fetchone()
-        return json.loads(row["summary_json"]) if row else None
+        record = self.get_summary_with_meta(arxiv_id_base)
+        return record["data"] if record else None
 
-    def upsert_summary(self, month: str, summary: dict[str, Any]) -> None:
+    def get_summary_with_meta(self, arxiv_id_base: str) -> dict[str, Any] | None:
+        row = self.conn.execute(
+            "SELECT summary_json, summary_meta_json FROM summaries WHERE arxiv_id_base=?", (arxiv_id_base,)
+        ).fetchone()
+        if not row:
+            return None
+        return {
+            "data": json.loads(row["summary_json"]),
+            "meta": json.loads(row["summary_meta_json"]) if row["summary_meta_json"] else None,
+        }
+
+    def upsert_summary(self, month: str, summary: dict[str, Any], meta: dict[str, Any] | None = None) -> None:
         self.conn.execute(
             """
-            INSERT INTO summaries(arxiv_id_base, month, summary_json)
-            VALUES (?, ?, ?)
+            INSERT INTO summaries(arxiv_id_base, month, summary_json, summary_meta_json)
+            VALUES (?, ?, ?, ?)
             ON CONFLICT(arxiv_id_base) DO UPDATE SET
               month=excluded.month,
               summary_json=excluded.summary_json,
+              summary_meta_json=excluded.summary_meta_json,
               updated_at=CURRENT_TIMESTAMP
             """,
-            (summary["arxiv_id_base"], month, json.dumps(summary, ensure_ascii=False)),
+            (
+                summary["arxiv_id_base"],
+                month,
+                json.dumps(summary, ensure_ascii=False),
+                json.dumps(meta, ensure_ascii=False, sort_keys=True) if meta is not None else None,
+            ),
         )
         self.conn.commit()
 

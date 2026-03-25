@@ -11,14 +11,21 @@ from typing import Any
 from dotenv import load_dotenv
 
 from .arxiv import fetch_month_candidates
+from .cache_meta import (
+    SUMMARY_STAGE_LOGIC_VERSION,
+    TRIAGE_STAGE_LOGIC_VERSION,
+    build_stage_descriptor,
+    build_stage_metadata,
+    is_cache_current,
+)
 from .config import Config, load_config
 from .db import DigestDB
 from .llm import LLMCallConfig, LLMRateLimitError, build_llm_call, load_api_key
 from .pdf import download_pdf, extract_text, slice_paper_text
 from .render import build_digest, write_json, write_jsonl
 from .site import update_home, write_month_site
-from .summarize import summarize_paper
-from .triage import load_schema, triage_paper
+from .summarize import summarize_paper_with_meta
+from .triage import load_schema, triage_paper_with_meta
 
 
 class RateLimitStop(BaseException):
@@ -159,6 +166,7 @@ def _triage_client_error_ids(month_out: Path) -> set[str]:
                 ids.add(aid)
     return ids
 
+
 def _normalize_triage_row(arxiv_id_base: str, result: dict[str, Any]) -> dict[str, Any]:
     reasons = result.get("reasons", [])
     if not isinstance(reasons, list):
@@ -177,6 +185,7 @@ def _run_triage_phase_for_month(
     month: str,
     db: DigestDB,
     llm: Any,
+    llm_config: LLMCallConfig,
 ) -> None:
     month_out = cfg.output_dir / month
     month_out.mkdir(parents=True, exist_ok=True)
@@ -200,6 +209,15 @@ def _run_triage_phase_for_month(
     triage_schema = load_schema(Path("schemas/triage.json"))
     triage_prompt = Path("prompts/triage.md").read_text(encoding="utf-8")
     repair_prompt = Path("prompts/repair_json.md").read_text(encoding="utf-8")
+    triage_descriptor = build_stage_descriptor(
+        stage="triage",
+        provider=llm_config.provider,
+        model=llm_config.model,
+        prompt_template=triage_prompt,
+        repair_template=repair_prompt,
+        schema=triage_schema,
+        stage_logic_version=TRIAGE_STAGE_LOGIC_VERSION,
+    )
 
     triage_rows: list[dict[str, Any]] = []
     for paper in candidates:
@@ -207,12 +225,12 @@ def _run_triage_phase_for_month(
         if run_cfg.triage_force:
             cached = None
         else:
-            cached = db.get_triage(aid)
-        if cached:
-            triage_rows.append(_normalize_triage_row(aid, cached))
+            cached = db.get_triage_with_meta(aid)
+        if cached and is_cache_current(cached.get("meta"), triage_descriptor["cache_version"]):
+            triage_rows.append(_normalize_triage_row(aid, cached["data"]))
             continue
         try:
-            result = triage_paper(
+            result, triage_call_meta = triage_paper_with_meta(
                 paper=paper,
                 llm=llm,
                 prompt_template=triage_prompt,
@@ -229,8 +247,17 @@ def _run_triage_phase_for_month(
                 "confidence": 0.0,
                 "reasons": [f"triage_exception:{type(exc).__name__}", "automatic_reject_fallback"],
             }
+            triage_call_meta = {"repair_used": False}
         triage_rows.append(row)
-        db.upsert_triage(month, row)
+        db.upsert_triage(
+            month,
+            row,
+            meta=build_stage_metadata(
+                triage_descriptor,
+                repair_used=bool(triage_call_meta.get("repair_used", False)),
+                updated_at_source=str(paper.get("updated", "")).strip() or None,
+            ),
+        )
         if run_cfg.triage_sleep_seconds > 0:
             time.sleep(run_cfg.triage_sleep_seconds)
 
@@ -245,6 +272,7 @@ def _run_summary_phase_for_month(
     month: str,
     db: DigestDB,
     llm: Any,
+    llm_config: LLMCallConfig,
 ) -> None:
     month_out = cfg.output_dir / month
     raw_path = month_out / "arxiv_raw.json"
@@ -267,9 +295,17 @@ def _run_summary_phase_for_month(
     summary_schema = _load_json(Path("schemas/summary.json"))
     summarize_prompt = Path("prompts/summarize.md").read_text(encoding="utf-8")
     repair_prompt = Path("prompts/repair_json.md").read_text(encoding="utf-8")
+    summary_descriptor = build_stage_descriptor(
+        stage="summary",
+        provider=llm_config.provider,
+        model=llm_config.model,
+        prompt_template=summarize_prompt,
+        repair_template=repair_prompt,
+        schema=summary_schema,
+        stage_logic_version=SUMMARY_STAGE_LOGIC_VERSION,
+    )
 
-    existing_summaries = [] if run_cfg.summary_force else _load_jsonl(month_out / "papers.jsonl")
-    summary_map: dict[str, dict[str, Any]] = {s["arxiv_id_base"]: s for s in existing_summaries}
+    summary_map: dict[str, dict[str, Any]] = {}
     rejected_ids = {aid for aid, triage in triage_map.items() if triage.get("decision") == "reject"}
     for aid in rejected_ids:
         summary_map.pop(aid, None)
@@ -284,9 +320,10 @@ def _run_summary_phase_for_month(
 
     for paper in accepted:
         aid = paper["arxiv_id_base"]
-        if aid in summary_map and not run_cfg.summary_force:
+        cached_summary = None if run_cfg.summary_force else db.get_summary_with_meta(aid)
+        if cached_summary and is_cache_current(cached_summary.get("meta"), summary_descriptor["cache_version"]):
+            summary_map[aid] = cached_summary["data"]
             continue
-
         pdf_state = _empty_pdf_state()
         raw_text = ""
         notes = "summary_not_attempted"
@@ -323,7 +360,7 @@ def _run_summary_phase_for_month(
                 }
 
         if raw_text.strip():
-            summary = summarize_paper(
+            summary, summary_call_meta = summarize_paper_with_meta(
                 paper=paper,
                 triage=triage_map.get(aid, {}),
                 raw_fulltext=raw_text,
@@ -341,7 +378,15 @@ def _run_summary_phase_for_month(
                 max_input_tokens=cfg.summary_max_input_tokens,
             )
             summary_map[aid] = summary
-            db.upsert_summary(month, summary)
+            db.upsert_summary(
+                month,
+                summary,
+                meta=build_stage_metadata(
+                    summary_descriptor,
+                    repair_used=bool(summary_call_meta.get("repair_used", False)),
+                    updated_at_source=str(paper.get("updated", "")).strip() or None,
+                ),
+            )
             print(f"[summary] {month}: summarized {aid}")
             if run_cfg.summary_sleep_seconds > 0:
                 time.sleep(run_cfg.summary_sleep_seconds)
@@ -428,13 +473,21 @@ def run_batch(config_path: Path) -> None:
     try:
         triage_llm: Any = build_llm_call(
             LLMCallConfig(
-                provider="openai",
+                provider="openrouter",
                 api_key=api_key,
                 model=run_cfg.triage_model or cfg.llm_model_triage,
                 temperature=cfg.llm_temperature_triage,
                 max_output_tokens=cfg.llm_max_output_tokens_triage,
                 base_url="https://openrouter.ai/api/v1",
             )
+        )
+        triage_llm_config = LLMCallConfig(
+            provider="openrouter",
+            api_key=api_key,
+            model=run_cfg.triage_model or cfg.llm_model_triage,
+            temperature=cfg.llm_temperature_triage,
+            max_output_tokens=cfg.llm_max_output_tokens_triage,
+            base_url="https://openrouter.ai/api/v1",
         )
 
         # Phase 1: triage all months first.
@@ -445,24 +498,23 @@ def run_batch(config_path: Path) -> None:
                 if run_cfg.sync_cache_from_outputs:
                     _bootstrap_cache_from_outputs(db, month, month_out)
                 print(f"[triage] {month}: start")
-                _run_triage_phase_for_month(cfg, run_cfg, month, db, triage_llm)
+                _run_triage_phase_for_month(cfg, run_cfg, month, db, triage_llm, triage_llm_config)
         finally:
             triage_llm.close()
 
         # Phase 2: summarize accepted for all months.
-        summary_llm: Any = build_llm_call(
-            LLMCallConfig(
-                provider="openai",
-                api_key=api_key,
-                model=run_cfg.summary_model or cfg.llm_model_summary,
-                temperature=cfg.llm_temperature_summary,
-                max_output_tokens=cfg.llm_max_output_tokens_summary,
-                base_url="https://openrouter.ai/api/v1",
-            )
+        summary_llm_config = LLMCallConfig(
+            provider="openrouter",
+            api_key=api_key,
+            model=run_cfg.summary_model or cfg.llm_model_summary,
+            temperature=cfg.llm_temperature_summary,
+            max_output_tokens=cfg.llm_max_output_tokens_summary,
+            base_url="https://openrouter.ai/api/v1",
         )
+        summary_llm: Any = build_llm_call(summary_llm_config)
         try:
             for month in months:
-                _run_summary_phase_for_month(cfg, run_cfg, month, db, summary_llm)
+                _run_summary_phase_for_month(cfg, run_cfg, month, db, summary_llm, summary_llm_config)
         finally:
             summary_llm.close()
     finally:

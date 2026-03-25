@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 import os
 
+DEFAULT_OPENROUTER_MODEL = "stepfun/step-3.5-flash:free"
+
 
 @dataclass(frozen=True)
 class Config:
@@ -37,13 +39,13 @@ def load_config() -> Config:
             os.environ.get("OPENROUTER_MODEL_TRIAGE")
             or os.environ.get("LLM_MODEL_TRIAGE")
             or os.environ.get("GEMINI_MODEL_TRIAGE")
-            or "stepfun/step-3.5-flash:free"
+            or DEFAULT_OPENROUTER_MODEL
         ),
         llm_model_summary=(
             os.environ.get("OPENROUTER_MODEL_SUMMARY")
             or os.environ.get("LLM_MODEL_SUMMARY")
             or os.environ.get("GEMINI_MODEL_SUMMARY")
-            or "stepfun/step-3.5-flash:free"
+            or DEFAULT_OPENROUTER_MODEL
         ),
         arxiv_rate_limit_seconds=float(os.environ.get("ARXIV_RATE_LIMIT_SECONDS", "2")),
         arxiv_connect_timeout_seconds=float(os.environ.get("ARXIV_CONNECT_TIMEOUT_SECONDS", "10")),

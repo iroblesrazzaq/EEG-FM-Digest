@@ -218,6 +218,35 @@ def summarize_paper(
     schema: dict[str, Any],
     max_input_tokens: int,
 ) -> dict[str, Any]:
+    result, _meta = summarize_paper_with_meta(
+        paper=paper,
+        triage=triage,
+        raw_fulltext=raw_fulltext,
+        fulltext_slices=fulltext_slices,
+        used_fulltext=used_fulltext,
+        notes=notes,
+        llm=llm,
+        prompt_template=prompt_template,
+        repair_template=repair_template,
+        schema=schema,
+        max_input_tokens=max_input_tokens,
+    )
+    return result
+
+
+def summarize_paper_with_meta(
+    paper: dict[str, Any],
+    triage: dict[str, Any],
+    raw_fulltext: str,
+    fulltext_slices: dict[str, str],
+    used_fulltext: bool,
+    notes: str,
+    llm: LLMCaller,
+    prompt_template: str,
+    repair_template: str,
+    schema: dict[str, Any],
+    max_input_tokens: int,
+) -> tuple[dict[str, Any], dict[str, Any]]:
     payload, mode_notes = _select_payload(
         paper=paper,
         triage=triage,
@@ -239,7 +268,7 @@ def summarize_paper(
             notes=merged_notes,
         )
         validate_json(data, schema)
-        return data
+        return data, {"repair_used": False}
     except Exception:
         repair_prompt = (
             repair_template.replace("{{SCHEMA_JSON}}", json.dumps(schema, ensure_ascii=False))
@@ -255,36 +284,39 @@ def summarize_paper(
                 notes=merged_notes,
             )
             validate_json(data, schema)
-            return data
+            return data, {"repair_used": True}
         except Exception:
             # deterministic fallback with schema-compatible defaults
-            return {
-                "arxiv_id_base": paper["arxiv_id_base"],
-                "title": paper["title"],
-                "published_date": paper["published"][:10],
-                "categories": paper["categories"],
-                "paper_type": "other",
-                "one_liner": "Summary unavailable due to JSON validation failure.",
-                "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-                "unique_contribution": "unknown",
-                "key_points": ["unknown", "unknown", "unknown"],
-                "data_scale": {"datasets": [], "subjects": None, "eeg_hours": None, "channels": None},
-                "method": {
-                    "architecture": None,
-                    "objective": None,
-                    "pretraining": None,
-                    "finetuning": None,
+            return (
+                {
+                    "arxiv_id_base": paper["arxiv_id_base"],
+                    "title": paper["title"],
+                    "published_date": paper["published"][:10],
+                    "categories": paper["categories"],
+                    "paper_type": "other",
+                    "one_liner": "Summary unavailable due to JSON validation failure.",
+                    "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+                    "unique_contribution": "unknown",
+                    "key_points": ["unknown", "unknown", "unknown"],
+                    "data_scale": {"datasets": [], "subjects": None, "eeg_hours": None, "channels": None},
+                    "method": {
+                        "architecture": None,
+                        "objective": None,
+                        "pretraining": None,
+                        "finetuning": None,
+                    },
+                    "evaluation": {"tasks": [], "benchmarks": [], "headline_results": []},
+                    "open_source": {"code_url": None, "weights_url": None, "license": None},
+                    "tags": {
+                        "paper_type": [],
+                        "backbone": [],
+                        "objective": [],
+                        "tokenization": [],
+                        "topology": [],
+                    },
+                    "limitations": ["unknown", "summary_json_error"],
+                    "used_fulltext": used_fulltext,
+                    "notes": f"{merged_notes};summary_json_error",
                 },
-                "evaluation": {"tasks": [], "benchmarks": [], "headline_results": []},
-                "open_source": {"code_url": None, "weights_url": None, "license": None},
-                "tags": {
-                    "paper_type": [],
-                    "backbone": [],
-                    "objective": [],
-                    "tokenization": [],
-                    "topology": [],
-                },
-                "limitations": ["unknown", "summary_json_error"],
-                "used_fulltext": used_fulltext,
-                "notes": f"{merged_notes};summary_json_error",
-            }
+                {"repair_used": True},
+            )
