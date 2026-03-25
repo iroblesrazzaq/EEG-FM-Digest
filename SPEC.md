@@ -5,8 +5,8 @@ Implement a monthly “EEG Foundation Model Digest” pipeline.
 
 ### Pipeline stages
 - **Stage 1 (Retrieve):** Query arXiv by relevant categories and a high-recall **title+abstract keyword strategy**.
-- **Stage 2 (Triage):** A **cheap Gemini model** reviews title+abstract and decides whether it is an **EEG-FM** paper (strict JSON output).
-- **Stage 3 (Deep summary):** Download PDF for accepted papers, extract text, and use a stronger Gemini model to generate a **deep structured summary** (strict JSON output).
+- **Stage 2 (Triage):** A **cheap OpenRouter model** reviews title+abstract and decides whether it is an **EEG-FM** paper (strict JSON output).
+- **Stage 3 (Deep summary):** Download PDF for accepted papers, extract text, and use a stronger OpenRouter model to generate a **deep structured summary** (strict JSON output).
 - **Stage 4 (Publish):** Generate a static GitHub Pages site in `docs/` with **one subpage per month** containing paper cards.
 
 ### Outputs (per month `YYYY-MM`)
@@ -93,7 +93,7 @@ Use `published` for inclusion, not `updated`.
 ### 3.6 Rate limiting
 - Sleep at least `ARXIV_RATE_LIMIT_SECONDS` (default 2) between paginated API calls.
 
-## 4) Stage 2: Cheap Gemini triage on abstract
+## 4) Stage 2: Cheap OpenRouter triage on abstract
 
 ### 4.1 Inputs to triage model
 Provide:
@@ -119,7 +119,7 @@ If parse/schema fails:
 - retry once with `prompts/repair_json.md`
 - if still failing: store error, mark reject with `confidence=0.0` and reason `triage_json_error`
 
-## 5) Stage 3: Deep summary (PDF + extraction + strong Gemini)
+## 5) Stage 3: Deep summary (PDF + extraction + strong OpenRouter model)
 
 ### 5.1 Which papers proceed
 Proceed for:
@@ -133,8 +133,8 @@ Proceed for:
 
 ### 5.3 Text extraction
 - Extract to: `outputs/YYYY-MM/text/{arxiv_id_base}.txt`
-- Preferred: `pypdf`
-- Fallback: `pdfminer.six`
+- Preferred: `pymupdf`
+- Fallback chain: `pypdf`, then `pdfminer.six`
 - Save extraction metadata: pages, chars, tool, errors
 
 ### 5.4 Deep summary input strategy
@@ -197,11 +197,11 @@ Defaults:
 - max-candidates: 500
 - max-accepted: 80
 
-## 9) Configuration (Gemini)
+## 9) Configuration (OpenRouter)
 Env vars:
-- `GEMINI_API_KEY` (or `GOOGLE_API_KEY`)
-- `GEMINI_MODEL_TRIAGE`
-- `GEMINI_MODEL_SUMMARY`
+- `OPENROUTER_API_KEY`
+- `OPENROUTER_MODEL_TRIAGE`
+- `OPENROUTER_MODEL_SUMMARY`
 - `ARXIV_RATE_LIMIT_SECONDS`
 - `PDF_RATE_LIMIT_SECONDS`
 - `OUTPUT_DIR`

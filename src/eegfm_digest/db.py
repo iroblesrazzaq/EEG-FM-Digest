@@ -98,6 +98,10 @@ class DigestDB:
         )
         self.conn.commit()
 
+    def delete_summary(self, arxiv_id_base: str) -> None:
+        self.conn.execute("DELETE FROM summaries WHERE arxiv_id_base=?", (arxiv_id_base,))
+        self.conn.commit()
+
     def upsert_run(self, month: str, stats: dict[str, Any]) -> None:
         self.conn.execute(
             """

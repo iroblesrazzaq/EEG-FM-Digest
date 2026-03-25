@@ -4,18 +4,18 @@
 ## Goal
 Implement SPEC.md using:
 - arXiv API (Atom feed)
-- Gemini via google-genai Python SDK
+- OpenRouter chat completions API
 - SQLite for state
 - deterministic HTML site output in docs/
 
 ## Key choices (do not deviate without updating SPEC.md)
-- LLM provider: Gemini (google-genai)
+- LLM provider: OpenRouter
 - Publishing: GitHub Pages from /docs (static HTML, no-Jekyll)
 
 ## Environment variables
-- GEMINI_API_KEY (or GOOGLE_API_KEY)
-- GEMINI_MODEL_TRIAGE
-- GEMINI_MODEL_SUMMARY
+- OPENROUTER_API_KEY
+- OPENROUTER_MODEL_TRIAGE
+- OPENROUTER_MODEL_SUMMARY
 
 ## Implementation rules
 - Keep pipeline staged: fetch -> triage -> (pdf+extract) -> summarize -> render -> publish.
@@ -31,7 +31,7 @@ Implement SPEC.md using:
   - arxiv.py
   - keywords.py
   - db.py
-  - llm_gemini.py
+  - llm.py
   - triage.py
   - pdf.py
   - summarize.py

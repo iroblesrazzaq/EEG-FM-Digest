@@ -2,22 +2,20 @@
 
 Monthly arXiv-based digest for EEG Foundation Model papers:
 1) Stage 1: keyword retrieval (title+abstract) within relevant arXiv categories
-2) Stage 2: Gemini triage on title+abstract
-3) Stage 3: PDF download + text extraction + Gemini deep summary
+2) Stage 2: OpenRouter triage on title+abstract
+3) Stage 3: PDF download + text extraction + OpenRouter deep summary
 4) Publish: static site in `/docs` with one page per month
 
 ## Setup
 ```bash
 pip install -e ".[dev]"
-export GEMINI_API_KEY="..."
-export GEMINI_MODEL_TRIAGE="gemini-3-flash-preview"
-export GEMINI_MODEL_SUMMARY="gemini-3-flash-preview"
+export OPENROUTER_API_KEY="..."
+export OPENROUTER_MODEL_TRIAGE="stepfun/step-3.5-flash:free"
+export OPENROUTER_MODEL_SUMMARY="stepfun/step-3.5-flash:free"
 export ARXIV_CONNECT_TIMEOUT_SECONDS="10"
 export ARXIV_READ_TIMEOUT_SECONDS="90"
 export ARXIV_RETRIES="3"
 ```
-
-You can also use `GOOGLE_API_KEY` instead of `GEMINI_API_KEY`.
 
 ## Main run command
 Run the pipeline for a specific month (`YYYY-MM`):
@@ -42,6 +40,8 @@ Use the batch runner to triage multiple months first, then summarize accepted pa
 python -m eegfm_digest.batch --config configs/batch_all_months.json
 python -m eegfm_digest.batch --config configs/batch_single_month.json
 ```
+
+The checked-in batch configs now use OpenRouter model `stepfun/step-3.5-flash:free` for both triage and summary.
 
 Wrapper scripts:
 ```bash
@@ -93,6 +93,29 @@ Summary input mode is:
 ### 4) HTML rendering only
 ```bash
 pytest -q tests/test_render_site.py
+```
+
+## Manual triage eval (fish shell)
+Build or refresh the frozen gold snapshot from the curated title list:
+```fish
+eegfm-triage-eval build-gold \
+  --db data/digest.sqlite \
+  --titles-file tests/fixtures/triage_eval_seed_titles_v1.txt \
+  --out tests/fixtures/triage_eval_gold_v1.jsonl
+```
+
+Score current DB triage decisions against the gold snapshot (`accept` vs `not_pass`, where `reject+borderline => not_pass`):
+```fish
+eegfm-triage-eval score \
+  --db data/digest.sqlite \
+  --gold tests/fixtures/triage_eval_gold_v1.jsonl
+```
+
+Equivalent module invocation:
+```fish
+python -m eegfm_digest.eval_triage score \
+  --db data/digest.sqlite \
+  --gold tests/fixtures/triage_eval_gold_v1.jsonl
 ```
 
 ## Where outputs go
