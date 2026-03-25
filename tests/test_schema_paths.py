@@ -5,6 +5,11 @@ from eegfm_digest.summarize import summarize_paper
 from eegfm_digest.triage import load_schema, triage_paper
 
 
+class FakeCallResult:
+    def __init__(self, text: str):
+        self.text = text
+
+
 class FakeLLM:
     def __init__(self, outputs, token_count: int = 100):
         self.outputs = outputs
@@ -12,11 +17,11 @@ class FakeLLM:
         self.prompts: list[str] = []
         self.token_count = token_count
 
-    def generate(self, prompt, schema=None):
+    def call(self, prompt, schema=None):
         self.prompts.append(prompt)
         out = self.outputs[self.i]
         self.i += 1
-        return out
+        return FakeCallResult(out)
 
     def count_tokens(self, content: str) -> int:
         return self.token_count

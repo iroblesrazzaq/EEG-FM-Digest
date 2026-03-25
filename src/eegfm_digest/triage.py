@@ -6,7 +6,7 @@ from typing import Any
 
 from jsonschema import ValidationError, validate
 
-from .llm_gemini import GeminiClient, parse_json_text
+from .llm import LLMCaller, parse_json_text
 
 
 class SchemaValidationError(RuntimeError):
@@ -35,7 +35,7 @@ def _persisted_triage(arxiv_id_base: str, data: dict[str, Any]) -> dict[str, Any
 
 def triage_paper(
     paper: dict[str, Any],
-    llm: GeminiClient,
+    llm: LLMCaller,
     prompt_template: str,
     repair_template: str,
     schema: dict[str, Any],
@@ -43,7 +43,7 @@ def triage_paper(
     prompt = prompt_template.replace("{{TITLE}}", paper["title"]).replace(
         "{{ABSTRACT}}", paper["summary"]
     )
-    raw = llm.generate(prompt, schema=schema)
+    raw = llm.call(prompt, schema=schema).text
     try:
         data = parse_json_text(raw)
         validate_json(data, schema)
@@ -54,7 +54,7 @@ def triage_paper(
             .replace("{{BAD_OUTPUT}}", raw)
         )
         try:
-            repaired = llm.generate(repair_prompt, schema=schema)
+            repaired = llm.call(repair_prompt, schema=schema).text
             data = parse_json_text(repaired)
             validate_json(data, schema)
             return _persisted_triage(paper["arxiv_id_base"], data)

@@ -1,5 +1,6 @@
 import hashlib
 import json
+import sqlite3
 from pathlib import Path
 
 from eegfm_digest.config import Config
@@ -38,11 +39,11 @@ def test_pipeline_writes_backend_rows_and_skips_site(monkeypatch, tmp_path):
     monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
     monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
 
-    class DummyGemini:
-        def __init__(self, _config):  # noqa: ANN001
+    class DummyLMCall:
+        def close(self):  # noqa: ANN201
             return None
 
-    monkeypatch.setattr("eegfm_digest.pipeline.GeminiClient", DummyGemini)
+    monkeypatch.setattr("eegfm_digest.pipeline.build_llm_call", lambda *_args, **_kwargs: DummyLMCall())
 
     def fake_triage_paper(paper, *_args, **_kwargs):  # noqa: ANN001
         decision = "accept" if paper["arxiv_id_base"] == "2501.00001" else "reject"
@@ -119,8 +120,8 @@ def test_pipeline_writes_backend_rows_and_skips_site(monkeypatch, tmp_path):
     monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", fake_summarize_paper)
 
     cfg = Config(
-        gemini_model_triage="triage-model",
-        gemini_model_summary="summary-model",
+        llm_model_triage="triage-model",
+        llm_model_summary="summary-model",
         output_dir=tmp_path / "outputs",
         data_dir=tmp_path / "data",
         docs_dir=tmp_path / "docs",
@@ -146,7 +147,7 @@ def test_pipeline_writes_backend_rows_and_skips_site(monkeypatch, tmp_path):
 
     assert accepted_row["paper_summary"] is not None
     assert accepted_row["pdf"]["downloaded"] is True
-    assert accepted_row["pdf"]["extract_meta"]["tool"] == "pypdf"
+    assert accepted_row["pdf"]["extract_meta"]["tool"] in {"pymupdf", "pypdf", "pdfminer"}
 
     assert rejected_row["paper_summary"] is None
     assert rejected_row["pdf"] == {
@@ -169,11 +170,11 @@ def test_pipeline_site_outputs_manifest_month_revision(monkeypatch, tmp_path):
     monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
     monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
 
-    class DummyGemini:
-        def __init__(self, _config):  # noqa: ANN001
+    class DummyLMCall:
+        def close(self):  # noqa: ANN201
             return None
 
-    monkeypatch.setattr("eegfm_digest.pipeline.GeminiClient", DummyGemini)
+    monkeypatch.setattr("eegfm_digest.pipeline.build_llm_call", lambda *_args, **_kwargs: DummyLMCall())
 
     monkeypatch.setattr(
         "eegfm_digest.pipeline.triage_paper",
@@ -248,8 +249,8 @@ def test_pipeline_site_outputs_manifest_month_revision(monkeypatch, tmp_path):
     )
 
     cfg = Config(
-        gemini_model_triage="triage-model",
-        gemini_model_summary="summary-model",
+        llm_model_triage="triage-model",
+        llm_model_summary="summary-model",
         output_dir=tmp_path / "outputs",
         data_dir=tmp_path / "data",
         docs_dir=tmp_path / "docs",
@@ -273,3 +274,120 @@ def test_pipeline_site_outputs_manifest_month_revision(monkeypatch, tmp_path):
     assert (cfg.docs_dir / "index.html").exists()
     assert (cfg.docs_dir / "explore" / "index.html").exists()
     assert (cfg.docs_dir / "process" / "index.html").exists()
+
+
+def test_pipeline_removes_stale_summary_when_triage_flips_to_reject(monkeypatch, tmp_path):
+    candidate = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Flip Paper")
+    candidates = [candidate]
+
+    monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
+
+    class DummyLMCall:
+        def close(self):  # noqa: ANN201
+            return None
+
+    monkeypatch.setattr("eegfm_digest.pipeline.build_llm_call", lambda *_args, **_kwargs: DummyLMCall())
+
+    triage_state = {"decision": "accept"}
+
+    def fake_triage_paper(paper, *_args, **_kwargs):  # noqa: ANN001
+        decision = triage_state["decision"]
+        return {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "decision": decision,
+            "confidence": 0.9 if decision == "accept" else 0.1,
+            "reasons": ["r1", "r2"],
+        }
+
+    monkeypatch.setattr("eegfm_digest.pipeline.triage_paper", fake_triage_paper)
+
+    def fake_download_pdf(_url, out_path, _rate):  # noqa: ANN001
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_bytes(b"%PDF-1.4")
+        return out_path
+
+    def fake_extract_text(_pdf_path, text_path):  # noqa: ANN001
+        text_path.parent.mkdir(parents=True, exist_ok=True)
+        text_path.write_text("Abstract\nA\n\nIntroduction\nB\n\nMethods\nC\n\nResults\nD\n\nConclusion\nE", encoding="utf-8")
+        return {"tool": "pypdf", "pages": 1, "chars": 100, "error": None}
+
+    monkeypatch.setattr("eegfm_digest.pipeline.download_pdf", fake_download_pdf)
+    monkeypatch.setattr("eegfm_digest.pipeline.extract_text", fake_extract_text)
+
+    def fake_summarize_paper(paper, *_args, **_kwargs):  # noqa: ANN001
+        return {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "title": paper["title"],
+            "published_date": paper["published"][:10],
+            "categories": paper["categories"],
+            "paper_type": "method",
+            "one_liner": "Concise summary line.",
+            "detailed_summary": (
+                "This work proposes a concise EEG modeling approach with explicit transfer framing "
+                "and reports benchmark gains using pretrained representations."
+            ),
+            "unique_contribution": "Deterministic contribution sentence.",
+            "key_points": ["point one", "point two", "point three"],
+            "data_scale": {
+                "datasets": ["Dataset-A"],
+                "subjects": 10,
+                "eeg_hours": 2.0,
+                "channels": 64,
+            },
+            "method": {
+                "architecture": "Transformer",
+                "objective": "Masked prediction",
+                "pretraining": "Self-supervised",
+                "finetuning": "Linear probe",
+            },
+            "evaluation": {
+                "tasks": ["classification"],
+                "benchmarks": ["Benchmark-A"],
+                "headline_results": ["Improved AUROC"],
+            },
+            "open_source": {"code_url": None, "weights_url": None, "license": None},
+            "tags": {
+                "paper_type": ["eeg-fm"],
+                "backbone": ["transformer"],
+                "objective": ["masked-reconstruction"],
+                "tokenization": ["time-patch"],
+                "topology": ["fixed-montage"],
+            },
+            "limitations": ["limited cohorts", "single dataset"],
+            "used_fulltext": True,
+            "notes": "ok",
+        }
+
+    monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", fake_summarize_paper)
+
+    cfg = Config(
+        llm_model_triage="triage-model",
+        llm_model_summary="summary-model",
+        output_dir=tmp_path / "outputs",
+        data_dir=tmp_path / "data",
+        docs_dir=tmp_path / "docs",
+        max_candidates=20,
+        max_accepted=20,
+        arxiv_rate_limit_seconds=0.0,
+        pdf_rate_limit_seconds=0.0,
+    )
+
+    run_month(cfg, "2025-01", no_site=True, force=True)
+
+    triage_state["decision"] = "reject"
+    run_month(cfg, "2025-01", no_site=True, force=True)
+
+    month_out = cfg.output_dir / "2025-01"
+    paper_rows = _read_jsonl(month_out / "papers.jsonl")
+    backend_rows = _read_jsonl(month_out / "backend_rows.jsonl")
+
+    assert paper_rows == []
+    assert backend_rows[0]["paper_summary"] is None
+
+    conn = sqlite3.connect(cfg.data_dir / "digest.sqlite")
+    try:
+        summary_count = conn.execute("SELECT COUNT(*) FROM summaries WHERE arxiv_id_base=?", ("2501.00001",)).fetchone()[0]
+    finally:
+        conn.close()
+    assert summary_count == 0

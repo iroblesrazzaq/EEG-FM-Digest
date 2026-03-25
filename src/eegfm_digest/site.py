@@ -37,9 +37,8 @@ _PROCESS_DETAILS_STEPS = [
 ]
 
 _PROCESS_DETAILS_FOOTER = (
-    "All triage and summary LLM calls through February 2026 use arcee-ai/trinity-large-preview:free "
-    "(thanks to the Arcee AI team for making their model free on OpenRouter). For all previous papers "
-    "(2021 - Jan 2026), running this whole process cost ~3 million tokens, so each accepted paper costs "
+    "Current triage and summary LLM calls use stepfun/step-3.5-flash:free via OpenRouter. "
+    "For all previous papers (2021 - Jan 2026), running this whole process cost ~3 million tokens, so each accepted paper costs "
     "~30,000 tokens (including averaged triage costs for papers that don't pass). Crucially, this digest "
     "excludes models pretrained on data from one specific task and fine-tuned specifically for that same task "
     "- we define an EEG FM as a large model pretrained on EEG data, built with the potential and intention "

@@ -2,20 +2,18 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import shutil
 import time
 from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
-import httpx
 from dotenv import load_dotenv
 
 from .arxiv import fetch_month_candidates
 from .config import Config, load_config
 from .db import DigestDB
-from .llm_gemini import GeminiClient, LLMConfig, load_api_key
+from .llm import LLMCallConfig, LLMRateLimitError, build_llm_call, load_api_key
 from .pdf import download_pdf, extract_text, slice_paper_text
 from .render import build_digest, write_json, write_jsonl
 from .site import update_home, write_month_site
@@ -35,9 +33,9 @@ class BatchRunConfig:
     triage_force: bool = False
     summary_force: bool = False
     include_borderline: bool = False
-    triage_provider: str = "gemini"
+    triage_provider: str = "openrouter"
     triage_model: str = ""
-    summary_provider: str = "gemini"
+    summary_provider: str = "openrouter"
     summary_model: str = ""
     triage_sleep_seconds: float = 0.0
     summary_sleep_seconds: float = 0.0
@@ -89,9 +87,9 @@ def _parse_batch_config(path: Path) -> BatchRunConfig:
         triage_force=bool(raw.get("triage_force", False)),
         summary_force=bool(raw.get("summary_force", False)),
         include_borderline=bool(raw.get("include_borderline", False)),
-        triage_provider=str(raw.get("triage_provider", raw.get("summary_provider", "gemini"))),
+        triage_provider=str(raw.get("triage_provider", raw.get("summary_provider", "openrouter"))),
         triage_model=str(raw.get("triage_model", raw.get("summary_model", ""))),
-        summary_provider=str(raw.get("summary_provider", "gemini")),
+        summary_provider=str(raw.get("summary_provider", "openrouter")),
         summary_model=str(raw.get("summary_model", "")),
         triage_sleep_seconds=float(raw.get("triage_sleep_seconds", 0.0)),
         summary_sleep_seconds=float(raw.get("summary_sleep_seconds", 0.0)),
@@ -161,72 +159,6 @@ def _triage_client_error_ids(month_out: Path) -> set[str]:
                 ids.add(aid)
     return ids
 
-
-class OpenRouterClient:
-    def __init__(self, api_key: str, model: str, temperature: float, max_output_tokens: int):
-        self.api_key = api_key
-        self.model = model
-        self.temperature = temperature
-        self.max_output_tokens = max_output_tokens
-        self._client = httpx.Client(timeout=180)
-
-    def close(self) -> None:
-        self._client.close()
-
-    def count_tokens(self, content: str) -> int:
-        # Approximate token count for payload-routing heuristics.
-        return max(1, len(content) // 4)
-
-    def _extract_text(self, payload: dict[str, Any]) -> str:
-        choices = payload.get("choices") or []
-        if not choices:
-            return ""
-        msg = choices[0].get("message") or {}
-        content = msg.get("content")
-        if isinstance(content, str):
-            return content.strip()
-        if isinstance(content, list):
-            parts: list[str] = []
-            for item in content:
-                if isinstance(item, dict):
-                    text = item.get("text")
-                    if text:
-                        parts.append(str(text))
-                elif isinstance(item, str):
-                    parts.append(item)
-            return "".join(parts).strip()
-        return ""
-
-    def generate(self, prompt: str, schema: dict[str, Any] | None = None) -> str:
-        body: dict[str, Any] = {
-            "model": self.model,
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": self.temperature,
-            "max_tokens": self.max_output_tokens,
-            "reasoning": {"enabled": True},
-        }
-        if schema is not None:
-            body["response_format"] = {"type": "json_object"}
-
-        resp = self._client.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type": "application/json",
-            },
-            json=body,
-        )
-        if resp.status_code in {402, 429}:
-            raise RateLimitStop(
-                f"openrouter_rate_limit_or_quota status={resp.status_code} body={resp.text[:220]}"
-            )
-        resp.raise_for_status()
-        text = self._extract_text(resp.json())
-        if not text:
-            raise RuntimeError("OpenRouter returned empty content")
-        return text
-
-
 def _normalize_triage_row(arxiv_id_base: str, result: dict[str, Any]) -> dict[str, Any]:
     reasons = result.get("reasons", [])
     if not isinstance(reasons, list):
@@ -288,7 +220,7 @@ def _run_triage_phase_for_month(
                 schema=triage_schema,
             )
             row = _normalize_triage_row(aid, result)
-        except RateLimitStop:
+        except (LLMRateLimitError, RateLimitStop):
             raise
         except Exception as exc:
             row = {
@@ -338,6 +270,10 @@ def _run_summary_phase_for_month(
 
     existing_summaries = [] if run_cfg.summary_force else _load_jsonl(month_out / "papers.jsonl")
     summary_map: dict[str, dict[str, Any]] = {s["arxiv_id_base"]: s for s in existing_summaries}
+    rejected_ids = {aid for aid, triage in triage_map.items() if triage.get("decision") == "reject"}
+    for aid in rejected_ids:
+        summary_map.pop(aid, None)
+        db.delete_summary(aid)
 
     existing_backend = _load_jsonl(month_out / "backend_rows.jsonl")
     pdf_map: dict[str, dict[str, Any]] = {
@@ -478,41 +414,28 @@ def run_batch(config_path: Path) -> None:
     load_dotenv(Path(run_cfg.env_path).expanduser())
     triage_provider = run_cfg.triage_provider.strip().lower()
     summary_provider = run_cfg.summary_provider.strip().lower()
-    if triage_provider not in {"gemini", "openrouter"}:
+    if triage_provider != "openrouter":
         raise RuntimeError(
-            f"Unsupported triage_provider={run_cfg.triage_provider}. Use 'gemini' or 'openrouter'."
+            f"Unsupported triage_provider={run_cfg.triage_provider}. Use 'openrouter'."
         )
-    if summary_provider not in {"gemini", "openrouter"}:
+    if summary_provider != "openrouter":
         raise RuntimeError(
-            f"Unsupported summary_provider={run_cfg.summary_provider}. Use 'gemini' or 'openrouter'."
+            f"Unsupported summary_provider={run_cfg.summary_provider}. Use 'openrouter'."
         )
-    openrouter_key = os.environ.get("OPENROUTER_API_KEY")
-    if (triage_provider == "openrouter" or summary_provider == "openrouter") and not openrouter_key:
-        raise RuntimeError("Missing OPENROUTER_API_KEY in environment or env file.")
-    gemini_key: str | None = None
-    if triage_provider == "gemini" or summary_provider == "gemini":
-        gemini_key = load_api_key()
+    api_key = load_api_key()
 
     db = DigestDB(cfg.data_dir / "digest.sqlite")
     try:
-        if triage_provider == "gemini":
-            triage_llm: Any = GeminiClient(
-                LLMConfig(
-                    api_key=gemini_key or load_api_key(),
-                    model=run_cfg.triage_model or cfg.gemini_model_triage,
-                    temperature=cfg.llm_temperature_triage,
-                    max_output_tokens=cfg.llm_max_output_tokens_triage,
-                )
-            )
-            triage_close = lambda: None
-        else:
-            triage_llm = OpenRouterClient(
-                api_key=openrouter_key or "",
-                model=run_cfg.triage_model or "arcee-ai/trinity-large-preview:free",
+        triage_llm: Any = build_llm_call(
+            LLMCallConfig(
+                provider="openai",
+                api_key=api_key,
+                model=run_cfg.triage_model or cfg.llm_model_triage,
                 temperature=cfg.llm_temperature_triage,
                 max_output_tokens=cfg.llm_max_output_tokens_triage,
+                base_url="https://openrouter.ai/api/v1",
             )
-            triage_close = triage_llm.close
+        )
 
         # Phase 1: triage all months first.
         try:
@@ -524,32 +447,24 @@ def run_batch(config_path: Path) -> None:
                 print(f"[triage] {month}: start")
                 _run_triage_phase_for_month(cfg, run_cfg, month, db, triage_llm)
         finally:
-            triage_close()
+            triage_llm.close()
 
         # Phase 2: summarize accepted for all months.
-        if summary_provider == "gemini":
-            summary_llm: Any = GeminiClient(
-                LLMConfig(
-                    api_key=gemini_key or load_api_key(),
-                    model=run_cfg.summary_model or cfg.gemini_model_summary,
-                    temperature=cfg.llm_temperature_summary,
-                    max_output_tokens=cfg.llm_max_output_tokens_summary,
-                )
-            )
-            for month in months:
-                _run_summary_phase_for_month(cfg, run_cfg, month, db, summary_llm)
-        else:
-            summary_llm = OpenRouterClient(
-                api_key=openrouter_key or "",
-                model=run_cfg.summary_model or "arcee-ai/trinity-large-preview:free",
+        summary_llm: Any = build_llm_call(
+            LLMCallConfig(
+                provider="openai",
+                api_key=api_key,
+                model=run_cfg.summary_model or cfg.llm_model_summary,
                 temperature=cfg.llm_temperature_summary,
                 max_output_tokens=cfg.llm_max_output_tokens_summary,
+                base_url="https://openrouter.ai/api/v1",
             )
-            try:
-                for month in months:
-                    _run_summary_phase_for_month(cfg, run_cfg, month, db, summary_llm)
-            finally:
-                summary_llm.close()
+        )
+        try:
+            for month in months:
+                _run_summary_phase_for_month(cfg, run_cfg, month, db, summary_llm)
+        finally:
+            summary_llm.close()
     finally:
         db.close()
 

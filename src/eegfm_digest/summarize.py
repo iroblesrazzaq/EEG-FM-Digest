@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from .llm_gemini import GeminiClient, parse_json_text
+from .llm import LLMCaller, parse_json_text
 from .triage import validate_json
 
 TAG_TAXONOMY: dict[str, list[str]] = {
@@ -56,7 +56,7 @@ def _render_prompt(prompt_template: str, payload: dict[str, Any]) -> str:
     return prompt_template.replace("{{INPUT_JSON}}", json.dumps(payload, ensure_ascii=False))
 
 
-def _count_tokens_or_none(llm: GeminiClient, prompt: str) -> int | None:
+def _count_tokens_or_none(llm: LLMCaller, prompt: str) -> int | None:
     count_fn = getattr(llm, "count_tokens", None)
     if not callable(count_fn):
         return None
@@ -72,7 +72,7 @@ def _select_payload(
     raw_fulltext: str,
     fulltext_slices: dict[str, str],
     prompt_template: str,
-    llm: GeminiClient,
+    llm: LLMCaller,
     max_input_tokens: int,
 ) -> tuple[dict[str, Any], str]:
     base = _base_payload(paper, triage)
@@ -212,7 +212,7 @@ def summarize_paper(
     fulltext_slices: dict[str, str],
     used_fulltext: bool,
     notes: str,
-    llm: GeminiClient,
+    llm: LLMCaller,
     prompt_template: str,
     repair_template: str,
     schema: dict[str, Any],
@@ -229,7 +229,7 @@ def summarize_paper(
     )
     merged_notes = f"{notes};{mode_notes}" if notes else mode_notes
     prompt = _render_prompt(prompt_template, payload)
-    raw = llm.generate(prompt, schema=schema)
+    raw = llm.call(prompt, schema=schema).text
     try:
         data = parse_json_text(raw)
         data = _normalize_summary_output(
@@ -246,7 +246,7 @@ def summarize_paper(
             .replace("{{BAD_OUTPUT}}", raw)
         )
         try:
-            repaired = llm.generate(repair_prompt, schema=schema)
+            repaired = llm.call(repair_prompt, schema=schema).text
             data = parse_json_text(repaired)
             data = _normalize_summary_output(
                 data=data,

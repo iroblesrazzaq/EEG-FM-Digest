@@ -5,6 +5,11 @@ from eegfm_digest.summarize import summarize_paper
 from eegfm_digest.triage import load_schema
 
 
+class FakeCallResult:
+    def __init__(self, text: str):
+        self.text = text
+
+
 class CaptureLLM:
     def __init__(self, token_result):
         self.token_result = token_result
@@ -15,57 +20,59 @@ class CaptureLLM:
             raise self.token_result
         return int(self.token_result)
 
-    def generate(self, prompt, schema=None):  # noqa: ANN001
+    def call(self, prompt, schema=None):  # noqa: ANN001
         self.prompts.append(prompt)
-        return json.dumps(
-            {
-                "arxiv_id_base": "2501.10000",
-                "title": "EEG FM",
-                "published_date": "2025-01-10",
-                "categories": ["cs.LG"],
-                "paper_type": "method",
-                "one_liner": "A concise summary line for the digest.",
-                "detailed_summary": (
-                    "This paper proposes a deterministic EEG representation method that combines "
-                    "self-supervised pretraining and lightweight finetuning for transfer. "
-                    "The core novelty is its stable objective and architecture choices designed "
-                    "for reproducible downstream performance across benchmarks."
-                ),
-                "unique_contribution": "A deterministic contribution sentence.",
-                "key_points": ["k1 point", "k2 point", "k3 point"],
-                "data_scale": {
-                    "datasets": ["Dataset-A"],
-                    "subjects": 10,
-                    "eeg_hours": 2.5,
-                    "channels": 64,
-                },
-                "method": {
-                    "architecture": "Transformer",
-                    "objective": "Masked prediction",
-                    "pretraining": "Self-supervised pretraining",
-                    "finetuning": "Linear probe",
-                },
-                "evaluation": {
-                    "tasks": ["classification"],
-                    "benchmarks": ["Benchmark-A"],
-                    "headline_results": ["Improved AUROC"],
-                },
-                "open_source": {
-                    "code_url": None,
-                    "weights_url": None,
-                    "license": None,
-                },
-                "tags": {
-                    "paper_type": ["eeg-fm"],
-                    "backbone": ["transformer"],
-                    "objective": ["masked-reconstruction"],
-                    "tokenization": ["time-patch"],
-                    "topology": ["fixed-montage"],
-                },
-                "limitations": ["limited cohorts", "needs broader evaluation"],
-                "used_fulltext": True,
-                "notes": "placeholder",
-            }
+        return FakeCallResult(
+            json.dumps(
+                {
+                    "arxiv_id_base": "2501.10000",
+                    "title": "EEG FM",
+                    "published_date": "2025-01-10",
+                    "categories": ["cs.LG"],
+                    "paper_type": "method",
+                    "one_liner": "A concise summary line for the digest.",
+                    "detailed_summary": (
+                        "This paper proposes a deterministic EEG representation method that combines "
+                        "self-supervised pretraining and lightweight finetuning for transfer. "
+                        "The core novelty is its stable objective and architecture choices designed "
+                        "for reproducible downstream performance across benchmarks."
+                    ),
+                    "unique_contribution": "A deterministic contribution sentence.",
+                    "key_points": ["k1 point", "k2 point", "k3 point"],
+                    "data_scale": {
+                        "datasets": ["Dataset-A"],
+                        "subjects": 10,
+                        "eeg_hours": 2.5,
+                        "channels": 64,
+                    },
+                    "method": {
+                        "architecture": "Transformer",
+                        "objective": "Masked prediction",
+                        "pretraining": "Self-supervised pretraining",
+                        "finetuning": "Linear probe",
+                    },
+                    "evaluation": {
+                        "tasks": ["classification"],
+                        "benchmarks": ["Benchmark-A"],
+                        "headline_results": ["Improved AUROC"],
+                    },
+                    "open_source": {
+                        "code_url": None,
+                        "weights_url": None,
+                        "license": None,
+                    },
+                    "tags": {
+                        "paper_type": ["eeg-fm"],
+                        "backbone": ["transformer"],
+                        "objective": ["masked-reconstruction"],
+                        "tokenization": ["time-patch"],
+                        "topology": ["fixed-montage"],
+                    },
+                    "limitations": ["limited cohorts", "needs broader evaluation"],
+                    "used_fulltext": True,
+                    "notes": "placeholder",
+                }
+            )
         )
 
 
@@ -164,46 +171,48 @@ def test_summarize_normalizes_paper_type_and_numeric_fields():
     schema = load_schema(Path("schemas/summary.json"))
 
     class ListPaperTypeLLM(CaptureLLM):
-        def generate(self, prompt, schema=None):  # noqa: ANN001
+        def call(self, prompt, schema=None):  # noqa: ANN001
             self.prompts.append(prompt)
-            return json.dumps(
-                {
-                    "paper_type": ["eeg-fm"],
-                    "one_liner": "Compact EEG FM summary.",
-                    "detailed_summary": (
-                        "This paper proposes a compact EEG foundation model architecture with "
-                        "efficient attention for long sequences and broad transfer. "
-                        "It demonstrates improved efficiency and competitive results across tasks."
-                    ),
-                    "unique_contribution": "Efficient alternating attention for EEG FM scaling.",
-                    "key_points": ["Single point only"],
-                    "data_scale": {
-                        "datasets": ["Dataset-A"],
-                        "subjects": "10k+",
-                        "eeg_hours": "20000+",
-                        "channels": "64",
-                    },
-                    "method": {
-                        "architecture": "Transformer",
-                        "objective": "Masked prediction",
-                        "pretraining": "Self-supervised",
-                        "finetuning": "Linear probe",
-                    },
-                    "evaluation": {
-                        "tasks": ["classification"],
-                        "benchmarks": ["Benchmark-A"],
-                        "headline_results": ["Improved AUROC"],
-                    },
-                    "open_source": {"code_url": None, "weights_url": None, "license": None},
-                    "tags": {
+            return FakeCallResult(
+                json.dumps(
+                    {
                         "paper_type": ["eeg-fm"],
-                        "backbone": ["transformer"],
-                        "objective": ["masked-reconstruction"],
-                        "tokenization": ["time-patch"],
-                        "topology": ["channel-flexible"],
-                    },
-                    "limitations": ["limited cohorts", "single data source"],
-                }
+                        "one_liner": "Compact EEG FM summary.",
+                        "detailed_summary": (
+                            "This paper proposes a compact EEG foundation model architecture with "
+                            "efficient attention for long sequences and broad transfer. "
+                            "It demonstrates improved efficiency and competitive results across tasks."
+                        ),
+                        "unique_contribution": "Efficient alternating attention for EEG FM scaling.",
+                        "key_points": ["Single point only"],
+                        "data_scale": {
+                            "datasets": ["Dataset-A"],
+                            "subjects": "10k+",
+                            "eeg_hours": "20000+",
+                            "channels": "64",
+                        },
+                        "method": {
+                            "architecture": "Transformer",
+                            "objective": "Masked prediction",
+                            "pretraining": "Self-supervised",
+                            "finetuning": "Linear probe",
+                        },
+                        "evaluation": {
+                            "tasks": ["classification"],
+                            "benchmarks": ["Benchmark-A"],
+                            "headline_results": ["Improved AUROC"],
+                        },
+                        "open_source": {"code_url": None, "weights_url": None, "license": None},
+                        "tags": {
+                            "paper_type": ["eeg-fm"],
+                            "backbone": ["transformer"],
+                            "objective": ["masked-reconstruction"],
+                            "tokenization": ["time-patch"],
+                            "topology": ["channel-flexible"],
+                        },
+                        "limitations": ["limited cohorts", "single data source"],
+                    }
+                )
             )
 
     llm = ListPaperTypeLLM(token_result=50)

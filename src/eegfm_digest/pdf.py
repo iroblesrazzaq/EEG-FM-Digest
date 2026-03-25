@@ -26,6 +26,25 @@ def extract_text(pdf_path: Path, text_path: Path) -> dict[str, Any]:
         txt = text_path.read_text(encoding="utf-8")
         return {"tool": "cached", "pages": None, "chars": len(txt), "error": None}
 
+    errors: list[str] = []
+
+    try:
+        import pymupdf
+
+        doc = pymupdf.open(str(pdf_path))
+        try:
+            pages = list(doc)
+            chunks = [(getattr(page, "get_text")() if hasattr(page, "get_text") else "") or "" for page in pages]
+            text = "\n".join(chunks)
+        finally:
+            close = getattr(doc, "close", None)
+            if callable(close):
+                close()
+        text_path.write_text(text, encoding="utf-8")
+        return {"tool": "pymupdf", "pages": len(pages), "chars": len(text), "error": None}
+    except Exception as exc:
+        errors.append(f"pymupdf_failed:{exc}")
+
     try:
         from pypdf import PdfReader
 
@@ -33,17 +52,29 @@ def extract_text(pdf_path: Path, text_path: Path) -> dict[str, Any]:
         chunks = [p.extract_text() or "" for p in reader.pages]
         text = "\n".join(chunks)
         text_path.write_text(text, encoding="utf-8")
-        return {"tool": "pypdf", "pages": len(reader.pages), "chars": len(text), "error": None}
+        return {
+            "tool": "pypdf",
+            "pages": len(reader.pages),
+            "chars": len(text),
+            "error": "; ".join(errors) if errors else None,
+        }
     except Exception as exc:
+        errors.append(f"pypdf_failed:{exc}")
         try:
             from pdfminer.high_level import extract_text as pm_extract_text
 
             text = pm_extract_text(str(pdf_path))
             text_path.write_text(text, encoding="utf-8")
-            return {"tool": "pdfminer", "pages": None, "chars": len(text), "error": f"pypdf_failed:{exc}"}
+            return {
+                "tool": "pdfminer",
+                "pages": None,
+                "chars": len(text),
+                "error": "; ".join(errors) if errors else None,
+            }
         except Exception as exc2:
+            errors.append(f"pdfminer_failed:{exc2}")
             text_path.write_text("", encoding="utf-8")
-            return {"tool": "none", "pages": None, "chars": 0, "error": f"extract_failed:{exc2}"}
+            return {"tool": "none", "pages": None, "chars": 0, "error": "; ".join(errors)}
 
 
 def bounded_text(text: str, head_chars: int, tail_chars: int) -> str:

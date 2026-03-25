@@ -7,8 +7,8 @@ import os
 
 @dataclass(frozen=True)
 class Config:
-    gemini_model_triage: str
-    gemini_model_summary: str
+    llm_model_triage: str
+    llm_model_summary: str
     arxiv_rate_limit_seconds: float = 2.0
     arxiv_connect_timeout_seconds: float = 10.0
     arxiv_read_timeout_seconds: float = 60.0
@@ -33,8 +33,18 @@ class Config:
 
 def load_config() -> Config:
     return Config(
-        gemini_model_triage=os.environ.get("GEMINI_MODEL_TRIAGE", "gemini-3-flash-preview"),
-        gemini_model_summary=os.environ.get("GEMINI_MODEL_SUMMARY", "gemini-3-flash-preview"),
+        llm_model_triage=(
+            os.environ.get("OPENROUTER_MODEL_TRIAGE")
+            or os.environ.get("LLM_MODEL_TRIAGE")
+            or os.environ.get("GEMINI_MODEL_TRIAGE")
+            or "stepfun/step-3.5-flash:free"
+        ),
+        llm_model_summary=(
+            os.environ.get("OPENROUTER_MODEL_SUMMARY")
+            or os.environ.get("LLM_MODEL_SUMMARY")
+            or os.environ.get("GEMINI_MODEL_SUMMARY")
+            or "stepfun/step-3.5-flash:free"
+        ),
         arxiv_rate_limit_seconds=float(os.environ.get("ARXIV_RATE_LIMIT_SECONDS", "2")),
         arxiv_connect_timeout_seconds=float(os.environ.get("ARXIV_CONNECT_TIMEOUT_SECONDS", "10")),
         arxiv_read_timeout_seconds=float(os.environ.get("ARXIV_READ_TIMEOUT_SECONDS", "60")),
