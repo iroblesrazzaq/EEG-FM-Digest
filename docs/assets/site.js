@@ -66,6 +66,18 @@ function safeNumber(value, fallback) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+function csvEscape(value) {
+  const text = String(value ?? "");
+  if (!text.includes('"') && !text.includes(",") && !text.includes("\n") && !text.includes("\r")) {
+    return text;
+  }
+  return `"${text.replaceAll('"', '""')}"`;
+}
+
+function csvLine(values) {
+  return values.map((value) => csvEscape(value)).join(",");
+}
+
 function monthDisplayLabel(month) {
   if (!month) {
     return "";
@@ -671,6 +683,28 @@ function monthBaseCount(state) {
   return state.papers.filter((paper) => paper.month === state.selectedMonth).length;
 }
 
+function filteredPapersForState(state) {
+  let filtered = state.papers;
+  if (state.view === "explore" && state.selectedMonth !== "all") {
+    filtered = filtered.filter((paper) => paper.month === state.selectedMonth);
+  }
+  if (state.query) {
+    filtered = filtered.filter((paper) => paperHaystack(paper).includes(state.query));
+  }
+  filtered = filtered.filter((paper) => matchesTagFilters(paper, state));
+  filtered = sortPapers(filtered, state.sortBy);
+
+  const featuredPaperId = state.view === "month" ? String(state.featuredPaperId || "") : "";
+  if (featuredPaperId) {
+    const featuredIndex = filtered.findIndex((paper) => paper.arxiv_id_base === featuredPaperId);
+    if (featuredIndex > 0) {
+      const [featuredPaper] = filtered.splice(featuredIndex, 1);
+      filtered.unshift(featuredPaper);
+    }
+  }
+  return filtered;
+}
+
 function monthEmptyMessage(month, stats) {
   const candidates = safeNumber(stats?.candidates, 0);
   const accepted = safeNumber(stats?.accepted, 0);
@@ -787,6 +821,94 @@ function renderPaperCard(paper, view, isFeatured) {
   `;
 }
 
+function buildResultsCsv(papers) {
+  const header = [
+    "month",
+    "published_date",
+    "arxiv_id_base",
+    "title",
+    "authors",
+    "categories",
+    "triage_decision",
+    "triage_confidence",
+    "one_liner",
+    "unique_contribution",
+    "key_points",
+    "abs_url",
+    "pdf_url",
+    "paper_type",
+    "backbone",
+    "objective",
+    "tokenization",
+    "topology",
+  ];
+  const rows = [csvLine(header)];
+  for (const paper of papers) {
+    const summary = paper.summary || {};
+    const tags = summary.tags && typeof summary.tags === "object" ? summary.tags : {};
+    rows.push(
+      csvLine([
+        paper.month,
+        paper.published_date,
+        paper.arxiv_id_base,
+        paper.title,
+        paper.authors.join("; "),
+        paper.categories.join("; "),
+        paper.triage?.decision || "",
+        paper.triage?.confidence ?? "",
+        summary.one_liner || "",
+        summary.unique_contribution || "",
+        asArray(summary.key_points).join(" | "),
+        paper.links?.abs || "",
+        paper.links?.pdf || "",
+        asArray(tags.paper_type).join("; "),
+        asArray(tags.backbone).join("; "),
+        asArray(tags.objective).join("; "),
+        asArray(tags.tokenization).join("; "),
+        asArray(tags.topology).join("; "),
+      ]),
+    );
+  }
+  return `${rows.join("\n")}\n`;
+}
+
+function currentResultsFilename(state) {
+  const scope = state.selectedMonth === "all" ? "all-months" : state.selectedMonth || "results";
+  return `eegfm-digest-search-${scope}.csv`;
+}
+
+function downloadCurrentResultsCsv(state) {
+  const papers = Array.isArray(state.lastFilteredPapers) ? state.lastFilteredPapers : [];
+  if (!papers.length || typeof document === "undefined") {
+    return;
+  }
+  const blob = new Blob([buildResultsCsv(papers)], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = currentResultsFilename(state);
+  link.style.display = "none";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+function syncExploreExportState(app, state) {
+  if (state.view !== "explore") {
+    return;
+  }
+  const exportBtn = app.querySelector("#export-results-btn");
+  if (exportBtn) {
+    const ready =
+      state.searchTriggered &&
+      !(state.loading && state.loading.active) &&
+      Array.isArray(state.lastFilteredPapers) &&
+      state.lastFilteredPapers.length > 0;
+    exportBtn.disabled = !ready;
+  }
+}
+
 function renderTagGroups(state, tagOptions, compact) {
   const groups = TAG_ORDER.map((category) => {
     const mergedValues = new Set(tagOptions[category] || []);
@@ -871,6 +993,7 @@ function renderExploreControls(app, state) {
         )}" placeholder="title, author, summary">
       </label>
       <button id="search-run-btn" data-testid="search-run-btn" type="button">Search</button>
+      <button id="export-results-btn" data-testid="export-results-btn" type="button" disabled>Export CSV</button>
       <button id="reset-filters" type="button">Clear search</button>
     </div>
     <p class="small filter-help">Tag filters: OR within each category, AND across categories.</p>
@@ -889,6 +1012,12 @@ function renderExploreControls(app, state) {
       void runExploreSearch(app, state);
     });
   }
+  const exportBtn = controls.querySelector("#export-results-btn");
+  if (exportBtn) {
+    exportBtn.addEventListener("click", () => {
+      downloadCurrentResultsCsv(state);
+    });
+  }
   const resetBtn = controls.querySelector("#reset-filters");
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
@@ -902,6 +1031,7 @@ function renderExploreControls(app, state) {
     });
   }
   bindTagCheckboxes(controls, state, app, { submitOnly: true });
+  syncExploreExportState(app, state);
 }
 
 function renderMonthControls(app, state) {
@@ -968,32 +1098,22 @@ function renderResults(app, state) {
   if (state.view === "explore" && !state.searchTriggered) {
     meta.textContent = "Search is ready. Click Search to load papers.";
     results.innerHTML = "<p class='empty-state'>No search run yet.</p>";
+    state.lastFilteredPapers = [];
+    syncExploreExportState(app, state);
     return;
   }
 
   if (state.view === "explore" && state.loading && state.loading.active) {
     meta.textContent = "Searching...";
     results.innerHTML = "<p class='empty-state'>Searching...</p>";
+    state.lastFilteredPapers = [];
+    syncExploreExportState(app, state);
     return;
   }
 
-  let filtered = state.papers;
-  if (state.view === "explore" && state.selectedMonth !== "all") {
-    filtered = filtered.filter((paper) => paper.month === state.selectedMonth);
-  }
-  if (state.query) {
-    filtered = filtered.filter((paper) => paperHaystack(paper).includes(state.query));
-  }
-  filtered = filtered.filter((paper) => matchesTagFilters(paper, state));
-  filtered = sortPapers(filtered, state.sortBy);
+  const filtered = filteredPapersForState(state);
+  state.lastFilteredPapers = filtered;
   const featuredPaperId = state.view === "month" ? String(state.featuredPaperId || "") : "";
-  if (featuredPaperId) {
-    const featuredIndex = filtered.findIndex((paper) => paper.arxiv_id_base === featuredPaperId);
-    if (featuredIndex > 0) {
-      const [featuredPaper] = filtered.splice(featuredIndex, 1);
-      filtered.unshift(featuredPaper);
-    }
-  }
 
   if (state.view === "month") {
     const baseCount = monthBaseCount(state);
@@ -1012,12 +1132,14 @@ function renderResults(app, state) {
     } else {
       results.innerHTML = "<p class='empty-state'>No papers match the current filters.</p>";
     }
+    syncExploreExportState(app, state);
     return;
   }
 
   results.innerHTML = filtered
     .map((paper) => renderPaperCard(paper, state.view, paper.arxiv_id_base === featuredPaperId))
     .join("\n");
+  syncExploreExportState(app, state);
 }
 
 function renderHome(app, state) {
@@ -1300,6 +1422,7 @@ async function setupDigestApp() {
     sortBy: "published_desc",
     selectedMonth: view === "month" ? month : "all",
     featuredPaperId,
+    lastFilteredPapers: [],
     searchTriggered: view === "month",
     selectedTags: Object.fromEntries(TAG_ORDER.map((category) => [category, new Set()])),
     loading:
@@ -1312,6 +1435,10 @@ async function setupDigestApp() {
             failed: 0,
           },
   };
+
+  if (typeof window !== "undefined") {
+    window.__digestAppState = state;
+  }
 
   if (state.view === "month") {
     renderMonthControls(app, state);
@@ -1328,6 +1455,7 @@ if (typeof window !== "undefined") {
     loadMonthPayloadForTest: (args) => loadMonthPayloadCached(args),
     getCacheStats: () => currentMonthCacheStats(),
     getCacheEntryCounts: () => currentMonthCacheEntryCounts(),
+    buildCurrentCsvForTest: () => buildResultsCsv(window.__digestAppState?.lastFilteredPapers || []),
     clearMemCacheForTest: () => clearMonthMemCache(),
     clearPersistentCacheForTest: () => clearMonthPersistentCache(),
     clearSessionCacheForTest: () => clearMonthSessionCache(),

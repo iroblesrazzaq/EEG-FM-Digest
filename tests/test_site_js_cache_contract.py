@@ -28,12 +28,14 @@ def test_site_js_exposes_test_hooks_and_submit_driven_search():
     assert "loadMonthPayloadForTest: (args) => loadMonthPayloadCached(args)" in site_js
     assert "getCacheStats: () => currentMonthCacheStats()" in site_js
     assert "getCacheEntryCounts: () => currentMonthCacheEntryCounts()" in site_js
+    assert "buildCurrentCsvForTest: () => buildResultsCsv(window.__digestAppState?.lastFilteredPapers || [])" in site_js
     assert "clearMemCacheForTest: () => clearMonthMemCache()" in site_js
     assert "clearPersistentCacheForTest: () => clearMonthPersistentCache()" in site_js
     assert "clearSessionCacheForTest: () => clearMonthSessionCache()" in site_js
     assert "function collectExploreTagOptions(state)" in site_js
     assert "Object.keys(TAG_LABELS[category] || {})" in site_js
     assert 'id="search-run-btn"' in site_js
+    assert 'id="export-results-btn"' in site_js
     assert 'placeholder="title, author, summary"' in site_js
     assert 'placeholder="title, author, summary, tags"' not in site_js
     assert "void runExploreSearch(app, state);" in site_js

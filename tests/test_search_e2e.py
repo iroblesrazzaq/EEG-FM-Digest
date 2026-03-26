@@ -409,6 +409,27 @@ def test_explore_keyword_search_filters_results_after_click(browser, synthetic_s
     context.close()
 
 
+def test_explore_export_csv_downloads_current_filtered_results(browser, synthetic_site):
+    context = browser.new_context(accept_downloads=True)
+    page, _urls = _tracked_page(context)
+    page.goto(f"{synthetic_site['base_url']}/explore/index.html", wait_until="networkidle")
+    page.get_by_test_id("search-input").fill("Alpha")
+    page.get_by_test_id("search-run-btn").click()
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 1")
+
+    with page.expect_download() as download_info:
+        page.get_by_test_id("export-results-btn").click()
+    download = download_info.value
+    csv_text = Path(download.path()).read_text(encoding="utf-8")
+
+    assert download.suggested_filename == "eegfm-digest-search-all-months.csv"
+    assert "Alpha EEG Foundation Model" in csv_text
+    assert "Beta Survey of EEG Foundation Models" not in csv_text
+    assert "Gamma Benchmark for EEG-FM Transfer" not in csv_text
+
+    context.close()
+
+
 def test_explore_tag_search_filters_results_after_click(browser, synthetic_site):
     context = browser.new_context()
     page, _urls = _tracked_page(context)
