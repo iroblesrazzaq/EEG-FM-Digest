@@ -111,6 +111,7 @@ def test_single_month_run_main_hard_pins_stepflash(monkeypatch, tmp_path):
     assert cfg.llm_model_triage == DEFAULT_OPENROUTER_MODEL
     assert cfg.llm_model_summary == DEFAULT_OPENROUTER_MODEL
     assert captured["month"] == "2026-03"
+    assert captured["kwargs"]["topic"] == "eeg-fm"
 
 
 def test_batch_run_respects_configured_models(monkeypatch, tmp_path):

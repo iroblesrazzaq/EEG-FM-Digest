@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from pathlib import Path
 
 from .arxiv import fetch_month_candidates
@@ -11,7 +12,7 @@ from .cache_meta import (
     build_stage_metadata,
     is_cache_current,
 )
-from .config import Config
+from .config import DEFAULT_TOPIC, Config, load_topic
 from .db import DigestDB
 from .llm import LLMCallConfig, build_llm_call, load_api_key
 from .pdf import download_pdf, extract_text, slice_paper_text
@@ -35,6 +36,49 @@ def _empty_pdf_state() -> dict[str, object | None]:
         "text_path": None,
         "extract_meta": None,
     }
+
+
+def _topic_cache_key(topic_slug: str, arxiv_id_base: str) -> str:
+    if topic_slug == DEFAULT_TOPIC:
+        return arxiv_id_base
+    return f"{topic_slug}:{arxiv_id_base}"
+
+
+def _topic_run_key(topic_slug: str, month: str) -> str:
+    if topic_slug == DEFAULT_TOPIC:
+        return month
+    return f"{topic_slug}:{month}"
+
+
+def _month_output_dir(base_output_dir: Path, topic_slug: str, month: str) -> Path:
+    return base_output_dir / topic_slug / month
+
+
+def _sync_legacy_output_dir(source_dir: Path, legacy_dir: Path) -> None:
+    if legacy_dir.is_symlink():
+        try:
+            if legacy_dir.resolve() == source_dir.resolve():
+                return
+        except FileNotFoundError:
+            pass
+        legacy_dir.unlink()
+
+    if not legacy_dir.exists():
+        legacy_dir.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            legacy_dir.symlink_to(source_dir.resolve(), target_is_directory=True)
+            return
+        except OSError:
+            legacy_dir.mkdir(parents=True, exist_ok=True)
+
+    legacy_dir.mkdir(parents=True, exist_ok=True)
+    for source_path in source_dir.rglob("*"):
+        target_path = legacy_dir / source_path.relative_to(source_dir)
+        if source_path.is_dir():
+            target_path.mkdir(parents=True, exist_ok=True)
+            continue
+        target_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source_path, target_path)
 
 
 def _triage_view(triage: dict[str, object] | None) -> dict[str, object]:
@@ -67,8 +111,10 @@ def run_month(
     no_pdf: bool = False,
     no_site: bool = False,
     force: bool = False,
+    topic: str = DEFAULT_TOPIC,
 ) -> None:
-    month_out = cfg.output_dir / month
+    topic_config = load_topic(topic)
+    month_out = _month_output_dir(cfg.output_dir, topic_config.slug, month)
     month_out.mkdir(parents=True, exist_ok=True)
     db = DigestDB(cfg.data_dir / "digest.sqlite")
 
@@ -84,10 +130,11 @@ def run_month(
         read_timeout_seconds=cfg.arxiv_read_timeout_seconds,
         retries=cfg.arxiv_retries,
         retry_backoff_seconds=cfg.arxiv_retry_backoff_seconds,
+        topic=topic_config,
     )
     write_json(month_out / "arxiv_raw.json", candidates)
     for c in candidates:
-        db.upsert_paper(month, c)
+        db.upsert_paper(month, c, cache_key=_topic_cache_key(topic_config.slug, c["arxiv_id_base"]))
 
     api_key = load_api_key()
     triage_llm_config = LLMCallConfig(
@@ -110,8 +157,8 @@ def run_month(
     summary_llm = build_llm_call(summary_llm_config)
 
     try:
-        triage_prompt = _read("prompts/triage.md")
-        summarize_prompt = _read("prompts/summarize.md")
+        triage_prompt = _read(str(topic_config.triage_prompt_path))
+        summarize_prompt = _read(str(topic_config.summarize_prompt_path))
         repair_prompt = _read("prompts/repair_json.md")
         triage_descriptor = build_stage_descriptor(
             stage="triage",
@@ -135,8 +182,9 @@ def run_month(
         # Stage 2: triage
         triage_rows: list[dict] = []
         for paper in candidates:
+            cache_key = _topic_cache_key(topic_config.slug, paper["arxiv_id_base"])
             try:
-                cached = None if force else db.get_triage_with_meta(paper["arxiv_id_base"])
+                cached = None if force else db.get_triage_with_meta(paper["arxiv_id_base"], cache_key=cache_key)
                 if cached and is_cache_current(cached.get("meta"), triage_descriptor["cache_version"]):
                     result_raw = cached["data"]
                 else:
@@ -151,6 +199,7 @@ def run_month(
                             repair_used=bool(triage_call_meta.get("repair_used", False)),
                             updated_at_source=str(paper.get("updated", "")).strip() or None,
                         ),
+                        cache_key=cache_key,
                     )
                 reasons_raw = result_raw.get("reasons", [])
                 if not isinstance(reasons_raw, list):
@@ -181,6 +230,7 @@ def run_month(
                         repair_used=False,
                         updated_at_source=str(paper.get("updated", "")).strip() or None,
                     ),
+                    cache_key=cache_key,
                 )
 
         write_jsonl(month_out / "triage.jsonl", sorted(triage_rows, key=lambda x: x["arxiv_id_base"]))
@@ -189,7 +239,7 @@ def run_month(
         triage_map = {t["arxiv_id_base"]: t for t in triage_rows}
         for arxiv_id_base, triage_row in triage_map.items():
             if triage_row.get("decision") == "reject":
-                db.delete_summary(arxiv_id_base)
+                db.delete_summary(arxiv_id_base, cache_key=_topic_cache_key(topic_config.slug, arxiv_id_base))
 
         accepted = [p for p in candidates if triage_map.get(p["arxiv_id_base"], {}).get("decision") == "accept"]
         if cfg.include_borderline:
@@ -204,9 +254,10 @@ def run_month(
         pdf_map: dict[str, dict[str, object | None]] = {}
         for paper in accepted:
             arxiv_id_base = paper["arxiv_id_base"]
+            cache_key = _topic_cache_key(topic_config.slug, arxiv_id_base)
             pdf_state: dict[str, object | None] = _empty_pdf_state()
             try:
-                cached_summary = None if force else db.get_summary_with_meta(arxiv_id_base)
+                cached_summary = None if force else db.get_summary_with_meta(arxiv_id_base, cache_key=cache_key)
                 if cached_summary and is_cache_current(cached_summary.get("meta"), summary_descriptor["cache_version"]):
                     summaries.append(cached_summary["data"])
                     summary_map[arxiv_id_base] = cached_summary["data"]
@@ -282,6 +333,7 @@ def run_month(
                             repair_used=bool(summary_call_meta.get("repair_used", False)),
                             updated_at_source=str(paper.get("updated", "")).strip() or None,
                         ),
+                        cache_key=cache_key,
                     )
             except Exception:
                 pass
@@ -314,6 +366,8 @@ def run_month(
 
         digest = build_digest(month, candidates, triage_rows, summaries)
         write_json(month_out / "digest.json", digest)
+        if topic_config.slug == DEFAULT_TOPIC:
+            _sync_legacy_output_dir(month_out, cfg.output_dir / month)
         if not no_site:
             metadata_map = {c["arxiv_id_base"]: c for c in candidates}
             write_month_site(
@@ -325,7 +379,7 @@ def run_month(
                 backend_rows=backend_rows,
             )
             update_home(cfg.docs_dir)
-        db.upsert_run(month, digest["stats"])
+        db.upsert_run(month, digest["stats"], run_key=_topic_run_key(topic_config.slug, month))
     finally:
         triage_llm.close()
         summary_llm.close()
