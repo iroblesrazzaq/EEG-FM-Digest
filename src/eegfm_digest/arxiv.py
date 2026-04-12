@@ -8,7 +8,7 @@ from typing import Any
 
 import httpx
 
-from .keywords import ARXIV_CATEGORIES, QUERY_A, QUERY_B
+from .keywords import active_arxiv_categories, active_arxiv_queries
 
 ARXIV_API_URL = "https://export.arxiv.org/api/query"
 ATOM_NS = {"atom": "http://www.w3.org/2005/Atom"}
@@ -70,8 +70,9 @@ def in_month(published: str, month: str) -> bool:
     return start <= dt < end
 
 
-def category_match(categories: list[str]) -> bool:
-    return any(cat in ARXIV_CATEGORIES for cat in categories)
+def category_match(categories: list[str], allowed_categories: set[str] | None = None) -> bool:
+    category_allowlist = allowed_categories or active_arxiv_categories()
+    return any(cat in category_allowlist for cat in categories)
 
 
 def dedupe_latest(papers: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -153,27 +154,31 @@ def fetch_month_candidates(
     max_candidates: int,
     month: str,
     rate_limit_seconds: float,
+    queries: list[str] | None = None,
+    allowed_categories: set[str] | None = None,
     connect_timeout_seconds: float = 10.0,
     read_timeout_seconds: float = 60.0,
     retries: int = 2,
     retry_backoff_seconds: float = 2.0,
 ) -> list[dict[str, Any]]:
-    combined = fetch_query(
-        QUERY_A,
-        max_candidates,
-        rate_limit_seconds,
-        connect_timeout_seconds=connect_timeout_seconds,
-        read_timeout_seconds=read_timeout_seconds,
-        retries=retries,
-        retry_backoff_seconds=retry_backoff_seconds,
-    ) + fetch_query(
-        QUERY_B,
-        max_candidates,
-        rate_limit_seconds,
-        connect_timeout_seconds=connect_timeout_seconds,
-        read_timeout_seconds=read_timeout_seconds,
-        retries=retries,
-        retry_backoff_seconds=retry_backoff_seconds,
-    )
-    filtered = [p for p in combined if category_match(p["categories"]) and in_month(p["published"], month)]
+    resolved_queries = queries or active_arxiv_queries()
+    resolved_categories = allowed_categories or active_arxiv_categories()
+    combined: list[dict[str, Any]] = []
+    for query in resolved_queries:
+        combined.extend(
+            fetch_query(
+                query,
+                max_candidates,
+                rate_limit_seconds,
+                connect_timeout_seconds=connect_timeout_seconds,
+                read_timeout_seconds=read_timeout_seconds,
+                retries=retries,
+                retry_backoff_seconds=retry_backoff_seconds,
+            )
+        )
+    filtered = [
+        p
+        for p in combined
+        if category_match(p["categories"], allowed_categories=resolved_categories) and in_month(p["published"], month)
+    ]
     return dedupe_latest(filtered)

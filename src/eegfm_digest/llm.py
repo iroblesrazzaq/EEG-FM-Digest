@@ -125,9 +125,9 @@ def build_llm_call(config: LLMCallConfig) -> LLMCaller:
 
 
 def load_api_key() -> str:
-    key = os.environ.get("OPENROUTER_API_KEY")
+    key = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("GEMINI_API_KEY")
     if not key:
-        raise RuntimeError("Missing OPENROUTER_API_KEY")
+        raise RuntimeError("Missing OPENROUTER_API_KEY or GEMINI_API_KEY")
     return key
 
 

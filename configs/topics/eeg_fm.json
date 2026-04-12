@@ -1,0 +1,17 @@
+{
+  "slug": "eeg_fm",
+  "title": "EEG Foundation Model Digest",
+  "description": "Monthly arXiv digest for EEG-FM papers",
+  "categories": [
+    "cs.AI",
+    "cs.LG",
+    "cs.NE",
+    "eess.SP",
+    "q-bio.NC",
+    "stat.ML"
+  ],
+  "queries": [
+    "all:(eeg OR electroencephalograph* OR brainwave*) AND all:(\"foundation model\" OR pretrain OR pretrained OR \"self-supervised\" OR \"self supervised\")",
+    "all:(eeg OR electroencephalograph* OR brainwave*) AND all:(\"representation learning\" OR masked OR transfer OR generaliz*)"
+  ]
+}
