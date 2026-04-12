@@ -6,7 +6,11 @@ from eegfm_digest.site import render_month_page, update_home, write_month_site
 
 
 def test_month_page_snapshot():
-    digest = {"top_picks": ["2501.00001"], "sections": [{"title": "new_model", "paper_ids": ["2501.00001"]}]}
+    digest = {
+        "featured_paper": None,
+        "top_picks": ["2501.00001"],
+        "sections": [{"title": "new_model", "paper_ids": ["2501.00001"]}],
+    }
     summaries = [
         {
             "arxiv_id_base": "2501.00001",
@@ -78,6 +82,7 @@ def test_write_month_site_payload_includes_summary_failures(tmp_path):
     digest = {
         "month": month,
         "stats": {"candidates": 3, "accepted": 2, "summarized": 1},
+        "featured_paper": None,
         "top_picks": ["2501.00001"],
         "sections": [],
     }
@@ -137,6 +142,7 @@ def test_write_month_site_payload_includes_summary_failures(tmp_path):
     payload = json.loads((docs_dir / "digest" / month / "papers.json").read_text(encoding="utf-8"))
     assert payload["month"] == "2025-01"
     assert payload["stats"] == {"candidates": 3, "accepted": 2, "summarized": 1}
+    assert payload["featured_paper_id"] is None
     assert len(payload["papers"]) == 2
     failed = [row for row in payload["papers"] if row["arxiv_id_base"] == "2501.00002"][0]
     assert failed["summary"] is None
@@ -153,6 +159,7 @@ def test_update_home_writes_month_manifest(tmp_path):
         json.dumps(
             {
                 "month": "2025-01",
+                "featured_paper_id": None,
                 "stats": {"candidates": 3, "accepted": 0, "summarized": 0},
                 "papers": [],
                 "top_picks": [],
@@ -165,6 +172,7 @@ def test_update_home_writes_month_manifest(tmp_path):
         json.dumps(
             {
                 "month": "2025-02",
+                "featured_paper_id": None,
                 "stats": {"candidates": 2, "accepted": 1, "summarized": 1},
                 "papers": [{"arxiv_id_base": "2502.00001", "summary": {"title": "x"}}],
                 "top_picks": ["2502.00001"],
@@ -197,12 +205,14 @@ def test_update_home_changes_only_modified_month_revision(tmp_path):
 
     payload_a = {
         "month": "2025-01",
+        "featured_paper_id": None,
         "stats": {"candidates": 1, "accepted": 1, "summarized": 1},
         "papers": [{"arxiv_id_base": "2501.00001", "summary": {"title": "a"}}],
         "top_picks": ["2501.00001"],
     }
     payload_b = {
         "month": "2025-02",
+        "featured_paper_id": None,
         "stats": {"candidates": 1, "accepted": 1, "summarized": 1},
         "papers": [{"arxiv_id_base": "2502.00001", "summary": {"title": "b"}}],
         "top_picks": ["2502.00001"],
@@ -235,6 +245,7 @@ def test_update_home_month_revision_matches_payload_hash(tmp_path):
         json.dumps(
             {
                 "month": "2025-01",
+                "featured_paper_id": None,
                 "stats": {"candidates": 1, "accepted": 1, "summarized": 1},
                 "papers": [{"arxiv_id_base": "2501.00001", "summary": {"title": "x"}}],
                 "top_picks": ["2501.00001"],

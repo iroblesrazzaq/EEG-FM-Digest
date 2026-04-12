@@ -63,9 +63,51 @@ class OpenAICall:
         # Approximate token count for routing fulltext vs slices.
         return max(1, len(content) // 4)
 
+    def _extract_text_from_part(self, part: Any) -> str:
+        if isinstance(part, str):
+            return part
+        if isinstance(part, dict):
+            text = part.get("text")
+            if isinstance(text, str):
+                return text
+            if isinstance(text, dict):
+                nested = text.get("value")
+                if isinstance(nested, str):
+                    return nested
+            if isinstance(part.get("content"), str):
+                return str(part["content"])
+            return ""
+        text = getattr(part, "text", None)
+        if isinstance(text, str):
+            return text
+        if isinstance(text, dict):
+            nested = text.get("value")
+            if isinstance(nested, str):
+                return nested
+        content = getattr(part, "content", None)
+        if isinstance(content, str):
+            return content
+        return ""
+
+    def _extract_text_from_dump(self, payload: dict[str, Any]) -> str:
+        choices = payload.get("choices", [])
+        if not isinstance(choices, list) or not choices:
+            return ""
+        message = choices[0].get("message", {})
+        content = message.get("content")
+        if isinstance(content, str):
+            return content.strip()
+        if isinstance(content, list):
+            parts = [self._extract_text_from_part(item) for item in content]
+            return "".join(part for part in parts if part).strip()
+        return ""
+
     def _extract_text(self, response: Any) -> str:
         choices = getattr(response, "choices", None) or []
         if not choices:
+            model_dump = getattr(response, "model_dump", None)
+            if callable(model_dump):
+                return self._extract_text_from_dump(model_dump())
             return ""
         message = getattr(choices[0], "message", None)
         content = getattr(message, "content", None)
@@ -74,10 +116,13 @@ class OpenAICall:
         if isinstance(content, list):
             parts: list[str] = []
             for item in content:
-                text = getattr(item, "text", None)
+                text = self._extract_text_from_part(item)
                 if text:
                     parts.append(str(text))
             return "".join(parts).strip()
+        model_dump = getattr(response, "model_dump", None)
+        if callable(model_dump):
+            return self._extract_text_from_dump(model_dump())
         return ""
 
     def call(self, prompt: str, schema: dict[str, Any] | None = None) -> LLMCallResult:

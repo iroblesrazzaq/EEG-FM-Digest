@@ -13,7 +13,7 @@ from .cache_meta import (
 )
 from .config import Config
 from .db import DigestDB
-from .llm import LLMCallConfig, build_llm_call, load_api_key
+from .llm import LLMCallConfig, LLMRateLimitError, build_llm_call, load_api_key
 from .pdf import download_pdf, extract_text, slice_paper_text
 from .render import build_digest, write_json, write_jsonl
 from .site import update_home, write_month_site
@@ -67,6 +67,7 @@ def run_month(
     no_pdf: bool = False,
     no_site: bool = False,
     force: bool = False,
+    feature_paper: str | None = None,
 ) -> None:
     month_out = cfg.output_dir / month
     month_out.mkdir(parents=True, exist_ok=True)
@@ -163,6 +164,8 @@ def run_month(
                 }
                 triage_rows.append(result)
             except Exception as exc:
+                if isinstance(exc, LLMRateLimitError):
+                    raise
                 fallback = {
                     "arxiv_id_base": paper["arxiv_id_base"],
                     "decision": "reject",
@@ -283,8 +286,9 @@ def run_month(
                             updated_at_source=str(paper.get("updated", "")).strip() or None,
                         ),
                     )
-            except Exception:
-                pass
+            except Exception as exc:
+                if isinstance(exc, LLMRateLimitError):
+                    raise
             pdf_map[arxiv_id_base] = pdf_state
 
         summaries = sorted(summaries, key=lambda x: (x["published_date"], x["arxiv_id_base"]))
@@ -312,7 +316,7 @@ def run_month(
             )
         write_jsonl(month_out / "backend_rows.jsonl", backend_rows)
 
-        digest = build_digest(month, candidates, triage_rows, summaries)
+        digest = build_digest(month, candidates, triage_rows, summaries, featured_paper=feature_paper)
         write_json(month_out / "digest.json", digest)
         if not no_site:
             metadata_map = {c["arxiv_id_base"]: c for c in candidates}

@@ -483,11 +483,16 @@ function parseMonthPayload(payload, fallbackMonth) {
   const topPicks = asArray(payload.top_picks)
     .map((item) => String(item || "").trim())
     .filter(Boolean);
-  const hasFeaturedPaperId = Object.prototype.hasOwnProperty.call(payload, "featured_paper_id");
+  const hasFeaturedPaperId =
+    Object.prototype.hasOwnProperty.call(payload, "featured_paper_id") ||
+    Object.prototype.hasOwnProperty.call(payload, "featured_paper");
+  const rawFeaturedPaperId = Object.prototype.hasOwnProperty.call(payload, "featured_paper_id")
+    ? payload.featured_paper_id
+    : payload.featured_paper;
   const featuredPaperId = hasFeaturedPaperId
-    ? payload.featured_paper_id === null
+    ? rawFeaturedPaperId === null
       ? null
-      : String(payload.featured_paper_id || "").trim()
+      : String(rawFeaturedPaperId || "").trim()
     : undefined;
   return {
     month,
@@ -719,6 +724,22 @@ function monthEmptyMessage(month, stats) {
     return `Accepted papers exist for ${monthDisplayLabel(month)}, but summaries are unavailable.`;
   }
   return `No papers match the current filters for ${monthDisplayLabel(month)}.`;
+}
+
+function renderFeaturedNullState(app, state) {
+  const slot = app.querySelector("#featured-paper");
+  if (!slot) {
+    return;
+  }
+  if (state.view !== "month" || !state.hasFeaturedPaperId || state.featuredPaperId) {
+    slot.innerHTML = "";
+    return;
+  }
+  slot.innerHTML = `
+    <article class="card featured-empty-card" data-testid="featured-empty-card">
+      <p class="featured-empty-card-text">No featured paper this month. Check back soon!</p>
+    </article>
+  `;
 }
 
 function renderTagChips(summary) {
@@ -1088,6 +1109,7 @@ function renderResults(app, state) {
   if (!results || !meta) {
     return;
   }
+  renderFeaturedNullState(app, state);
   if (!results.hasAttribute("data-testid")) {
     results.setAttribute("data-testid", "results-list");
   }
@@ -1192,7 +1214,11 @@ function renderHome(app, state) {
                   ${featured.one_liner ? `<p class="small">${esc(featured.one_liner)}</p>` : ""}
                 </div>
               `
-              : `<p class="small">Featured paper: not set.</p>`;
+              : `
+                <div class="featured-paper featured-paper-empty">
+                  <p class="small">No featured paper this month. Check back soon!</p>
+                </div>
+              `;
           return `
             <article class="month-card" data-month-href="${monthHref}" tabindex="0" role="link" aria-label="Open ${esc(
               monthLabel,
@@ -1377,6 +1403,7 @@ async function setupDigestApp() {
 
   const papers = [];
   let featuredPaperId = "";
+  let hasFeaturedPaperId = false;
   if (view === "month") {
     const initialMonthRow = manifest.months.find((item) => item && item.month === month);
     const monthRev = normalizeMonthRev(initialMonthRow?.month_rev);
@@ -1396,18 +1423,12 @@ async function setupDigestApp() {
     const monthKey = monthPayload.month || month;
     monthStats[monthKey] = monthPayload.stats;
     papers.push(...monthPayload.papers);
-    const manifestMonthRow = manifest.months.find((item) => item && item.month === monthKey);
-    const fallbackFeaturedId =
-      manifestMonthRow && manifestMonthRow.featured
-        ? String(manifestMonthRow.featured.arxiv_id_base || "").trim()
-        : "";
     if (monthPayload.has_featured_paper_id) {
+      hasFeaturedPaperId = true;
       featuredPaperId =
         monthPayload.featured_paper_id === null
           ? ""
           : String(monthPayload.featured_paper_id || "").trim();
-    } else {
-      featuredPaperId = String(monthPayload.top_picks[0] || fallbackFeaturedId || "").trim();
     }
   }
 
@@ -1422,6 +1443,7 @@ async function setupDigestApp() {
     sortBy: "published_desc",
     selectedMonth: view === "month" ? month : "all",
     featuredPaperId,
+    hasFeaturedPaperId,
     lastFilteredPapers: [],
     searchTriggered: view === "month",
     selectedTags: Object.fromEntries(TAG_ORDER.map((category) => [category, new Set()])),

@@ -161,6 +161,7 @@ Same as triage.
 ### 6.1 Digest JSON
 Write `outputs/YYYY-MM/digest.json` including:
 - stats (candidates, accepted, summarized)
+- `featured_paper` nullable arXiv id; defaults to `null` unless explicitly set via CLI
 - `top_picks` ids
 - sections mapping
 
@@ -185,7 +186,12 @@ Incremental:
 - skip already-triaged and already-summarized unless `--force`
 
 ## 8) CLI
-`python -m eegfm_digest.run --month YYYY-MM [--max-candidates N] [--max-accepted N] [--include-borderline] [--no-pdf] [--no-site] [--force]`
+`python -m eegfm_digest.run --month YYYY-MM [--feature-paper ARXIV_ID] [--max-candidates N] [--max-accepted N] [--include-borderline] [--no-pdf] [--no-site] [--force]`
+
+`--feature-paper`:
+- optional explicit featured paper id for that month
+- defaults to null when omitted
+- this is the only supported way to set the featured paper; the pipeline and GitHub Actions must not auto-select one
 
 `--no-site` mode:
 - still writes all `outputs/YYYY-MM/*` artifacts and updates SQLite.
@@ -220,4 +226,5 @@ Optional:
 
 ## 11) GitHub Actions
 - Monthly workflow (day 1): runs previous month, writes `docs/`, commits changes (or opens PR).
+- Workflows must never auto-set `featured_paper`; leave it `null` unless the CLI flag is provided manually.
 - Test workflow: runs pytest on push/PR.

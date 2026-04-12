@@ -1,0 +1,14 @@
+EEG Foundation Models: Progresses, Benchmarking, and Open Problems
+EEG-to-Voice Decoding of Spoken and Imagined speech Using Non-Invasive EEG
+Leveraging Foundational Models and Simple Fusion for Multi-modal Physiological Signal Analysis
+Systematic review of self-supervised foundation models for brain network representation using electroencephalography
+Multi-decoder Neural Tracking Method for Accurately Predicting Speech Intelligibility
+Brain4FMs: A Benchmark of Foundation Models for Electrical Brain Signal
+ASPEN: Spectral-Temporal Fusion for Cross-Subject Brain Decoding
+BrainRVQ: A High-Fidelity EEG Foundation Model via Dual-Domain Residual Quantization and Hierarchical Autoregression
+DeeperBrain: A Neuro-Grounded EEG Foundation Model Towards Universal BCI
+Structured Prototype-Guided Adaptation for EEG Foundation Models
+ZUNA: Flexible EEG Superresolution with Position-Aware Diffusion Autoencoders
+HCFT: Hierarchical Convolutional Fusion Transformer for EEG Decoding
+Online decoding of rat self-paced locomotion speed from EEG using recurrent neural networks
+Cross-Temporal Attention Fusion (CTAF) for Multimodal Physiological Signals in Self-Supervised Learning

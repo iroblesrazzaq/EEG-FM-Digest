@@ -561,10 +561,31 @@ button:disabled {
   border-top: 1px solid var(--line);
 }
 
+.featured-paper-empty {
+  border-top-style: dashed;
+}
+
 .featured-title {
   margin: 4px 0 6px 0;
   font-weight: 700;
   line-height: 1.35;
+}
+
+#featured-paper:empty {
+  display: none;
+}
+
+.featured-empty-card {
+  margin: 14px 0 0 0;
+  border-style: dashed;
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: none;
+}
+
+.featured-empty-card-text {
+  margin: 0;
+  color: var(--muted);
 }
 
 #results-meta {
