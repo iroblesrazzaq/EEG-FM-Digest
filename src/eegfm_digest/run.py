@@ -7,6 +7,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from .config import DEFAULT_OPENROUTER_MODEL, load_config
+from .csv_export import export_month_csv
 from .pipeline import run_month
 
 
@@ -24,6 +25,7 @@ def main() -> None:
     parser.add_argument("--include-borderline", action="store_true")
     parser.add_argument("--no-pdf", action="store_true")
     parser.add_argument("--no-site", action="store_true")
+    parser.add_argument("--csv", action="store_true")
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
 
@@ -41,6 +43,8 @@ def main() -> None:
         cfg = replace(cfg, include_borderline=True)
 
     run_month(cfg, args.month, no_pdf=args.no_pdf, no_site=args.no_site, force=args.force)
+    if args.csv:
+        export_month_csv(cfg.output_dir / args.month)
 
 
 if __name__ == "__main__":
