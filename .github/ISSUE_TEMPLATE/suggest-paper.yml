@@ -1,0 +1,28 @@
+name: Suggest a Paper
+description: Suggest a paper for the EEG-FM Digest
+labels: ["paper-suggestion"]
+body:
+  - type: input
+    id: arxiv_id
+    attributes:
+      label: arXiv ID or URL
+      description: "e.g. 2401.12345 or https://arxiv.org/abs/2401.12345"
+      placeholder: "2401.12345"
+    validations:
+      required: true
+  - type: dropdown
+    id: modality
+    attributes:
+      label: Primary modality
+      options:
+        - EEG
+        - fMRI
+        - Focused Ultrasound
+        - Other neuroimaging
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: Why include this paper?
+      placeholder: "Brief reason this paper is relevant..."

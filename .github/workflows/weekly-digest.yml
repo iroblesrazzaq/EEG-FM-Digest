@@ -1,0 +1,32 @@
+name: Weekly Digest Update
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch: {}
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -e .
+      - name: Run pipeline
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL_TRIAGE: gemma-4-31b-it
+          GEMINI_MODEL_SUMMARY: gemma-4-31b-it
+        run: |
+          MONTH=$(date +%Y-%m)
+          python -m eegfm_digest.run --month "$MONTH"
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add outputs/ docs/
+          git diff --staged --quiet || git commit -m "auto: weekly digest update"
+          git push

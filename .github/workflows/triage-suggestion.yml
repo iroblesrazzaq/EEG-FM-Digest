@@ -1,0 +1,32 @@
+name: Triage Paper Suggestion
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  triage:
+    if: contains(github.event.issue.labels.*.name, 'paper-suggestion')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -e .
+      - name: Extract and triage
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL_TRIAGE: gemma-4-31b-it
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          ARXIV_ID=$(echo "$ISSUE_BODY" | grep -oP '\d{4}\.\d{4,5}')
+          if [ -n "$ARXIV_ID" ]; then
+            python scripts/triage_single.py "$ARXIV_ID" > result.md
+          else
+            echo "Could not parse an arXiv ID from the issue body." > result.md
+          fi
+      - name: Comment result
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body-path: result.md
