@@ -3,7 +3,7 @@
   "title": "MonthlyDigest",
   "type": "object",
   "additionalProperties": false,
-  "required": ["month", "stats", "top_picks", "sections"],
+  "required": ["month", "stats", "featured_paper", "top_picks", "sections"],
   "properties": {
     "month": { "type": "string", "pattern": "^\\d{4}-\\d{2}$" },
     "stats": {
@@ -16,6 +16,7 @@
         "summarized": { "type": "integer", "minimum": 0 }
       }
     },
+    "featured_paper": { "type": ["string", "null"], "default": null },
     "top_picks": { "type": "array", "items": { "type": "string" }, "maxItems": 5 },
     "sections": {
       "type": "array",

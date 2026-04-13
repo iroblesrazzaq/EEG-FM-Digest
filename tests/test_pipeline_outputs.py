@@ -3,7 +3,10 @@ import json
 import sqlite3
 from pathlib import Path
 
+import pytest
+
 from eegfm_digest.config import Config
+from eegfm_digest.llm import LLMRateLimitError
 from eegfm_digest.pipeline import run_month
 
 
@@ -137,10 +140,12 @@ def test_pipeline_writes_backend_rows_and_skips_site(monkeypatch, tmp_path):
     backend_rows = _read_jsonl(month_out / "backend_rows.jsonl")
     triage_rows = _read_jsonl(month_out / "triage.jsonl")
     paper_rows = _read_jsonl(month_out / "papers.jsonl")
+    digest = json.loads((month_out / "digest.json").read_text(encoding="utf-8"))
 
     assert [row["arxiv_id_base"] for row in backend_rows] == ["2501.00001", "2501.00002"]
     assert set(triage_rows[0].keys()) == {"arxiv_id_base", "decision", "confidence", "reasons"}
     assert len(paper_rows) == 1
+    assert digest["featured_paper"] is None
 
     accepted_row = backend_rows[0]
     rejected_row = backend_rows[1]
@@ -160,6 +165,80 @@ def test_pipeline_writes_backend_rows_and_skips_site(monkeypatch, tmp_path):
     assert not (tmp_path / "docs").exists()
     assert (cfg.output_dir / "2025-01" / "digest.json").exists()
     assert (cfg.data_dir / "digest.sqlite").exists()
+
+
+def test_pipeline_writes_explicit_featured_paper_to_digest(monkeypatch, tmp_path):
+    candidates = [_candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")]
+
+    monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
+
+    class DummyLMCall:
+        def close(self):  # noqa: ANN201
+            return None
+
+    monkeypatch.setattr("eegfm_digest.pipeline.build_llm_call", lambda *_args, **_kwargs: DummyLMCall())
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.triage_paper",
+        lambda paper, *_args, **_kwargs: {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "decision": "accept",
+            "confidence": 0.9,
+            "reasons": ["r1", "r2"],
+        },
+    )
+
+    def fake_download_pdf(_url, out_path, _rate):  # noqa: ANN001
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_bytes(b"%PDF-1.4")
+        return out_path
+
+    def fake_extract_text(_pdf_path, text_path):  # noqa: ANN001
+        text_path.parent.mkdir(parents=True, exist_ok=True)
+        text_path.write_text("Abstract\nEEG abstract", encoding="utf-8")
+        return {"tool": "pypdf", "pages": 1, "chars": 20, "error": None}
+
+    monkeypatch.setattr("eegfm_digest.pipeline.download_pdf", fake_download_pdf)
+    monkeypatch.setattr("eegfm_digest.pipeline.extract_text", fake_extract_text)
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.summarize_paper",
+        lambda paper, *_args, **_kwargs: {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "title": paper["title"],
+            "published_date": paper["published"][:10],
+            "categories": paper["categories"],
+            "paper_type": "method",
+            "one_liner": "Concise summary line.",
+            "detailed_summary": "Detailed summary.",
+            "unique_contribution": "Deterministic contribution sentence.",
+            "key_points": ["point one", "point two", "point three"],
+            "data_scale": {"datasets": [], "subjects": None, "eeg_hours": None, "channels": None},
+            "method": {"architecture": None, "objective": None, "pretraining": None, "finetuning": None},
+            "evaluation": {"tasks": [], "benchmarks": [], "headline_results": []},
+            "open_source": {"code_url": None, "weights_url": None, "license": None},
+            "tags": {"paper_type": [], "backbone": [], "objective": [], "tokenization": [], "topology": []},
+            "limitations": [],
+            "used_fulltext": True,
+            "notes": "ok",
+        },
+    )
+
+    cfg = Config(
+        llm_model_triage="triage-model",
+        llm_model_summary="summary-model",
+        output_dir=tmp_path / "outputs",
+        data_dir=tmp_path / "data",
+        docs_dir=tmp_path / "docs",
+        max_candidates=20,
+        max_accepted=20,
+        arxiv_rate_limit_seconds=0.0,
+        pdf_rate_limit_seconds=0.0,
+    )
+
+    run_month(cfg, "2025-01", no_site=True, feature_paper="2501.00001")
+
+    digest = json.loads((cfg.output_dir / "2025-01" / "digest.json").read_text(encoding="utf-8"))
+    assert digest["featured_paper"] == "2501.00001"
 
 
 def test_pipeline_site_outputs_manifest_month_revision(monkeypatch, tmp_path):
@@ -391,3 +470,35 @@ def test_pipeline_removes_stale_summary_when_triage_flips_to_reject(monkeypatch,
     finally:
         conn.close()
     assert summary_count == 0
+
+
+def test_pipeline_reraises_llm_rate_limit_errors(monkeypatch, tmp_path):
+    candidates = [_candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")]
+
+    monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
+
+    class DummyLMCall:
+        def close(self):  # noqa: ANN201
+            return None
+
+    monkeypatch.setattr("eegfm_digest.pipeline.build_llm_call", lambda *_args, **_kwargs: DummyLMCall())
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.triage_paper",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(LLMRateLimitError("429 upstream")),
+    )
+
+    cfg = Config(
+        llm_model_triage="triage-model",
+        llm_model_summary="summary-model",
+        output_dir=tmp_path / "outputs",
+        data_dir=tmp_path / "data",
+        docs_dir=tmp_path / "docs",
+        max_candidates=20,
+        max_accepted=20,
+        arxiv_rate_limit_seconds=0.0,
+        pdf_rate_limit_seconds=0.0,
+    )
+
+    with pytest.raises(LLMRateLimitError):
+        run_month(cfg, "2025-01", no_site=True)

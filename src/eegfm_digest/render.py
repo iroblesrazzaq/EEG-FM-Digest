@@ -19,7 +19,34 @@ def pick_top_picks(summaries: list[dict[str, Any]], triage_map: dict[str, dict[s
     return [s["arxiv_id_base"] for s in ranked[:5]]
 
 
-def build_digest(month: str, candidates: list[dict[str, Any]], triage_rows: list[dict[str, Any]], summaries: list[dict[str, Any]]) -> dict[str, Any]:
+def _normalize_featured_paper(
+    featured_paper: str | None,
+    triage_rows: list[dict[str, Any]],
+) -> str | None:
+    if featured_paper is None:
+        return None
+    featured_paper_id = str(featured_paper).strip()
+    if not featured_paper_id:
+        return None
+    accepted_ids = {
+        str(row.get("arxiv_id_base", "")).strip()
+        for row in triage_rows
+        if str(row.get("decision", "")).strip() == "accept"
+    }
+    if featured_paper_id not in accepted_ids:
+        raise RuntimeError(
+            f"Featured paper {featured_paper_id} was not accepted for this month; only accepted papers can be featured."
+        )
+    return featured_paper_id
+
+
+def build_digest(
+    month: str,
+    candidates: list[dict[str, Any]],
+    triage_rows: list[dict[str, Any]],
+    summaries: list[dict[str, Any]],
+    featured_paper: str | None = None,
+) -> dict[str, Any]:
     triage_map = {t["arxiv_id_base"]: t for t in triage_rows}
     sections_map: dict[str, list[str]] = defaultdict(list)
     for s in sorted(summaries, key=lambda x: (x["paper_type"], x["published_date"], x["arxiv_id_base"])):
@@ -32,6 +59,7 @@ def build_digest(month: str, candidates: list[dict[str, Any]], triage_rows: list
             "accepted": len([t for t in triage_rows if t["decision"] == "accept"]),
             "summarized": len(summaries),
         },
+        "featured_paper": _normalize_featured_paper(featured_paper, triage_rows),
         "top_picks": pick_top_picks(summaries, triage_map),
         "sections": [{"title": k, "paper_ids": v} for k, v in sorted(sections_map.items())],
     }
