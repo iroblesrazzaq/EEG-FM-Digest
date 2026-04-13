@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 import hashlib
 import html
 import json
@@ -7,86 +8,26 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-_SHORT_BLURB = (
-    "This digest serves as a monthly update on the current EEG foundation model literature on arXiv. "
-    "We filter with arXiv title and abstract keywords, and a triage LLM to decide on papers that qualify. "
-    "Then, we generate a summary of the entire paper with an LLM. "
-    "I manually choose the featured paper of the month."
-)
-
-_PROCESS_DETAILS_INTRO = (
-    "This digest serves as a monthly update on the current EEG foundation model literature. "
-    "I built it so I can keep up to date with the latest EEG FM papers, mostly using Codex 5.3. "
-    "The process is as follows:"
-)
+from .keywords import load_topic_config
 
 _PROCESS_DETAILS_STEPS = [
-    (
-        "First we call the arXiv API to retrieve papers with EEG-FM-related terms in their title and abstract. "
-        "This yielded me 492 candidate papers."
-    ),
-    (
-        "Then, I use an LLM on the title and abstract to triage all papers returned by the arXiv search. "
-        "The model returns a decision (accept, reject, borderline), its confidence, and 2-4 reasons "
-        "for its decision. 94 papers passed this step."
-    ),
-    (
-        "Finally, for all models accepted by the triage LLM, we download the pdf, extract text with PyMuPDF, "
-        "and run a summary LLM where we extract a summary, bullet points, unique contribution, and tags."
-    ),
+    "Query arXiv with a topic-specific recall net built from categories and title/abstract keyword queries.",
+    "Run an LLM triage pass on title and abstract only to accept, reject, or mark borderline papers.",
+    "Download PDFs only for accepted or borderline papers, extract text, and generate structured summaries.",
+    "Render deterministic static HTML pages into docs/ so the archive can be published with GitHub Pages.",
 ]
-
-_PROCESS_DETAILS_FOOTER = (
-    "Current triage and summary LLM calls use stepfun/step-3.5-flash:free via OpenRouter. "
-    "For all previous papers (2021 - Jan 2026), running this whole process cost ~3 million tokens, so each accepted paper costs "
-    "~30,000 tokens (including averaged triage costs for papers that don't pass). Crucially, this digest "
-    "excludes models pretrained on data from one specific task and fine-tuned specifically for that same task "
-    "- we define an EEG FM as a large model pretrained on EEG data, built with the potential and intention "
-    "for broad transfer. I update the digest at least once a month, hopefully every week if I'm diligent."
-)
 
 _PROCESS_LIMITATIONS = [
-    "Only checks paper on arXiv.",
+    "This pipeline only checks papers available on arXiv.",
     "arXiv keyword search may miss papers.",
     "Triage LLM could misclassify a paper.",
-    (
-        "Summary LLM is not an expert on the literature - one consequence is that it lacks "
-        "the expertise to judge important and novel contributions, so it must rely on the paper "
-        "to accurately self-identify novelty/importance."
-    ),
+    "Summary quality depends on PDF extraction quality and what the paper states explicitly.",
 ]
 
-
-_EEG_KEYWORDS = [
-    "eeg",
-    "electroencephalograph*",
-    "brainwave*",
-]
-
-_FM_KEYWORDS_SET_A = [
-    '"foundation model"',
-    "pretrain",
-    "pretrained",
-    '"self-supervised"',
-    '"self supervised"',
-]
-
-_FM_KEYWORDS_SET_B = [
-    '"representation learning"',
-    "masked",
-    "transfer",
-    "generaliz*",
-]
-
-_AUTHOR_NAME = "Ismael Robles-Razzaq"
-_GITHUB_PROFILE_URL = "https://github.com/iroblesrazzaq"
-_PROJECT_REPO_URL = "https://github.com/iroblesrazzaq/EEG-FM-Digest"
-_PERSONAL_WEBSITE_URL = "https://iroblesrazzaq.github.io/"
-_LINKEDIN_URL = "https://www.linkedin.com/in/ismaelroblesrazzaq"
-_EMAIL_ADDRESS = "ismaelroblesrazzaq@gmail.com"
 _ASSET_VERSION = "20260225-1"
-_SITE_TAB_TITLE_BASE = "EEG-FM Digest"
 _FEATURED_PAPERS_PATH = Path("configs/featured_papers.json")
+_SITE_CONFIG_PATH = Path("configs/site_config.json")
+_DEFAULT_THEME_COLOR = "#1e40af"
 
 _ICON_SVGS = {
     "github": (
@@ -139,6 +80,56 @@ _ICON_SVGS = {
 }
 
 
+@dataclass(frozen=True)
+class SiteBranding:
+    title: str
+    author: str
+    description: str
+    theme_color: str
+    links: dict[str, str]
+
+
+def load_site_config(path: Path = _SITE_CONFIG_PATH) -> SiteBranding:
+    payload: dict[str, Any] = {
+        "title": "EEG Foundation Model Digest",
+        "author": "Ismael Robles-Razzaq",
+        "description": "Monthly arXiv digest for EEG-FM papers",
+        "theme_color": _DEFAULT_THEME_COLOR,
+        "links": {
+            "github": "https://github.com/iroblesrazzaq",
+            "linkedin": "https://www.linkedin.com/in/ismaelroblesrazzaq",
+            "website": "https://iroblesrazzaq.github.io/",
+            "email": "ismaelroblesrazzaq@gmail.com",
+        },
+    }
+    if path.exists():
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(raw, dict):
+            raise RuntimeError(f"Invalid site config at {path}: expected a JSON object.")
+        payload.update({key: value for key, value in raw.items() if key != "links"})
+        if isinstance(raw.get("links"), dict):
+            merged_links = dict(payload["links"])
+            merged_links.update(
+                {
+                    str(key).strip(): str(value).strip()
+                    for key, value in raw["links"].items()
+                    if str(key).strip() and str(value).strip()
+                }
+            )
+            payload["links"] = merged_links
+    return SiteBranding(
+        title=str(payload.get("title", "Research Digest")).strip() or "Research Digest",
+        author=str(payload.get("author", "")).strip(),
+        description=str(payload.get("description", "")).strip(),
+        theme_color=_normalize_hex_color(str(payload.get("theme_color", _DEFAULT_THEME_COLOR)).strip()),
+        links={
+            str(key).strip(): str(value).strip()
+            for key, value in dict(payload.get("links", {})).items()
+            if str(key).strip() and str(value).strip()
+        },
+    )
+
+
 def _safe_str_list(value: Any) -> list[str]:
     if not isinstance(value, list):
         return []
@@ -168,6 +159,55 @@ def _safe_links(value: Any, arxiv_id_base: str) -> dict[str, str]:
     if pdf_url:
         links["pdf"] = pdf_url
     return links
+
+
+def _normalize_hex_color(value: str) -> str:
+    color = value.strip().lstrip("#")
+    if len(color) == 3:
+        color = "".join(ch * 2 for ch in color)
+    if len(color) != 6 or any(ch not in "0123456789abcdefABCDEF" for ch in color):
+        return _DEFAULT_THEME_COLOR
+    return f"#{color.lower()}"
+
+
+def _hex_to_rgb(value: str) -> tuple[int, int, int]:
+    color = _normalize_hex_color(value).lstrip("#")
+    return tuple(int(color[idx:idx + 2], 16) for idx in (0, 2, 4))
+
+
+def _mix_hex(value: str, other: str, ratio: float) -> str:
+    ratio = max(0.0, min(1.0, ratio))
+    rgb_a = _hex_to_rgb(value)
+    rgb_b = _hex_to_rgb(other)
+    mixed = tuple(round((1.0 - ratio) * a + ratio * b) for a, b in zip(rgb_a, rgb_b))
+    return "#" + "".join(f"{channel:02x}" for channel in mixed)
+
+
+def _theme_style_block(branding: SiteBranding) -> str:
+    accent = branding.theme_color
+    accent_deep = _mix_hex(accent, "#000000", 0.22)
+    accent_soft = _mix_hex(accent, "#ffffff", 0.88)
+    return (
+        "<style>:root{"
+        f"--accent:{html.escape(accent)};"
+        f"--accent-deep:{html.escape(accent_deep)};"
+        f"--accent-soft:{html.escape(accent_soft)};"
+        "}</style>"
+    )
+
+
+def _head_html(page_title: str, stylesheet_href: str, branding: SiteBranding, description: str | None = None) -> str:
+    meta_description = html.escape(description or branding.description)
+    return (
+        "<head>"
+        "<meta charset='utf-8'>"
+        f"<meta name='description' content='{meta_description}'>"
+        f"<meta name='theme-color' content='{html.escape(branding.theme_color)}'>"
+        f"<title>{html.escape(page_title)}</title>"
+        f"<link rel='stylesheet' href='{html.escape(stylesheet_href)}?v={_ASSET_VERSION}'>"
+        f"{_theme_style_block(branding)}"
+        "</head>"
+    )
 
 
 def load_featured_paper_overrides(path: Path = _FEATURED_PAPERS_PATH) -> dict[str, str | None]:
@@ -376,15 +416,18 @@ def _month_payload(
 
 
 def _about_digest_block(process_href: str, include_process_cta: bool = False) -> str:
+    branding = load_site_config()
     cta = (
         f"<p class='small'><a href='{html.escape(process_href)}'>Read the detailed process and prompt design</a></p>"
         if include_process_cta
         else ""
     )
+    description = branding.description or "A monthly research digest built from arXiv retrieval and structured LLM summaries."
     return (
         "<section class='digest-about'>"
         "<h2>About This Digest</h2>"
-        f"<p>{html.escape(_SHORT_BLURB)}</p>"
+        f"<p>{html.escape(description)}. The pipeline retrieves candidate papers from arXiv, triages them with an LLM, "
+        "summarizes accepted papers from PDFs, and publishes a static archive.</p>"
         f"{cta}"
         "</section>"
     )
@@ -402,15 +445,20 @@ def _keyword_list_html(items: list[str]) -> str:
     return f"<ul>{values}</ul>"
 
 
-def _header_contact_links_html() -> str:
+def _header_contact_links_html(branding: SiteBranding) -> str:
     items = [
-        ("github", "GitHub profile", _GITHUB_PROFILE_URL),
-        ("website", "Personal website", _PERSONAL_WEBSITE_URL),
-        ("linkedin", "LinkedIn profile", _LINKEDIN_URL),
-        ("email", f"Email {_EMAIL_ADDRESS}", f"mailto:{_EMAIL_ADDRESS}"),
+        ("github", "GitHub", branding.links.get("github", "")),
+        ("website", "Website", branding.links.get("website", "")),
+        ("linkedin", "LinkedIn", branding.links.get("linkedin", "")),
+        ("email", "Email", branding.links.get("email", "")),
     ]
     links: list[str] = []
     for icon_name, aria_label, href in items:
+        href = href.strip()
+        if not href:
+            continue
+        if icon_name == "email" and not href.startswith("mailto:"):
+            href = f"mailto:{href}"
         icon = _ICON_SVGS.get(icon_name, "")
         if not icon:
             continue
@@ -427,6 +475,7 @@ def _nav_html(
     explore_href: str,
     process_href: str,
     active_tab: str,
+    branding: SiteBranding,
 ) -> str:
     tabs = [
         ("home", "Monthly Digest", home_href),
@@ -440,22 +489,25 @@ def _nav_html(
         )
         for key, label, href in tabs
     )
-    repo_link = (
-        f"<a class='site-nav-link site-nav-link-repo' href='{html.escape(_PROJECT_REPO_URL)}' "
-        "rel='noopener noreferrer' target='_blank'>GitHub Repo</a>"
-    )
-    contacts = _header_contact_links_html()
+    github_href = branding.links.get("github", "").strip()
+    github_link = ""
+    if github_href:
+        github_link = (
+            f"<a class='site-nav-link site-nav-link-repo' href='{html.escape(github_href)}' "
+            "rel='noopener noreferrer' target='_blank'>GitHub</a>"
+        )
+    contacts = _header_contact_links_html(branding)
     return (
         "<header class='site-shell'>"
         "<div class='site-shell-inner'>"
         "<div class='site-shell-top'>"
         "<div class='site-brand'>"
-        f"<p class='site-title'><a class='site-title-link' href='{html.escape(home_href)}'>EEG Foundation Model Digest</a></p>"
+        f"<p class='site-title'><a class='site-title-link' href='{html.escape(home_href)}'>{html.escape(branding.title)}</a></p>"
         "</div>"
-        f"<nav class='site-nav'>{links}{repo_link}</nav>"
+        f"<nav class='site-nav'>{links}{github_link}</nav>"
         "</div>"
         "<div class='site-shell-meta'>"
-        f"<p class='site-byline'>by <strong>{html.escape(_AUTHOR_NAME)}</strong></p>"
+        f"<p class='site-byline'>by <strong>{html.escape(branding.author)}</strong></p>"
         f"<div class='site-contact-links'>{contacts}</div>"
         "</div>"
         "</div>"
@@ -464,38 +516,37 @@ def _nav_html(
 
 
 def render_process_page() -> str:
+    branding = load_site_config()
+    topic = load_topic_config()
     step_items = "".join(f"<li>{html.escape(text)}</li>" for text in _PROCESS_DETAILS_STEPS)
     limitation_items = "".join(f"<li>{html.escape(text)}</li>" for text in _PROCESS_LIMITATIONS)
     triage_prompt = html.escape(_load_prompt_text(Path("prompts/triage.md")))
     summary_prompt = html.escape(_load_prompt_text(Path("prompts/summarize.md")))
-    nav = _nav_html("../index.html", "../explore/index.html", "../process/index.html", "process")
+    nav = _nav_html("../index.html", "../explore/index.html", "../process/index.html", "process", branding)
+    category_items = _keyword_list_html(list(topic.categories))
+    query_items = _keyword_list_html(list(topic.queries))
     return f"""<!doctype html>
-<html><head><meta charset='utf-8'><title>{html.escape(_tab_title("About"))}</title>
-<link rel='stylesheet' href='../assets/style.css?v={_ASSET_VERSION}'></head><body>
+<html>{_head_html(_tab_title(branding, "About"), "../assets/style.css", branding)}<body>
 {nav}
 <main class='container process-page'>
 <h1>About This Digest</h1>
 <section class='process-content'>
-<p>{html.escape(_PROCESS_DETAILS_INTRO)}</p>
+<p>{html.escape(branding.description)}. The current topic definition is loaded from <code>configs/topics/</code>.</p>
 <ul>{step_items}</ul>
-<p>{html.escape(_PROCESS_DETAILS_FOOTER)}</p>
+<p>The default model choice is hardcoded in the repo, while the API key is loaded from environment variables. This keeps scheduled runs simple for forks.</p>
 <h2>Limitations</h2>
 <ul>{limitation_items}</ul>
-<h2>arXiv Retrieval Keywords</h2>
+<h2>Topic Config</h2>
 <section class='prompt-details keyword-details'>
-<p class='small'>Matching requires one EEG term plus one FM term set in title/abstract.</p>
+<p class='small'>The active topic config drives retrieval categories and query strings.</p>
 <div class='keyword-grid'>
 <section>
-<p><strong>EEG term set</strong> (used in both queries)</p>
-{_keyword_list_html(_EEG_KEYWORDS)}
+<p><strong>arXiv categories</strong></p>
+{category_items}
 </section>
 <section>
-<p><strong>FM term set A</strong></p>
-{_keyword_list_html(_FM_KEYWORDS_SET_A)}
-</section>
-<section>
-<p><strong>FM term set B</strong></p>
-{_keyword_list_html(_FM_KEYWORDS_SET_B)}
+<p><strong>Query strings</strong></p>
+{query_items}
 </section>
 </div>
 </section>
@@ -531,10 +582,11 @@ def _month_tab_label(month: str) -> str:
         return month
 
 
-def _tab_title(suffix: str | None = None) -> str:
+def _tab_title(branding: SiteBranding, suffix: str | None = None) -> str:
+    base = branding.title
     if not suffix:
-        return _SITE_TAB_TITLE_BASE
-    return f"{_SITE_TAB_TITLE_BASE} | {suffix}"
+        return base
+    return f"{base} | {suffix}"
 
 
 def render_month_page(
@@ -544,22 +596,22 @@ def render_month_page(
     digest: dict[str, Any],
 ) -> str:
     del summaries, metadata, digest  # Render path is JSON-driven; data loads client-side.
+    branding = load_site_config()
     month_attr = html.escape(month)
     month_json = html.escape(f"../../digest/{month}/papers.json")
     manifest_json = html.escape("../../data/months.json")
     month_title = html.escape(_month_label(month))
-    month_tab_title = html.escape(_tab_title(_month_tab_label(month)))
-    nav = _nav_html("../../index.html", "../../explore/index.html", "../../process/index.html", "home")
+    month_tab_title = _tab_title(branding, _month_tab_label(month))
+    nav = _nav_html("../../index.html", "../../explore/index.html", "../../process/index.html", "home", branding)
     return f"""<!doctype html>
-<html><head><meta charset='utf-8'><title>{month_tab_title}</title>
-<link rel='stylesheet' href='../../assets/style.css?v={_ASSET_VERSION}'></head>
+<html>{_head_html(month_tab_title, "../../assets/style.css", branding, f"{branding.description} for {_month_label(month)}.")}
 <body>
   {nav}
   <main id='digest-app' class='container' data-view='month' data-month='{month_attr}' data-manifest-json='{manifest_json}' data-month-json='{month_json}'>
     <section class='hero-banner month-hero'>
       <p class='hero-kicker'>Monthly Digest</p>
       <h1>{month_title} Digest</h1>
-      <p class='sub'>Accepted EEG-FM papers and summaries for this month.</p>
+      <p class='sub'>Accepted papers and summaries for this month.</p>
     </section>
     <section id='controls' class='controls'></section>
     <p id='results-meta' class='small'></p>
@@ -571,11 +623,11 @@ def render_month_page(
 
 
 def render_home_page(months: list[str]) -> str:
+    branding = load_site_config()
     fallback_months = html.escape(json.dumps(months, ensure_ascii=False))
-    nav = _nav_html("index.html", "explore/index.html", "process/index.html", "home")
+    nav = _nav_html("index.html", "explore/index.html", "process/index.html", "home", branding)
     return f"""<!doctype html>
-<html><head><meta charset='utf-8'><title>{html.escape(_tab_title())}</title>
-<link rel='stylesheet' href='assets/style.css?v={_ASSET_VERSION}'></head><body>
+<html>{_head_html(_tab_title(branding), "assets/style.css", branding)}<body>
 {nav}
 <main id='digest-app' class='container' data-view='home' data-month='' data-manifest-json='data/months.json' data-fallback-months='{fallback_months}'>
 {_about_digest_block("process/index.html", include_process_cta=False)}
@@ -588,11 +640,11 @@ def render_home_page(months: list[str]) -> str:
 
 
 def render_explore_page(months: list[str]) -> str:
+    branding = load_site_config()
     fallback_months = html.escape(json.dumps(months, ensure_ascii=False))
-    nav = _nav_html("../index.html", "../explore/index.html", "../process/index.html", "explore")
+    nav = _nav_html("../index.html", "../explore/index.html", "../process/index.html", "explore", branding)
     return f"""<!doctype html>
-<html><head><meta charset='utf-8'><title>{html.escape(_tab_title("Search"))}</title>
-<link rel='stylesheet' href='../assets/style.css?v={_ASSET_VERSION}'></head><body>
+<html>{_head_html(_tab_title(branding, "Search"), "../assets/style.css", branding)}<body>
 {nav}
 <main id='digest-app' class='container' data-view='explore' data-month='' data-manifest-json='../data/months.json' data-fallback-months='{fallback_months}'>
 <h1>Search</h1>
