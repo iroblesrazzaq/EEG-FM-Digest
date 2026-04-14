@@ -3,10 +3,14 @@
 ## 1) Overview
 Implement a monthly “EEG Foundation Model Digest” pipeline.
 
+Current provider plan:
+- GitHub-hosted scheduled and manual runs use Google AI Studio with `gemma-4-31b-it`
+- OpenRouter remains a supported fallback/provider option for local or batch runs
+
 ### Pipeline stages
 - **Stage 1 (Retrieve):** Query arXiv by relevant categories and a high-recall **title+abstract keyword strategy**.
-- **Stage 2 (Triage):** A **cheap OpenRouter model** reviews title+abstract and decides whether it is an **EEG-FM** paper (strict JSON output).
-- **Stage 3 (Deep summary):** Download PDF for accepted papers, extract text, and use a stronger OpenRouter model to generate a **deep structured summary** (strict JSON output).
+- **Stage 2 (Triage):** A configured **Google AI Studio or OpenRouter model** reviews title+abstract and decides whether it is an **EEG-FM** paper (strict JSON output).
+- **Stage 3 (Deep summary):** Download PDF for accepted papers, extract text, and use a stronger configured **Google AI Studio or OpenRouter model** to generate a **deep structured summary** (strict JSON output).
 - **Stage 4 (Publish):** Generate a static GitHub Pages site in `docs/` with **one subpage per month** containing paper cards.
 
 ### Outputs (per month `YYYY-MM`)
@@ -93,7 +97,7 @@ Use `published` for inclusion, not `updated`.
 ### 3.6 Rate limiting
 - Sleep at least `ARXIV_RATE_LIMIT_SECONDS` (default 2) between paginated API calls.
 
-## 4) Stage 2: Cheap OpenRouter triage on abstract
+## 4) Stage 2: Cheap LLM triage on abstract
 
 ### 4.1 Inputs to triage model
 Provide:
@@ -119,7 +123,7 @@ If parse/schema fails:
 - retry once with `prompts/repair_json.md`
 - if still failing: store error, mark reject with `confidence=0.0` and reason `triage_json_error`
 
-## 5) Stage 3: Deep summary (PDF + extraction + strong OpenRouter model)
+## 5) Stage 3: Deep summary (PDF + extraction + strong LLM model)
 
 ### 5.1 Which papers proceed
 Proceed for:
@@ -203,8 +207,12 @@ Defaults:
 - max-candidates: 500
 - max-accepted: 80
 
-## 9) Configuration (OpenRouter)
+## 9) Configuration (LLM providers)
 Env vars:
+- `LLM_PROVIDER` (`google` or `openrouter`; default inferred from available API keys)
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL_TRIAGE`
+- `GEMINI_MODEL_SUMMARY`
 - `OPENROUTER_API_KEY`
 - `OPENROUTER_MODEL_TRIAGE`
 - `OPENROUTER_MODEL_SUMMARY`
@@ -214,6 +222,7 @@ Env vars:
 - `DATA_DIR`
 
 Optional:
+- `GOOGLE_API_KEY` (alias for `GEMINI_API_KEY`)
 - `LLM_TEMPERATURE_TRIAGE` default 0.2
 - `LLM_TEMPERATURE_SUMMARY` default 0.2
 - `LLM_MAX_OUTPUT_TOKENS_TRIAGE` default 1024

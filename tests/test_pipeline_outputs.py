@@ -40,7 +40,7 @@ def test_pipeline_writes_backend_rows_and_skips_site(monkeypatch, tmp_path):
     ]
 
     monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
-    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda *_args, **_kwargs: "test-key")
 
     class DummyLMCall:
         def close(self):  # noqa: ANN201
@@ -171,7 +171,7 @@ def test_pipeline_writes_explicit_featured_paper_to_digest(monkeypatch, tmp_path
     candidates = [_candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")]
 
     monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
-    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda *_args, **_kwargs: "test-key")
 
     class DummyLMCall:
         def close(self):  # noqa: ANN201
@@ -247,7 +247,7 @@ def test_pipeline_site_outputs_manifest_month_revision(monkeypatch, tmp_path):
     ]
 
     monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
-    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda *_args, **_kwargs: "test-key")
 
     class DummyLMCall:
         def close(self):  # noqa: ANN201
@@ -360,7 +360,7 @@ def test_pipeline_removes_stale_summary_when_triage_flips_to_reject(monkeypatch,
     candidates = [candidate]
 
     monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
-    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda *_args, **_kwargs: "test-key")
 
     class DummyLMCall:
         def close(self):  # noqa: ANN201
@@ -476,7 +476,7 @@ def test_pipeline_reraises_llm_rate_limit_errors(monkeypatch, tmp_path):
     candidates = [_candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")]
 
     monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
-    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda *_args, **_kwargs: "test-key")
 
     class DummyLMCall:
         def close(self):  # noqa: ANN201

@@ -144,7 +144,7 @@ def test_batch_run_respects_configured_models(monkeypatch, tmp_path):
             docs_dir=tmp_path / "docs",
         ),
     )
-    monkeypatch.setattr("eegfm_digest.batch.load_api_key", lambda: "test-key")
+    monkeypatch.setattr("eegfm_digest.batch.load_api_key", lambda *_args, **_kwargs: "test-key")
     monkeypatch.setattr("eegfm_digest.batch.load_dotenv", lambda *_args, **_kwargs: None)
     monkeypatch.setattr("eegfm_digest.batch._effective_months", lambda *_args, **_kwargs: [])
     monkeypatch.setattr(
@@ -290,7 +290,7 @@ def test_pipeline_migrates_old_db_rows_and_treats_missing_metadata_as_stale(monk
     summary_calls = {"count": 0}
 
     monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: [candidate])
-    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda *_args, **_kwargs: "test-key")
 
     class DummyLLM:
         def close(self) -> None:
@@ -365,7 +365,7 @@ def test_pipeline_cache_versions_reuse_and_invalidate(monkeypatch, tmp_path):
     }
 
     monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: [candidate])
-    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda *_args, **_kwargs: "test-key")
     monkeypatch.setattr("eegfm_digest.pipeline._read", lambda path: prompts[path])
 
     class DummyLLM:

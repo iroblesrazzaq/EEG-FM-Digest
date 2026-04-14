@@ -20,7 +20,14 @@ from .cache_meta import (
 )
 from .config import Config, load_config
 from .db import DigestDB
-from .llm import LLMCallConfig, LLMRateLimitError, build_llm_call, load_api_key
+from .llm import (
+    LLMCallConfig,
+    LLMRateLimitError,
+    build_llm_call,
+    load_api_key,
+    normalize_provider,
+    provider_base_url,
+)
 from .pdf import download_pdf, extract_text, slice_paper_text
 from .render import build_digest, write_json, write_jsonl
 from .site import update_home, write_month_site
@@ -457,37 +464,30 @@ def run_batch(config_path: Path) -> None:
 
     # Load API keys for providers from configured env file.
     load_dotenv(Path(run_cfg.env_path).expanduser())
-    triage_provider = run_cfg.triage_provider.strip().lower()
-    summary_provider = run_cfg.summary_provider.strip().lower()
-    if triage_provider != "openrouter":
-        raise RuntimeError(
-            f"Unsupported triage_provider={run_cfg.triage_provider}. Use 'openrouter'."
-        )
-    if summary_provider != "openrouter":
-        raise RuntimeError(
-            f"Unsupported summary_provider={run_cfg.summary_provider}. Use 'openrouter'."
-        )
-    api_key = load_api_key()
+    triage_provider = normalize_provider(run_cfg.triage_provider)
+    summary_provider = normalize_provider(run_cfg.summary_provider)
+    triage_api_key = load_api_key(triage_provider)
+    summary_api_key = triage_api_key if summary_provider == triage_provider else load_api_key(summary_provider)
 
     db = DigestDB(cfg.data_dir / "digest.sqlite")
     try:
         triage_llm: Any = build_llm_call(
             LLMCallConfig(
-                provider="openrouter",
-                api_key=api_key,
+                provider=triage_provider,
+                api_key=triage_api_key,
                 model=run_cfg.triage_model or cfg.llm_model_triage,
                 temperature=cfg.llm_temperature_triage,
                 max_output_tokens=cfg.llm_max_output_tokens_triage,
-                base_url="https://openrouter.ai/api/v1",
+                base_url=provider_base_url(triage_provider),
             )
         )
         triage_llm_config = LLMCallConfig(
-            provider="openrouter",
-            api_key=api_key,
+            provider=triage_provider,
+            api_key=triage_api_key,
             model=run_cfg.triage_model or cfg.llm_model_triage,
             temperature=cfg.llm_temperature_triage,
             max_output_tokens=cfg.llm_max_output_tokens_triage,
-            base_url="https://openrouter.ai/api/v1",
+            base_url=provider_base_url(triage_provider),
         )
 
         # Phase 1: triage all months first.
@@ -504,12 +504,12 @@ def run_batch(config_path: Path) -> None:
 
         # Phase 2: summarize accepted for all months.
         summary_llm_config = LLMCallConfig(
-            provider="openrouter",
-            api_key=api_key,
+            provider=summary_provider,
+            api_key=summary_api_key,
             model=run_cfg.summary_model or cfg.llm_model_summary,
             temperature=cfg.llm_temperature_summary,
             max_output_tokens=cfg.llm_max_output_tokens_summary,
-            base_url="https://openrouter.ai/api/v1",
+            base_url=provider_base_url(summary_provider),
         )
         summary_llm: Any = build_llm_call(summary_llm_config)
         try:

@@ -13,7 +13,7 @@ from .cache_meta import (
 )
 from .config import Config
 from .db import DigestDB
-from .llm import LLMCallConfig, LLMRateLimitError, build_llm_call, load_api_key
+from .llm import LLMCallConfig, LLMRateLimitError, build_llm_call, load_api_key, provider_base_url
 from .pdf import download_pdf, extract_text, slice_paper_text
 from .render import build_digest, write_json, write_jsonl
 from .site import update_home, write_month_site
@@ -90,22 +90,22 @@ def run_month(
     for c in candidates:
         db.upsert_paper(month, c)
 
-    api_key = load_api_key()
+    api_key = load_api_key(cfg.llm_provider)
     triage_llm_config = LLMCallConfig(
-        provider="openrouter",
+        provider=cfg.llm_provider,
         api_key=api_key,
         model=cfg.llm_model_triage,
         temperature=cfg.llm_temperature_triage,
         max_output_tokens=cfg.llm_max_output_tokens_triage,
-        base_url="https://openrouter.ai/api/v1",
+        base_url=provider_base_url(cfg.llm_provider),
     )
     summary_llm_config = LLMCallConfig(
-        provider="openrouter",
+        provider=cfg.llm_provider,
         api_key=api_key,
         model=cfg.llm_model_summary,
         temperature=cfg.llm_temperature_summary,
         max_output_tokens=cfg.llm_max_output_tokens_summary,
-        base_url="https://openrouter.ai/api/v1",
+        base_url=provider_base_url(cfg.llm_provider),
     )
     triage_llm = build_llm_call(triage_llm_config)
     summary_llm = build_llm_call(summary_llm_config)

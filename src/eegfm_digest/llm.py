@@ -2,8 +2,13 @@ from __future__ import annotations
 
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Protocol
+
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+GOOGLE_OPENAI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
+GOOGLE_PROVIDER_ALIASES = {"google", "google_ai_studio", "gemini"}
+OPENAI_COMPAT_PROVIDER_ALIASES = {"openai", "openrouter"} | GOOGLE_PROVIDER_ALIASES
 
 
 @dataclass(frozen=True)
@@ -36,22 +41,60 @@ class LLMRateLimitError(RuntimeError):
     pass
 
 
+def normalize_provider(provider: str) -> str:
+    normalized = provider.strip().lower().replace("-", "_")
+    if normalized in GOOGLE_PROVIDER_ALIASES:
+        return "google"
+    return normalized
+
+
+def infer_provider_from_env(default: str = "openrouter") -> str:
+    explicit = os.environ.get("LLM_PROVIDER") or os.environ.get("LLM_API_PROVIDER")
+    if explicit:
+        return normalize_provider(explicit)
+    if os.environ.get("OPENROUTER_API_KEY"):
+        return "openrouter"
+    if os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"):
+        return "google"
+    if os.environ.get("OPENAI_API_KEY"):
+        return "openai"
+    return normalize_provider(default)
+
+
+def provider_base_url(provider: str) -> str | None:
+    normalized = normalize_provider(provider)
+    if normalized == "openrouter":
+        return OPENROUTER_BASE_URL
+    if normalized == "google":
+        return GOOGLE_OPENAI_BASE_URL
+    return None
+
+
+def provider_supports_json_object(provider: str) -> bool:
+    return normalize_provider(provider) in {"openai", "openrouter"}
+
+
 class OpenAICall:
     """OpenAI-compatible chat-completions wrapper.
 
-    This is used with OpenRouter today by setting `base_url` to the OpenRouter API.
+    This is used with OpenRouter and Google AI Studio by setting `base_url`.
     """
 
     def __init__(self, config: LLMCallConfig):
-        self.config = config
+        normalized_provider = normalize_provider(config.provider)
+        self.config = replace(
+            config,
+            provider=normalized_provider,
+            base_url=config.base_url or provider_base_url(normalized_provider),
+        )
         try:
             from openai import OpenAI
         except ImportError as exc:
             raise RuntimeError("Missing `openai` package. Install project dependencies first.") from exc
 
         self._client = OpenAI(
-            api_key=config.api_key,
-            base_url=config.base_url or "https://openrouter.ai/api/v1",
+            api_key=self.config.api_key,
+            base_url=self.config.base_url,
         )
 
     def close(self) -> None:
@@ -132,7 +175,7 @@ class OpenAICall:
             "temperature": self.config.temperature,
             "max_tokens": self.config.max_output_tokens,
         }
-        if schema is not None:
+        if schema is not None and provider_supports_json_object(self.config.provider):
             req["response_format"] = {"type": "json_object"}
 
         try:
@@ -163,17 +206,30 @@ class OpenAICall:
 
 
 def build_llm_call(config: LLMCallConfig) -> LLMCaller:
-    provider = config.provider.strip().lower()
-    if provider in {"openai", "openrouter"}:
+    provider = normalize_provider(config.provider)
+    if provider in OPENAI_COMPAT_PROVIDER_ALIASES:
         return OpenAICall(config)
     raise RuntimeError(f"Unsupported LM provider={config.provider}.")
 
 
-def load_api_key() -> str:
-    key = os.environ.get("OPENROUTER_API_KEY")
-    if not key:
-        raise RuntimeError("Missing OPENROUTER_API_KEY")
-    return key
+def load_api_key(provider: str | None = None) -> str:
+    resolved_provider = normalize_provider(provider or infer_provider_from_env())
+    if resolved_provider == "openrouter":
+        key = os.environ.get("OPENROUTER_API_KEY")
+        if not key:
+            raise RuntimeError("Missing OPENROUTER_API_KEY")
+        return key
+    if resolved_provider == "google":
+        key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        if not key:
+            raise RuntimeError("Missing GEMINI_API_KEY or GOOGLE_API_KEY")
+        return key
+    if resolved_provider == "openai":
+        key = os.environ.get("OPENAI_API_KEY")
+        if not key:
+            raise RuntimeError("Missing OPENAI_API_KEY")
+        return key
+    raise RuntimeError(f"Unsupported LM provider={provider}.")
 
 
 def parse_json_text(text: str) -> dict[str, Any]:
