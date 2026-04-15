@@ -60,12 +60,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2601.17883v2",
+        "arxiv_id_base": "2601.17883",
+        "one_liner": "Comprehensive benchmark of 12 open-source EEG foundation models across 13 datasets spanning 9 BCI paradigms.",
+        "title": "EEG Foundation Models: Progresses, Benchmarking, and Open Problems"
+      },
       "href": "digest/2026-01/index.html",
       "json_path": "digest/2026-01/papers.json",
       "month": "2026-01",
       "month_label": "January 2026",
-      "month_rev": "acb6f985a0a3f3b8",
+      "month_rev": "f20af7c8ddb27697",
       "stats": {
         "accepted": 5,
         "candidates": 15,
@@ -150,12 +155,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2508.04956v1",
+        "arxiv_id_base": "2508.04956",
+        "one_liner": "MENDR is the first Riemannian EEG foundation model that learns symmetric positive definite matrix embeddings through wavelet decomposition and manifold attention for interpretable clinical EEG analysis.",
+        "title": "MENDR: Manifold Explainable Neural Data Representations"
+      },
       "href": "digest/2025-08/index.html",
       "json_path": "digest/2025-08/papers.json",
       "month": "2025-08",
       "month_label": "August 2025",
-      "month_rev": "df691a7ad7f2ff64",
+      "month_rev": "ad7b5be418483b08",
       "stats": {
         "accepted": 6,
         "candidates": 20,
