@@ -28,50 +28,75 @@
           "eess.SP"
         ],
         "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
+          "channels": 8.0,
+          "datasets": [
+            "Temple University Hospital EEG corpus"
+          ],
+          "eeg_hours": 26496.0,
+          "subjects": 14979.0
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper proposes a two-stage self-supervised pre-training pipeline for EEG that adapts the HuBERT speech processing framework to predict discrete cluster labels from neural data. Unlike prior foundation models focused strictly on BCI benchmarks, this approach emphasizes real-time utility through minimal preprocessing and a restricted 8-channel scalp montage. Evaluation across three benchmark datasets demonstrates that the model learns diverse electrophysiological features, including alpha rhythms and individual variability, while significantly improving performance on P300 and motor imagery tasks compared to training from scratch.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "Dataset A (P300/RSVP)",
+            "Dataset B (Motor Imagery/Movement)",
+            "Dataset C (P300)"
+          ],
+          "headline_results": [
+            "Pre-training improved performance over de novo baselines (p < 0.001) across all tasks",
+            "Achieved near-ceiling accuracy for participant ID and eyes-open/closed detection"
+          ],
+          "tasks": [
+            "P300 speller",
+            "Motor imagery",
+            "Participant identification",
+            "Eyes open vs closed detection"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: A transformer-based architecture pre-trained on the Temple University Hospital EEG corpus using a two-stage masked prediction objective.",
+          "Learns diverse features: T-SNE visualizations and classification tasks reveal the model captures individual variability and alpha rhythms (eyes-closed state) alongside BCI signatures.",
+          "Performance gain: Pre-training significantly outperforms de novo training across P300 and motor imagery tasks, although it does not yet surpass current state-of-the-art BCI benchmarks."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Does not exceed current state-of-the-art results for standard BCI benchmarks.",
+          "Pre-training data from hospital settings may not capture features prominent in BCI tasks.",
+          "Model likely encodes non-neural physiological artifacts, such as eye movements."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "A stack of six 1D-convolutional layers followed by 12 transformer encoder layers (12 heads, 3072 FF dim), totaling 96.4M parameters.",
+          "finetuning": "Fine-tuned on P300 and motor imagery tasks using either full-model weight updates or linear probing of the final embedding and output layers.",
+          "objective": "Masked prediction of discrete k-means cluster labels (discrete-code-prediction).",
+          "pretraining": "Two-stage process: Stage 1 predicts 100 k-means labels derived from spectrograms; Stage 2 predicts 500 k-means labels derived from Stage 1 embeddings."
         },
-        "notes": "manual_resummary_prompt_update_arcee;input_mode=fulltext;prompt_tokens=9323;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 31848, \"error\": null, \"pages\": 6, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=9323",
+        "one_liner": "A self-supervised EEG foundation model based on the HuBERT framework designed for low-profile, real-time BCI applications using a minimal 8-channel montage.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2025-06-02",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "discrete-code-prediction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
         },
         "title": "EEG Foundation Models for BCI Learn Diverse Features of Electrophysiology",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Adapts the HuBERT framework to EEG to create a low-profile foundation model that captures both BCI-specific signatures and general neurophysiological features using only 8 channels.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,

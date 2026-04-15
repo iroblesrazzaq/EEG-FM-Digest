@@ -366,49 +366,75 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
+          "datasets": [
+            "SWEC",
+            "MC iEEG",
+            "Brain Treebank",
+            "CHB-MIT",
+            "BONN",
+            "BCI Competition IV-2a"
+          ],
+          "eeg_hours": 1040.0,
+          "subjects": 149.0
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper introduces BrainCodec, a quantized autoencoder designed for the universal compression of EEG and iEEG signals. The model utilizes residual vector quantization (RVQ) and a multi-scale STFT-based GAN discriminator, incorporating a novel relative line length loss to preserve clinically relevant features. Experimental results show that training on cleaner iEEG data enhances reconstruction fidelity for noisier EEG signals at high compression ratios, maintaining downstream task performance up to 64x compression.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "EEGWaveNet",
+            "MI-BMInet"
+          ],
+          "headline_results": [
+            "PRD < 30 at 64x compression",
+            "Seizure detection F1-score shows < 1% drop at 64x compression"
+          ],
+          "tasks": [
+            "iEEG seizure detection",
+            "EEG motor imagery classification"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: BrainCodec is a high-fidelity quantized autoencoder capable of compressing both iEEG and EEG signals up to 64x.",
+          "Cross-modal transfer: Training on high-SNR iEEG data generalizes better to noisier scalp EEG than training on EEG alone, especially under restrictive bottlenecks.",
+          "Clinical fidelity: Maintains downstream classification performance for seizure detection and motor imagery, validated by an expert neurologist."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "GAN model introduces spurious high-frequency oscillations that can pollute the signal.",
+          "EEG compression is less efficient than iEEG due to lower intrinsic SNR.",
+          "RVQ quantization schema may not be fully codebook efficient.",
+          "High compression ratios (64x) on EEG cause a noticeable low-pass filtering effect."
         ],
         "method": {
-          "architecture": null,
+          "architecture": "Quantized autoencoder with 2D convolutional encoder/decoder, Residual Vector Quantization (RVQ) with 4 codebooks, and a multi-scale STFT-based GAN discriminator.",
           "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "objective": "Combined loss including time-domain L1, frequency-domain L1/L2, relative line length, adversarial, and quantization MSE.",
+          "pretraining": "Trained on iEEG (SWEC), EEG (CHB-MIT), or mixed modalities."
         },
-        "notes": "{\"chars\": 88129, \"error\": null, \"pages\": 48, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=34831;summary_json_error;summary_retry_failed;summary_retry_failed_reason=exception:ConnectError",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 88129, \"error\": null, \"pages\": 48, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=24007",
+        "one_liner": "A high-fidelity neural compressor for EEG and iEEG that demonstrates improved reconstruction of noisy scalp EEG when pretrained on high-SNR intracranial EEG.",
         "open_source": {
-          "code_url": null,
+          "code_url": "https://github.com/IBM/eeg-ieeg-brain-compressor",
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2025-02-10",
         "tags": {
           "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "objective": [
+            "discrete-code-prediction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
         },
         "title": "The Case for Cleaner Biosignals: High-fidelity Neural Compressor Enables Transfer from Cleaner iEEG to Noisier EEG",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Demonstrates that transferring a neural compressor from high-SNR iEEG to low-SNR EEG improves reconstruction fidelity at high compression ratios compared to training on EEG alone.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,

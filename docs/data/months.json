@@ -153,7 +153,7 @@
       "json_path": "digest/2025-06/papers.json",
       "month": "2025-06",
       "month_label": "June 2025",
-      "month_rev": "48c2fbfaf22d2191",
+      "month_rev": "1036a4467599ca69",
       "stats": {
         "accepted": 8,
         "candidates": 20,
@@ -209,7 +209,7 @@
       "json_path": "digest/2025-02/papers.json",
       "month": "2025-02",
       "month_label": "February 2025",
-      "month_rev": "e8dd7cddae3ddfa9",
+      "month_rev": "b12bd0ba85954cfb",
       "stats": {
         "accepted": 9,
         "candidates": 19,
