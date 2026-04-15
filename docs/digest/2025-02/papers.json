@@ -1,4 +1,5 @@
 {
+  "featured_paper_id": "2502.17464",
   "month": "2025-02",
   "papers": [
     {
@@ -31,47 +32,57 @@
           "eess.SP"
         ],
         "data_scale": {
-          "channels": 19,
+          "channels": null,
           "datasets": [
-            "13 datasets (4 AD + 9 non-AD neurological disorders)"
+            "ADFSU",
+            "ADFTD",
+            "ADSZ",
+            "APA V A",
+            "CNBPM"
           ],
-          "eeg_hours": 427.81,
-          "subjects": 2238
+          "eeg_hours": 1185.84,
+          "subjects": 4646.0
         },
-        "detailed_summary": "This paper introduces LEAD, the first large-scale foundation model for EEG-based Alzheimer's disease (AD) detection. The authors address three major challenges in existing EEG-based AD detection methods: the lack of large-scale datasets, limited generalizability across subjects, and difficulty adapting to heterogeneous data. To tackle these issues, they curate the world's largest EEG-AD corpus to date, comprising 2,238 subjects and 427.81 hours of recordings. The proposed LEAD model features a gated temporal-spatial Transformer that can handle EEG recordings with arbitrary lengths, channel configurations, and sampling rates. Additionally, they introduce a subject-regularized training strategy and employ medical contrastive learning for pre-training on 13 datasets (4 AD and 9 non-AD neurological disorders) before fine-tuning on 5 AD datasets. LEAD achieves the best average ranking across all 20 evaluations on 5 downstream datasets, substantially outperforming existing approaches including state-of-the-art EEG foundation models.",
+        "detailed_summary": "The paper proposes LEAD, the first large-scale foundation model specifically for EEG-based AD detection, trained on a curated corpus of 2,238 subjects. It introduces a gated temporal-spatial Transformer that adapts to arbitrary recording lengths, channel configurations, and sampling rates, combined with a subject-regularized training strategy to enhance subject-level feature learning. The model was pre-trained using medical contrastive learning on 13 neurological disorder datasets and demonstrated superior performance across 5 downstream AD datasets compared to 16 baselines, including SOTA EEG foundation models.",
         "evaluation": {
           "benchmarks": [
-            "16 baseline methods including 4 SOTA EEG foundation models"
+            "ADFSU",
+            "ADFTD",
+            "ADSZ",
+            "APA V A",
+            "CNBPM"
           ],
           "headline_results": [
-            "Best average ranking across 20 evaluations; subject-level F1 scores up to 94.32%"
+            "Outperformed 16 baselines including LaBraM and CBraMod",
+            "Achieved best average ranking across 20 evaluations"
           ],
           "tasks": [
-            "5 downstream AD datasets"
+            "Binary AD vs HC detection",
+            "Dementia-stage classification"
           ]
         },
         "key_points": [
-          "New EEG foundation model: LEAD achieves SOTA subject-level results on 5 downstream AD datasets under challenging subject-independent cross-validation.",
-          "Gated temporal-spatial Transformer: Adapts to EEG recordings with arbitrary lengths, channel configurations, and sampling rates.",
-          "Subject-regularized training: Incorporates subject-level cross-entropy loss and index group shuffling to enhance subject-level feature learning."
+          "New EEG foundation model: LEAD is designed for subject-level Alzheimer's disease detection, utilizing a gated temporal-spatial Transformer to handle heterogeneous EEG data.",
+          "Novel training paradigm: Employs medical contrastive pre-training on 13 datasets and a subject-regularized strategy featuring subject-level cross-entropy loss and index group shuffling.",
+          "Strong empirical results: Achieves the best average ranking across 20 evaluations on 5 downstream AD datasets, surpassing existing SOTA EEG foundation models."
         ],
         "limitations": [
-          "Performance on dementia-stage classification (AD vs MCI vs HC) remains limited at approximately 66% subject-level F1 score",
-          "Relies on curated datasets which may not fully represent all demographic variations",
-          "Requires substantial computational resources for pre-training and fine-tuning"
+          "Limited performance on dementia-stage classification (AD vs MCI vs HC) compared to binary detection.",
+          "Difficulty distinguishing MCI subjects due to overlapping distributions of dementia stages.",
+          "Lack of longitudinal EEG data to track disease progression."
         ],
         "method": {
-          "architecture": "Gated temporal-spatial Transformer",
-          "finetuning": "Supervised fine-tuning on 5 AD datasets",
-          "objective": "Subject-level AD detection",
-          "pretraining": "Medical contrastive learning on 13 datasets (4 AD + 9 non-AD neurological disorders)"
+          "architecture": "Gated temporal-spatial Transformer with 3D channel and sampling rate embeddings",
+          "finetuning": "Fine-tuned using a combination of sample-level and subject-level cross-entropy losses",
+          "objective": "Sample- and subject-level medical contrastive learning",
+          "pretraining": "Pre-trained on 13 neurological disorder datasets"
         },
-        "notes": "{\"chars\": 138067, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=36472",
-        "one_liner": "LEAD is the first large-scale EEG foundation model for Alzheimer's disease detection, achieving state-of-the-art performance across multiple datasets.",
+        "notes": "{\"chars\": 138067, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=36547",
+        "one_liner": "A large-scale EEG foundation model for Alzheimer's disease detection utilizing a gated temporal-spatial Transformer and subject-regularized training.",
         "open_source": {
           "code_url": "https://github.com/DL4mHealth/LEAD",
-          "license": "Unknown",
-          "weights_url": "Available"
+          "license": null,
+          "weights_url": null
         },
         "paper_type": "new_model",
         "published_date": "2025-02-02",
@@ -80,7 +91,7 @@
             "transformer"
           ],
           "objective": [
-            "masked-reconstruction"
+            "contrastive"
           ],
           "paper_type": [
             "new-model"
@@ -89,23 +100,23 @@
             "time-patch"
           ],
           "topology": [
-            "fixed-montage"
+            "channel-flexible"
           ]
         },
         "title": "LEAD: An EEG Foundation Model for Alzheimer's Disease Detection",
-        "unique_contribution": "LEAD is the first foundation model for EEG-based Alzheimer's disease detection, trained on the world's largest EEG-AD corpus and achieving state-of-the-art performance across multiple datasets.",
+        "unique_contribution": "Introduces the world's largest EEG-AD corpus and a gated temporal-spatial Transformer with subject-regularized training for robust subject-level Alzheimer's detection.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
       "title": "LEAD: An EEG Foundation Model for Alzheimer's Disease Detection",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "EEG is the primary modality for Alzheimer's Disease detection.",
-          "The paper explicitly proposes 'LEAD, the first large-scale foundation model for EEG-based AD detection'.",
-          "It addresses challenges related to representation learning, generalizability, and data heterogeneity, which are core to foundation models.",
-          "The work involves pre-training on multiple datasets and fine-tuning, aligning with foundation model methodologies."
+          "Explicitly proposes LEAD as a 'large-scale foundation model for EEG-based AD detection'",
+          "Uses a pre-training strategy on a large-scale corpus of 13 different EEG datasets",
+          "Demonstrates broad transferability by fine-tuning and testing on 5 downstream AD datasets",
+          "Directly compares performance against other state-of-the-art EEG foundation models"
         ]
       }
     },
@@ -137,7 +148,7 @@
         "data_scale": {
           "channels": null,
           "datasets": [
-            "TUEG",
+            "TUEG Corpus",
             "TUAB",
             "TUAR",
             "TUSL"
@@ -145,7 +156,7 @@
           "eeg_hours": 21000.0,
           "subjects": 5000.0
         },
-        "detailed_summary": "FEMBA (Foundational EEG Mamba + Bidirectional Architecture) addresses the computational inefficiency of transformer-based EEG models by introducing a bidirectional state-space architecture that scales linearly with sequence length. The model is pre-trained on over 21,000 hours of unlabeled EEG from 5,000 subjects using a masked reconstruction objective, then fine-tuned on three downstream tasks: abnormal EEG detection (TUAB), artifact detection (TUAR), and slowing events classification (TUSL). FEMBA achieves competitive performance to transformer models while being 3.5x more computationally efficient and 1.5x more memory efficient, with a tiny 7.8M parameter variant demonstrating viability for wearable applications.",
+        "detailed_summary": "FEMBA proposes a self-supervised framework using bidirectional state-space models (Mamba) to overcome the quadratic time and memory complexity of Transformer-based EEG models. The model is pre-trained on over 21,000 hours of unlabeled EEG data from 5,000 subjects using a masked reconstruction objective. Evaluation on TUAB, TUAR, and TUSL benchmarks demonstrates that FEMBA achieves competitive or state-of-the-art performance while significantly reducing computational overhead, particularly in its Tiny variant.",
         "evaluation": {
           "benchmarks": [
             "TUAB",
@@ -153,40 +164,39 @@
             "TUSL"
           ],
           "headline_results": [
-            "TUAB: 81.82% balanced accuracy (0.8921 AUROC)",
-            "TUAR: 0.949 AUROC",
-            "efficiency: 3.5x computational reduction, 1.5x memory reduction vs transformers"
+            "TUAB: 81.82% balanced accuracy (Huge)",
+            "TUAR: 0.949 AUROC (Base)",
+            "TUSL: 0.731 AUROC (Base)"
           ],
           "tasks": [
-            "abnormal EEG detection",
-            "artifact detection",
-            "slowing events classification"
+            "Abnormal EEG detection",
+            "Artifact detection",
+            "Slowing detection"
           ]
         },
         "key_points": [
-          "New EEG foundation model: FEMBA uses bidirectional Mamba architecture to achieve transformer-level performance with linear complexity",
-          "Large-scale pre-training: Trained on 21,000+ hours of unlabeled EEG from 5,000 subjects using masked reconstruction",
-          "Efficient deployment: 7.8M parameter tiny variant achieves 0.949 AUROC on artifact detection with 27x computational reduction"
+          "New EEG foundation model: FEMBA utilizes a bidirectional Mamba architecture to provide linear-time complexity for processing extended EEG recordings.",
+          "Pre-trained on a massive scale of 21,000+ hours of unlabeled EEG from 5,000+ subjects using a 60% masked reconstruction task.",
+          "Demonstrates extreme efficiency, with the Tiny variant (7.8M params) beating previous SOTA on artifact detection (TUAR) while reducing computation by 27x."
         ],
         "limitations": [
-          "Performance evaluation limited to three specific EEG tasks",
-          "No comparison with other emerging efficient architectures beyond transformers",
-          "Potential domain shift when deploying to populations not represented in pre-training data",
-          "No explicit evaluation of model interpretability or clinical explainability",
-          "Limited discussion of robustness to varying electrode montages and channel configurations"
+          "Performance gaps in AUPR on TUSL likely due to class imbalance.",
+          "Domain shifts between neonatal and adult EEG require further adaptation.",
+          "Need for further exploration of SSM-specific interpretability mechanisms.",
+          "Lack of multi-modal physiological signal integration."
         ],
         "method": {
-          "architecture": "bidirectional Mamba (state-space model)",
-          "finetuning": "three downstream tasks: abnormal detection, artifact detection, slowing events",
-          "objective": "masked reconstruction (self-supervised)",
-          "pretraining": "21,000 hours of unlabeled EEG from TUEG corpus"
+          "architecture": "Bidirectional Mamba encoder with a 2D convolutional tokenizer",
+          "finetuning": "Linear or Mamba-enhanced classifiers for downstream tasks",
+          "objective": "Self-supervised masked reconstruction (60% masking) using Smooth L1 loss",
+          "pretraining": "Pre-trained on 21,000+ hours of unlabeled EEG data"
         },
-        "notes": "{\"chars\": 37688, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=10954;max_tokens=1",
-        "one_liner": "FEMBA is a bidirectional Mamba-based foundation model for EEG that achieves transformer-level performance with linear complexity, enabling efficient deployment on resource-constrained devices.",
+        "notes": "{\"chars\": 37688, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=10938",
+        "one_liner": "A bidirectional Mamba-based foundation model for EEG that achieves linear scaling and high efficiency for clinical and wearable applications.",
         "open_source": {
-          "code_url": "unknown",
-          "license": "unknown",
-          "weights_url": "unknown"
+          "code_url": "https://github.com/pulp-bio/BioFoundation",
+          "license": null,
+          "weights_url": null
         },
         "paper_type": "new_model",
         "published_date": "2025-02-10",
@@ -204,23 +214,22 @@
             "time-patch"
           ],
           "topology": [
-            "channel-flexible"
+            "fixed-montage"
           ]
         },
         "title": "FEMBA: Efficient and Scalable EEG Analysis with a Bidirectional Mamba Foundation Model",
-        "unique_contribution": "FEMBA demonstrates that bidirectional Mamba architectures can match or exceed transformer performance on EEG tasks while providing linear computational scaling, enabling efficient deployment on resource-constrained devices.",
+        "unique_contribution": "Introduces a bidirectional Mamba architecture for EEG foundation modeling that scales linearly with sequence length, enabling high-performance analysis on resource-constrained wearable devices.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
       "title": "FEMBA: Efficient and Scalable EEG Analysis with a Bidirectional Mamba Foundation Model",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "EEG is the primary modality analyzed.",
-          "The paper explicitly proposes a 'Foundation Model' for EEG analysis (FEMBA).",
-          "It addresses efficiency and scalability challenges in EEG analysis using a novel architecture (Mamba).",
-          "The work involves self-supervised pretraining and fine-tuning on downstream tasks, aligning with foundation model principles."
+          "Explicitly identifies as a 'Bidirectional Mamba Foundation Model' for EEG.",
+          "Utilizes a self-supervised framework trained on a large-scale dataset of 21,000 hours of unlabeled EEG.",
+          "Demonstrates broad transferability by fine-tuning on multiple downstream tasks for general-purpose analytics."
         ]
       }
     },
@@ -260,68 +269,65 @@
             "VitalDB"
           ],
           "eeg_hours": null,
-          "subjects": 30000.0
+          "subjects": null
         },
-        "detailed_summary": "This paper investigates cross-biosignal transfer learning by adapting a transformer-based EEG foundation model (CEReBrO) to estimate blood pressure from ECG and PPG signals. The authors fine-tune the pre-trained EEG model on MIMIC-III and VitalDB datasets, achieving near state-of-the-art accuracy for diastolic BP (MAE 1.57 mmHg) and surpassing prior work for systolic BP (MAE 2.72 mmHg). They also apply dynamic INT8 quantization, reducing the smallest model size by over 3.5x (from 13.73 MB to 3.83 MB) while preserving performance, enabling real-time deployment on resource-constrained wearable devices.",
+        "detailed_summary": "The paper proposes a cross-biosignal transfer learning framework that fine-tunes the CEReBrO EEG foundation model for blood pressure estimation from ECG and PPG waveforms. Unlike prior work that trains from scratch or uses modality-specific pre-training, this approach leverages temporal representations learned from EEG to improve accuracy and convergence. Evaluations on MIMIC-III and VitalDB show the model achieves near state-of-the-art results, with dynamic INT8 quantization reducing the model size by up to 3.9x while maintaining performance.",
         "evaluation": {
           "benchmarks": [
             "MIMIC-III",
             "VitalDB"
           ],
           "headline_results": [
-            "DBP_MAE: 1.57 mmHg",
-            "SBP_MAE: 2.72 mmHg",
-            "Model size reduction: 3.5x"
+            "MIMIC-III: DBP MAE 1.57 mmHg, SBP MAE 2.72 mmHg",
+            "VitalDB: DBP MAE 1.92 mmHg, SBP MAE 3.14 mmHg"
           ],
           "tasks": [
-            "BP estimation"
+            "Blood Pressure Estimation"
           ]
         },
         "key_points": [
-          "New EEG foundation model: Adapts pre-trained EEG transformer to ECG/PPG for cuffless BP monitoring.",
-          "Cross-biosignal transfer: Achieves near-SOTA DBP accuracy (1.57 mmHg) and 1.5x better SBP accuracy than prior work.",
-          "Hardware optimization: Dynamic INT8 quantization reduces model size by 3.5x while maintaining clinical-grade accuracy."
+          "Application of an EEG foundation model: Uses the CEReBrO transformer, pre-trained on EEG, to estimate systolic and diastolic blood pressure from ECG and PPG signals.",
+          "Cross-modality transfer: Unfrozen fine-tuning of the EEG backbone significantly outperforms training from scratch and frozen-backbone approaches in terms of MAE and convergence.",
+          "Hardware optimization: Employs dynamic INT8 quantization to reduce model size by ~3.5-3.9x, enabling real-time inference on resource-constrained wearables."
         ],
         "limitations": [
-          "Limited to MIMIC-III and VitalDB datasets",
-          "Real-world artifacts and motion conditions not fully addressed",
-          "No embedded platform validation demonstrated",
-          "Potential overfitting risk with large models on limited data"
+          "Data heterogeneity across patient demographics and clinical conditions may affect generalizability.",
+          "Real-time on-device latency and battery constraints on ultra-low-power microcontrollers are not yet fully evaluated.",
+          "Susceptibility to real-world confounders like motion artifacts and signal dropouts.",
+          "Lack of patient-specific calibration for daily-life continuous monitoring."
         ],
         "method": {
-          "architecture": "Transformer encoder (CEReBrO)",
-          "finetuning": "ECG/PPG signals",
-          "objective": "Masked reconstruction",
-          "pretraining": "EEG signals"
+          "architecture": "CEReBrO transformer-encoder with an added MLP regression head",
+          "finetuning": "Unfrozen backbone fine-tuning on ECG/PPG signals",
+          "objective": "Regression (SBP/DBP)",
+          "pretraining": "Pre-trained on TUEG EEG data"
         },
-        "notes": "manual_resummary_prompt_update_arcee;input_mode=fulltext;prompt_tokens=11950",
-        "one_liner": "EEG-based foundation model fine-tuned on ECG/PPG for cuffless BP estimation with INT8 quantization.",
+        "notes": "{\"chars\": 41290, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=11935",
+        "one_liner": "Adapts a pre-trained EEG foundation model for cuffless blood pressure estimation using ECG and PPG signals with post-training quantization for wearable deployment.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "new_model",
+        "paper_type": "application",
         "published_date": "2025-02-10",
         "tags": {
           "backbone": [
             "transformer"
           ],
-          "objective": [
-            "masked-reconstruction"
-          ],
+          "objective": [],
           "paper_type": [
-            "new-model"
+            "post-training"
           ],
           "tokenization": [
             "time-patch"
           ],
           "topology": [
-            "channel-flexible"
+            "topology-agnostic"
           ]
         },
         "title": "Finetuning and Quantization of EEG-Based Foundational BioSignal Models on ECG and PPG Data for Blood Pressure Estimation",
-        "unique_contribution": "First demonstration that a large EEG-based foundation model can be fine-tuned for BP estimation from ECG/PPG without additional pre-training, combined with hardware-friendly quantization for edge deployment.",
+        "unique_contribution": "Demonstrates the first successful transfer of a large-scale EEG foundation model to cuffless blood pressure estimation using ECG and PPG signals without additional large-scale pre-training.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -330,123 +336,9 @@
         "confidence": 0.9,
         "decision": "accept",
         "reasons": [
-          "Paper investigates finetuning of EEG-based foundational models on other biosignals (ECG/PPG).",
-          "EEG is used as the source for pre-trained representations for transfer learning.",
-          "The work contributes to generalized biosignal foundation models by exploring cross-modality transfer.",
-          "The paper evaluates performance on a downstream task (BP estimation) using these transferred representations."
-        ]
-      }
-    },
-    {
-      "arxiv_id": "2502.17462v1",
-      "arxiv_id_base": "2502.17462",
-      "authors": [
-        "Francesco Stefano Carzaniga",
-        "Gary Tom Hoppeler",
-        "Michael Hersche",
-        "Kaspar Anton Schindler",
-        "Abbas Rahimi"
-      ],
-      "categories": [
-        "eess.SP",
-        "cs.AI",
-        "cs.LG"
-      ],
-      "links": {
-        "abs": "http://arxiv.org/abs/2502.17462v1",
-        "pdf": "https://arxiv.org/pdf/2502.17462v1"
-      },
-      "published_date": "2025-02-10",
-      "summary": {
-        "arxiv_id_base": "2502.17462",
-        "categories": [
-          "eess.SP",
-          "cs.AI",
-          "cs.LG"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [
-            "SWEC",
-            "MC iEEG",
-            "Brain Treebank",
-            "CHB-MIT",
-            "BONN",
-            "BCI Competition IV-2a"
-          ],
-          "eeg_hours": 1040.0,
-          "subjects": 149.0
-        },
-        "detailed_summary": "The paper introduces BrainCodec, a quantized autoencoder designed for the universal compression of EEG and iEEG signals. The model utilizes residual vector quantization (RVQ) and a multi-scale STFT-based GAN discriminator, incorporating a novel relative line length loss to preserve clinically relevant features. Experimental results show that training on cleaner iEEG data enhances reconstruction fidelity for noisier EEG signals at high compression ratios, maintaining downstream task performance up to 64x compression.",
-        "evaluation": {
-          "benchmarks": [
-            "EEGWaveNet",
-            "MI-BMInet"
-          ],
-          "headline_results": [
-            "PRD < 30 at 64x compression",
-            "Seizure detection F1-score shows < 1% drop at 64x compression"
-          ],
-          "tasks": [
-            "iEEG seizure detection",
-            "EEG motor imagery classification"
-          ]
-        },
-        "key_points": [
-          "New EEG foundation model: BrainCodec is a high-fidelity quantized autoencoder capable of compressing both iEEG and EEG signals up to 64x.",
-          "Cross-modal transfer: Training on high-SNR iEEG data generalizes better to noisier scalp EEG than training on EEG alone, especially under restrictive bottlenecks.",
-          "Clinical fidelity: Maintains downstream classification performance for seizure detection and motor imagery, validated by an expert neurologist."
-        ],
-        "limitations": [
-          "GAN model introduces spurious high-frequency oscillations that can pollute the signal.",
-          "EEG compression is less efficient than iEEG due to lower intrinsic SNR.",
-          "RVQ quantization schema may not be fully codebook efficient.",
-          "High compression ratios (64x) on EEG cause a noticeable low-pass filtering effect."
-        ],
-        "method": {
-          "architecture": "Quantized autoencoder with 2D convolutional encoder/decoder, Residual Vector Quantization (RVQ) with 4 codebooks, and a multi-scale STFT-based GAN discriminator.",
-          "finetuning": null,
-          "objective": "Combined loss including time-domain L1, frequency-domain L1/L2, relative line length, adversarial, and quantization MSE.",
-          "pretraining": "Trained on iEEG (SWEC), EEG (CHB-MIT), or mixed modalities."
-        },
-        "notes": "{\"chars\": 88129, \"error\": null, \"pages\": 48, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=24007",
-        "one_liner": "A high-fidelity neural compressor for EEG and iEEG that demonstrates improved reconstruction of noisy scalp EEG when pretrained on high-SNR intracranial EEG.",
-        "open_source": {
-          "code_url": "https://github.com/IBM/eeg-ieeg-brain-compressor",
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "new_model",
-        "published_date": "2025-02-10",
-        "tags": {
-          "backbone": [],
-          "objective": [
-            "discrete-code-prediction"
-          ],
-          "paper_type": [
-            "new-model"
-          ],
-          "tokenization": [
-            "discrete-tokens"
-          ],
-          "topology": [
-            "channel-flexible"
-          ]
-        },
-        "title": "The Case for Cleaner Biosignals: High-fidelity Neural Compressor Enables Transfer from Cleaner iEEG to Noisier EEG",
-        "unique_contribution": "Demonstrates that transferring a neural compressor from high-SNR iEEG to low-SNR EEG improves reconstruction fidelity at high compression ratios compared to training on EEG alone.",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
-      "title": "The Case for Cleaner Biosignals: High-fidelity Neural Compressor Enables Transfer from Cleaner iEEG to Noisier EEG",
-      "triage": {
-        "confidence": 0.9,
-        "decision": "accept",
-        "reasons": [
-          "The paper focuses on EEG and iEEG, which are central modalities.",
-          "It proposes a neural compressor (BrainCodec) for these biosignals, suggesting a foundation model-style representation learning approach.",
-          "The work explores transfer learning from iEEG to EEG and evaluates its impact on downstream tasks, aligning with foundation model principles of transferable representations.",
-          "The paper investigates signal fidelity and compression, relevant to efficient representation learning for EEG."
+          "Explicitly utilizes 'EEG-based foundation models' as the starting point for transfer learning.",
+          "Investigates the transferability of representations learned from abundant EEG data to other biosignals (ECG/PPG).",
+          "Focuses on the adaptation and fine-tuning of an EEG-FM, fitting the ecosystem criteria for EEG-FM evaluation and transfer."
         ]
       }
     },
@@ -476,48 +368,46 @@
           "q-bio.NC"
         ],
         "data_scale": {
-          "channels": 0,
+          "channels": null,
           "datasets": [
-            "BCIC-2A",
-            "BCIC-2B",
-            "other datasets"
+            "PhysioMI",
+            "TSU",
+            "SEED"
           ],
-          "eeg_hours": 0,
-          "subjects": 169
+          "eeg_hours": null,
+          "subjects": 159.0
         },
-        "detailed_summary": "This paper introduces the Large Cognition Model (LCM), a transformer-based foundation model for EEG that leverages large-scale self-supervised learning to capture universal EEG representations. Unlike existing approaches, LCM integrates temporal and spectral attention mechanisms and employs a novel contrastive learning framework with masked feature reconstruction. The model demonstrates strong generalization across diverse EEG datasets and tasks, even without extensive pretraining, outperforming state-of-the-art universal EEG models on motor imagery classification benchmarks.",
+        "detailed_summary": "The paper proposes the Large Cognition Model (LCM), a transformer-based foundation model designed to learn universal EEG representations. It introduces a learnable channel mapping to align diverse electrode configurations and a self-supervised framework combining spatio-temporal contrastive alignment with masked patch reconstruction. Evaluations on BCIC-2A and BCIC-2B motor imagery datasets demonstrate that LCM outperforms existing universal models such as EEGPT and LaBraM.",
         "evaluation": {
           "benchmarks": [
             "BCIC-2A",
             "BCIC-2B"
           ],
           "headline_results": [
-            "BCIC-2A: 61.66% Balanced Accuracy, 46.19% Cohen's Kappa, 59.32% Weighted F1/AUROC",
-            "BCIC-2B: 75.23% Balanced Accuracy, 47.31% Cohen's Kappa, 82.44% Weighted F1/AUROC"
+            "Outperforms EEGPT by 3.2% in balanced accuracy on BCIC-2A and 3.11% on BCIC-2B."
           ],
           "tasks": [
-            "motor imagery classification"
+            "Motor Imagery classification"
           ]
         },
         "key_points": [
-          "New EEG foundation model: LCM uses transformer architecture with temporal and spectral attention for robust EEG representation learning.",
-          "Strong generalization: LCM outperforms existing universal EEG models on motor imagery tasks, even without pretraining.",
-          "Novel contrastive learning: Incorporates spatio-temporal alignment and masked reconstruction for improved feature learning."
+          "New EEG foundation model: LCM employs a transformer architecture with learnable channel mapping to unify diverse electrode configurations into a common latent space.",
+          "Method: Uses a self-supervised learning strategy that integrates spatio-temporal contrastive alignment and masked feature reconstruction.",
+          "Results: Achieves state-of-the-art performance on BCIC-2A and BCIC-2B benchmarks, surpassing models like EEGPT and LaBraM in balanced accuracy and Cohen's Kappa."
         ],
         "limitations": [
-          "No explicit mention of open-source code or model weights",
-          "Evaluation focused primarily on motor imagery tasks",
-          "No information on computational requirements or inference speed",
-          "Limited discussion of interpretability of learned representations"
+          "Requires larger and more diverse pretraining datasets to further boost generalization.",
+          "Spatial and temporal feature extraction could be refined for better interpretability.",
+          "Does not currently integrate multimodal biosignals."
         ],
         "method": {
-          "architecture": "transformer",
-          "finetuning": "supervised fine-tuning on specific EEG tasks",
-          "objective": "contrastive learning with masked reconstruction",
-          "pretraining": "self-supervised learning on large-scale EEG data"
+          "architecture": "Transformer with a convolutional block and a learnable channel mapping matrix for montage alignment",
+          "finetuning": "Fine-tuning on BCIC-2A and BCIC-2B datasets for 100 epochs",
+          "objective": "Combined spatio-temporal contrastive alignment (MSE) and masked patch reconstruction loss",
+          "pretraining": "Self-supervised pretraining on PhysioMI, TSU, and SEED datasets"
         },
-        "notes": "{\"chars\": 28373, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=8499",
-        "one_liner": "LCM is a transformer-based EEG foundation model using contrastive learning and masked reconstruction to achieve strong cross-dataset generalization.",
+        "notes": "{\"chars\": 28373, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=8595",
+        "one_liner": "A transformer-based EEG foundation model utilizing learnable channel mapping and a dual contrastive-reconstruction objective for cross-dataset generalization.",
         "open_source": {
           "code_url": null,
           "license": null,
@@ -540,134 +430,133 @@
             "time-patch"
           ],
           "topology": [
-            "fixed-montage"
+            "channel-flexible"
           ]
         },
         "title": "Large Cognition Model: Towards Pretrained EEG Foundation Model",
-        "unique_contribution": "LCM introduces a novel contrastive learning framework with spatio-temporal alignment and masked reconstruction, achieving superior cross-dataset generalization without requiring extensive pretraining.",
+        "unique_contribution": "Introduces a transformer-based EEG encoder with learnable channel mapping and a combined contrastive-reconstruction objective to enable robust generalization across different EEG montages and tasks.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
       "title": "Large Cognition Model: Towards Pretrained EEG Foundation Model",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "Title explicitly mentions 'EEG Foundation Model'",
-          "Abstract proposes a 'transformer-based foundation model' for EEG",
-          "Abstract discusses 'large-scale self-supervised learning' and 'universal EEG representations'",
-          "Abstract highlights 'cross-subject and cross-task generalization' relevant to foundation models"
+          "Explicitly proposes a 'transformer-based foundation model' designed to generalize across diverse EEG datasets and tasks.",
+          "Utilizes large-scale self-supervised learning to capture 'universal EEG representations'.",
+          "Focuses on broad transferability and efficient fine-tuning for multiple downstream EEG applications."
         ]
       }
     },
     {
-      "arxiv_id": "2502.17465v1",
-      "arxiv_id_base": "2502.17465",
+      "arxiv_id": "2502.17481v3",
+      "arxiv_id_base": "2502.17481",
       "authors": [
-        "Mostafa El Gedawy",
-        "Omnia Nabil",
-        "Omar Mamdouh",
-        "Mahmoud Nady",
-        "Nour Alhuda Adel",
-        "Ahmed Fares"
+        "Cheol-Hui Lee",
+        "Hakseung Kim",
+        "Byung C. Yoon",
+        "Dong-Joo Kim"
       ],
       "categories": [
         "eess.SP",
-        "cs.CL",
+        "cs.AI",
         "cs.LG"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2502.17465v1",
-        "pdf": "https://arxiv.org/pdf/2502.17465v1"
+        "abs": "http://arxiv.org/abs/2502.17481v3",
+        "pdf": "https://arxiv.org/pdf/2502.17481v3"
       },
-      "published_date": "2025-02-11",
+      "published_date": "2025-02-18",
       "summary": {
-        "arxiv_id_base": "2502.17465",
+        "arxiv_id_base": "2502.17481",
         "categories": [
           "eess.SP",
-          "cs.CL",
+          "cs.AI",
           "cs.LG"
         ],
         "data_scale": {
-          "channels": 105.0,
+          "channels": 6.0,
           "datasets": [
-            "ZuCo"
+            "SHHS1"
           ],
           "eeg_hours": null,
-          "subjects": 30.0
+          "subjects": null
         },
-        "detailed_summary": "This paper introduces a novel framework for translating EEG signals into coherent, open-vocabulary text, addressing limitations of current closed-vocabulary approaches. The system combines a subject-specific brain module using bidirectional GRUs and transformer encoders with a language module employing BART for initial text generation and GPT-4 for refinement. Trained on the ZuCo dataset, the model achieves state-of-the-art performance on BLEU, ROUGE, and BERTScore metrics, demonstrating improved semantic fidelity and individual brain variation understanding compared to existing methods.",
+        "detailed_summary": "The paper proposes SynthSleepNet, a framework that leverages EEG, EOG, EMG, and ECG signals using a combination of generative (masked prediction) and discriminative (contrastive) SSL objectives. It differs from prior work by integrating these two SSL paradigms and employing a Mamba-based temporal context module to efficiently capture inter-epoch dependencies. The model's effectiveness is demonstrated on the SHHS1 dataset across sleep-stage classification, apnea, and hypopnea detection tasks, showing superior performance even in semi-supervised settings.",
         "evaluation": {
           "benchmarks": [
-            "ZuCo dataset"
+            "SHHS1"
           ],
           "headline_results": [
-            "BLEU-1: 42.34%, BLEU-2: 25.26%, BLEU-3: 14.91%, BLEU-4: 8.89%, ROUGE-1-F: 32.66%, BERTScore-F: 53.53%"
+            "Sleep-stage classification: 89.89% accuracy",
+            "Apnea detection: 99.75% accuracy",
+            "Hypopnea detection: 89.60% accuracy"
           ],
           "tasks": [
-            "EEG-to-text decoding"
+            "sleep-stage classification",
+            "apnea detection",
+            "hypopnea detection"
           ]
         },
         "key_points": [
-          "New EEG foundation model: Open-vocabulary EEG-to-text decoding framework integrating subject-specific representation learning with pre-trained language models.",
-          "Method novelty: Two-stage training approach combining subject-specific EEG feature extraction with BART language model fine-tuning and GPT-4 refinement for semantic accuracy.",
-          "Strongest evidence: Achieves BLEU-1 score of 42.34%, ROUGE-1-F of 32.66%, and BERTScore-F of 53.53% on ZuCo dataset, outperforming existing methods including T5 and ProphetNet."
+          "New EEG foundation model: SynthSleepNet uses a hybrid SSL approach combining masked prediction and contrastive learning across multiple PSG modalities.",
+          "Integrates a Mamba-based temporal context module to capture long-range dependencies across sleep epochs more efficiently than LSTMs or Transformers.",
+          "Achieves state-of-the-art results on sleep-stage classification (89.89% acc) and apnea detection (99.75% acc) using the SHHS1 dataset."
         ],
         "limitations": [
-          "Limited dataset size (30 subjects total across ZuCo v1.0 and v2.0) restricts generalizability",
-          "English-only language constraint limits multilingual applicability",
-          "Requires accurate temporal alignment and high-quality EEG data for optimal performance",
-          "Computational resource intensive training process with sophisticated neural architectures",
-          "External GPT-4 enhancement needed for optimal output quality",
-          "Current approach requires extensive pre-processing of EEG signals",
-          "Dataset limitations: subjects reading in English only, limiting generalizability to other languages"
+          "Relatively lower performance in hypopnea detection compared to other tasks.",
+          "Dependence on specific modalities like ECG for subtle event detection.",
+          "Lack of respiratory-specific modalities such as airflow or thoracic effort belts.",
+          "Need for greater dataset diversity to improve generalizability.",
+          "Requirement for lightweight optimization for real-time clinical application."
         ],
         "method": {
-          "architecture": "EEG signals processed through bidirectional GRU and transformer encoder for subject-specific feature extraction, then decoded using BART language model and refined with GPT-4. Two-stage training: first aligning EEG features with BART embeddings using MSE loss, then fine-tuning BART with cross-entropy loss for text generation.",
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Modality-specific backbones (NeuroNet-based) with LoRA, a ViT-based multimodal encoder, and ViT decoders.",
+          "finetuning": "Incorporates a Mamba-based Temporal Context Module (TCM) to model inter-epoch dependencies.",
+          "objective": "Joint loss of MSE for masked prediction and NT-Xent for contrastive learning.",
+          "pretraining": "Hybrid SSL combining masked prediction and contrastive learning."
         },
-        "notes": "manual_resummary_prompt_update_arcee;input_mode=fulltext;prompt_tokens=19590",
-        "one_liner": "New EEG foundation model: Open-vocabulary EEG-to-text decoding framework integrating subject-specific representation learning with pre-trained language models.",
+        "notes": "{\"chars\": 76214, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=21211",
+        "one_liner": "A multimodal hybrid self-supervised learning framework for PSG analysis combining masked prediction and contrastive learning with a Mamba-based temporal context module.",
         "open_source": {
-          "code_url": null,
+          "code_url": "https://github.com/dlcjfgmlnasa/SynthSleepNet",
           "license": null,
           "weights_url": null
         },
         "paper_type": "new_model",
-        "published_date": "2025-02-11",
+        "published_date": "2025-02-18",
         "tags": {
           "backbone": [
-            "transformer"
+            "transformer",
+            "mamba-ssm"
           ],
           "objective": [
-            "autoregressive"
+            "masked-reconstruction",
+            "contrastive"
           ],
           "paper_type": [
             "new-model"
           ],
           "tokenization": [
-            "time-patch"
+            "latent-tokens"
           ],
-          "topology": [
-            "fixed-montage"
-          ]
+          "topology": []
         },
-        "title": "Bridging Brain Signals and Language: A Deep Learning Approach to EEG-to-Text Decoding",
-        "unique_contribution": "First end-to-end deep learning framework for open-vocabulary EEG-to-text decoding that integrates subject-specific representation learning with pre-trained language models and includes a deployable web platform with text-to-speech functionality.",
+        "title": "Toward Foundational Model for Sleep Analysis Using a Multimodal Hybrid Self-Supervised Learning Framework",
+        "unique_contribution": "Introduces a hybrid SSL framework that integrates masked prediction and contrastive learning to learn expressive multimodal representations of PSG data, enhanced by a Mamba-based temporal context module.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
-      "title": "Bridging Brain Signals and Language: A Deep Learning Approach to EEG-to-Text Decoding",
+      "title": "Toward Foundational Model for Sleep Analysis Using a Multimodal Hybrid Self-Supervised Learning Framework",
       "triage": {
         "confidence": 0.9,
         "decision": "accept",
         "reasons": [
-          "EEG is the primary modality for decoding into text.",
-          "The paper uses deep representation learning for EEG features, aligning with foundation model concepts.",
-          "It aims for open-vocabulary text generation from brain signals, a significant advancement.",
-          "The work addresses limitations in current EEG-to-text methods and demonstrates improved performance."
+          "Title explicitly frames the work as 'Toward Foundational Model for Sleep Analysis'.",
+          "Uses a hybrid self-supervised learning framework (masked prediction and contrastive learning) to learn expressive representations.",
+          "Demonstrates transferability across multiple downstream tasks including sleep-stage classification, apnea detection, and hypopnea detection.",
+          "EEG is a core modality within the multimodal PSG data used for the pretrained model."
         ]
       }
     },
@@ -698,68 +587,70 @@
           "eess.SP"
         ],
         "data_scale": {
-          "channels": 0.0,
+          "channels": 16.0,
           "datasets": [
             "TUEV",
             "TUAB",
             "CHB-MIT",
-            "IIIC Seizure"
+            "IIIC Seizure",
+            "EESM23"
           ],
-          "eeg_hours": 0.0,
-          "subjects": 0.0
+          "eeg_hours": null,
+          "subjects": null
         },
-        "detailed_summary": "This paper introduces TFM-Tokenizer, a novel framework for learning discrete token vocabularies from single-channel EEG signals by capturing time-frequency motifs. The authors address the challenge of effective EEG tokenization, which remains an open problem in foundation model development. TFM-Tokenizer employs a dual-path architecture with time-frequency masking to learn robust motif representations, making it model-agnostic and compatible with both lightweight transformers and existing foundation models. The framework demonstrates three key benefits: improved accuracy (up to 11% Cohen's Kappa improvement), enhanced generalization as a plug-and-play component for diverse foundation models, and scalability across different EEG devices by operating at the single-channel level rather than relying on the 10-20 system.",
+        "detailed_summary": "The paper proposes TFM-Tokenizer, a framework that converts single-channel EEG signals into discrete tokens by learning a vocabulary of time-frequency motifs. It utilizes a dual-path architecture featuring a Localized Spectral Window Encoder and a Temporal Encoder, trained via a joint time-frequency masking objective. Evaluation across four clinical benchmarks and an ear-EEG sleep staging task demonstrates significant gains in accuracy and cross-device scalability, while also boosting the performance of existing foundation models like BIOT and LaBraM.",
         "evaluation": {
           "benchmarks": [
             "TUEV",
             "TUAB",
+            "IIIC Seizure",
             "CHB-MIT",
-            "IIIC Seizure"
+            "EESM23"
           ],
           "headline_results": [
-            "Up to 11% improvement in Cohen's Kappa",
-            "14% improvement on ear-EEG sleep staging",
-            "4% boost for existing foundation models"
+            "Up to 11% gain in Cohen's Kappa on TUEV",
+            "14% improvement on ear-EEG sleep staging over baselines"
           ],
           "tasks": [
-            "EEG classification",
-            "Sleep staging",
-            "Seizure detection"
+            "Event classification",
+            "Abnormal detection",
+            "Seizure type classification",
+            "Seizure detection",
+            "Sleep staging"
           ]
         },
         "key_points": [
-          "New EEG foundation model: TFM-Tokenizer converts single-channel EEG into discrete tokens by capturing time-frequency motifs, enabling flexible adaptation to multi-channel tasks and non-standard EEG devices.",
-          "Novel motif learning architecture: Introduces dual-path encoding with localized spectral window encoder and explicit time-frequency masking to capture band-specific and cross-frequency patterns.",
-          "Strong empirical evidence: Achieves up to 11% improvement in Cohen's Kappa over strong baselines across four diverse EEG benchmarks and 14% improvement on ear-EEG sleep staging tasks."
+          "New EEG tokenization method: TFM-Tokenizer learns a discrete vocabulary of time-frequency motifs from single-channel signals, making it model-agnostic and device-flexible.",
+          "Dual-path architecture: Combines a localized spectral window encoder with a temporal encoder using a joint masking objective to capture robust neural motifs.",
+          "Strong empirical results: Achieves up to 11% improvement in Cohen's Kappa on TUEV and demonstrates 14% better performance on out-of-domain ear-EEG sleep staging."
         ],
         "limitations": [
-          "Performance improvements vary across datasets and tasks",
-          "Requires careful hyperparameter tuning for optimal results",
-          "Evaluation focused primarily on classification tasks rather than generative applications",
-          "Scalability to very long EEG recordings not explicitly addressed",
-          "Potential computational overhead from dual-path architecture"
+          "Fixed windowing can cause large neural patterns to be split across windows.",
+          "Temporal shifts may lead to separate token assignments for the same event.",
+          "Window boundaries may cause misinterpretation of continuous neural events."
         ],
         "method": {
-          "architecture": "TFM-Tokenizer framework with single-channel EEG tokenization using dual-path architecture (localized spectral window encoder + temporal encoder + temporal transformer) and vector quantization codebook; downstream lightweight transformer with linear attention for multi-channel modeling.",
-          "finetuning": "Multi-channel EEG classification tasks",
-          "objective": "Masked reconstruction of time-frequency motifs",
-          "pretraining": "Single-channel EEG pretraining on multiple datasets"
+          "architecture": "Dual-path encoder (Localized Spectral Window Encoder and Temporal Encoder) followed by a Temporal Transformer and a VQ codebook quantizer.",
+          "finetuning": "Masked token prediction on a downstream transformer followed by task-specific fine-tuning.",
+          "objective": "Joint frequency-temporal masking prediction (masked reconstruction and vocabulary loss).",
+          "pretraining": "Unsupervised single-channel motif learning."
         },
-        "notes": "{\"chars\": 86324, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=23244;max_tokens=1",
-        "one_liner": "Novel EEG tokenization framework that learns time-frequency motifs from single-channel signals and improves foundation model performance.",
+        "notes": "{\"chars\": 86324, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=23291",
+        "one_liner": "A model-agnostic tokenization framework that learns discrete time-frequency motifs from single-channel EEG to enhance foundation model representations.",
         "open_source": {
           "code_url": "https://github.com/Jathurshan0330/TFM-Tokenizer",
-          "license": "Unknown",
+          "license": null,
           "weights_url": "https://github.com/Jathurshan0330/TFM-Tokenizer"
         },
-        "paper_type": "new_model",
+        "paper_type": "method",
         "published_date": "2025-02-22",
         "tags": {
           "backbone": [
             "transformer"
           ],
           "objective": [
-            "masked-reconstruction"
+            "masked-reconstruction",
+            "discrete-code-prediction"
           ],
           "paper_type": [
             "new-model"
@@ -772,196 +663,64 @@
           ]
         },
         "title": "Tokenizing Single-Channel EEG with Time-Frequency Motif Learning",
-        "unique_contribution": "First principled framework for learning discrete token vocabularies that capture time-frequency motifs in single-channel EEG signals and directly utilize them as inputs for downstream modeling.",
+        "unique_contribution": "Introduces a single-channel, device-agnostic tokenization method that explicitly learns a discrete vocabulary of time-frequency motifs to replace raw EEG inputs in foundation models.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
       "title": "Tokenizing Single-Channel EEG with Time-Frequency Motif Learning",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "The paper directly addresses \"EEG tokenization,\"",
-          "The methodology is novel and well-explained."
+          "Explicitly addresses the challenge of EEG tokenization specifically for foundation models.",
+          "Designed as a plug-and-play component to enhance existing EEG-FMs such as BIOT and LaBraM.",
+          "Evaluated across multiple benchmarks and pretraining settings to improve generalizable EEG representations."
         ]
       }
     },
     {
-      "arxiv_id": "2502.16794v3",
-      "arxiv_id_base": "2502.16794",
+      "arxiv_id": "2502.17873v2",
+      "arxiv_id_base": "2502.17873",
       "authors": [
-        "Xilin Jiang",
-        "Sukru Samet Dindar",
-        "Vishal Choudhari",
-        "Stephan Bickel",
-        "Ashesh Mehta",
-        "Guy M McKhann",
-        "Daniel Friedman",
-        "Adeen Flinker",
-        "Nima Mesgarani"
+        "Jiazhen Hong",
+        "Geoffrey Mackellar",
+        "Soheila Ghane"
       ],
       "categories": [
-        "cs.SD",
-        "cs.AI",
-        "cs.CL",
-        "cs.HC",
-        "eess.AS"
-      ],
-      "links": {
-        "abs": "http://arxiv.org/abs/2502.16794v3",
-        "pdf": "https://arxiv.org/pdf/2502.16794v3"
-      },
-      "published_date": "2025-02-24",
-      "summary": {
-        "arxiv_id_base": "2502.16794",
-        "categories": [
-          "cs.SD",
-          "cs.AI",
-          "cs.CL",
-          "cs.HC",
-          "eess.AS"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [
-            "iEEG Clinical Dataset",
-            "Speech-Only Dataset"
-          ],
-          "eeg_hours": null,
-          "subjects": 6.0
-        },
-        "detailed_summary": "This paper introduces Intention-Informed Auditory Scene Understanding (II-ASU) and presents AAD-LLM, a prototype system that extends an auditory large language model (LLM) by incorporating intracranial electroencephalography (iEEG) recordings to decode which speaker a listener is attending to and refine responses accordingly. The model first predicts the attended speaker from neural activity, then conditions response generation on this inferred attentional state. Evaluated on speaker description, speech transcription and extraction, and question answering in multitalker scenarios, AAD-LLM demonstrates improved alignment with listener intention compared to existing auditory LLMs, both objectively and subjectively.",
-        "evaluation": {
-          "benchmarks": [
-            "iEEG clinical dataset",
-            "speech-only dataset"
-          ],
-          "headline_results": [
-            "Near-oracle performance on transcription and summarization tasks",
-            "Significantly outperforms baseline auditory LLMs in both objective and subjective evaluations"
-          ],
-          "tasks": [
-            "speaker description",
-            "speech transcription",
-            "speech summarization",
-            "free Q&A"
-          ]
-        },
-        "key_points": [
-          "New EEG foundation model: AAD-LLM extends an auditory LLM with intracranial EEG to decode listener attention in multitalker scenarios.",
-          "Core method/evidence: Speaker prediction from neural signals conditions LLM responses, achieving near-oracle performance on transcription and summarization tasks.",
-          "Main practical takeaway: Intention-informed processing significantly improves alignment with human perception compared to standard auditory LLMs."
-        ],
-        "limitations": [
-          "Relies on intracranial EEG, limiting practical use",
-          "Experiments focus on controlled two-speaker scenarios",
-          "Speaker prediction accuracy affected when speakers share similar voice characteristics",
-          "Requires additional clinical data for optimal performance"
-        ],
-        "method": {
-          "architecture": "AAD-LLM extends an auditory LLM (Qwen2-Audio) by incorporating intracranial EEG recordings to decode listener attention. The model predicts the attended speaker from neural activity using x-vectors and K-means clustering, then conditions response generation on this inferred attentional state. It uses a Whisper speech encoder and Qwen2 LLM, with LoRA fine-tuning for speaker prediction integration.",
-          "finetuning": "LoRA fine-tuning to integrate speaker prediction from neural signals with the auditory LLM architecture.",
-          "objective": "Decode listener attention from intracranial EEG and condition auditory LLM responses on inferred attentional state to achieve intention-informed auditory scene understanding.",
-          "pretraining": "Not explicitly described; builds upon pre-trained auditory LLM (Qwen2-Audio) with additional neural attention decoding components."
-        },
-        "notes": "{\"chars\": 105707, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=28190;max_tokens=1",
-        "one_liner": "AAD-LLM integrates intracranial EEG with an auditory LLM to decode listener attention and generate perception-aligned responses in multitalker scenarios.",
-        "open_source": {
-          "code_url": "https://aad-llm.github.io",
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "new_model",
-        "published_date": "2025-02-24",
-        "tags": {
-          "backbone": [
-            "transformer"
-          ],
-          "objective": [
-            "autoregressive"
-          ],
-          "paper_type": [
-            "new-model"
-          ],
-          "tokenization": [
-            "time-patch"
-          ],
-          "topology": [
-            "fixed-montage"
-          ]
-        },
-        "title": "AAD-LLM: Neural Attention-Driven Auditory Scene Understanding",
-        "unique_contribution": "First system to integrate brain signals into an auditory LLM for attention-driven scene understanding, enabling listener-aligned auditory AI.",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
-      "title": "AAD-LLM: Neural Attention-Driven Auditory Scene Understanding",
-      "triage": {
-        "confidence": 0.9,
-        "decision": "accept",
-        "reasons": [
-          "The paper explicitly extends an \"auditory LLM\"",
-          "The methodology is sound and well-described"
-        ]
-      }
-    },
-    {
-      "arxiv_id": "2502.17213v2",
-      "arxiv_id_base": "2502.17213",
-      "authors": [
-        "Jiahe Li",
-        "Xin Chen",
-        "Fanqi Shen",
-        "Junru Chen",
-        "Yuxin Liu",
-        "Daoze Zhang",
-        "Zhizhang Yuan",
-        "Fang Zhao",
-        "Meng Li",
-        "Yang Yang"
-      ],
-      "categories": [
-        "q-bio.NC",
-        "cs.AI",
         "cs.LG",
         "eess.SP"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2502.17213v2",
-        "pdf": "https://arxiv.org/pdf/2502.17213v2"
+        "abs": "http://arxiv.org/abs/2502.17873v2",
+        "pdf": "https://arxiv.org/pdf/2502.17873v2"
       },
-      "published_date": "2025-02-24",
+      "published_date": "2025-02-25",
       "summary": {
-        "arxiv_id_base": "2502.17213",
+        "arxiv_id_base": "2502.17873",
         "categories": [
-          "q-bio.NC",
-          "cs.AI",
           "cs.LG",
           "eess.SP"
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [
-            "46"
-          ],
+          "datasets": [],
           "eeg_hours": null,
           "subjects": null
         },
-        "detailed_summary": "This survey systematically examines recent advances in deep learning approaches for EEG/iEEG-based neurological diagnostics, focusing on applications across 7 neurological conditions using 46 datasets. For each condition, it reviews representative methods and their quantitative results, integrating performance comparisons with analyses of data usage, model design, and task-specific adaptations, while highlighting the role of pre-trained multi-task models in achieving scalable, generalizable solutions. The paper proposes a standardized benchmark to evaluate models across diverse datasets and improve reproducibility, emphasizing how recent innovations are transforming neurological diagnostics toward intelligent, adaptable healthcare systems.",
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
         "evaluation": {
           "benchmarks": [],
           "headline_results": [],
           "tasks": []
         },
         "key_points": [
-          "Comprehensive survey of 450 studies and 46 public datasets across 7 neurological conditions",
-          "Identifies self-supervised learning as key for scalable, generalizable neurodiagnostic solutions",
-          "Proposes BrainBenchmark platform for standardized evaluation and reproducible research"
+          "unknown",
+          "unknown",
+          "unknown"
         ],
         "limitations": [
-          "Performance metrics vary across studies due to inconsistent evaluation protocols",
-          "Limited real-world clinical deployment data for many proposed methods",
-          "Benchmarking platform still in early stages with limited model/dataset coverage"
+          "unknown",
+          "summary_json_error"
         ],
         "method": {
           "architecture": null,
@@ -969,51 +728,154 @@
           "objective": null,
           "pretraining": null
         },
-        "notes": "{\"chars\": 226764, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=59050",
-        "one_liner": "Comprehensive review of deep learning for EEG/iEEG-based neurological diagnostics across 7 conditions using 46 datasets.",
+        "notes": "{\"chars\": 54543, \"error\": null, \"pages\": 10, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=15390;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
         "open_source": {
-          "code_url": "https://github.com/ZJU-BrainNet/BrainBenchmark",
+          "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "survey",
-        "published_date": "2025-02-24",
+        "paper_type": "other",
+        "published_date": "2025-02-25",
         "tags": {
           "backbone": [],
           "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "An Efficient Self-Supervised Framework for Long-Sequence EEG Modeling",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "An Efficient Self-Supervised Framework for Long-Sequence EEG Modeling",
+      "triage": {
+        "confidence": 0.85,
+        "decision": "accept",
+        "reasons": [
+          "EEG is the primary modality and the central focus of the work.",
+          "Proposes a self-supervised pre-training framework (EEGM2) for EEG representation learning.",
+          "Explicitly claims strong generalization across multiple tasks and transferability across domains, aligning with foundation model goals."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2502.21086v2",
+      "arxiv_id_base": "2502.21086",
+      "authors": [
+        "Özgün Turgut",
+        "Felix S. Bott",
+        "Markus Ploner",
+        "Daniel Rueckert"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2502.21086v2",
+        "pdf": "https://arxiv.org/pdf/2502.21086v2"
+      },
+      "published_date": "2025-02-28",
+      "summary": {
+        "arxiv_id_base": "2502.21086",
+        "categories": [
+          "cs.AI",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "LEMON",
+            "Epilepsy",
+            "TUEV"
+          ],
+          "eeg_hours": 125.0,
+          "subjects": null
+        },
+        "detailed_summary": "The paper investigates whether general-purpose time series foundation models, specifically MOMENT, UniTS, and OTiS, can serve as effective feature extractors for EEG analysis across age prediction, seizure detection, and event classification. The authors compare these models against 16 specialized EEG models using zero-shot, linear probing, and fine-tuning strategies. The results demonstrate that general-purpose models are competitive and can localize demographic and disease-related biomarkers through frequency band analysis, reducing the reliance on large task-specific datasets.",
+        "evaluation": {
+          "benchmarks": [
+            "LEMON",
+            "Epilepsy",
+            "TUEV"
+          ],
+          "headline_results": [
+            "General-purpose models are competitive with specialized EEG models",
+            "Zero-shot works for seizure detection",
+            "Fine-tuning is required for age prediction"
+          ],
+          "tasks": [
+            "age prediction",
+            "seizure detection",
+            "event classification"
+          ]
+        },
+        "key_points": [
+          "Benchmark study: Evaluates general-purpose time series foundation models (MOMENT, UniTS, OTiS) on EEG tasks, finding them competitive with specialized models.",
+          "Domain adaptation: Zero-shot features suffice for visually interpretable tasks like seizure detection, while fine-tuning is essential for complex tasks like age prediction.",
+          "Biomarker localization: Demonstrates that these models can identify frequency-specific biomarkers, such as age-related information in high frequencies and ictal activity in low frequencies."
+        ],
+        "limitations": [
+          "Fine-tuning remains essential for complex clinical tasks that require high specialization.",
+          "Evaluation is limited to three general-purpose time series models.",
+          "Task-specific training on very limited data still risks overfitting.",
+          "Reliance on public datasets which may not capture the full diversity of clinical EEG scenarios."
+        ],
+        "method": {
+          "architecture": "General-purpose time series foundation models (MOMENT, UniTS, OTiS)",
+          "finetuning": "Zero-shot, Linear Probing, and Fine-tuning",
+          "objective": null,
+          "pretraining": "General time series pre-training"
+        },
+        "notes": "{\"chars\": 23940, \"error\": null, \"pages\": 7, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7301",
+        "one_liner": "Evaluates the effectiveness of general-purpose time series foundation models as feature extractors for various EEG clinical tasks.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2025-02-28",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
           "paper_type": [
-            "survey"
+            "benchmark"
           ],
           "tokenization": [],
           "topology": []
         },
-        "title": "Deep Learning-Powered Electrical Brain Signals Analysis: Advancing Neurological Diagnostics",
-        "unique_contribution": "Establishes the first comprehensive benchmark for EEG/iEEG analysis and identifies self-supervised learning as the optimal paradigm for developing multi-task diagnostic frameworks.",
+        "title": "Are foundation models useful feature extractors for electroencephalography analysis?",
+        "unique_contribution": "Systematically benchmarks general-purpose time series foundation models against specialized EEG models to assess their utility as feature extractors and their ability to localize clinical biomarkers.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
-      "title": "Deep Learning-Powered Electrical Brain Signals Analysis: Advancing Neurological Diagnostics",
+      "title": "Are foundation models useful feature extractors for electroencephalography analysis?",
       "triage": {
-        "confidence": 0.9,
+        "confidence": 0.95,
         "decision": "accept",
         "reasons": [
-          "The review highlights \"pre-trained multi-task models\" for \"scalable, generalizable solutions\" in EEG/iEEG analysis, aligning with foundation model principles.",
-          "It proposes a \"standardized benchmark to evaluate models across diverse datasets,\" which is directly relevant to EEG foundation model evaluation.",
-          "The paper focuses on deep learning approaches for EEG/iEEG across multiple neurological conditions and datasets, indicating a strong fit for the scope."
+          "Explicitly evaluates the utility of foundation models as feature extractors for EEG analysis.",
+          "Fits the ecosystem criteria as a benchmark/evaluation study of foundation models applied to EEG.",
+          "Focuses on the transferability of pretrained representations to reduce reliance on task-specific EEG datasets."
         ]
       }
     }
   ],
   "stats": {
-    "accepted": 9,
+    "accepted": 8,
     "candidates": 19,
-    "summarized": 9
+    "summarized": 8
   },
   "top_picks": [
     "2502.17464",
     "2502.16060",
     "2502.06438",
     "2502.01678",
-    "2502.17465"
+    "2502.21086"
   ]
 }

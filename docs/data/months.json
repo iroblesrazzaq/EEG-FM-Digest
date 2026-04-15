@@ -3,12 +3,17 @@
   "months": [
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2604.04297v1",
+        "arxiv_id_base": "2604.04297",
+        "one_liner": "A compact 5.4M-parameter pan-modal foundation model that unifies EEG, ECG, and PPG processing within a single shared encoder for efficient edge deployment.",
+        "title": "PanLUNA: An Efficient and Robust Query-Unified Multimodal Model for Edge Biosignal Intelligence"
+      },
       "href": "digest/2026-04/index.html",
       "json_path": "digest/2026-04/papers.json",
       "month": "2026-04",
       "month_label": "April 2026",
-      "month_rev": "856acab24b3bd5a4",
+      "month_rev": "c033045d30e65de3",
       "stats": {
         "accepted": 1,
         "candidates": 3,
@@ -17,12 +22,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2603.19100v1",
+        "arxiv_id_base": "2603.19100",
+        "one_liner": "A computationally efficient EEG foundation model combining topology-invariant channel unification with bidirectional Mamba blocks and a hybrid LeJEPA-reconstruction objective.",
+        "title": "LuMamba: Latent Unified Mamba for Electrode Topology-Invariant and Efficient EEG Modeling"
+      },
       "href": "digest/2026-03/index.html",
       "json_path": "digest/2026-03/papers.json",
       "month": "2026-03",
       "month_label": "March 2026",
-      "month_rev": "488fa9c53fa271b0",
+      "month_rev": "7680bca777e8b1f2",
       "stats": {
         "accepted": 6,
         "candidates": 19,
@@ -64,12 +74,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2512.19097v2",
+        "arxiv_id_base": "2512.19097",
+        "one_liner": "DIVER-1 is a family of EEG/iEEG foundation models trained on 59.3k hours of diverse electrophysiological data, achieving state-of-the-art performance across established benchmarks.",
+        "title": "DIVER-1 : Deep Integration of Vast Electrophysiological Recordings at Scale"
+      },
       "href": "digest/2025-12/index.html",
       "json_path": "digest/2025-12/papers.json",
       "month": "2025-12",
       "month_label": "December 2025",
-      "month_rev": "d2bc47c8a6a59943",
+      "month_rev": "be89be10fa6edc6d",
       "stats": {
         "accepted": 3,
         "candidates": 12,
@@ -78,12 +93,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2511.13733v1",
+        "arxiv_id_base": "2511.13733",
+        "one_liner": "THD-BAR introduces a novel autoregressive framework for EEG that leverages a Brain Topology Hierarchy to capture multi-scale spatial and temporal dynamics.",
+        "title": "THD-BAR: Topology Hierarchical Derived Brain Autoregressive Modeling for EEG Generic Representations"
+      },
       "href": "digest/2025-11/index.html",
       "json_path": "digest/2025-11/papers.json",
       "month": "2025-11",
       "month_label": "November 2025",
-      "month_rev": "d5fcf1bbe70a73b9",
+      "month_rev": "edf4f89e835c0fa3",
       "stats": {
         "accepted": 8,
         "candidates": 32,
@@ -92,12 +112,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2510.21585v1",
+        "arxiv_id_base": "2510.21585",
+        "one_liner": "REVE is a foundation model for EEG that generalizes across diverse setups through large-scale pretraining on 25,000 subjects and 60,000 hours of data.",
+        "title": "REVE: A Foundation Model for EEG -- Adapting to Any Setup with Large-Scale Pretraining on 25,000 Subjects"
+      },
       "href": "digest/2025-10/index.html",
       "json_path": "digest/2025-10/papers.json",
       "month": "2025-10",
       "month_label": "October 2025",
-      "month_rev": "b676d41be96f3a4e",
+      "month_rev": "a5bf9d4824d1be47",
       "stats": {
         "accepted": 8,
         "candidates": 26,
@@ -106,12 +131,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2509.26301v2",
+        "arxiv_id_base": "2509.26301",
+        "one_liner": "NeuroTTT aligns EEG foundation models to downstream tasks through domain-specific self-supervised fine-tuning and test-time adaptation.",
+        "title": "NeuroTTT: Bridging Pretraining-Downstream Task Misalignment in EEG Foundation Models via Test-Time Training"
+      },
       "href": "digest/2025-09/index.html",
       "json_path": "digest/2025-09/papers.json",
       "month": "2025-09",
       "month_label": "September 2025",
-      "month_rev": "a09908dafaf5c983",
+      "month_rev": "3d060eb8cf5deb48",
       "stats": {
         "accepted": 8,
         "candidates": 18,
@@ -134,12 +164,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2507.11783v3",
+        "arxiv_id_base": "2507.11783",
+        "one_liner": "Critical review of ten early EEG foundation models, identifying key trends, research gaps, and future directions.",
+        "title": "EEG Foundation Models: A Critical Review of Current Progress and Future Directions"
+      },
       "href": "digest/2025-07/index.html",
       "json_path": "digest/2025-07/papers.json",
       "month": "2025-07",
       "month_label": "July 2025",
-      "month_rev": "ab324661790f5291",
+      "month_rev": "f3028300e35dfb47",
       "stats": {
         "accepted": 2,
         "candidates": 17,
@@ -148,12 +183,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2506.23075v1",
+        "arxiv_id_base": "2506.23075",
+        "one_liner": "CSBrain introduces cross-scale spatiotemporal modeling to EEG foundation models, achieving state-of-the-art performance across 11 tasks and 16 datasets.",
+        "title": "CSBrain: A Cross-scale Spatiotemporal Brain Foundation Model for EEG Decoding"
+      },
       "href": "digest/2025-06/index.html",
       "json_path": "digest/2025-06/papers.json",
       "month": "2025-06",
       "month_label": "June 2025",
-      "month_rev": "1036a4467599ca69",
+      "month_rev": "5b4af7e77ee501d4",
       "stats": {
         "accepted": 8,
         "candidates": 20,
@@ -162,12 +202,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2505.18185v3",
+        "arxiv_id_base": "2505.18185",
+        "one_liner": "BrainOmni is the first foundation model to jointly pretrain on EEG and MEG signals, enabling unified brain signal representation learning.",
+        "title": "BrainOmni: A Brain Foundation Model for Unified EEG and MEG Signals"
+      },
       "href": "digest/2025-05/index.html",
       "json_path": "digest/2025-05/papers.json",
       "month": "2025-05",
       "month_label": "May 2025",
-      "month_rev": "00b7d8ae8af994a1",
+      "month_rev": "18a13aae6c1aaac0",
       "stats": {
         "accepted": 6,
         "candidates": 14,
@@ -176,12 +221,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2504.21214v2",
+        "arxiv_id_base": "2504.21214",
+        "one_liner": "Large Brain Language Model (LBLM) pretrained with Future Spectro-Temporal Prediction (FSTP) paradigm for silent speech decoding in active BCI.",
+        "title": "Pretraining Large Brain Language Model for Active BCI: Silent Speech"
+      },
       "href": "digest/2025-04/index.html",
       "json_path": "digest/2025-04/papers.json",
       "month": "2025-04",
       "month_label": "April 2025",
-      "month_rev": "ac8de67b11006b07",
+      "month_rev": "44c58d73fce956db",
       "stats": {
         "accepted": 3,
         "candidates": 10,
@@ -190,12 +240,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2503.10362v1",
+        "arxiv_id_base": "2503.10362",
+        "one_liner": "BioSerenity-E1 is a self-supervised foundation model for clinical EEG that combines spectral tokenization with masked prediction to achieve state-of-the-art performance across multiple diagnostic tasks.",
+        "title": "BioSerenity-E1: a self-supervised EEG model for medical applications"
+      },
       "href": "digest/2025-03/index.html",
       "json_path": "digest/2025-03/papers.json",
       "month": "2025-03",
       "month_label": "March 2025",
-      "month_rev": "875ec1ffe039313d",
+      "month_rev": "fde9e352375b6e56",
       "stats": {
         "accepted": 2,
         "candidates": 4,
@@ -204,26 +259,36 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2502.17464v1",
+        "arxiv_id_base": "2502.17464",
+        "one_liner": "A transformer-based EEG foundation model utilizing learnable channel mapping and a dual contrastive-reconstruction objective for cross-dataset generalization.",
+        "title": "Large Cognition Model: Towards Pretrained EEG Foundation Model"
+      },
       "href": "digest/2025-02/index.html",
       "json_path": "digest/2025-02/papers.json",
       "month": "2025-02",
       "month_label": "February 2025",
-      "month_rev": "b12bd0ba85954cfb",
+      "month_rev": "c57aa51ffed24053",
       "stats": {
-        "accepted": 9,
+        "accepted": 8,
         "candidates": 19,
-        "summarized": 9
+        "summarized": 8
       }
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2501.10885v4",
+        "arxiv_id_base": "2501.10885",
+        "one_liner": "New compact EEG foundation model with alternating attention mechanism for efficient spatio-temporal modeling",
+        "title": "CEReBrO: Compact Encoder for Representations of Brain Oscillations Using Efficient Alternating Attention"
+      },
       "href": "digest/2025-01/index.html",
       "json_path": "digest/2025-01/papers.json",
       "month": "2025-01",
       "month_label": "January 2025",
-      "month_rev": "0b6b2a01c162a0ac",
+      "month_rev": "01cd28abb622185a",
       "stats": {
         "accepted": 1,
         "candidates": 9,
@@ -232,12 +297,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2412.07236v6",
+        "arxiv_id_base": "2412.07236",
+        "one_liner": "CBraMod is a novel EEG foundation model that uses criss-cross transformer architecture and asymmetric positional encoding to achieve state-of-the-art performance across 10 downstream BCI tasks.",
+        "title": "CBraMod: A Criss-Cross Brain Foundation Model for EEG Decoding"
+      },
       "href": "digest/2024-12/index.html",
       "json_path": "digest/2024-12/papers.json",
       "month": "2024-12",
       "month_label": "December 2024",
-      "month_rev": "dcce7de4189f15c5",
+      "month_rev": "fe6080e8525be64c",
       "stats": {
         "accepted": 2,
         "candidates": 15,
@@ -246,12 +316,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2411.19230v2",
+        "arxiv_id_base": "2411.19230",
+        "one_liner": "Unified graph pre-training framework combining contrastive and masked autoencoder methods for EEG distillation.",
+        "title": "Pre-Training Graph Contrastive Masked Autoencoders are Strong Distillers for EEG"
+      },
       "href": "digest/2024-11/index.html",
       "json_path": "digest/2024-11/papers.json",
       "month": "2024-11",
       "month_label": "November 2024",
-      "month_rev": "bad1eb0f54b7ac4a",
+      "month_rev": "35a4e3927c14334d",
       "stats": {
         "accepted": 3,
         "candidates": 16,
@@ -260,12 +335,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2410.19779v2",
+        "arxiv_id_base": "2410.19779",
+        "one_liner": "BrainGPT is the first generalist EEG foundation model using autoregressive pre-training to achieve state-of-the-art performance across 12 benchmarks spanning 5 tasks.",
+        "title": "BrainGPT: Unleashing the Potential of EEG Generalist Foundation Model by Autoregressive Pre-training"
+      },
       "href": "digest/2024-10/index.html",
       "json_path": "digest/2024-10/papers.json",
       "month": "2024-10",
       "month_label": "October 2024",
-      "month_rev": "7fe185263ae708b3",
+      "month_rev": "a865ae0d8b9d6f3a",
       "stats": {
         "accepted": 2,
         "candidates": 17,
@@ -274,12 +354,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2409.12454v1",
+        "arxiv_id_base": "2409.12454",
+        "one_liner": "FoME is a large-scale foundation model for EEG that uses adaptive temporal-lateral attention scaling to achieve state-of-the-art performance across multiple downstream tasks.",
+        "title": "FoME: A Foundation Model for EEG using Adaptive Temporal-Lateral Attention Scaling"
+      },
       "href": "digest/2024-09/index.html",
       "json_path": "digest/2024-09/papers.json",
       "month": "2024-09",
       "month_label": "September 2024",
-      "month_rev": "3457e59e604cdca3",
+      "month_rev": "515da77a8bf1bd5c",
       "stats": {
         "accepted": 4,
         "candidates": 12,
@@ -288,12 +373,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2409.00101v3",
+        "arxiv_id_base": "2409.00101",
+        "one_liner": "NeuroLM is the first multi-task foundation model that unifies diverse EEG tasks within a single model through instruction tuning, leveraging LLMs to treat EEG as a foreign language.",
+        "title": "NeuroLM: A Universal Multi-task Foundation Model for Bridging the Gap between Language and EEG Signals"
+      },
       "href": "digest/2024-08/index.html",
       "json_path": "digest/2024-08/papers.json",
       "month": "2024-08",
       "month_label": "August 2024",
-      "month_rev": "9a275b94e4a71d65",
+      "month_rev": "4686b54f950a5198",
       "stats": {
         "accepted": 2,
         "candidates": 11,
@@ -330,12 +420,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2405.18765v1",
+        "arxiv_id_base": "2405.18765",
+        "one_liner": "LaBraM is a foundation model for EEG that learns universal representations through unsupervised pre-training on 2,500+ hours of diverse EEG data and achieves SOTA performance on multiple downstream BCI tasks.",
+        "title": "Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI"
+      },
       "href": "digest/2024-05/index.html",
       "json_path": "digest/2024-05/papers.json",
       "month": "2024-05",
       "month_label": "May 2024",
-      "month_rev": "73a654e0ad00cad6",
+      "month_rev": "83313e3e65624e17",
       "stats": {
         "accepted": 2,
         "candidates": 7,
@@ -358,12 +453,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2403.11772v2",
+        "arxiv_id_base": "2403.11772",
+        "one_liner": "Signal-JEPA introduces a novel spatial block masking strategy for EEG self-supervised learning, enabling effective cross-dataset transfer.",
+        "title": "S-JEPA: towards seamless cross-dataset transfer through dynamic spatial attention"
+      },
       "href": "digest/2024-03/index.html",
       "json_path": "digest/2024-03/papers.json",
       "month": "2024-03",
       "month_label": "March 2024",
-      "month_rev": "72bec0bb7c1012e4",
+      "month_rev": "a0fdcde42166f816",
       "stats": {
         "accepted": 1,
         "candidates": 8,
@@ -372,12 +472,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2402.17772v2",
+        "arxiv_id_base": "2402.17772",
+        "one_liner": "EEG2Rep is a self-supervised learning approach for EEG representation learning that uses semantic subsequence preserving masking and latent space reconstruction to generate rich semantic representations.",
+        "title": "EEG2Rep: Enhancing Self-supervised EEG Representation Through Informative Masked Inputs"
+      },
       "href": "digest/2024-02/index.html",
       "json_path": "digest/2024-02/papers.json",
       "month": "2024-02",
       "month_label": "February 2024",
-      "month_rev": "b5005c65cdb249a7",
+      "month_rev": "692c38074fcbf919",
       "stats": {
         "accepted": 2,
         "candidates": 6,
@@ -386,12 +491,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2401.10278v1",
+        "arxiv_id_base": "2401.10278",
+        "one_liner": "EEGFormer is a novel foundation model for EEG that uses vector-quantized pretraining on large-scale unlabeled data to learn universal, transferable, and interpretable representations.",
+        "title": "EEGFormer: Towards Transferable and Interpretable Large-Scale EEG Foundation Model"
+      },
       "href": "digest/2024-01/index.html",
       "json_path": "digest/2024-01/papers.json",
       "month": "2024-01",
       "month_label": "January 2024",
-      "month_rev": "20a5682c8c1043c0",
+      "month_rev": "fab26825ef2c4b2e",
       "stats": {
         "accepted": 1,
         "candidates": 11,
@@ -414,12 +524,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2311.03764v4",
+        "arxiv_id_base": "2311.03764",
+        "one_liner": "Neuro-GPT is a foundation model for EEG that combines an EEG encoder with a GPT decoder, pre-trained on large-scale EEG data via masked reconstruction and fine-tuned for motor imagery classification.",
+        "title": "Neuro-GPT: Towards A Foundation Model for EEG"
+      },
       "href": "digest/2023-11/index.html",
       "json_path": "digest/2023-11/papers.json",
       "month": "2023-11",
       "month_label": "November 2023",
-      "month_rev": "7f9b56b1c7ad77d7",
+      "month_rev": "a910a7fe9874583b",
       "stats": {
         "accepted": 1,
         "candidates": 13,
@@ -498,12 +613,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2305.10351v1",
+        "arxiv_id_base": "2305.10351",
+        "one_liner": "BIOT is a foundational transformer model for biosignals that enables cross-data learning with mismatched channels, variable lengths, and missing values.",
+        "title": "BIOT: Cross-data Biosignal Learning in the Wild"
+      },
       "href": "digest/2023-05/index.html",
       "json_path": "digest/2023-05/papers.json",
       "month": "2023-05",
       "month_label": "May 2023",
-      "month_rev": "6e30315e603489cc",
+      "month_rev": "39a4ec6290e77f6f",
       "stats": {
         "accepted": 1,
         "candidates": 1,
@@ -596,12 +716,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2211.02625v1",
+        "arxiv_id_base": "2211.02625",
+        "one_liner": "MAEEG is a reconstruction-based self-supervised learning model that learns EEG representations by reconstructing masked EEG features using a transformer architecture.",
+        "title": "MAEEG: Masked Auto-encoder for EEG Representation Learning"
+      },
       "href": "digest/2022-10/index.html",
       "json_path": "digest/2022-10/papers.json",
       "month": "2022-10",
       "month_label": "October 2022",
-      "month_rev": "b1c622c8c174252e",
+      "month_rev": "0a0ea38b716add24",
       "stats": {
         "accepted": 1,
         "candidates": 5,
@@ -680,12 +805,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2204.03272v1",
+        "arxiv_id_base": "2204.03272",
+        "one_liner": "mulEEG is a novel multi-view self-supervised learning method for EEG representation learning that outperforms supervised training on sleep staging tasks.",
+        "title": "mulEEG: A Multi-View Representation Learning on EEG Signals"
+      },
       "href": "digest/2022-04/index.html",
       "json_path": "digest/2022-04/papers.json",
       "month": "2022-04",
       "month_label": "April 2022",
-      "month_rev": "ebf8cfb62211d171",
+      "month_rev": "36c7d0e3e1a2aee5",
       "stats": {
         "accepted": 1,
         "candidates": 4,
@@ -890,12 +1020,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2101.12037v1",
+        "arxiv_id_base": "2101.12037",
+        "one_liner": "BENDR is a transformer-based EEG foundation model pretrained via contrastive self-supervision to learn generalizable representations across subjects, hardware, and tasks.",
+        "title": "BENDR: using transformers and a contrastive self-supervised learning task to learn from massive amounts of EEG data"
+      },
       "href": "digest/2021-01/index.html",
       "json_path": "digest/2021-01/papers.json",
       "month": "2021-01",
       "month_label": "January 2021",
-      "month_rev": "c11cc399d95fb692",
+      "month_rev": "889b7cd5051329ae",
       "stats": {
         "accepted": 1,
         "candidates": 1,
