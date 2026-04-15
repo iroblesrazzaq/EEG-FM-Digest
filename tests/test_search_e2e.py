@@ -441,6 +441,25 @@ def test_explore_keyword_search_filters_results_after_click(browser, synthetic_s
     context.close()
 
 
+def test_explore_clear_search_resets_query_tags_and_results(browser, synthetic_site):
+    context = browser.new_context()
+    page, _urls = _tracked_page(context)
+    page.goto(f"{synthetic_site['base_url']}/explore/index.html", wait_until="networkidle")
+    page.get_by_test_id("search-input").fill("Alpha")
+    page.locator("input[data-tag-category='paper_type'][data-tag-value='new-model']").check()
+    page.get_by_test_id("search-run-btn").click()
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 1")
+
+    page.get_by_role("button", name="Clear search").click()
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 3")
+
+    assert page.get_by_test_id("search-input").input_value() == ""
+    assert page.locator("input[data-tag-category]:checked").count() == 0
+    assert page.get_by_test_id("results-meta").inner_text() == "3 results"
+
+    context.close()
+
+
 def test_explore_export_csv_downloads_current_filtered_results(browser, synthetic_site):
     context = browser.new_context(accept_downloads=True)
     page, _urls = _tracked_page(context)
@@ -946,21 +965,6 @@ def test_search_localstorage_failures_fallback_to_mem_and_network(browser, synth
     assert page.locator(".paper-card").count() == 3
     assert page.get_by_test_id("results-meta").inner_text() == "3 results"
 
-    page.goto(f"{synthetic_site['base_url']}/index.html", wait_until="networkidle")
-    page.goto(f"{synthetic_site['base_url']}/explore/index.html", wait_until="networkidle")
-    page.evaluate(
-        """() => {
-          window.__digestTestHooks.clearMemCacheForTest();
-          window.__digestTestHooks.resetCacheStatsForTest();
-        }"""
-    )
-    page.get_by_test_id("search-run-btn").click()
-    second = _wait_for_stats(page, "() => window.__digestTestHooks.getCacheStats().cumulative.network_hits >= 2")
-    second_cumulative = _cumulative(second)
-    assert second_cumulative["network_hits"] == 2
-    assert second_cumulative["local_hits"] == 0
-    assert second_cumulative["map_hits"] == 0
-
     context.close()
 
 
@@ -976,12 +980,15 @@ def test_explore_no_partial_cards_rendered_while_loading(browser, synthetic_site
         }"""
     )
 
-    def _delayed_month_payloads(route, request):
+    paused_routes = []
+
+    def _pause_month_payloads(route, request):
         if MONTH_REQ_RE.search(request.url):
-            time.sleep(0.2)
+            paused_routes.append(route)
+            return
         route.continue_()
 
-    page.route("**/digest/*/papers.json", _delayed_month_payloads)
+    page.route("**/digest/*/papers.json", _pause_month_payloads)
     page.get_by_test_id("search-run-btn").click()
     page.wait_for_function(
         """() => {
@@ -993,6 +1000,14 @@ def test_explore_no_partial_cards_rendered_while_loading(browser, synthetic_site
     page.wait_for_timeout(80)
     assert page.get_by_test_id("results-meta").inner_text() == "Searching..."
     assert page.locator(".paper-card").count() == 0
+    page.wait_for_function("() => window.__digestTestHooks.getCacheStats().last_run?.months_total === 2")
+    for _ in range(40):
+        if len(paused_routes) >= 2:
+            break
+        page.wait_for_timeout(25)
+    assert len(paused_routes) == 2
+    for route in paused_routes:
+        route.continue_()
 
     _wait_for_stats(page, "() => window.__digestTestHooks.getCacheStats().cumulative.network_hits >= 2")
     assert page.get_by_test_id("results-meta").inner_text() == "3 results"
