@@ -22,7 +22,7 @@
       "json_path": "digest/2026-03/papers.json",
       "month": "2026-03",
       "month_label": "March 2026",
-      "month_rev": "7179d717906a32e4",
+      "month_rev": "488fa9c53fa271b0",
       "stats": {
         "accepted": 6,
         "candidates": 19,
@@ -41,7 +41,7 @@
       "json_path": "digest/2026-02/papers.json",
       "month": "2026-02",
       "month_label": "February 2026",
-      "month_rev": "f028bcbc8ab47319",
+      "month_rev": "8228db661233a9ac",
       "stats": {
         "accepted": 10,
         "candidates": 24,
