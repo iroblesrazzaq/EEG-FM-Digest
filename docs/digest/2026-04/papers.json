@@ -1,0 +1,126 @@
+{
+  "featured_paper_id": null,
+  "month": "2026-04",
+  "papers": [
+    {
+      "arxiv_id": "2604.04297v1",
+      "arxiv_id_base": "2604.04297",
+      "authors": [
+        "Marija Zelic",
+        "Anna Tegon",
+        "Yawei Li",
+        "Thorir Mar Ingolfsson",
+        "Luca Benini"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2604.04297v1",
+        "pdf": "https://arxiv.org/pdf/2604.04297v1"
+      },
+      "published_date": "2026-04-05",
+      "summary": {
+        "arxiv_id_base": "2604.04297",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "TUEG",
+            "Siena",
+            "MIMIC-IV",
+            "CODE-15%",
+            "PulseDB"
+          ],
+          "eeg_hours": 40000.0,
+          "subjects": 415414.0
+        },
+        "detailed_summary": "PanLUNA proposes a single-encoder architecture that extends LUNA's channel-unification module to treat multimodal biosignals as a unified query set augmented with sensor-type embeddings. This approach enables efficient cross-modal early fusion and inherent robustness to missing modalities at inference time without requiring paired multimodal data during pretraining. The model is pretrained on approximately 40,000 hours of heterogeneous biosignal data and demonstrates state-of-the-art performance on multimodal sleep staging (HMC) and competitive results on abnormal EEG detection (TUAB).",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "HMC",
+            "PTB-XL",
+            "CSN"
+          ],
+          "headline_results": [
+            "TUAB: 81.21% balanced accuracy",
+            "HMC: 0.7416 balanced accuracy (SOTA)",
+            "GAP9 MCU: 325.6ms latency for 12-lead ECG"
+          ],
+          "tasks": [
+            "TUAB abnormal EEG detection",
+            "HMC multimodal sleep staging",
+            "Cardiac benchmarks (PTB-XL, CSN)"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: A pan-modal 5.4M-parameter encoder that jointly processes EEG, ECG, and PPG signals.",
+          "Novel query-fusion mechanism: Uses sensor-type embeddings and cross-attention to unify modalities, matching models up to 57x larger.",
+          "Edge-ready efficiency: Achieves real-time multimodal inference on the GAP9 RISC-V MCU with INT8 quantization."
+        ],
+        "limitations": [
+          "Performance degradation observed in morphological ECG tasks (e.g., PTBXL-Form) under aggressive quantization.",
+          "Clinical validation in real-world continuous monitoring scenarios is still required.",
+          "Small parameter count (5.4M) for edge feasibility may limit the representational ceiling compared to larger foundation models."
+        ],
+        "method": {
+          "architecture": "Convolutional encoders and FFT frequency features followed by a Channel-Modality Unification module (cross-attention between learned queries and channel features with sensor-type embeddings) and a temporal Transformer with Rotary Positional Embeddings (RoPE).",
+          "finetuning": "Full fine-tuning, Frozen Encoder, or LoRA.",
+          "objective": "Masked reconstruction for self-supervised pretraining.",
+          "pretraining": "Self-supervised pretraining on 40,000 hours of heterogeneous biosignal data."
+        },
+        "notes": "{\"chars\": 30837, \"error\": null, \"pages\": 5, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=9157",
+        "one_liner": "A compact 5.4M-parameter pan-modal foundation model that unifies EEG, ECG, and PPG processing within a single shared encoder for efficient edge deployment.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-04-05",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "PanLUNA: An Efficient and Robust Query-Unified Multimodal Model for Edge Biosignal Intelligence",
+        "unique_contribution": "Introduces a query-unified single-encoder architecture that fuses EEG, ECG, and PPG using sensor-type embeddings, enabling a compact multimodal FM robust to missing modalities.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "PanLUNA: An Efficient and Robust Query-Unified Multimodal Model for Edge Biosignal Intelligence",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly describes PanLUNA as a 'pan-modal FM' for biosignals.",
+          "Includes EEG as one of the core target modalities processed by a shared encoder.",
+          "Evaluates the model on EEG-specific tasks such as TUAB abnormal EEG detection."
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 1,
+    "candidates": 3,
+    "summarized": 1
+  },
+  "top_picks": [
+    "2604.04297"
+  ]
+}
