@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from dataclasses import dataclass, replace
 from typing import Any, Protocol
 
@@ -9,6 +10,8 @@ OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 GOOGLE_OPENAI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 GOOGLE_PROVIDER_ALIASES = {"google", "google_ai_studio", "gemini"}
 OPENAI_COMPAT_PROVIDER_ALIASES = {"openai", "openrouter"} | GOOGLE_PROVIDER_ALIASES
+DEFAULT_RATE_LIMIT_RETRIES = 5
+DEFAULT_RATE_LIMIT_BACKOFF_SECONDS = 5.0
 
 
 @dataclass(frozen=True)
@@ -178,21 +181,28 @@ class OpenAICall:
         if schema is not None and provider_supports_json_object(self.config.provider):
             req["response_format"] = {"type": "json_object"}
 
-        try:
-            response = self._client.chat.completions.create(**req)
-        except Exception as exc:
-            status_code = getattr(exc, "status_code", None)
-            response = getattr(exc, "response", None)
-            if status_code is None and response is not None:
-                status_code = getattr(response, "status_code", None)
-            if status_code in {402, 429}:
-                detail = ""
-                if response is not None:
-                    detail = str(getattr(response, "text", "") or "")[:220]
-                raise LLMRateLimitError(
-                    f"openai_compat_rate_limit_or_quota status={status_code} body={detail}"
-                ) from exc
-            raise
+        backoff_seconds = float(os.environ.get("LLM_RATE_LIMIT_BACKOFF_SECONDS", str(DEFAULT_RATE_LIMIT_BACKOFF_SECONDS)))
+        retry_count = int(os.environ.get("LLM_RATE_LIMIT_RETRIES", str(DEFAULT_RATE_LIMIT_RETRIES)))
+        for attempt in range(retry_count + 1):
+            try:
+                response = self._client.chat.completions.create(**req)
+                break
+            except Exception as exc:
+                status_code = getattr(exc, "status_code", None)
+                response = getattr(exc, "response", None)
+                if status_code is None and response is not None:
+                    status_code = getattr(response, "status_code", None)
+                if status_code in {402, 429}:
+                    detail = ""
+                    if response is not None:
+                        detail = str(getattr(response, "text", "") or "")[:220]
+                    if attempt < retry_count:
+                        time.sleep(backoff_seconds * (2**attempt))
+                        continue
+                    raise LLMRateLimitError(
+                        f"openai_compat_rate_limit_or_quota status={status_code} body={detail}"
+                    ) from exc
+                raise
 
         text = self._extract_text(response)
         if not text:
@@ -233,4 +243,17 @@ def load_api_key(provider: str | None = None) -> str:
 
 
 def parse_json_text(text: str) -> dict[str, Any]:
-    return json.loads(text)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        decoder = json.JSONDecoder()
+        for idx, char in enumerate(text):
+            if char not in "{[":
+                continue
+            try:
+                value, end = decoder.raw_decode(text[idx:])
+            except json.JSONDecodeError:
+                continue
+            if isinstance(value, dict):
+                return value
+        raise

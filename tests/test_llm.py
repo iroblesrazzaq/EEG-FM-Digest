@@ -1,4 +1,4 @@
-from eegfm_digest.llm import LLMCallConfig, OpenAICall, load_api_key
+from eegfm_digest.llm import LLMCallConfig, OpenAICall, load_api_key, parse_json_text
 
 
 def _fake_response(text: str):
@@ -113,3 +113,13 @@ def test_load_api_key_uses_gemini_key_for_google_provider(monkeypatch):
 
     assert load_api_key("google") == "gem-key"
     assert load_api_key() == "gem-key"
+
+
+def test_parse_json_text_extracts_json_object_from_surrounding_text():
+    text = "<thought>internal reasoning</thought>{\"decision\":\"accept\",\"confidence\":0.9,\"reasons\":[\"r1\",\"r2\"]}"
+
+    assert parse_json_text(text) == {
+        "decision": "accept",
+        "confidence": 0.9,
+        "reasons": ["r1", "r2"],
+    }

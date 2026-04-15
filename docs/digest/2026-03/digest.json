@@ -1,0 +1,39 @@
+{
+  "featured_paper": null,
+  "month": "2026-03",
+  "sections": [
+    {
+      "paper_ids": [
+        "2603.28122"
+      ],
+      "title": "method"
+    },
+    {
+      "paper_ids": [
+        "2603.04478",
+        "2603.16739",
+        "2603.19100"
+      ],
+      "title": "new_model"
+    },
+    {
+      "paper_ids": [
+        "2603.16281",
+        "2603.26716"
+      ],
+      "title": "other"
+    }
+  ],
+  "stats": {
+    "accepted": 6,
+    "candidates": 19,
+    "summarized": 6
+  },
+  "top_picks": [
+    "2603.19100",
+    "2603.16739",
+    "2603.04478",
+    "2603.26716",
+    "2603.16281"
+  ]
+}
