@@ -4,6 +4,21 @@ on:
   schedule:
     - cron: "0 10 1 * *"  # 10:00 UTC on day 1
   workflow_dispatch:
+    inputs:
+      month:
+        description: "Target month in YYYY-MM format. Leave blank to use the previous month."
+        required: false
+        type: string
+      include_borderline:
+        description: "Include borderline papers for PDF download and summary."
+        required: false
+        default: false
+        type: boolean
+      force:
+        description: "Ignore cached triage and summary rows for the target month."
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -19,10 +34,33 @@ jobs:
       - run: pip install -e .
       - name: Run digest for previous month
         env:
+          LLM_PROVIDER: google
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL_TRIAGE: ${{ vars.GEMINI_MODEL_TRIAGE }}
-          GEMINI_MODEL_SUMMARY: ${{ vars.GEMINI_MODEL_SUMMARY }}
-        run: python -m eegfm_digest.run
+          GEMINI_MODEL_TRIAGE: gemma-4-31b-it
+          GEMINI_MODEL_SUMMARY: gemma-4-31b-it
+        run: |
+          TARGET_MONTH="${{ inputs.month }}"
+          if [ -z "$TARGET_MONTH" ]; then
+            TARGET_MONTH=$(python - <<'PY'
+from datetime import date
+from dateutil.relativedelta import relativedelta
+
+first = date.today().replace(day=1)
+prev = first - relativedelta(months=1)
+print(f"{prev.year:04d}-{prev.month:02d}")
+PY
+)
+          fi
+
+          ARGS=(--month "$TARGET_MONTH")
+          if [ "${{ inputs.include_borderline }}" = "true" ]; then
+            ARGS+=(--include-borderline)
+          fi
+          if [ "${{ inputs.force }}" = "true" ]; then
+            ARGS+=(--force)
+          fi
+
+          python -m eegfm_digest.run "${ARGS[@]}"
       - name: Commit updated docs
         run: |
           git config user.name "github-actions"

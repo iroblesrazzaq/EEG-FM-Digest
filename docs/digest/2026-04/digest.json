@@ -1,0 +1,20 @@
+{
+  "featured_paper": "2604.04297",
+  "month": "2026-04",
+  "sections": [
+    {
+      "paper_ids": [
+        "2604.04297"
+      ],
+      "title": "new_model"
+    }
+  ],
+  "stats": {
+    "accepted": 1,
+    "candidates": 3,
+    "summarized": 1
+  },
+  "top_picks": [
+    "2604.04297"
+  ]
+}

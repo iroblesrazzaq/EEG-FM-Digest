@@ -1,0 +1,666 @@
+{
+  "featured_paper_id": "2603.19100",
+  "month": "2026-03",
+  "papers": [
+    {
+      "arxiv_id": "2603.04478v1",
+      "arxiv_id_base": "2603.04478",
+      "authors": [
+        "Chenqi Li",
+        "Yu Liu",
+        "Shuo Zhang",
+        "Timothy Denison",
+        "Tingting Zhu"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2603.04478v1",
+        "pdf": "https://arxiv.org/pdf/2603.04478v1"
+      },
+      "published_date": "2026-03-04",
+      "summary": {
+        "arxiv_id_base": "2603.04478",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 16.0,
+          "datasets": [
+            "Temple University Hospital EEG Corpus"
+          ],
+          "eeg_hours": 8829.0,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes the Multi-Teacher Distillation Pretraining (MTDP) framework, which replaces traditional self-supervised masked reconstruction with knowledge distillation from cross-modal foundation models. The method employs a two-stage process: first, a learnable gating network fuses representations from DINOv3 (vision) and Chronos (time-series) using a masked latent denoising objective; second, this fused representation is distilled into a student EEG model. Extensive evaluations across 12 datasets and 9 tasks demonstrate that MTDP outperforms self-supervised counterparts while requiring only 25% of the pretraining data.",
+        "evaluation": {
+          "benchmarks": [
+            "12 diverse EEG datasets"
+          ],
+          "headline_results": [
+            "Outperformed self-supervised CBraMod on 10/12 datasets at 100% data",
+            "Outperformed self-supervised CBraMod on 9/12 datasets using only 25% pretraining data"
+          ],
+          "tasks": [
+            "Motor Imagery",
+            "Sleep Staging",
+            "Seizure Detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model pretraining framework: MTDP leverages cross-modal priors from DINOv3 and Chronos to overcome the data scarcity and low signal-to-noise ratio of EEG signals.",
+          "Two-stage distillation process: Uses a learnable gating network for unsupervised teacher fusion followed by cosine-similarity-based distillation into a student model.",
+          "High data efficiency: Outperforms state-of-the-art self-supervised EEG models on 9 out of 12 downstream tasks using only 25% of the pretraining data."
+        ],
+        "limitations": [
+          "Increased data processing and inference costs compared to masked reconstruction due to the use of large teacher models.",
+          "Additional hard disk and I/O burdens resulting from the need to store pre-computed teacher representations."
+        ],
+        "method": {
+          "architecture": "Student: CBraMod (criss-cross transformer). Teachers: DINOv3-ViT-B/16 and Chronos-Bolt-Base.",
+          "finetuning": "Jointly tuning the backbone and a 3-layer MLP classifier on downstream tasks.",
+          "objective": "Two-stage: (1) Masked latent denoising for teacher fusion; (2) Cosine similarity for knowledge distillation.",
+          "pretraining": "Multi-Teacher Distillation Pretraining (MTDP) using a learnable gating network to fuse cross-modal representations."
+        },
+        "notes": "{\"chars\": 53392, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=15254",
+        "one_liner": "A pretraining framework for EEG foundation models that distills knowledge from vision and time-series foundation models via a two-stage gating and distillation process.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-03-04",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Standing on the Shoulders of Giants: Rethinking EEG Foundation Model Pretraining via Multi-Teacher Distillation",
+        "unique_contribution": "Introduces the MTDP framework to bootstrap EEG foundation models by distilling complementary representations from established vision and time-series foundation models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Standing on the Shoulders of Giants: Rethinking EEG Foundation Model Pretraining via Multi-Teacher Distillation",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly proposes a new pretraining framework (MTDP) specifically for EEG foundation models.",
+          "Focuses on creating reusable EEG representations by distilling knowledge from other modality foundation models.",
+          "Demonstrates broad transferability and utility across 9 downstream tasks and 12 datasets."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2603.16281v1",
+      "arxiv_id_base": "2603.16281",
+      "authors": [
+        "Saarang Panchavati",
+        "Uddhav Panchavati",
+        "Corey Arnold",
+        "William Speier"
+      ],
+      "categories": [
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2603.16281v1",
+        "pdf": "https://arxiv.org/pdf/2603.16281v1"
+      },
+      "published_date": "2026-03-17",
+      "summary": {
+        "arxiv_id_base": "2603.16281",
+        "categories": [
+          "cs.LG",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "TUH EEG",
+            "NMT",
+            "EEGDash",
+            "HBN",
+            "MOABB"
+          ],
+          "eeg_hours": 29109.0,
+          "subjects": 20940.0
+        },
+        "detailed_summary": "Laya proposes a self-supervised learning framework that predicts latent embeddings of masked temporal EEG segments rather than reconstructing raw signals. It incorporates a montage-agnostic channel mixer and explicit geometric regularization (SIGReg) to ensure stable training and prevent representation collapse. Evaluation on EEG-Bench shows that Laya-S, trained on only 10% of the pretraining data, outperforms larger reconstruction-based models on clinical tasks and demonstrates superior robustness to additive noise.",
+        "evaluation": {
+          "benchmarks": [
+            "EEG-Bench"
+          ],
+          "headline_results": [
+            "Laya-S achieved 0.597 mean balanced accuracy on clinical tasks, outperforming LaBraM (0.573) and LUNA (0.560)."
+          ],
+          "tasks": [
+            "Clinical classification",
+            "BCI tasks"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: Laya utilizes a LeJEPA-based latent prediction objective to learn transferable representations without the noise bias of signal reconstruction.",
+          "Demonstrates high sample efficiency, with a version trained on 10% of the data (Laya-S) achieving superior mean balanced accuracy on clinical tasks compared to LaBraM and LUNA.",
+          "Shows significant resilience to noise and captures clinically meaningful temporal structures, such as seizure onset, as evidenced by PCA visualization."
+        ],
+        "limitations": [
+          "Scaling dynamics are unclear, as Laya-full performed slightly worse than Laya-S.",
+          "Evaluation is limited to classification tasks, excluding retrieval or forecasting.",
+          "Linear probing may underestimate the model's utility for non-linear tasks.",
+          "BCI performance remains limited, suggesting a need for subject-level adaptation.",
+          "Lacks explicit support for bipolar montages and intracranial electrodes."
+        ],
+        "method": {
+          "architecture": "Transformer encoder with RoPE and a lightweight Transformer predictor; uses a 1D convolutional patch embedder and a query-based cross-attention channel mixer.",
+          "finetuning": "Linear probing (frozen encoder) on 14 tasks from EEG-Bench.",
+          "objective": "Masked latent prediction using MSE between predicted and target embeddings, combined with Sketched Isotropic Gaussian Regularization (SIGReg).",
+          "pretraining": "Self-supervised pretraining on 29,109 hours of EEG data across multiple datasets."
+        },
+        "notes": "{\"chars\": 68276, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=18848",
+        "one_liner": "Laya is the first EEG foundation model based on LeJEPA, replacing signal reconstruction with latent prediction to learn noise-resilient, semantically rich representations.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-03-17",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Laya: A LeJEPA Approach to EEG via Latent Prediction over Reconstruction",
+        "unique_contribution": "Introduces the first application of LeJEPA to EEG, utilizing latent prediction and isotropic Gaussian regularization to avoid the bias toward high-variance artifacts inherent in reconstruction-based objectives.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Laya: A LeJEPA Approach to EEG via Latent Prediction over Reconstruction",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies Laya as the first EEG foundation model based on LeJEPA",
+          "Focuses on learning transferable representations from large unlabeled corpora",
+          "Aims to improve upon existing EEG foundation models by replacing reconstruction objectives with latent prediction",
+          "Evaluates the model's effectiveness across a range of EEG benchmarks"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2603.16739v2",
+      "arxiv_id_base": "2603.16739",
+      "authors": [
+        "Davy Darankoum",
+        "Chloé Habermacher",
+        "Julien Volle",
+        "Sergei Grudinin"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.HC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2603.16739v2",
+        "pdf": "https://arxiv.org/pdf/2603.16739v2"
+      },
+      "published_date": "2026-03-17",
+      "summary": {
+        "arxiv_id_base": "2603.16739",
+        "categories": [
+          "cs.LG",
+          "cs.AI",
+          "cs.HC"
+        ],
+        "data_scale": {
+          "channels": 19.0,
+          "datasets": [
+            "Temple University Hospital EEG dataset (TUEG)"
+          ],
+          "eeg_hours": 9000.0,
+          "subjects": 14987.0
+        },
+        "detailed_summary": "The paper proposes SpecMoE, a foundation model that employs a novel Gaussian-smoothed masking strategy on short-time Fourier transform (STFT) maps to prevent spectral leakage and artificial transients during self-supervised pretraining. It introduces SpecHi-Net, a U-shaped hierarchical architecture with dual-path convolutions and Global Transformers, and a spectral gating mechanism that routes signals to specialized experts based on Power Spectral Density (PSD). Evaluation across nine human and murine EEG datasets demonstrates state-of-the-art performance in tasks like seizure detection and drug effect prediction, showing strong cross-species generalization.",
+        "evaluation": {
+          "benchmarks": [
+            "PhysioNet-MI",
+            "MACO",
+            "Siena",
+            "SEED-VIG"
+          ],
+          "headline_results": [
+            "Outperformed baselines in 7 of 9 tasks",
+            "SOTA in murine drug decoding (MACO) and human seizure detection (Siena)"
+          ],
+          "tasks": [
+            "motor imagery",
+            "emotion recognition",
+            "sleep stage classification",
+            "drug effect prediction",
+            "seizure detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: SpecMoE uses Gaussian-smoothed STFT masking and a hierarchical U-Net-like backbone to learn robust neural rhythms without boundary artifacts.",
+          "Novel spectral gating: Employs a Mixture-of-Experts (MoE) architecture where a learned gating mechanism routes inputs based on Power Spectral Density (PSD).",
+          "Cross-species efficacy: Achieves state-of-the-art results on 7 of 9 benchmarks, including significant gains in murine drug effect decoding and human seizure detection."
+        ],
+        "limitations": [
+          "Requires full-parameter fine-tuning for optimal performance; zero-shot generalization remains an open challenge.",
+          "The 50% masking ratio was adopted from prior work and may be suboptimal.",
+          "Expert specialization in the MoE framework currently relies on stochastic data partitioning."
+        ],
+        "method": {
+          "architecture": "SpecHi-Net (U-shaped hierarchical encoder-decoder with dual-path convolutions and Global Transformers with RoPE)",
+          "finetuning": "Spectral-guided Mixture-of-Experts (SpecMoE) using PSD-based gating",
+          "objective": "Self-supervised masked reconstruction of STFT maps using Gaussian-smoothed masks",
+          "pretraining": "Masked reconstruction on TUEG dataset"
+        },
+        "notes": "{\"chars\": 95508, \"error\": null, \"pages\": 34, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=26015",
+        "one_liner": "A spectral-anchored EEG foundation model utilizing Gaussian-smoothed STFT masking and a PSD-guided Mixture-of-Experts framework for cross-species decoding.",
+        "open_source": {
+          "code_url": "https://github.com/TeraXj78/SpecMoE",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-03-17",
+        "tags": {
+          "backbone": [
+            "moe",
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "SpecMoE: Spectral Mixture-of-Experts Foundation Model for Cross-Species EEG Decoding",
+        "unique_contribution": "Introduces a Gaussian-smoothed time-frequency masking scheme and a PSD-guided Mixture-of-Experts framework to learn physiologically grounded EEG representations across species.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "SpecMoE: Spectral Mixture-of-Experts Foundation Model for Cross-Species EEG Decoding",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies as a foundation model for generalized EEG decoding.",
+          "Utilizes self-supervised pretraining with a novel masking scheme to learn reusable neural patterns.",
+          "Demonstrates broad transferability across diverse tasks and cross-species (human and murine) EEG datasets."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2603.26716v1",
+      "arxiv_id_base": "2603.26716",
+      "authors": [
+        "Anna Tegon",
+        "Nicholas Lehmann",
+        "Yawei Li",
+        "Andrea Cossettini",
+        "Luca Benini",
+        "Thorir Mar Ingolfsson"
+      ],
+      "categories": [
+        "eess.SP",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2603.26716v1",
+        "pdf": "https://arxiv.org/pdf/2603.26716v1"
+      },
+      "published_date": "2026-03-18",
+      "summary": {
+        "arxiv_id_base": "2603.26716",
+        "categories": [
+          "eess.SP",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 22.0,
+          "datasets": [
+            "Temple University EEG Corpus (TUEG)"
+          ],
+          "eeg_hours": 21787.32,
+          "subjects": 14987.0
+        },
+        "detailed_summary": "The paper proposes FEMBA, a bidirectional Mamba architecture pre-trained on over 21,000 hours of EEG using a novel low-pass filtering reconstruction objective to prioritize neural oscillations over high-frequency artifacts. To enable edge deployment, the authors utilize Quantization-Aware Training (QAT) to compress the model to 2-bit weights, overcoming the activation outlier issues typical of State-Space Models (SSMs). The framework is successfully deployed on a GAP9 RISC-V microcontroller, achieving real-time inference with significantly lower FLOPs and memory footprint than Transformer-based benchmarks.",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "TUAR",
+            "TUSL"
+          ],
+          "headline_results": [
+            "TUAB AUROC: 0.893",
+            "27x fewer FLOPs than LaBraM-Base",
+            "1.70s inference for 5s window on GAP9 MCU"
+          ],
+          "tasks": [
+            "Abnormal EEG detection",
+            "Artifact detection",
+            "Slowing event detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: FEMBA uses a bidirectional Mamba architecture pre-trained on 21,787 hours of EEG data.",
+          "Physiologically-aware pre-training with low-pass filtering improves TUAB AUROC to 0.893, outperforming contrastive baselines.",
+          "Achieves 2-bit weight quantization via QAT, enabling deployment on GAP9 MCU with 1.70s inference per 5s window and ~2MB memory footprint."
+        ],
+        "limitations": [
+          "Evaluation limited to clinical adult recordings from TUEG, TUAB, TUAR, and TUSL.",
+          "Inference is performed on fixed, non-overlapping 5s windows rather than a fully streaming regime.",
+          "Quantization analysis primarily focused on the FEMBA-Tiny architecture.",
+          "Lack of prospective clinical validation and assessment of user comfort or workflow integration.",
+          "The selective SSM scan remains a sequential compute bottleneck on the GAP9 hardware."
+        ],
+        "method": {
+          "architecture": "Bidirectional Mamba encoder with a lightweight Transformer decoder (used only for pre-training).",
+          "finetuning": "Linear probing and full fine-tuning on TUAB, TUAR, and TUSL datasets.",
+          "objective": "Physiologically-aware reconstruction using a low-pass filter (40 Hz cutoff) to prioritize neural oscillations.",
+          "pretraining": "Pre-trained on TUEG using a masked reconstruction task with a low-pass filtered target."
+        },
+        "notes": "{\"chars\": 74320, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=20450",
+        "one_liner": "A bidirectional Mamba-based EEG foundation model featuring physiologically-aware pre-training and 2-bit quantization for ultra-low-power MCU deployment.",
+        "open_source": {
+          "code_url": "https://github.com/pulp-bio/BioFoundation",
+          "license": "unknown",
+          "weights_url": "https://github.com/pulp-bio/BioFoundation"
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-03-18",
+        "tags": {
+          "backbone": [
+            "mamba-ssm"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "FEMBA on the Edge: Physiologically-Aware Pre-Training, Quantization, and Deployment of a Bidirectional Mamba EEG Foundation Model on an Ultra-low Power Microcontroller",
+        "unique_contribution": "Introduces a physiologically-aware low-pass reconstruction objective and a QAT-based 2-bit quantization framework to deploy a Mamba-based EEG foundation model on ultra-low-power microcontrollers.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "FEMBA on the Edge: Physiologically-Aware Pre-Training, Quantization, and Deployment of a Bidirectional Mamba EEG Foundation Model on an Ultra-low Power Microcontroller",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly presents FEMBA, which is described as a bidirectional Mamba EEG foundation model.",
+          "Pre-trained on a large-scale dataset of over 21,000 hours of EEG for broad representation.",
+          "Focuses on the quantization and deployment ecosystem for EEG foundation models on ultra-low power hardware."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2603.19100v1",
+      "arxiv_id_base": "2603.19100",
+      "authors": [
+        "Danaé Broustail",
+        "Anna Tegon",
+        "Thorir Mar Ingolfsson",
+        "Yawei Li",
+        "Luca Benini"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2603.19100v1",
+        "pdf": "https://arxiv.org/pdf/2603.19100v1"
+      },
+      "published_date": "2026-03-19",
+      "summary": {
+        "arxiv_id_base": "2603.19100",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "TUEG"
+          ],
+          "eeg_hours": 21600.0,
+          "subjects": 14000.0
+        },
+        "detailed_summary": "LuMamba addresses the challenges of electrode heterogeneity and computational scalability by fusing LUNA's cross-attention channel unification with FEMBA's bidirectional Mamba blocks. It introduces the first adaptation of the Latent-Euclidean Joint-Embedding Predictive Architecture (LeJEPA) to biosignals, combining it with masked reconstruction to balance latent structure and cross-montage transferability. Pre-trained on over 21,000 hours of EEG, the model demonstrates state-of-the-art performance in Alzheimer's detection and significant efficiency gains over Transformer-based architectures.",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "TUAR",
+            "TUSL",
+            "APAVA",
+            "TDBrain"
+          ],
+          "headline_results": [
+            "TUAB: 80.99% balanced accuracy",
+            "APAVA: 0.97 AUPR for Alzheimer's detection",
+            "377x fewer FLOPS than LaBraM"
+          ],
+          "tasks": [
+            "Seizure detection",
+            "Alzheimer's detection",
+            "Brain tumor classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: LuMamba combines topology-invariant encoding with linear-complexity bidirectional Mamba blocks for efficient, montage-agnostic modeling.",
+          "Adapts the LeJEPA framework to EEG, showing that a hybrid objective of distributional regularization and masked reconstruction improves robustness to distribution shifts.",
+          "Achieves 377x fewer FLOPS than LaBraM and supports 12x longer sequences before reaching memory limits while maintaining competitive clinical performance."
+        ],
+        "limitations": [
+          "Underperforms task-specific state-of-the-art methods on TUAR and TUSL.",
+          "The generalization-oriented pre-training objective is less effective on highly class-imbalanced datasets like TUSL.",
+          "Downstream evaluation is limited to a small number of disease-specific datasets for mental condition classification."
+        ],
+        "method": {
+          "architecture": "LUNA embedder and channel unifier (cross-attention) followed by FEMBA bidirectional Mamba blocks.",
+          "finetuning": "Mamba-based classification head.",
+          "objective": "Hybrid of masked reconstruction and LeJEPA (combining SIGReg and JEPA predictive loss).",
+          "pretraining": "Self-supervised on TUEG corpus."
+        },
+        "notes": "{\"chars\": 27901, \"error\": null, \"pages\": 5, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=8647",
+        "one_liner": "A computationally efficient EEG foundation model combining topology-invariant channel unification with bidirectional Mamba blocks and a hybrid LeJEPA-reconstruction objective.",
+        "open_source": {
+          "code_url": "https://github.com/pulp-bio/biofoundation",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-03-19",
+        "tags": {
+          "backbone": [
+            "mamba-ssm"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "topology-agnostic"
+          ]
+        },
+        "title": "LuMamba: Latent Unified Mamba for Electrode Topology-Invariant and Efficient EEG Modeling",
+        "unique_contribution": "Introduces a topology-invariant SSM-based framework for EEG that integrates LeJEPA to regularize the latent space, improving generalization across heterogeneous electrode configurations.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "LuMamba: Latent Unified Mamba for Electrode Topology-Invariant and Efficient EEG Modeling",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly frames the work as addressing challenges in building EEG foundation models.",
+          "Pre-trained on a large-scale unlabeled dataset of over 21,000 hours of EEG.",
+          "Evaluated on five diverse downstream tasks to demonstrate the generalizability of the learned representations.",
+          "Utilizes a self-supervised framework designed for broad transfer across different electrode configurations."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2603.28122v1",
+      "arxiv_id_base": "2603.28122",
+      "authors": [
+        "Junghoon Justin Park",
+        "Yeonghyeon Park",
+        "Jiook Cha"
+      ],
+      "categories": [
+        "quant-ph",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2603.28122v1",
+        "pdf": "https://arxiv.org/pdf/2603.28122v1"
+      },
+      "published_date": "2026-03-30",
+      "summary": {
+        "arxiv_id_base": "2603.28122",
+        "categories": [
+          "quant-ph",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 64.0,
+          "datasets": [
+            "PhysioNet Motor Imagery"
+          ],
+          "eeg_hours": null,
+          "subjects": 17700.0
+        },
+        "detailed_summary": "The paper proposes Q-DIVER, which integrates the pretrained DIVER-1 EEG encoder with a Quantum Time-series Transformer (QTSTransformer) as a readout head. It employs Differentiable Quantum Architecture Search (DiffQAS) to autonomously optimize the quantum circuit topology during end-to-end fine-tuning. Evaluation on the PhysioNet Motor Imagery dataset shows that the quantum head achieves predictive performance comparable to a classical MLP while using 50x fewer task-specific parameters.",
+        "evaluation": {
+          "benchmarks": [
+            "PhysioNet Motor Imagery"
+          ],
+          "headline_results": [
+            "Test F1-score: 63.49%",
+            "Test Accuracy: 63.39%",
+            "50x reduction in head parameters compared to MLP"
+          ],
+          "tasks": [
+            "Motor Imagery Classification"
+          ]
+        },
+        "key_points": [
+          "Method for quantum transfer learning: Combines the DIVER-1 foundation model with a differentiable quantum classifier (QTSTransformer) for EEG decoding.",
+          "Autonomous architecture discovery: Uses DiffQAS to search 576 circuit configurations, discovering that parametric entangling gates (CRX) are optimal for EEG data.",
+          "Extreme parameter efficiency: Achieves a Test F1 of 63.49% on PhysioNet-MI using 50x fewer head parameters (2.10M) than a classical MLP (105.02M)."
+        ],
+        "limitations": [
+          "Evaluation is limited to a single downstream dataset (PhysioNet-MI).",
+          "Quantum circuits are simulated classically; performance on actual NISQ hardware is not yet demonstrated.",
+          "The search space for DiffQAS is relatively small (576 combinations).",
+          "Dependence on the DIVER-1 pretrained weights for performance."
+        ],
+        "method": {
+          "architecture": "Hybrid architecture using DIVER-1 (Transformer encoder) as the backbone and QTSTransformer as the head.",
+          "finetuning": "End-to-end fine-tuning of both the DIVER-1 encoder and the quantum readout head.",
+          "objective": "End-to-end classification loss with Differentiable Quantum Architecture Search (DiffQAS) for circuit optimization.",
+          "pretraining": "DIVER-1 was pretrained using masked reconstruction of time-domain and spectral patches."
+        },
+        "notes": "{\"chars\": 35802, \"error\": null, \"pages\": 7, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=10333",
+        "one_liner": "A hybrid EEG framework combining the DIVER-1 foundation model with a differentiable quantum classifier to achieve parameter-efficient motor imagery classification.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-03-30",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Q-DIVER: Integrated Quantum Transfer Learning and Differentiable Quantum Architecture Search with EEG Data",
+        "unique_contribution": "Introduces a differentiable quantum architecture search framework to optimize the readout head of a pretrained EEG foundation model for parameter-efficient transfer learning.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Q-DIVER: Integrated Quantum Transfer Learning and Differentiable Quantum Architecture Search with EEG Data",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Utilizes a 'large-scale pretrained EEG encoder (DIVER-1)' as a core component.",
+          "Focuses on adaptation and fine-tuning of a pretrained EEG representation via quantum transfer learning.",
+          "EEG is the central modality for the biological signal processing task."
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 6,
+    "candidates": 19,
+    "summarized": 6
+  },
+  "top_picks": [
+    "2603.26716",
+    "2603.19100",
+    "2603.16739",
+    "2603.16281",
+    "2603.04478"
+  ]
+}

@@ -6,7 +6,7 @@ from datetime import date
 
 from dateutil.relativedelta import relativedelta
 
-from .config import DEFAULT_OPENROUTER_MODEL, DEFAULT_TOPIC, load_config
+from .config import load_config
 from .pipeline import run_month
 
 
@@ -19,7 +19,7 @@ def default_month() -> str:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--month", default=default_month(), help="YYYY-MM (default: previous month)")
-    parser.add_argument("--topic", default=DEFAULT_TOPIC, help=f"Topic slug (default: {DEFAULT_TOPIC})")
+    parser.add_argument("--feature-paper", default=None, help="Accepted arXiv id to feature for this month")
     parser.add_argument("--max-candidates", type=int, default=None)
     parser.add_argument("--max-accepted", type=int, default=None)
     parser.add_argument("--include-borderline", action="store_true")
@@ -29,11 +29,6 @@ def main() -> None:
     args = parser.parse_args()
 
     cfg = load_config()
-    cfg = replace(
-        cfg,
-        llm_model_triage=DEFAULT_OPENROUTER_MODEL,
-        llm_model_summary=DEFAULT_OPENROUTER_MODEL,
-    )
     if args.max_candidates is not None:
         cfg = replace(cfg, max_candidates=args.max_candidates)
     if args.max_accepted is not None:
@@ -41,7 +36,14 @@ def main() -> None:
     if args.include_borderline:
         cfg = replace(cfg, include_borderline=True)
 
-    run_month(cfg, args.month, no_pdf=args.no_pdf, no_site=args.no_site, force=args.force, topic=args.topic)
+    run_month(
+        cfg,
+        args.month,
+        no_pdf=args.no_pdf,
+        no_site=args.no_site,
+        force=args.force,
+        feature_paper=args.feature_paper,
+    )
 
 
 if __name__ == "__main__":

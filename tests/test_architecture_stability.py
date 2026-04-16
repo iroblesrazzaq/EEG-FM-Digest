@@ -5,7 +5,7 @@ import sqlite3
 import sys
 
 from eegfm_digest.batch import run_batch
-from eegfm_digest.config import Config, DEFAULT_OPENROUTER_MODEL
+from eegfm_digest.config import Config
 from eegfm_digest.pipeline import run_month
 from eegfm_digest.run import main as run_main
 from eegfm_digest.site import update_home, write_month_site
@@ -85,7 +85,7 @@ def _backend_rows(papers: list[dict], summary_map: dict[str, dict | None]) -> li
     return rows
 
 
-def test_single_month_run_main_hard_pins_stepflash(monkeypatch, tmp_path):
+def test_single_month_run_main_respects_configured_models(monkeypatch, tmp_path):
     captured: dict[str, object] = {}
 
     monkeypatch.setattr(
@@ -102,16 +102,16 @@ def test_single_month_run_main_hard_pins_stepflash(monkeypatch, tmp_path):
         "eegfm_digest.run.run_month",
         lambda cfg, month, **kwargs: captured.update({"cfg": cfg, "month": month, "kwargs": kwargs}),
     )
-    monkeypatch.setattr(sys, "argv", ["run.py", "--month", "2026-03"])
+    monkeypatch.setattr(sys, "argv", ["run.py", "--month", "2026-03", "--feature-paper", "2603.12345"])
 
     run_main()
 
     cfg = captured["cfg"]
     assert isinstance(cfg, Config)
-    assert cfg.llm_model_triage == DEFAULT_OPENROUTER_MODEL
-    assert cfg.llm_model_summary == DEFAULT_OPENROUTER_MODEL
+    assert cfg.llm_model_triage == "env-triage"
+    assert cfg.llm_model_summary == "env-summary"
     assert captured["month"] == "2026-03"
-    assert captured["kwargs"]["topic"] == "eeg-fm"
+    assert captured["kwargs"]["feature_paper"] == "2603.12345"
 
 
 def test_batch_run_respects_configured_models(monkeypatch, tmp_path):
@@ -144,7 +144,7 @@ def test_batch_run_respects_configured_models(monkeypatch, tmp_path):
             docs_dir=tmp_path / "docs",
         ),
     )
-    monkeypatch.setattr("eegfm_digest.batch.load_api_key", lambda: "test-key")
+    monkeypatch.setattr("eegfm_digest.batch.load_api_key", lambda *_args, **_kwargs: "test-key")
     monkeypatch.setattr("eegfm_digest.batch.load_dotenv", lambda *_args, **_kwargs: None)
     monkeypatch.setattr("eegfm_digest.batch._effective_months", lambda *_args, **_kwargs: [])
     monkeypatch.setattr(
@@ -157,7 +157,7 @@ def test_batch_run_respects_configured_models(monkeypatch, tmp_path):
     assert captured_models == ["batch-triage", "batch-summary"]
 
 
-def test_write_month_site_resolves_featured_override_and_null(tmp_path):
+def test_write_month_site_persists_explicit_featured_paper_and_null(tmp_path):
     docs_dir = tmp_path / "docs"
     month = "2026-02"
     papers = [
@@ -168,6 +168,7 @@ def test_write_month_site_resolves_featured_override_and_null(tmp_path):
     digest = {
         "month": month,
         "stats": {"candidates": 2, "accepted": 2, "summarized": 2},
+        "featured_paper": "2602.18478",
         "top_picks": ["2602.10000"],
         "sections": [],
     }
@@ -179,9 +180,8 @@ def test_write_month_site_resolves_featured_override_and_null(tmp_path):
         metadata={paper["arxiv_id_base"]: paper for paper in papers},
         digest=digest,
         backend_rows=_backend_rows(papers, {paper["arxiv_id_base"]: summary for paper, summary in zip(papers, summaries)}),
-        featured_overrides={"2026-02": "2602.18478", "2026-03": None},
     )
-    update_home(docs_dir, featured_overrides={"2026-02": "2602.18478", "2026-03": None})
+    update_home(docs_dir)
 
     payload = json.loads((docs_dir / "digest" / "2026-02" / "papers.json").read_text(encoding="utf-8"))
     manifest = json.loads((docs_dir / "data" / "months.json").read_text(encoding="utf-8"))
@@ -198,13 +198,13 @@ def test_write_month_site_resolves_featured_override_and_null(tmp_path):
         digest={
             "month": march,
             "stats": {"candidates": 1, "accepted": 1, "summarized": 1},
+            "featured_paper": None,
             "top_picks": ["2602.10000"],
             "sections": [],
         },
         backend_rows=_backend_rows([papers[0]], {papers[0]["arxiv_id_base"]: summaries[0]}),
-        featured_overrides={"2026-02": "2602.18478", "2026-03": None},
     )
-    update_home(docs_dir, featured_overrides={"2026-02": "2602.18478", "2026-03": None})
+    update_home(docs_dir)
 
     march_payload = json.loads((docs_dir / "digest" / "2026-03" / "papers.json").read_text(encoding="utf-8"))
     manifest = json.loads((docs_dir / "data" / "months.json").read_text(encoding="utf-8"))
@@ -215,33 +215,30 @@ def test_write_month_site_resolves_featured_override_and_null(tmp_path):
     assert month_map["2026-03"]["featured"] is None
 
 
-def test_update_home_rejects_invalid_featured_override(tmp_path):
+def test_write_month_site_rejects_missing_explicit_featured_paper(tmp_path):
     docs_dir = tmp_path / "docs"
     month = "2026-02"
     papers = [_candidate("2602.10000", "2026-02-01T00:00:00Z", "Other Paper")]
     summaries = [_summary(papers[0])]
-
-    write_month_site(
-        docs_dir=docs_dir,
-        month=month,
-        summaries=summaries,
-        metadata={papers[0]["arxiv_id_base"]: papers[0]},
-        digest={
-            "month": month,
-            "stats": {"candidates": 1, "accepted": 1, "summarized": 1},
-            "top_picks": ["2602.10000"],
-            "sections": [],
-        },
-        backend_rows=_backend_rows(papers, {papers[0]["arxiv_id_base"]: summaries[0]}),
-        featured_overrides={},
-    )
-
     try:
-        update_home(docs_dir, featured_overrides={"2026-02": "2602.18478"})
+        write_month_site(
+            docs_dir=docs_dir,
+            month=month,
+            summaries=summaries,
+            metadata={papers[0]["arxiv_id_base"]: papers[0]},
+            digest={
+                "month": month,
+                "stats": {"candidates": 1, "accepted": 1, "summarized": 1},
+                "featured_paper": "2602.18478",
+                "top_picks": ["2602.10000"],
+                "sections": [],
+            },
+            backend_rows=_backend_rows(papers, {papers[0]["arxiv_id_base"]: summaries[0]}),
+        )
     except RuntimeError as exc:
         assert "missing paper id 2602.18478" in str(exc)
     else:
-        raise AssertionError("Expected invalid featured override to raise")
+        raise AssertionError("Expected invalid featured paper to raise")
 
 
 def test_pipeline_migrates_old_db_rows_and_treats_missing_metadata_as_stale(monkeypatch, tmp_path):
@@ -293,7 +290,7 @@ def test_pipeline_migrates_old_db_rows_and_treats_missing_metadata_as_stale(monk
     summary_calls = {"count": 0}
 
     monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: [candidate])
-    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda *_args, **_kwargs: "test-key")
 
     class DummyLLM:
         def close(self) -> None:
@@ -368,7 +365,7 @@ def test_pipeline_cache_versions_reuse_and_invalidate(monkeypatch, tmp_path):
     }
 
     monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: [candidate])
-    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda: "test-key")
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda *_args, **_kwargs: "test-key")
     monkeypatch.setattr("eegfm_digest.pipeline._read", lambda path: prompts[path])
 
     class DummyLLM:

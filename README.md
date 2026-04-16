@@ -2,19 +2,28 @@
 
 Monthly arXiv-based digest for EEG Foundation Model papers:
 1) Stage 1: keyword retrieval (title+abstract) within relevant arXiv categories
-2) Stage 2: OpenRouter triage on title+abstract
-3) Stage 3: PDF download + text extraction + OpenRouter deep summary
+2) Stage 2: LLM triage on title+abstract (Google AI Studio or OpenRouter)
+3) Stage 3: PDF download + text extraction + LLM deep summary
 4) Publish: static site in `/docs` with one page per month
 
 ## Setup
 ```bash
 pip install -e ".[dev]"
-export OPENROUTER_API_KEY="..."
-export OPENROUTER_MODEL_TRIAGE="stepfun/step-3.5-flash:free"
-export OPENROUTER_MODEL_SUMMARY="stepfun/step-3.5-flash:free"
+export LLM_PROVIDER="google"
+export GEMINI_API_KEY="..."
+export GEMINI_MODEL_TRIAGE="gemma-4-31b-it"
+export GEMINI_MODEL_SUMMARY="gemma-4-31b-it"
 export ARXIV_CONNECT_TIMEOUT_SECONDS="10"
 export ARXIV_READ_TIMEOUT_SECONDS="90"
 export ARXIV_RETRIES="3"
+```
+
+OpenRouter remains supported:
+```bash
+export LLM_PROVIDER="openrouter"
+export OPENROUTER_API_KEY="..."
+export OPENROUTER_MODEL_TRIAGE="stepfun/step-3.5-flash:free"
+export OPENROUTER_MODEL_SUMMARY="stepfun/step-3.5-flash:free"
 ```
 
 ## Main run command
@@ -41,7 +50,7 @@ python -m eegfm_digest.batch --config configs/batch_all_months.json
 python -m eegfm_digest.batch --config configs/batch_single_month.json
 ```
 
-The checked-in batch configs now use OpenRouter model `stepfun/step-3.5-flash:free` for both triage and summary.
+The checked-in batch configs still default to OpenRouter, but the runner now also accepts `triage_provider` / `summary_provider` values compatible with Google AI Studio.
 
 Wrapper scripts:
 ```bash

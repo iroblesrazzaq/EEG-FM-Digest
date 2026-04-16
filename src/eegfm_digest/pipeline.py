@@ -14,7 +14,7 @@ from .cache_meta import (
 )
 from .config import DEFAULT_TOPIC, Config, load_topic
 from .db import DigestDB
-from .llm import LLMCallConfig, build_llm_call, load_api_key
+from .llm import LLMCallConfig, LLMRateLimitError, build_llm_call, load_api_key, provider_base_url
 from .pdf import download_pdf, extract_text, slice_paper_text
 from .render import build_digest, write_json, write_jsonl
 from .site import update_home, write_month_site
@@ -111,7 +111,7 @@ def run_month(
     no_pdf: bool = False,
     no_site: bool = False,
     force: bool = False,
-    topic: str = DEFAULT_TOPIC,
+    feature_paper: str | None = None,
 ) -> None:
     topic_config = load_topic(topic)
     month_out = _month_output_dir(cfg.output_dir, topic_config.slug, month)
@@ -136,22 +136,22 @@ def run_month(
     for c in candidates:
         db.upsert_paper(month, c, cache_key=_topic_cache_key(topic_config.slug, c["arxiv_id_base"]))
 
-    api_key = load_api_key()
+    api_key = load_api_key(cfg.llm_provider)
     triage_llm_config = LLMCallConfig(
-        provider="openrouter",
+        provider=cfg.llm_provider,
         api_key=api_key,
         model=cfg.llm_model_triage,
         temperature=cfg.llm_temperature_triage,
         max_output_tokens=cfg.llm_max_output_tokens_triage,
-        base_url="https://openrouter.ai/api/v1",
+        base_url=provider_base_url(cfg.llm_provider),
     )
     summary_llm_config = LLMCallConfig(
-        provider="openrouter",
+        provider=cfg.llm_provider,
         api_key=api_key,
         model=cfg.llm_model_summary,
         temperature=cfg.llm_temperature_summary,
         max_output_tokens=cfg.llm_max_output_tokens_summary,
-        base_url="https://openrouter.ai/api/v1",
+        base_url=provider_base_url(cfg.llm_provider),
     )
     triage_llm = build_llm_call(triage_llm_config)
     summary_llm = build_llm_call(summary_llm_config)
@@ -212,6 +212,8 @@ def run_month(
                 }
                 triage_rows.append(result)
             except Exception as exc:
+                if isinstance(exc, LLMRateLimitError):
+                    raise
                 fallback = {
                     "arxiv_id_base": paper["arxiv_id_base"],
                     "decision": "reject",
@@ -335,8 +337,9 @@ def run_month(
                         ),
                         cache_key=cache_key,
                     )
-            except Exception:
-                pass
+            except Exception as exc:
+                if isinstance(exc, LLMRateLimitError):
+                    raise
             pdf_map[arxiv_id_base] = pdf_state
 
         summaries = sorted(summaries, key=lambda x: (x["published_date"], x["arxiv_id_base"]))
@@ -364,7 +367,7 @@ def run_month(
             )
         write_jsonl(month_out / "backend_rows.jsonl", backend_rows)
 
-        digest = build_digest(month, candidates, triage_rows, summaries)
+        digest = build_digest(month, candidates, triage_rows, summaries, featured_paper=feature_paper)
         write_json(month_out / "digest.json", digest)
         if topic_config.slug == DEFAULT_TOPIC:
             _sync_legacy_output_dir(month_out, cfg.output_dir / month)

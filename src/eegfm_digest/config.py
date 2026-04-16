@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from pathlib import Path
 import os
 
+from .llm import infer_provider_from_env
+
 DEFAULT_OPENROUTER_MODEL = "stepfun/step-3.5-flash:free"
 DEFAULT_TOPIC = "eeg-fm"
 TOPICS_DIR = Path("configs/topics")
@@ -14,6 +16,7 @@ TOPICS_DIR = Path("configs/topics")
 class Config:
     llm_model_triage: str
     llm_model_summary: str
+    llm_provider: str = "openrouter"
     arxiv_rate_limit_seconds: float = 2.0
     arxiv_connect_timeout_seconds: float = 10.0
     arxiv_read_timeout_seconds: float = 60.0
@@ -69,6 +72,7 @@ def load_topic(topic_slug: str = DEFAULT_TOPIC) -> TopicConfig:
 
 def load_config() -> Config:
     return Config(
+        llm_provider=infer_provider_from_env(),
         llm_model_triage=(
             os.environ.get("OPENROUTER_MODEL_TRIAGE")
             or os.environ.get("LLM_MODEL_TRIAGE")
