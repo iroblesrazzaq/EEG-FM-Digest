@@ -137,6 +137,7 @@ def test_pipeline_writes_backend_rows_and_skips_site(monkeypatch, tmp_path):
     run_month(cfg, "2025-01", no_site=True)
 
     month_out = cfg.output_dir / "2025-01"
+    topic_month_out = cfg.output_dir / "eeg-fm" / "2025-01"
     backend_rows = _read_jsonl(month_out / "backend_rows.jsonl")
     triage_rows = _read_jsonl(month_out / "triage.jsonl")
     paper_rows = _read_jsonl(month_out / "papers.jsonl")
@@ -164,6 +165,7 @@ def test_pipeline_writes_backend_rows_and_skips_site(monkeypatch, tmp_path):
 
     assert not (tmp_path / "docs").exists()
     assert (cfg.output_dir / "2025-01" / "digest.json").exists()
+    assert (topic_month_out / "digest.json").exists()
     assert (cfg.data_dir / "digest.sqlite").exists()
 
 

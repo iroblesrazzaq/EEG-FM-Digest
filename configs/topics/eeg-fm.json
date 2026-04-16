@@ -1,0 +1,35 @@
+{
+  "slug": "eeg-fm",
+  "arxiv_categories": [
+    "q-bio.NC",
+    "cs.LG",
+    "stat.ML",
+    "eess.SP",
+    "cs.AI",
+    "cs.NE"
+  ],
+  "keywords": {
+    "anchor_terms": [
+      "eeg",
+      "electroencephalograph*",
+      "brainwave*"
+    ],
+    "query_a_terms": [
+      "\"foundation model\"",
+      "pretrain",
+      "pretrained",
+      "\"self-supervised\"",
+      "\"self supervised\""
+    ],
+    "query_b_terms": [
+      "\"representation learning\"",
+      "masked",
+      "transfer",
+      "generaliz*"
+    ]
+  },
+  "prompt_paths": {
+    "triage": "prompts/triage.md",
+    "summarize": "prompts/summarize.md"
+  }
+}
