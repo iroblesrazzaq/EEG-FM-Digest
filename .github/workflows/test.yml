@@ -2,7 +2,10 @@ name: tests
 
 on:
   push:
+    branches: [main]
   pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   test:
@@ -13,4 +16,5 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -e ".[dev]"
+      - run: python -m playwright install --with-deps chromium
       - run: pytest -q
