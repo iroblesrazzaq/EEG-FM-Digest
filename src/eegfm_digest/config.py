@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from pathlib import Path
 import os
@@ -8,8 +7,6 @@ import os
 from .llm import infer_provider_from_env
 
 DEFAULT_OPENROUTER_MODEL = "stepfun/step-3.5-flash:free"
-DEFAULT_TOPIC = "eeg-fm"
-TOPICS_DIR = Path("configs/topics")
 
 
 @dataclass(frozen=True)
@@ -37,37 +34,6 @@ class Config:
     llm_temperature_summary: float = 0.2
     llm_max_output_tokens_triage: int = 1024
     llm_max_output_tokens_summary: int = 2048
-
-
-@dataclass(frozen=True)
-class TopicConfig:
-    slug: str
-    arxiv_categories: tuple[str, ...]
-    keyword_anchor_terms: tuple[str, ...]
-    keyword_query_a_terms: tuple[str, ...]
-    keyword_query_b_terms: tuple[str, ...]
-    triage_prompt_path: Path
-    summarize_prompt_path: Path
-
-
-def load_topic(topic_slug: str = DEFAULT_TOPIC) -> TopicConfig:
-    topic_path = TOPICS_DIR / f"{topic_slug}.json"
-    if not topic_path.exists():
-        raise FileNotFoundError(f"Topic config not found: {topic_path}")
-
-    raw = json.loads(topic_path.read_text(encoding="utf-8"))
-    keywords = raw.get("keywords") or {}
-    prompt_paths = raw.get("prompt_paths") or {}
-
-    return TopicConfig(
-        slug=str(raw.get("slug") or topic_slug),
-        arxiv_categories=tuple(str(value) for value in raw["arxiv_categories"]),
-        keyword_anchor_terms=tuple(str(value) for value in keywords["anchor_terms"]),
-        keyword_query_a_terms=tuple(str(value) for value in keywords["query_a_terms"]),
-        keyword_query_b_terms=tuple(str(value) for value in keywords["query_b_terms"]),
-        triage_prompt_path=Path(str(prompt_paths["triage"])),
-        summarize_prompt_path=Path(str(prompt_paths["summarize"])),
-    )
 
 
 def load_config() -> Config:

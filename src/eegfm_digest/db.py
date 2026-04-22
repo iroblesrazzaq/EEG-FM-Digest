@@ -56,8 +56,7 @@ class DigestDB:
         if column not in columns:
             self.conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {column_type}")
 
-    def upsert_paper(self, month: str, paper: dict[str, Any], cache_key: str | None = None) -> None:
-        cache_key = cache_key or paper["arxiv_id_base"]
+    def upsert_paper(self, month: str, paper: dict[str, Any]) -> None:
         self.conn.execute(
             """
             INSERT INTO papers(arxiv_id_base, month, metadata_json)
@@ -67,18 +66,17 @@ class DigestDB:
               metadata_json=excluded.metadata_json,
               updated_at=CURRENT_TIMESTAMP
             """,
-            (cache_key, month, json.dumps(paper, ensure_ascii=False)),
+            (paper["arxiv_id_base"], month, json.dumps(paper, ensure_ascii=False)),
         )
         self.conn.commit()
 
-    def get_triage(self, arxiv_id_base: str, cache_key: str | None = None) -> dict[str, Any] | None:
-        record = self.get_triage_with_meta(arxiv_id_base, cache_key=cache_key)
+    def get_triage(self, arxiv_id_base: str) -> dict[str, Any] | None:
+        record = self.get_triage_with_meta(arxiv_id_base)
         return record["data"] if record else None
 
-    def get_triage_with_meta(self, arxiv_id_base: str, cache_key: str | None = None) -> dict[str, Any] | None:
-        cache_key = cache_key or arxiv_id_base
+    def get_triage_with_meta(self, arxiv_id_base: str) -> dict[str, Any] | None:
         row = self.conn.execute(
-            "SELECT triage_json, triage_meta_json FROM triage WHERE arxiv_id_base=?", (cache_key,)
+            "SELECT triage_json, triage_meta_json FROM triage WHERE arxiv_id_base=?", (arxiv_id_base,)
         ).fetchone()
         if not row:
             return None
@@ -87,14 +85,7 @@ class DigestDB:
             "meta": json.loads(row["triage_meta_json"]) if row["triage_meta_json"] else None,
         }
 
-    def upsert_triage(
-        self,
-        month: str,
-        triage: dict[str, Any],
-        meta: dict[str, Any] | None = None,
-        cache_key: str | None = None,
-    ) -> None:
-        cache_key = cache_key or triage["arxiv_id_base"]
+    def upsert_triage(self, month: str, triage: dict[str, Any], meta: dict[str, Any] | None = None) -> None:
         self.conn.execute(
             """
             INSERT INTO triage(arxiv_id_base, month, triage_json, triage_meta_json)
@@ -106,7 +97,7 @@ class DigestDB:
               updated_at=CURRENT_TIMESTAMP
             """,
             (
-                cache_key,
+                triage["arxiv_id_base"],
                 month,
                 json.dumps(triage, ensure_ascii=False),
                 json.dumps(meta, ensure_ascii=False, sort_keys=True) if meta is not None else None,
@@ -114,14 +105,13 @@ class DigestDB:
         )
         self.conn.commit()
 
-    def get_summary(self, arxiv_id_base: str, cache_key: str | None = None) -> dict[str, Any] | None:
-        record = self.get_summary_with_meta(arxiv_id_base, cache_key=cache_key)
+    def get_summary(self, arxiv_id_base: str) -> dict[str, Any] | None:
+        record = self.get_summary_with_meta(arxiv_id_base)
         return record["data"] if record else None
 
-    def get_summary_with_meta(self, arxiv_id_base: str, cache_key: str | None = None) -> dict[str, Any] | None:
-        cache_key = cache_key or arxiv_id_base
+    def get_summary_with_meta(self, arxiv_id_base: str) -> dict[str, Any] | None:
         row = self.conn.execute(
-            "SELECT summary_json, summary_meta_json FROM summaries WHERE arxiv_id_base=?", (cache_key,)
+            "SELECT summary_json, summary_meta_json FROM summaries WHERE arxiv_id_base=?", (arxiv_id_base,)
         ).fetchone()
         if not row:
             return None
@@ -130,14 +120,7 @@ class DigestDB:
             "meta": json.loads(row["summary_meta_json"]) if row["summary_meta_json"] else None,
         }
 
-    def upsert_summary(
-        self,
-        month: str,
-        summary: dict[str, Any],
-        meta: dict[str, Any] | None = None,
-        cache_key: str | None = None,
-    ) -> None:
-        cache_key = cache_key or summary["arxiv_id_base"]
+    def upsert_summary(self, month: str, summary: dict[str, Any], meta: dict[str, Any] | None = None) -> None:
         self.conn.execute(
             """
             INSERT INTO summaries(arxiv_id_base, month, summary_json, summary_meta_json)
@@ -149,7 +132,7 @@ class DigestDB:
               updated_at=CURRENT_TIMESTAMP
             """,
             (
-                cache_key,
+                summary["arxiv_id_base"],
                 month,
                 json.dumps(summary, ensure_ascii=False),
                 json.dumps(meta, ensure_ascii=False, sort_keys=True) if meta is not None else None,
@@ -157,13 +140,11 @@ class DigestDB:
         )
         self.conn.commit()
 
-    def delete_summary(self, arxiv_id_base: str, cache_key: str | None = None) -> None:
-        cache_key = cache_key or arxiv_id_base
-        self.conn.execute("DELETE FROM summaries WHERE arxiv_id_base=?", (cache_key,))
+    def delete_summary(self, arxiv_id_base: str) -> None:
+        self.conn.execute("DELETE FROM summaries WHERE arxiv_id_base=?", (arxiv_id_base,))
         self.conn.commit()
 
-    def upsert_run(self, month: str, stats: dict[str, Any], run_key: str | None = None) -> None:
-        run_key = run_key or month
+    def upsert_run(self, month: str, stats: dict[str, Any]) -> None:
         self.conn.execute(
             """
             INSERT INTO runs(month, stats_json)
@@ -172,7 +153,7 @@ class DigestDB:
               stats_json=excluded.stats_json,
               updated_at=CURRENT_TIMESTAMP
             """,
-            (run_key, json.dumps(stats, ensure_ascii=False)),
+            (month, json.dumps(stats, ensure_ascii=False)),
         )
         self.conn.commit()
 

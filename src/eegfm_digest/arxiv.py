@@ -3,13 +3,12 @@ from __future__ import annotations
 import re
 import time
 import xml.etree.ElementTree as ET
-from collections.abc import Collection, Sequence
 from datetime import datetime, timezone
 from typing import Any
 
 import httpx
 
-from .config import DEFAULT_TOPIC, TopicConfig, load_topic
+from .keywords import ARXIV_CATEGORIES, QUERY_A, QUERY_B
 
 ARXIV_API_URL = "https://export.arxiv.org/api/query"
 ATOM_NS = {"atom": "http://www.w3.org/2005/Atom"}
@@ -71,14 +70,8 @@ def in_month(published: str, month: str) -> bool:
     return start <= dt < end
 
 
-def build_keyword_query(anchor_terms: Sequence[str], target_terms: Sequence[str]) -> str:
-    return f"all:({' OR '.join(anchor_terms)}) AND all:({' OR '.join(target_terms)})"
-
-
-def category_match(categories: list[str], allowed_categories: Collection[str] | None = None) -> bool:
-    if allowed_categories is None:
-        allowed_categories = load_topic(DEFAULT_TOPIC).arxiv_categories
-    return any(cat in allowed_categories for cat in categories)
+def category_match(categories: list[str]) -> bool:
+    return any(cat in ARXIV_CATEGORIES for cat in categories)
 
 
 def dedupe_latest(papers: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -164,13 +157,9 @@ def fetch_month_candidates(
     read_timeout_seconds: float = 60.0,
     retries: int = 2,
     retry_backoff_seconds: float = 2.0,
-    topic: TopicConfig | None = None,
 ) -> list[dict[str, Any]]:
-    topic = topic or load_topic(DEFAULT_TOPIC)
-    query_a = build_keyword_query(topic.keyword_anchor_terms, topic.keyword_query_a_terms)
-    query_b = build_keyword_query(topic.keyword_anchor_terms, topic.keyword_query_b_terms)
     combined = fetch_query(
-        query_a,
+        QUERY_A,
         max_candidates,
         rate_limit_seconds,
         connect_timeout_seconds=connect_timeout_seconds,
@@ -178,7 +167,7 @@ def fetch_month_candidates(
         retries=retries,
         retry_backoff_seconds=retry_backoff_seconds,
     ) + fetch_query(
-        query_b,
+        QUERY_B,
         max_candidates,
         rate_limit_seconds,
         connect_timeout_seconds=connect_timeout_seconds,
@@ -186,7 +175,5 @@ def fetch_month_candidates(
         retries=retries,
         retry_backoff_seconds=retry_backoff_seconds,
     )
-    filtered = [
-        p for p in combined if category_match(p["categories"], topic.arxiv_categories) and in_month(p["published"], month)
-    ]
+    filtered = [p for p in combined if category_match(p["categories"]) and in_month(p["published"], month)]
     return dedupe_latest(filtered)
