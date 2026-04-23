@@ -43,6 +43,24 @@ python -m eegfm_digest.run --month 2025-01 --force
 
 `--no-site` runs backend-only mode: outputs and SQLite are updated, `docs/` is untouched.
 
+## Daily incremental runs
+Instead of re-running a whole month, `--daily` only triages papers submitted since the last successful run.  State is persisted in `data/last_successful_run.json` (git-tracked).
+
+```bash
+python -m eegfm_digest.run --daily                                   # normal daily invocation
+python -m eegfm_digest.run --daily --since 2026-04-22T00:00:00Z      # backfill a specific window
+python -m eegfm_digest.run --daily --dry-run                         # don't advance the run log
+python -m eegfm_digest.run --daily --overlap-hours 12                # widen the back-overlap
+```
+
+How it works:
+- `since = last_query_end_utc - overlap_hours` (default 6h, to absorb arXiv's indexing lag).  If no run log exists yet, falls back to a 24h lookback and prints a warning.
+- `until = --until` or the current UTC time.
+- The window query (`submittedDate:[YYYYMMDDHHMM TO YYYYMMDDHHMM]`) is appended to each keyword query; results are grouped by published month and each affected month is re-rendered via the normal monthly pipeline.  Already-triaged papers are cache hits in SQLite, so LLM cost scales with new papers only.
+- `data/last_successful_run.json` is written only when the pipeline completes without `ArxivFetchError` or `LLMRateLimitError`.  On failure the next run re-covers the same window via the overlap.
+
+Daily runs are wired to `.github/workflows/daily-digest.yml` (`workflow_dispatch` only until the cron line is uncommented).  The workflow makes two commits per run: outputs + SQLite first, then the run log — so a `last_successful_run.json` update is never orphaned from the data it describes.
+
 ## Batch runs (all months or one month)
 Use the batch runner to triage multiple months first, then summarize accepted papers:
 ```bash

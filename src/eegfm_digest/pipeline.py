@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 
-from .arxiv import fetch_month_candidates
+from .arxiv import fetch_month_candidates, fetch_window_candidates
 from .cache_meta import (
     SUMMARY_STAGE_LOGIC_VERSION,
     TRIAGE_STAGE_LOGIC_VERSION,
@@ -19,6 +21,31 @@ from .render import build_digest, write_json, write_jsonl
 from .site import update_home, write_month_site
 from .summarize import summarize_paper, summarize_paper_with_meta
 from .triage import load_schema, triage_paper, triage_paper_with_meta
+
+
+@dataclass(frozen=True)
+class MonthRunStats:
+    """Summary returned by :func:`run_month` for downstream callers."""
+
+    month: str
+    candidates: int
+    accepted: int
+    summarized: int
+
+
+@dataclass(frozen=True)
+class WindowRunStats:
+    """Aggregate summary returned by :func:`run_window`."""
+
+    since: datetime
+    until: datetime
+    window_candidates: int
+    affected_months: tuple[str, ...]
+    per_month: tuple[MonthRunStats, ...]
+
+    @property
+    def total_accepted(self) -> int:
+        return sum(m.accepted for m in self.per_month)
 
 _ORIGINAL_TRIAGE_PAPER = triage_paper
 _ORIGINAL_SUMMARIZE_PAPER = summarize_paper
@@ -68,7 +95,7 @@ def run_month(
     no_site: bool = False,
     force: bool = False,
     feature_paper: str | None = None,
-) -> None:
+) -> MonthRunStats:
     month_out = cfg.output_dir / month
     month_out.mkdir(parents=True, exist_ok=True)
     db = DigestDB(cfg.data_dir / "digest.sqlite")
@@ -330,7 +357,75 @@ def run_month(
             )
             update_home(cfg.docs_dir)
         db.upsert_run(month, digest["stats"])
+        return MonthRunStats(
+            month=month,
+            candidates=len(candidates),
+            accepted=sum(1 for t in triage_rows if t.get("decision") == "accept"),
+            summarized=len(summaries),
+        )
     finally:
         triage_llm.close()
         summary_llm.close()
         db.close()
+
+
+def run_window(
+    cfg: Config,
+    since: datetime,
+    until: datetime,
+    no_pdf: bool = False,
+    no_site: bool = False,
+    force: bool = False,
+) -> WindowRunStats:
+    """Run the pipeline for all arXiv papers submitted in ``[since, until)``.
+
+    Discovery is scoped to the window; rendering still happens at the
+    per-month level because the static site is organized by month.  For
+    each month that contains newly discovered papers, :func:`run_month`
+    is invoked to refresh the full month view.  Previously triaged papers
+    are cache hits, so the LLM cost scales with *new* papers, not with
+    the size of each affected month.
+
+    Raises:
+        ArxivFetchError: arXiv API failed after retries.
+        LLMRateLimitError: LLM provider quota exhausted.
+
+    Neither exception is caught here — daily-mode callers rely on them
+    to short-circuit advancement of ``last_successful_run.json``.
+    """
+    if until <= since:
+        raise ValueError(f"until ({until!r}) must be strictly greater than since ({since!r})")
+
+    window_candidates = fetch_window_candidates(
+        since,
+        until,
+        max_candidates=cfg.max_candidates,
+        rate_limit_seconds=cfg.arxiv_rate_limit_seconds,
+        connect_timeout_seconds=cfg.arxiv_connect_timeout_seconds,
+        read_timeout_seconds=cfg.arxiv_read_timeout_seconds,
+        retries=cfg.arxiv_retries,
+        retry_backoff_seconds=cfg.arxiv_retry_backoff_seconds,
+    )
+
+    affected_months: list[str] = sorted(
+        {str(p.get("published", ""))[:7] for p in window_candidates if p.get("published")}
+    )
+
+    per_month: list[MonthRunStats] = []
+    for month in affected_months:
+        stats = run_month(
+            cfg,
+            month,
+            no_pdf=no_pdf,
+            no_site=no_site,
+            force=force,
+        )
+        per_month.append(stats)
+
+    return WindowRunStats(
+        since=since.astimezone(timezone.utc),
+        until=until.astimezone(timezone.utc),
+        window_candidates=len(window_candidates),
+        affected_months=tuple(affected_months),
+        per_month=tuple(per_month),
+    )

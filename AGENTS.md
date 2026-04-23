@@ -60,8 +60,16 @@ Implement SPEC.md using:
 
 ## Commands
 - install: pip install -e .
-- run: python -m eegfm_digest.run --month YYYY-MM
+- run (monthly backfill): python -m eegfm_digest.run --month YYYY-MM
+- run (incremental daily): python -m eegfm_digest.run --daily
 - tests: pytest -q
+
+## Daily mode
+- `--daily` resolves `since = last_query_end_utc - overlap_hours` (default 6h) from `data/last_successful_run.json`, or falls back to a 24h lookback when that file is absent.
+- `--until` defaults to wall-clock UTC.  `--since` / `--until` override everything (useful for backfills).
+- The run log is written only when `run_window` returns without raising; `ArxivFetchError` and `LLMRateLimitError` intentionally propagate so the next run re-covers the window via the 6h overlap.
+- Scheduled by `.github/workflows/daily-digest.yml` (cron initially disabled pending manual verification; `workflow_dispatch` exposes `since`/`until`/`dry_run` inputs).
+- Commit pattern: outputs+SQLite in one commit, `data/last_successful_run.json` in a second commit on the same push.  Never amend the run log into a prior failed-pipeline commit.
 
 ## Publishing
 - docs/.nojekyll must live inside docs/ (not repo root).
