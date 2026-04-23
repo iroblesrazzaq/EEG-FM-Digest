@@ -48,6 +48,37 @@ function norm(s) {
   return String(s || "").toLowerCase();
 }
 
+/** @param {Date} d */
+function formatLocalDate(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+/** @param {{ dateFrom: string; dateTo: string }} state @param {"3m"|"year"|"last-year"} preset */
+function applyDatePreset(state, preset) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let from = null;
+  let to = null;
+  if (preset === "3m") {
+    const d = new Date(today);
+    d.setMonth(d.getMonth() - 3);
+    from = d;
+    to = today;
+  } else if (preset === "year") {
+    from = new Date(today.getFullYear(), 0, 1);
+    to = today;
+  } else if (preset === "last-year") {
+    const y = today.getFullYear() - 1;
+    from = new Date(y, 0, 1);
+    to = new Date(y, 11, 31);
+  }
+  state.dateFrom = from ? formatLocalDate(from) : "";
+  state.dateTo = to ? formatLocalDate(to) : "";
+}
+
 function esc(s) {
   return String(s || "")
     .replaceAll("&", "&amp;")
@@ -696,6 +727,14 @@ function filteredPapersForState(state) {
   if (state.query) {
     filtered = filtered.filter((paper) => paperHaystack(paper).includes(state.query));
   }
+  const dateFrom = String(state.dateFrom || "").trim();
+  const dateTo = String(state.dateTo || "").trim();
+  if (dateFrom) {
+    filtered = filtered.filter((paper) => paper.published_date && paper.published_date >= dateFrom);
+  }
+  if (dateTo) {
+    filtered = filtered.filter((paper) => paper.published_date && paper.published_date <= dateTo);
+  }
   filtered = filtered.filter((paper) => matchesTagFilters(paper, state));
   filtered = sortPapers(filtered, state.sortBy);
 
@@ -993,7 +1032,11 @@ function bindTagCheckboxes(controls, state, app, options = {}) {
     if (submitOnly) {
       return;
     }
-    renderResults(app, state);
+    if (options.autoLoad && state.papers.length === 0 && !state.searchTriggered) {
+      void runExploreSearch(app, state, { commitQuery: false });
+    } else {
+      renderResults(app, state);
+    }
   });
 }
 
@@ -1016,6 +1059,25 @@ function renderExploreControls(app, state) {
       <button id="search-run-btn" data-testid="search-run-btn" type="button">Search</button>
       <button id="export-results-btn" data-testid="export-results-btn" type="button" disabled>Export CSV</button>
       <button id="reset-filters" type="button">Clear search</button>
+    </div>
+    <div class="control-row date-filter-row">
+      <label class="control" for="date-from">
+        <span>Published from</span>
+        <input id="date-from" data-testid="date-from" type="date" value="${esc(String(state.dateFrom || "").trim())}">
+      </label>
+      <label class="control" for="date-to">
+        <span>Published to</span>
+        <input id="date-to" data-testid="date-to" type="date" value="${esc(String(state.dateTo || "").trim())}">
+      </label>
+      <div class="date-preset-group">
+        <span class="date-preset-label">Presets</span>
+        <div class="date-preset-buttons">
+          <button type="button" data-testid="date-preset-3m" data-date-preset="3m">Last 3 months</button>
+          <button type="button" data-testid="date-preset-year" data-date-preset="year">This year</button>
+          <button type="button" data-testid="date-preset-last-year" data-date-preset="last-year">Last year</button>
+        </div>
+      </div>
+      <button id="clear-dates-btn" data-testid="clear-dates-btn" type="button">Clear dates</button>
     </div>
     <p class="small filter-help">Tag filters: OR within each category, AND across categories.</p>
     ${tagGroups}
@@ -1044,6 +1106,8 @@ function renderExploreControls(app, state) {
     resetBtn.addEventListener("click", () => {
       state.queryRaw = "";
       state.query = "";
+      state.dateFrom = "";
+      state.dateTo = "";
       for (const category of TAG_ORDER) {
         state.selectedTags[category].clear();
       }
@@ -1051,7 +1115,61 @@ function renderExploreControls(app, state) {
       renderResults(app, state);
     });
   }
-  bindTagCheckboxes(controls, state, app, { submitOnly: true });
+  const dateFromInput = controls.querySelector("#date-from");
+  if (dateFromInput) {
+    dateFromInput.addEventListener("change", (event) => {
+      const target = event.target;
+      if (!target || target.id !== "date-from") {
+        return;
+      }
+      state.dateFrom = String(target.value || "").trim();
+      if (state.papers.length === 0 && !state.searchTriggered) {
+        void runExploreSearch(app, state, { commitQuery: false });
+      } else {
+        renderResults(app, state);
+      }
+    });
+  }
+  const dateToInput = controls.querySelector("#date-to");
+  if (dateToInput) {
+    dateToInput.addEventListener("change", (event) => {
+      const target = event.target;
+      if (!target || target.id !== "date-to") {
+        return;
+      }
+      state.dateTo = String(target.value || "").trim();
+      if (state.papers.length === 0 && !state.searchTriggered) {
+        void runExploreSearch(app, state, { commitQuery: false });
+      } else {
+        renderResults(app, state);
+      }
+    });
+  }
+  const clearDatesBtn = controls.querySelector("#clear-dates-btn");
+  if (clearDatesBtn) {
+    clearDatesBtn.addEventListener("click", () => {
+      state.dateFrom = "";
+      state.dateTo = "";
+      renderExploreControls(app, state);
+      renderResults(app, state);
+    });
+  }
+  controls.querySelectorAll("[data-date-preset]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const preset = btn.getAttribute("data-date-preset");
+      if (!preset) {
+        return;
+      }
+      applyDatePreset(state, preset);
+      renderExploreControls(app, state);
+      if (state.papers.length === 0 && !state.searchTriggered) {
+        void runExploreSearch(app, state, { commitQuery: false });
+      } else {
+        renderResults(app, state);
+      }
+    });
+  });
+  bindTagCheckboxes(controls, state, app, { autoLoad: true });
   syncExploreExportState(app, state);
 }
 
@@ -1117,9 +1235,13 @@ function renderResults(app, state) {
     meta.setAttribute("data-testid", "results-meta");
   }
 
-  if (state.view === "explore" && !state.searchTriggered) {
-    meta.textContent = "Search is ready. Click Search to load papers.";
-    results.innerHTML = "<p class='empty-state'>No search run yet.</p>";
+  const hasAnyActiveFilter =
+    hasTagFilters(state) ||
+    !!String(state.dateFrom || "").trim() ||
+    !!String(state.dateTo || "").trim();
+  if (state.view === "explore" && !state.searchTriggered && !hasAnyActiveFilter) {
+    meta.textContent = "";
+    results.innerHTML = "<p class='empty-state'>Enter a search query above, or pick a tag or date filter below, to explore papers.</p>";
     state.lastFilteredPapers = [];
     syncExploreExportState(app, state);
     return;
@@ -1146,7 +1268,8 @@ function renderResults(app, state) {
 
   if (!filtered.length) {
     const monthKey = state.view === "month" ? state.month : state.selectedMonth;
-    const noFilters = !state.query && !hasTagFilters(state);
+    const noFilters =
+      !state.query && !hasTagFilters(state) && !String(state.dateFrom || "").trim() && !String(state.dateTo || "").trim();
     if (monthKey === "all" && noFilters) {
       results.innerHTML = "<p class='empty-state'>No accepted papers are available for the selected month set.</p>";
     } else if (monthKey !== "all" && noFilters) {
@@ -1343,14 +1466,16 @@ async function loadExploreMonthsLazy(app, state, monthRows, view) {
   renderResults(app, state);
 }
 
-async function runExploreSearch(app, state) {
+async function runExploreSearch(app, state, { commitQuery = true } = {}) {
   if (!state || state.view !== "explore") {
     return;
   }
   if (state.loading && state.loading.active) {
     return;
   }
-  state.query = norm(state.queryRaw);
+  if (commitQuery) {
+    state.query = norm(state.queryRaw);
+  }
   state.searchTriggered = true;
   state.papers = [];
   state.loading.active = true;
@@ -1440,6 +1565,8 @@ async function setupDigestApp() {
     papers,
     queryRaw: "",
     query: "",
+    dateFrom: "",
+    dateTo: "",
     sortBy: "published_desc",
     selectedMonth: view === "month" ? month : "all",
     featuredPaperId,
