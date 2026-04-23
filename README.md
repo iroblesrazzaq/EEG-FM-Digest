@@ -59,7 +59,7 @@ How it works:
 - The window query (`submittedDate:[YYYYMMDDHHMM TO YYYYMMDDHHMM]`) is appended to each keyword query; results are grouped by published month and each affected month is re-rendered via the normal monthly pipeline.  Already-triaged papers are cache hits in SQLite, so LLM cost scales with new papers only.
 - `data/last_successful_run.json` is written only when the pipeline completes without `ArxivFetchError` or `LLMRateLimitError`.  On failure the next run re-covers the same window via the overlap.
 
-Daily runs are wired to `.github/workflows/daily-digest.yml` (`workflow_dispatch` only until the cron line is uncommented).  The workflow makes two commits per run: outputs + SQLite first, then the run log — so a `last_successful_run.json` update is never orphaned from the data it describes.
+Daily runs are wired to `.github/workflows/daily-digest.yml` on a `0 10 * * *` cron, with `workflow_dispatch` still available for verification runs and backfills. The workflow makes two commits per run: outputs + SQLite first, then the run log — so a `last_successful_run.json` update is never orphaned from the data it describes.
 
 ## Batch runs (all months or one month)
 Use the batch runner to triage multiple months first, then summarize accepted papers:

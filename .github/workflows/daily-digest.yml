@@ -1,13 +1,11 @@
 name: Daily Digest
 
-# Scheduled cron is intentionally commented out until the first manual runs via
-# workflow_dispatch confirm that data/last_successful_run.json round-trips
-# cleanly.  Uncomment the "- cron" line below to go live; the 10:00 UTC slot
-# sits after arXiv's nightly indexing lag so the previous evening's
-# submissions are searchable.
+# Runs daily at 10:00 UTC, after arXiv's nightly indexing lag so the previous
+# evening's submissions are searchable. workflow_dispatch remains available for
+# verification runs, backfills, and targeted window replays.
 on:
-  # schedule:
-  #   - cron: '0 10 * * *'
+  schedule:
+    - cron: '0 10 * * *'
   workflow_dispatch:
     inputs:
       since:
