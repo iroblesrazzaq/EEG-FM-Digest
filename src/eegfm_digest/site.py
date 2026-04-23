@@ -11,6 +11,7 @@ _SHORT_BLURB = (
     "This digest serves as a monthly update on the current EEG foundation model literature on arXiv. "
     "We filter with arXiv title and abstract keywords, and a triage LLM to decide on papers that qualify. "
     "Then, we generate a summary of the entire paper with an LLM. "
+    "The digest updates daily with GitHub Actions. "
     "I manually choose the featured paper of the month."
 )
 
@@ -37,12 +38,12 @@ _PROCESS_DETAILS_STEPS = [
 ]
 
 _PROCESS_DETAILS_FOOTER = (
-    "Current triage and summary LLM calls use stepfun/step-3.5-flash:free via OpenRouter. "
+    "Current triage and summary LLM calls use gemma-4-31b-it via OpenRouter. "
     "For all previous papers (2021 - Jan 2026), running this whole process cost ~3 million tokens, so each accepted paper costs "
     "~30,000 tokens (including averaged triage costs for papers that don't pass). Crucially, this digest "
     "excludes models pretrained on data from one specific task and fine-tuned specifically for that same task "
     "- we define an EEG FM as a large model pretrained on EEG data, built with the potential and intention "
-    "for broad transfer. I update the digest at least once a month, hopefully every week if I'm diligent."
+    "for broad transfer. The digest updates daily with GitHub Actions."
 )
 
 _PROCESS_LIMITATIONS = [
