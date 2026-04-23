@@ -3,7 +3,11 @@ __pycache__/
 *.pyc
 .DS_Store
 
+# Note: data/digest.sqlite is intentionally tracked -- it is the
+# triage/summary cache the daily workflow relies on for incremental
+# runs.  Other sqlite files (scratch/debug DBs) remain ignored.
 data/*.sqlite
+!data/digest.sqlite
 data/*.pdf
 outputs/
 docs/local/
