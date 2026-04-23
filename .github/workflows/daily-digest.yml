@@ -27,16 +27,16 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/create-github-app-token@v1
+      - uses: actions/create-github-app-token@v3
         id: app_token
         with:
           app-id: ${{ vars.DIGEST_APP_ID }}
           private-key: ${{ secrets.DIGEST_APP_PRIVATE_KEY }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           token: ${{ steps.app_token.outputs.token }}
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
       - run: pip install -e .

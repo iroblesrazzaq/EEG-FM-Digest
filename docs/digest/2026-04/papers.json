@@ -1,7 +1,113 @@
 {
-  "featured_paper_id": "2604.04297",
+  "featured_paper_id": null,
   "month": "2026-04",
   "papers": [
+    {
+      "arxiv_id": "2604.14202v1",
+      "arxiv_id_base": "2604.14202",
+      "authors": [
+        "Yihang Dong",
+        "Changhong Jing",
+        "Shuqiang Wang"
+      ],
+      "categories": [
+        "q-bio.NC",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2604.14202v1",
+        "pdf": "https://arxiv.org/pdf/2604.14202v1"
+      },
+      "published_date": "2026-04-03",
+      "summary": {
+        "arxiv_id_base": "2604.14202",
+        "categories": [
+          "q-bio.NC",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 64.0,
+          "datasets": [
+            "14 datasets"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes a unified framework to bridge the gap between non-invasive scalp EEG and invasive iEEG for BCI. It integrates general-purpose representations from the LaBraM foundation model with biophysical constraints (neural mass models) and anatomical priors (geometric mode decomposition of T1-MRI). The final enhanced signals are synthesized using a conditional diffusion process, which was validated across 14 datasets and showed significant improvements in BCI decoding accuracy and neurophysiological plausibility.",
+        "evaluation": {
+          "benchmarks": [
+            "SEED",
+            "DEAP",
+            "BCI Competition IV"
+          ],
+          "headline_results": [
+            "Average F1 score improvement of 5.2% across 12 BCI datasets",
+            "High consistency with real iEEG across PSD Sim, PCC, and Cos Sim metrics"
+          ],
+          "tasks": [
+            "BCI decoding",
+            "Signal reconstruction",
+            "Physiological validity analysis"
+          ]
+        },
+        "key_points": [
+          "Method for EEG enhancement: Bridges the gap between scalp EEG and iEEG by fusing data-driven representations from a pretrained foundation model with biophysical and geometric priors.",
+          "Novel fusion architecture: Employs a conditional diffusion model guided by LaBraM embeddings, neural field equations, and Laplace-Beltrami cortical decomposition.",
+          "Concrete performance gains: Improved BCI decoding across 12 datasets by an average of 5.2% in F1 score, with enhanced signals showing focal activation in known emotion-processing brain regions."
+        ],
+        "limitations": [
+          "Scarcity of synchronized scalp EEG and iEEG paired recordings.",
+          "Limited scale and generalizability of existing pretrained EEG models.",
+          "High heterogeneity in experimental paradigms and acquisition protocols across studies.",
+          "Presence of significant electromyographic, ocular, and environmental noise.",
+          "Neurodynamical constraints are only incorporated at the mesoscale (mean-field modeling).",
+          "Lack of integration of microscale single-neuron dynamics and macroscale inter-regional network coupling."
+        ],
+        "method": {
+          "architecture": "Diffusion model (U-Net) conditioned on a Transformer-based fusion module that integrates LaBraM embeddings, MLP-compressed neural dynamics, and geometric mode decomposition features.",
+          "finetuning": "End-to-end training of the diffusion model and fusion layers using paired scalp EEG and iEEG recordings.",
+          "objective": "Variational ELBO for diffusion, supplemented by weighted negative Pearson correlation, MSE, and L2 regularization losses.",
+          "pretraining": "Utilizes LaBraM, a large foundation model pretrained on massive-scale unpaired EEG data, as a frozen representation extractor."
+        },
+        "notes": "{\"chars\": 84355, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=23126",
+        "one_liner": "A framework that enhances scalp EEG to iEEG-like fidelity by fusing pretrained EEG representations, neurodynamical constraints, and MRI-derived geometric priors via a diffusion model.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-04-03",
+        "tags": {
+          "backbone": [
+            "transformer",
+            "diffusion"
+          ],
+          "objective": [],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Bridging scalp and intracranial EEG in BCI via pretrained neural representations and geometric constraint embedding",
+        "unique_contribution": "Integrates pretrained EEG foundation model representations with explicit neurodynamical and cortical geometric constraints within a diffusion-based generative framework to synthesize high-fidelity iEEG-like signals from scalp EEG.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Bridging scalp and intracranial EEG in BCI via pretrained neural representations and geometric constraint embedding",
+      "triage": {
+        "confidence": 0.85,
+        "decision": "accept",
+        "reasons": [
+          "EEG is the primary modality",
+          "Explicitly utilizes a 'pre-trained large EEG model' to extract 'general-purpose neural representations'",
+          "Focuses on representational enhancement by leveraging transferable EEG-FM representations"
+        ]
+      }
+    },
     {
       "arxiv_id": "2604.04297v1",
       "arxiv_id_base": "2604.04297",
@@ -37,7 +143,7 @@
           "eeg_hours": 40000.0,
           "subjects": 415414.0
         },
-        "detailed_summary": "PanLUNA proposes a single-encoder architecture that extends LUNA's channel-unification module to treat multimodal biosignals as a unified query set augmented with sensor-type embeddings. This approach enables efficient cross-modal early fusion and inherent robustness to missing modalities at inference time without requiring paired multimodal data during pretraining. The model is pretrained on approximately 40,000 hours of heterogeneous biosignal data and demonstrates state-of-the-art performance on multimodal sleep staging (HMC) and competitive results on abnormal EEG detection (TUAB).",
+        "detailed_summary": "PanLUNA proposes a single-encoder architecture that extends a channel-unification mechanism to fuse EEG, ECG, and PPG signals using sensor-type embeddings and cross-attention. Unlike late-fusion models, it treats multimodal channels as a unified query set, enabling inherent robustness to missing modalities and a significantly smaller memory footprint. The model is pretrained on approximately 40,000 hours of heterogeneous biosignal data and demonstrates state-of-the-art performance on multimodal sleep staging and competitive results on EEG abnormal detection.",
         "evaluation": {
           "benchmarks": [
             "TUAB",
@@ -46,33 +152,33 @@
             "CSN"
           ],
           "headline_results": [
-            "TUAB: 81.21% balanced accuracy",
-            "HMC: 0.7416 balanced accuracy (SOTA)",
-            "GAP9 MCU: 325.6ms latency for 12-lead ECG"
+            "81.21% balanced accuracy on TUAB",
+            "0.7416 balanced accuracy on HMC",
+            "INT8 quantization recovers ≥96% performance"
           ],
           "tasks": [
-            "TUAB abnormal EEG detection",
-            "HMC multimodal sleep staging",
-            "Cardiac benchmarks (PTB-XL, CSN)"
+            "EEG abnormal detection",
+            "Multimodal sleep staging",
+            "Cardiac classification"
           ]
         },
         "key_points": [
-          "New EEG foundation model: A pan-modal 5.4M-parameter encoder that jointly processes EEG, ECG, and PPG signals.",
-          "Novel query-fusion mechanism: Uses sensor-type embeddings and cross-attention to unify modalities, matching models up to 57x larger.",
-          "Edge-ready efficiency: Achieves real-time multimodal inference on the GAP9 RISC-V MCU with INT8 quantization."
+          "New EEG foundation model: A compact 5.4M-parameter pan-modal FM that jointly processes EEG, ECG, and PPG signals in one shared encoder.",
+          "Achieves state-of-the-art 0.7416 balanced accuracy on HMC multimodal sleep staging and 81.21% on TUAB abnormal EEG detection.",
+          "Demonstrates edge feasibility on GAP9 RISC-V MCU with 325.6 ms latency for 12-lead ECG and 1.206 s for multimodal sleep staging."
         ],
         "limitations": [
-          "Performance degradation observed in morphological ECG tasks (e.g., PTBXL-Form) under aggressive quantization.",
-          "Clinical validation in real-world continuous monitoring scenarios is still required.",
-          "Small parameter count (5.4M) for edge feasibility may limit the representational ceiling compared to larger foundation models."
+          "Performance degradation observed in morphological tasks (e.g., PTBXL-Form) under aggressive quantization.",
+          "Pretraining relies on publicly available datasets which may not cover all clinical scenarios.",
+          "The model's small parameter count (5.4M) may limit its ability to capture extremely complex cross-modal interactions compared to larger models."
         ],
         "method": {
-          "architecture": "Convolutional encoders and FFT frequency features followed by a Channel-Modality Unification module (cross-attention between learned queries and channel features with sensor-type embeddings) and a temporal Transformer with Rotary Positional Embeddings (RoPE).",
-          "finetuning": "Full fine-tuning, Frozen Encoder, or LoRA.",
-          "objective": "Masked reconstruction for self-supervised pretraining.",
-          "pretraining": "Self-supervised pretraining on 40,000 hours of heterogeneous biosignal data."
+          "architecture": "Single shared encoder using a Channel-Modality Unification module with cross-attention and sensor-type embeddings, followed by a patch-wise temporal Transformer with Rotary Positional Embeddings.",
+          "finetuning": "Full fine-tuning (FF), Frozen Encoder (FE), and LoRA.",
+          "objective": "Self-supervised pretraining via masked signal patch reconstruction.",
+          "pretraining": "Pretrained on ~40,000 hours of heterogeneous biosignal data."
         },
-        "notes": "{\"chars\": 30837, \"error\": null, \"pages\": 5, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=9157",
+        "notes": "{\"chars\": 30837, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=9159",
         "one_liner": "A compact 5.4M-parameter pan-modal foundation model that unifies EEG, ECG, and PPG processing within a single shared encoder for efficient edge deployment.",
         "open_source": {
           "code_url": null,
@@ -99,7 +205,7 @@
           ]
         },
         "title": "PanLUNA: An Efficient and Robust Query-Unified Multimodal Model for Edge Biosignal Intelligence",
-        "unique_contribution": "Introduces a query-unified single-encoder architecture that fuses EEG, ECG, and PPG using sensor-type embeddings, enabling a compact multimodal FM robust to missing modalities.",
+        "unique_contribution": "Extends channel-unification to a pan-modal framework using sensor-type embeddings to enable efficient cross-modal early fusion within a single shared encoder.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -109,18 +215,238 @@
         "decision": "accept",
         "reasons": [
           "Explicitly describes PanLUNA as a 'pan-modal FM' for biosignals.",
-          "Includes EEG as one of the core target modalities processed by a shared encoder.",
-          "Evaluates the model on EEG-specific tasks such as TUAB abnormal EEG detection."
+          "EEG is a core target modality processed within a shared encoder.",
+          "Targets general biosignal representation learning for multiple tasks including EEG abnormal detection."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2604.15016v1",
+      "arxiv_id_base": "2604.15016",
+      "authors": [
+        "Jingyuan Wang",
+        "Meiyan Xu",
+        "Zhihao Jia",
+        "Chenyu Liu",
+        "Xinliang Zhou",
+        "Ziyu Jia",
+        "Yong Li",
+        "Fang Li",
+        "Junfeng Yao",
+        "Yi Ding"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2604.15016v1",
+        "pdf": "https://arxiv.org/pdf/2604.15016v1"
+      },
+      "published_date": "2026-04-16",
+      "summary": {
+        "arxiv_id_base": "2604.15016",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 64.0,
+          "datasets": [
+            "FACED",
+            "Mumtaz2016",
+            "PhysioNet-MI",
+            "SHU-MI"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "DLink proposes a unified framework to transfer knowledge from large EEG foundation models to compact students to enable deployment on embedded BCI systems. It introduces a dynamic Router to adaptively aggregate dominant intermediate teacher layers and a 'Mimic-then-Compress' student architecture to maintain high-dimensional semantics before structured reduction. The framework employs spectral distillation in the frequency domain to mitigate aliasing and temporal jitter during compression, with evidence across four EEG benchmarks showing performance approaching fully fine-tuned FMs at significantly lower computational costs.",
+        "evaluation": {
+          "benchmarks": [
+            "FACED",
+            "Mumtaz2016",
+            "PhysioNet-MI",
+            "SHU-MI"
+          ],
+          "headline_results": [
+            "MiC-M student approaches fine-tuned FM performance with ~50x FLOPs reduction",
+            "Outperforms lightweight baselines like EEGNet and Conformer"
+          ],
+          "tasks": [
+            "emotion recognition",
+            "depression detection",
+            "motor imagery"
+          ]
+        },
+        "key_points": [
+          "Method for EEG-FM compression: DLink distills large foundation models into compact students using a dynamic Router and a Mimic-then-Compress pipeline.",
+          "Spectral-domain alignment: Uses frequency-domain distillation of magnitude and phase to regularize compression and suppress aliasing artifacts.",
+          "Efficiency gains: The MiC-M student achieves performance competitive with fine-tuned FMs while reducing FLOPs by nearly 50x."
+        ],
+        "limitations": [
+          "Performance is dependent on the quality and architecture of the teacher foundation model.",
+          "The dynamic Router is only used during training and its decisions are distilled, but the initial routing policy depends on PSD scores.",
+          "Evaluation is limited to four specific BCI benchmarks."
+        ],
+        "method": {
+          "architecture": "EEG MiC student consisting of a Mimicker (hybrid CNN and Transformer) and a Compressor (spatio-temporal downsampling).",
+          "finetuning": "Distills from pre-trained FMs into a compact student for specific BCI tasks.",
+          "objective": "Joint loss combining task-specific classification, spectral distillation (magnitude and phase alignment), and PSD-based router supervision.",
+          "pretraining": "Distills knowledge from pre-trained FMs such as CBraMod, LaBraM, and EEG-DINO."
+        },
+        "notes": "{\"chars\": 44320, \"error\": null, \"pages\": 9, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=12751",
+        "one_liner": "A knowledge distillation framework that compresses large EEG foundation models into compact students using dynamic layer aggregation and spectral-domain alignment.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-04-16",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "DLink: Distilling Layer-wise and Dominant Knowledge from EEG Foundation Models",
+        "unique_contribution": "Introduces a dynamic routing mechanism for layer-wise knowledge aggregation and spectral-domain alignment to prevent aliasing during the compression of EEG foundation models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "DLink: Distilling Layer-wise and Dominant Knowledge from EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets 'EEG foundation models (FMs)' in both title and abstract.",
+          "Proposes a framework (DLink) specifically for distilling knowledge from large EEG-FMs to compact student models.",
+          "Fits the inclusion criteria for EEG-FM ecosystem papers focusing on adaptation and model compression."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2604.16926v1",
+      "arxiv_id_base": "2604.16926",
+      "authors": [
+        "Gabriel Jason Lee",
+        "Jathurshan Pradeepkumar",
+        "Jimeng Sun"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2604.16926v1",
+        "pdf": "https://arxiv.org/pdf/2604.16926v1"
+      },
+      "published_date": "2026-04-18",
+      "summary": {
+        "arxiv_id_base": "2604.16926",
+        "categories": [
+          "cs.LG",
+          "cs.AI",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "TUEV",
+            "TUAB",
+            "CHB-MIT",
+            "SleepEDF-78",
+            "EarEEG"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper introduces NeuroAdapt-Bench to evaluate how test-time adaptation (TTA) methods perform on EEG foundation models when facing real-world distribution shifts. It compares gradient-based methods like Tent and SHOT against optimization-free methods like T3A across multiple pretrained backbones and diverse tasks. The results demonstrate that gradient-based TTA often degrades performance, while optimization-free approaches provide greater stability and occasional gains, particularly in extreme modality-shift scenarios such as Ear-EEG.",
+        "evaluation": {
+          "benchmarks": [
+            "NeuroAdapt-Bench"
+          ],
+          "headline_results": [
+            "T3A achieved a +18.9 percentage-point balanced accuracy gain for REVE-Base on CHB-MIT",
+            "Gradient-based TTA methods (Tent, SHOT) often degraded performance across multiple models"
+          ],
+          "tasks": [
+            "event detection",
+            "abnormality screening",
+            "seizure detection",
+            "sleep staging"
+          ]
+        },
+        "key_points": [
+          "Benchmark for EEG foundation models: NeuroAdapt-Bench systematically evaluates test-time adaptation (TTA) across diverse datasets and distribution shifts.",
+          "Optimization-free TTA is superior: Methods like T3A are significantly more stable and less prone to performance degradation than gradient-based approaches such as Tent and SHOT.",
+          "Evidence of modality shift challenges: T3A provided the most reliable gains when adapting scalp-EEG models to Ear-EEG sleep staging, whereas gradient-based methods consistently failed."
+        ],
+        "limitations": [
+          "Does not cover the full space of existing TTA approaches and model families.",
+          "High computational and memory costs for larger models like REVE-Large.",
+          "Limited feasible batch sizes due to hardware constraints.",
+          "Lack of direct evaluation regarding computational efficiency for clinical deployment."
+        ],
+        "method": {
+          "architecture": "Evaluates three TTA methods (Tent, SHOT, T3A) on three EEG-FM backbones (CBraMod, TFM-Tokenizer, REVE) using a shared lightweight classification head.",
+          "finetuning": "Frozen encoder with only the classification head trained on source data prior to test-time adaptation.",
+          "objective": "Evaluates entropy minimization (Tent), MI maximization/pseudo-labeling (SHOT), and prototype adjustment (T3A).",
+          "pretraining": "Uses fixed pretrained EEG foundation models."
+        },
+        "notes": "{\"chars\": 60733, \"error\": null, \"pages\": 24, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=16953",
+        "one_liner": "A systematic benchmark (NeuroAdapt-Bench) evaluating the stability and effectiveness of test-time adaptation methods for EEG foundation models under various distribution shifts.",
+        "open_source": {
+          "code_url": "Released",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-04-18",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": []
+        },
+        "title": "Test-Time Adaptation for EEG Foundation Models: A Systematic Study under Real-World Distribution Shifts",
+        "unique_contribution": "Introduces NeuroAdapt-Bench, the first systematic framework to evaluate test-time adaptation across multiple EEG foundation models and realistic distribution shifts, including extreme modality changes.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Test-Time Adaptation for EEG Foundation Models: A Systematic Study under Real-World Distribution Shifts",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets EEG foundation models in both the title and abstract.",
+          "Introduces NeuroAdapt-Bench, a systematic benchmark for evaluating test-time adaptation on EEG-FMs.",
+          "Evaluates multiple pretrained foundation models across diverse downstream tasks and distribution shifts."
         ]
       }
     }
   ],
   "stats": {
-    "accepted": 1,
-    "candidates": 3,
-    "summarized": 1
+    "accepted": 4,
+    "candidates": 7,
+    "summarized": 4
   },
   "top_picks": [
-    "2604.04297"
+    "2604.16926",
+    "2604.15016",
+    "2604.04297",
+    "2604.14202"
   ]
 }

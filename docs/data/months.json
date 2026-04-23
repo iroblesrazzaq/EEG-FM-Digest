@@ -3,21 +3,16 @@
   "months": [
     {
       "empty_state": "has_papers",
-      "featured": {
-        "abs_url": "http://arxiv.org/abs/2604.04297v1",
-        "arxiv_id_base": "2604.04297",
-        "one_liner": "A compact 5.4M-parameter pan-modal foundation model that unifies EEG, ECG, and PPG processing within a single shared encoder for efficient edge deployment.",
-        "title": "PanLUNA: An Efficient and Robust Query-Unified Multimodal Model for Edge Biosignal Intelligence"
-      },
+      "featured": null,
       "href": "digest/2026-04/index.html",
       "json_path": "digest/2026-04/papers.json",
       "month": "2026-04",
       "month_label": "April 2026",
-      "month_rev": "c033045d30e65de3",
+      "month_rev": "e0d9e057b3341fd7",
       "stats": {
-        "accepted": 1,
-        "candidates": 3,
-        "summarized": 1
+        "accepted": 4,
+        "candidates": 7,
+        "summarized": 4
       }
     },
     {
