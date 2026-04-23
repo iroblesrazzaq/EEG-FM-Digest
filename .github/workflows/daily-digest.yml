@@ -1,0 +1,106 @@
+name: Daily Digest
+
+# Scheduled cron is intentionally commented out until the first manual runs via
+# workflow_dispatch confirm that data/last_successful_run.json round-trips
+# cleanly.  Uncomment the "- cron" line below to go live; the 10:00 UTC slot
+# sits after arXiv's nightly indexing lag so the previous evening's
+# submissions are searchable.
+on:
+  # schedule:
+  #   - cron: '0 10 * * *'
+  workflow_dispatch:
+    inputs:
+      since:
+        description: 'ISO-8601 start of the window (e.g. 2026-04-22T00:00:00Z). Optional; default reads data/last_successful_run.json minus overlap.'
+        required: false
+      until:
+        description: 'ISO-8601 end of the window. Optional; default is the runner time.'
+        required: false
+      dry_run:
+        description: 'Set to "true" to skip writing the run log (verification runs).'
+        required: false
+        default: 'false'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/create-github-app-token@v1
+        id: app_token
+        with:
+          app-id: ${{ vars.DIGEST_APP_ID }}
+          private-key: ${{ secrets.DIGEST_APP_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app_token.outputs.token }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -e .
+
+      - name: Run daily pipeline
+        # Inputs are passed via env to avoid ${{ }} expansion into the shell
+        # script body (script-injection hardening).  The app token used by
+        # this job can bypass `main` branch protection, so we treat the
+        # dispatch surface as a privileged boundary even though only
+        # repo-writers can dispatch today.
+        env:
+          LLM_PROVIDER: google
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL_TRIAGE: gemma-4-31b-it
+          GEMINI_MODEL_SUMMARY: gemma-4-31b-it
+          INPUT_SINCE: ${{ inputs.since }}
+          INPUT_UNTIL: ${{ inputs.until }}
+          INPUT_DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          args=(--daily)
+          if [ -n "${INPUT_SINCE:-}" ]; then
+            args+=(--since "$INPUT_SINCE")
+          fi
+          if [ -n "${INPUT_UNTIL:-}" ]; then
+            args+=(--until "$INPUT_UNTIL")
+          fi
+          if [ "${INPUT_DRY_RUN:-}" = "true" ]; then
+            args+=(--dry-run)
+          fi
+          python -m eegfm_digest.run "${args[@]}"
+
+      - name: Commit outputs (first commit)
+        # Outputs land first.  If this succeeds but the run-log commit below
+        # fails for any reason, tomorrow's run will redo the same window and
+        # dedupe via SQLite cache -- self-healing.
+        id: commit_outputs
+        run: |
+          set -euo pipefail
+          git config user.name "eeg-fm-daily-digest[bot]"
+          git config user.email "${{ steps.app_token.outputs.app-slug }}[bot]@users.noreply.github.com"
+          git add outputs/ docs/ data/digest.sqlite
+          if git diff --staged --quiet; then
+            echo "no_output_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "auto: daily digest outputs $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "no_output_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit run log (second commit)
+        # The run log advances only if the pipeline succeeded (i.e. step
+        # "Run daily pipeline" did not fail).  GitHub Actions skips later
+        # steps on earlier failure unless explicitly marked with
+        # if: always(), which this step is not -- so the contract holds.
+        run: |
+          set -euo pipefail
+          git add data/last_successful_run.json || true
+          if git diff --staged --quiet; then
+            echo "no run-log change (dry-run or nothing to update)"
+          else
+            git commit -m "auto: advance daily run log $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          fi
+
+      - name: Push
+        run: |
+          set -euo pipefail
+          git push

@@ -14,6 +14,15 @@ ARXIV_API_URL = "https://export.arxiv.org/api/query"
 ATOM_NS = {"atom": "http://www.w3.org/2005/Atom"}
 
 
+class ArxivFetchError(RuntimeError):
+    """Raised when the arXiv API fails after all retries.
+
+    Distinct from other ``RuntimeError``s so daily-mode callers can decide
+    not to advance ``last_successful_run.json`` while leaving partial DB
+    state in place for the next run's overlap window to re-process.
+    """
+
+
 def month_bounds(month: str) -> tuple[datetime, datetime]:
     year, mon = month.split("-")
     start = datetime(int(year), int(mon), 1, tzinfo=timezone.utc)
@@ -122,7 +131,7 @@ def fetch_query(
                     retryable = status == 429 or (status is not None and status >= 500)
                     attempt += 1
                     if (not retryable) or attempt > retries:
-                        raise RuntimeError(
+                        raise ArxivFetchError(
                             f"arXiv request failed after {attempt} attempts "
                             f"(status={status}, start={start}, max_results={chunk})"
                         ) from exc
@@ -130,7 +139,7 @@ def fetch_query(
                 except (httpx.ReadTimeout, httpx.TransportError) as exc:
                     attempt += 1
                     if attempt > retries:
-                        raise RuntimeError(
+                        raise ArxivFetchError(
                             f"arXiv request failed after {attempt} attempts "
                             f"(start={start}, max_results={chunk})"
                         ) from exc
@@ -177,3 +186,91 @@ def fetch_month_candidates(
     )
     filtered = [p for p in combined if category_match(p["categories"]) and in_month(p["published"], month)]
     return dedupe_latest(filtered)
+
+
+def format_arxiv_datetime(dt: datetime) -> str:
+    """Render a datetime for arXiv's ``submittedDate:[...]`` query parameter.
+
+    arXiv accepts ``YYYYMMDDHHMM`` in UTC with minute precision.  Seconds
+    are truncated; callers should use inclusive start / inclusive end
+    and rely on SQLite deduplication for boundary overlap.
+    """
+    dt_utc = dt.astimezone(timezone.utc)
+    return dt_utc.strftime("%Y%m%d%H%M")
+
+
+def _in_window(published: str, since: datetime, until: datetime) -> bool:
+    dt = datetime.fromisoformat(published.replace("Z", "+00:00"))
+    dt = dt.astimezone(timezone.utc)
+    return since <= dt < until
+
+
+def fetch_window_candidates(
+    since: datetime,
+    until: datetime,
+    max_candidates: int,
+    rate_limit_seconds: float,
+    connect_timeout_seconds: float = 10.0,
+    read_timeout_seconds: float = 60.0,
+    retries: int = 2,
+    retry_backoff_seconds: float = 2.0,
+    client: httpx.Client | None = None,
+) -> list[dict[str, Any]]:
+    """Return candidates with ``submittedDate`` in ``[since, until)``.
+
+    The ``submittedDate:[...]`` filter is appended to ``QUERY_A`` and
+    ``QUERY_B`` to keep the daily window tight at the source instead of
+    paging through a full month.  Client-side filtering still applies
+    because arXiv's minute-precision bounds are coarser than our window.
+    """
+    if until <= since:
+        raise ValueError(f"until ({until!r}) must be strictly greater than since ({since!r})")
+
+    since_utc = since.astimezone(timezone.utc)
+    until_utc = until.astimezone(timezone.utc)
+    date_filter = (
+        f" AND submittedDate:[{format_arxiv_datetime(since_utc)} "
+        f"TO {format_arxiv_datetime(until_utc)}]"
+    )
+
+    combined = fetch_query(
+        QUERY_A + date_filter,
+        max_candidates,
+        rate_limit_seconds,
+        connect_timeout_seconds=connect_timeout_seconds,
+        read_timeout_seconds=read_timeout_seconds,
+        retries=retries,
+        retry_backoff_seconds=retry_backoff_seconds,
+        client=client,
+    ) + fetch_query(
+        QUERY_B + date_filter,
+        max_candidates,
+        rate_limit_seconds,
+        connect_timeout_seconds=connect_timeout_seconds,
+        read_timeout_seconds=read_timeout_seconds,
+        retries=retries,
+        retry_backoff_seconds=retry_backoff_seconds,
+        client=client,
+    )
+
+    filtered = [
+        p
+        for p in combined
+        if category_match(p["categories"]) and _in_window(p["published"], since_utc, until_utc)
+    ]
+    return dedupe_latest(filtered)
+
+
+def group_candidates_by_month(candidates: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+    """Bucket candidates by their published ``YYYY-MM`` so windows that
+    straddle a month boundary can be published per-month."""
+    out: dict[str, list[dict[str, Any]]] = {}
+    for p in candidates:
+        published = str(p.get("published", ""))
+        if len(published) < 7:
+            continue
+        key = published[:7]
+        out.setdefault(key, []).append(p)
+    for month in out:
+        out[month] = sorted(out[month], key=lambda x: (x["published"], x["arxiv_id_base"]))
+    return out

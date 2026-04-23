@@ -1,7 +1,7 @@
 # SPEC.md
 
 ## 1) Overview
-Implement a monthly “EEG Foundation Model Digest” pipeline.
+Implement an incremental “EEG Foundation Model Digest” pipeline.  Historically the pipeline was run once per month; the canonical production mode is now a daily incremental run that re-triages only papers submitted since the last successful run.  The site is still organized one page per month.
 
 Current provider plan:
 - GitHub-hosted scheduled and manual runs use Google AI Studio with `gemma-4-31b-it`
@@ -190,12 +190,17 @@ Incremental:
 - skip already-triaged and already-summarized unless `--force`
 
 ## 8) CLI
+Monthly backfill / single-month run:
 `python -m eegfm_digest.run --month YYYY-MM [--feature-paper ARXIV_ID] [--max-candidates N] [--max-accepted N] [--include-borderline] [--no-pdf] [--no-site] [--force]`
+
+Daily incremental run:
+`python -m eegfm_digest.run --daily [--since ISO8601] [--until ISO8601] [--overlap-hours H] [--dry-run] [--max-candidates N] [--max-accepted N] [--include-borderline] [--no-pdf] [--no-site] [--force]`
 
 `--feature-paper`:
 - optional explicit featured paper id for that month
 - defaults to null when omitted
 - this is the only supported way to set the featured paper; the pipeline and GitHub Actions must not auto-select one
+- not supported in `--daily` mode
 
 `--no-site` mode:
 - still writes all `outputs/YYYY-MM/*` artifacts and updates SQLite.
@@ -206,6 +211,32 @@ Defaults:
 - include-borderline: false
 - max-candidates: 500
 - max-accepted: 80
+- overlap-hours: 6 (daily mode)
+
+## 8a) Daily mode semantics
+
+State file: `data/last_successful_run.json` (git-tracked, version 1).
+```json
+{
+  "last_success_utc": "2026-04-22T14:37:00Z",
+  "last_query_end_utc": "2026-04-22T14:37:00Z",
+  "papers_fetched": 12,
+  "papers_accepted": 3,
+  "affected_months": ["2026-04"],
+  "run_id": "2026-04-22T14:37:00Z",
+  "version": 1
+}
+```
+
+Window resolution:
+- `until = --until` or wall-clock UTC.
+- `since = --since`, else `last_query_end_utc - overlap_hours` from the run log, else `until - 24h` (first-ever run, with a warning).
+- arXiv query: `QUERY_A` / `QUERY_B` appended with `AND submittedDate:[YYYYMMDDHHMM TO YYYYMMDDHHMM]`.
+- Window results are grouped by `published[:7]`; each distinct month triggers a normal `run_month` invocation.  SQLite cache ensures already-triaged papers do not re-invoke the LLM.
+
+Success definition: the run is "successful" iff `run_window` returns without raising `ArxivFetchError` or `LLMRateLimitError`.  On success the run log is overwritten with the new window end.  On failure the run log is left untouched and the next run auto-covers the same window via the overlap.
+
+Never catch `ArxivFetchError` or `LLMRateLimitError` inside `run_window`/`run_month`; daily callers depend on propagation to make the "no run-log advance" decision.
 
 ## 9) Configuration (LLM providers)
 Env vars:
@@ -234,6 +265,7 @@ Optional:
 - Fixture-based integration test: cached `arxiv_raw.json`, stubbed LLM outputs
 
 ## 11) GitHub Actions
-- Monthly workflow (day 1): runs previous month, writes `docs/`, commits changes (or opens PR).
+- `.github/workflows/daily-digest.yml`: production incremental workflow.  Cron line starts commented out; enable only after verifying a `workflow_dispatch` round-trip.  Runs `python -m eegfm_digest.run --daily`, then makes two commits per run — outputs + `data/digest.sqlite` first, `data/last_successful_run.json` second — so a run-log advance is never orphaned from the data it describes.
 - Workflows must never auto-set `featured_paper`; leave it `null` unless the CLI flag is provided manually.
 - Test workflow: runs pytest on push/PR.
+- Manual / ad-hoc single-month runs use the CLI locally with `--month` (no scheduled workflow).
