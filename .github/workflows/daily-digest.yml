@@ -73,12 +73,19 @@ jobs:
         # Outputs land first.  If this succeeds but the run-log commit below
         # fails for any reason, tomorrow's run will redo the same window and
         # dedupe via SQLite cache -- self-healing.
+        #
+        # We commit the rendered site (docs/) and the triage/summary cache
+        # (data/digest.sqlite).  outputs/ stays gitignored: it holds per-month
+        # raw JSONL dumps plus PDFs/text that would bloat git history and are
+        # reproducible from the DB + arXiv + LLM.  The -A flag on specific
+        # pathspecs picks up creations/modifications/deletions without
+        # erroring when a path does not yet exist on a fresh checkout.
         id: commit_outputs
         run: |
           set -euo pipefail
           git config user.name "eeg-fm-daily-digest[bot]"
           git config user.email "${{ steps.app_token.outputs.app-slug }}[bot]@users.noreply.github.com"
-          git add outputs/ docs/ data/digest.sqlite
+          git add -A docs/ data/digest.sqlite
           if git diff --staged --quiet; then
             echo "no_output_changes=true" >> "$GITHUB_OUTPUT"
           else
