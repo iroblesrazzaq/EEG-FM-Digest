@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from eegfm_digest.run import _parse_iso, _resolve_daily_window
+from eegfm_digest.run import _parse_iso, _resolve_daily_window, main
 from eegfm_digest.run_log import RunLog, save_run_log
 
 
@@ -95,6 +95,24 @@ def test_resolve_window_cli_since_overrides_log(tmp_path: Path):
     assert since == override_since
     assert until == now
     assert log is not None  # still loaded
+
+
+@pytest.mark.parametrize(
+    "argv, expected_flag",
+    [
+        (["run", "--since", "2026-04-22T00:00:00Z"], "--since"),
+        (["run", "--until", "2026-04-22T00:00:00Z"], "--until"),
+        (["run", "--dry-run"], "--dry-run"),
+    ],
+)
+def test_daily_only_flags_require_daily(monkeypatch, capsys, argv, expected_flag):
+    monkeypatch.setattr("sys.argv", argv)
+    with pytest.raises(SystemExit) as excinfo:
+        main()
+    assert excinfo.value.code == 2
+    err = capsys.readouterr().err
+    assert expected_flag in err
+    assert "--daily" in err
 
 
 def test_resolve_window_cli_until_overrides_now(tmp_path: Path):

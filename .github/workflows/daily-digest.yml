@@ -42,21 +42,29 @@ jobs:
       - run: pip install -e .
 
       - name: Run daily pipeline
+        # Inputs are passed via env to avoid ${{ }} expansion into the shell
+        # script body (script-injection hardening).  The app token used by
+        # this job can bypass `main` branch protection, so we treat the
+        # dispatch surface as a privileged boundary even though only
+        # repo-writers can dispatch today.
         env:
           LLM_PROVIDER: google
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL_TRIAGE: gemma-4-31b-it
           GEMINI_MODEL_SUMMARY: gemma-4-31b-it
+          INPUT_SINCE: ${{ inputs.since }}
+          INPUT_UNTIL: ${{ inputs.until }}
+          INPUT_DRY_RUN: ${{ inputs.dry_run }}
         run: |
           set -euo pipefail
           args=(--daily)
-          if [ -n "${{ inputs.since }}" ]; then
-            args+=(--since "${{ inputs.since }}")
+          if [ -n "${INPUT_SINCE:-}" ]; then
+            args+=(--since "$INPUT_SINCE")
           fi
-          if [ -n "${{ inputs.until }}" ]; then
-            args+=(--until "${{ inputs.until }}")
+          if [ -n "${INPUT_UNTIL:-}" ]; then
+            args+=(--until "$INPUT_UNTIL")
           fi
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
+          if [ "${INPUT_DRY_RUN:-}" = "true" ]; then
             args+=(--dry-run)
           fi
           python -m eegfm_digest.run "${args[@]}"

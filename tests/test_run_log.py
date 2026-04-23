@@ -65,6 +65,46 @@ def test_save_creates_parent_dirs(tmp_path: Path):
     assert path.exists()
 
 
+def test_save_is_atomic_no_leftover_tmp(tmp_path: Path):
+    path = tmp_path / "run.json"
+    save_run_log(
+        path,
+        RunLog(last_success_utc="2026-04-22T10:00:00Z", last_query_end_utc="2026-04-22T10:00:00Z"),
+    )
+    # The atomic write uses <name>.tmp as a staging file; it must be gone
+    # after a successful replace.
+    assert not (tmp_path / "run.json.tmp").exists()
+
+
+def test_save_preserves_prior_file_when_replace_fails(tmp_path: Path, monkeypatch):
+    """If os.replace raises, the pre-existing file must remain intact."""
+    import eegfm_digest.run_log as run_log_mod
+
+    path = tmp_path / "run.json"
+    original = RunLog(
+        last_success_utc="2026-04-22T10:00:00Z",
+        last_query_end_utc="2026-04-22T10:00:00Z",
+        run_id="original",
+    )
+    save_run_log(path, original)
+    original_bytes = path.read_bytes()
+
+    def boom(src, dst):  # noqa: ARG001
+        raise OSError("simulated crash after staging")
+
+    monkeypatch.setattr(run_log_mod.os, "replace", boom)
+    replacement = RunLog(
+        last_success_utc="2026-04-23T10:00:00Z",
+        last_query_end_utc="2026-04-23T10:00:00Z",
+        run_id="replacement",
+    )
+    with pytest.raises(OSError, match="simulated crash"):
+        save_run_log(path, replacement)
+
+    # Target file is untouched.
+    assert path.read_bytes() == original_bytes
+
+
 def test_save_is_deterministic(tmp_path: Path):
     """Stable key order + trailing newline so git diffs stay minimal."""
     path = tmp_path / "run.json"

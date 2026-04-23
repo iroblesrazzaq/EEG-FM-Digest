@@ -178,6 +178,20 @@ def main() -> None:
             parser.error("--feature-paper is not supported in --daily mode")
         sys.exit(_run_daily(args))
 
+    daily_only_set = [
+        flag
+        for flag, was_set in (
+            ("--since", args.since is not None),
+            ("--until", args.until is not None),
+            ("--dry-run", args.dry_run),
+        )
+        if was_set
+    ]
+    if daily_only_set:
+        parser.error(
+            f"{', '.join(daily_only_set)} require --daily (month mode ignores them)"
+        )
+
     month = args.month or default_month()
     cfg = load_config()
     if args.max_candidates is not None:

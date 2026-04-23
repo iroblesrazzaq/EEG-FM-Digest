@@ -9,6 +9,7 @@ window auto-extends.
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -97,10 +98,18 @@ def load_run_log(path: Path) -> RunLog | None:
 
 
 def save_run_log(path: Path, log: RunLog) -> None:
-    """Write the run log to disk (creating parent dirs as needed)."""
+    """Write the run log to disk atomically (creating parent dirs as needed).
+
+    Writes to a sibling ``<name>.tmp`` first and then ``os.replace``s it into
+    place so that a crash mid-write cannot leave a truncated or partial file
+    that would make the next run fail to parse the log.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = log.to_dict()
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    serialized = json.dumps(payload, indent=2, sort_keys=True) + "\n"
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(serialized, encoding="utf-8")
+    os.replace(tmp, path)
 
 
 def compute_since(
