@@ -1033,7 +1033,7 @@ function bindTagCheckboxes(controls, state, app, options = {}) {
       return;
     }
     if (options.autoLoad && state.papers.length === 0 && !state.searchTriggered) {
-      void runExploreSearch(app, state);
+      void runExploreSearch(app, state, { commitQuery: false });
     } else {
       renderResults(app, state);
     }
@@ -1124,7 +1124,7 @@ function renderExploreControls(app, state) {
       }
       state.dateFrom = String(target.value || "").trim();
       if (state.papers.length === 0 && !state.searchTriggered) {
-        void runExploreSearch(app, state);
+        void runExploreSearch(app, state, { commitQuery: false });
       } else {
         renderResults(app, state);
       }
@@ -1139,7 +1139,7 @@ function renderExploreControls(app, state) {
       }
       state.dateTo = String(target.value || "").trim();
       if (state.papers.length === 0 && !state.searchTriggered) {
-        void runExploreSearch(app, state);
+        void runExploreSearch(app, state, { commitQuery: false });
       } else {
         renderResults(app, state);
       }
@@ -1163,7 +1163,7 @@ function renderExploreControls(app, state) {
       applyDatePreset(state, preset);
       renderExploreControls(app, state);
       if (state.papers.length === 0 && !state.searchTriggered) {
-        void runExploreSearch(app, state);
+        void runExploreSearch(app, state, { commitQuery: false });
       } else {
         renderResults(app, state);
       }
@@ -1237,8 +1237,8 @@ function renderResults(app, state) {
 
   const hasAnyActiveFilter =
     hasTagFilters(state) ||
-    String(state.dateFrom || "").trim() ||
-    String(state.dateTo || "").trim();
+    !!String(state.dateFrom || "").trim() ||
+    !!String(state.dateTo || "").trim();
   if (state.view === "explore" && !state.searchTriggered && !hasAnyActiveFilter) {
     meta.textContent = "";
     results.innerHTML = "<p class='empty-state'>Enter a search query above, or pick a tag or date filter below, to explore papers.</p>";
@@ -1466,14 +1466,16 @@ async function loadExploreMonthsLazy(app, state, monthRows, view) {
   renderResults(app, state);
 }
 
-async function runExploreSearch(app, state) {
+async function runExploreSearch(app, state, { commitQuery = true } = {}) {
   if (!state || state.view !== "explore") {
     return;
   }
   if (state.loading && state.loading.active) {
     return;
   }
-  state.query = norm(state.queryRaw);
+  if (commitQuery) {
+    state.query = norm(state.queryRaw);
+  }
   state.searchTriggered = true;
   state.papers = [];
   state.loading.active = true;
