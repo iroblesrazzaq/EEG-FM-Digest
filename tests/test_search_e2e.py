@@ -358,6 +358,17 @@ def _last_run(stats: dict) -> dict:
     return stats.get("last_run") or {}
 
 
+def _goto_explore_and_run_search_to_three_cards(page, synthetic_site: dict) -> None:
+    page.goto(f"{synthetic_site['base_url']}/explore/index.html", wait_until="networkidle")
+    page.get_by_test_id("search-run-btn").click()
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 3")
+
+
+def _synthetic_published_dates() -> tuple[str, ...]:
+    """Top-level published_date on each synthetic fixture paper (see _paper)."""
+    return ("2025-01-10", "2025-01-12", "2025-02-03")
+
+
 def _month_cache_key(month: str, month_rev: str) -> str:
     return f"{MONTH_CACHE_PREFIX}:{MONTH_CACHE_SCHEMA_VERSION}:{month}:{month_rev}"
 
@@ -403,7 +414,9 @@ def test_explore_has_search_button_and_no_auto_load(browser, synthetic_site):
     assert page.locator("input[data-tag-category]").count() > 0
     assert _month_payload_request_count(urls) == 0
     assert page.locator(".paper-card").count() == 0
-    assert "Showing" not in page.get_by_test_id("results-meta").inner_text()
+    meta = page.get_by_test_id("results-meta").inner_text()
+    assert "Showing" not in meta
+    assert "Loading" not in meta
 
     context.close()
 
@@ -1068,4 +1081,153 @@ def test_clear_session_alias_clears_local_persistent_cache(browser, synthetic_si
     page.evaluate("() => window.__digestTestHooks.clearSessionCacheForTest()")
     assert _storage_get_item(page, "local", key) is None
 
+    context.close()
+
+
+def test_date_from_filter_narrows_results(browser, synthetic_site):
+    context = browser.new_context()
+    page, _urls = _tracked_page(context)
+    _goto_explore_and_run_search_to_three_cards(page, synthetic_site)
+    page.get_by_test_id("date-from").fill("2025-01-11")
+    page.get_by_test_id("date-from").press("Tab")
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 2")
+    assert page.get_by_test_id("results-meta").inner_text() == "2 results"
+    titles = page.locator(".paper-card h3").all_text_contents()
+    assert any("Beta Survey" in t for t in titles)
+    assert any("Gamma Benchmark" in t for t in titles)
+    context.close()
+
+
+def test_date_to_filter_narrows_results(browser, synthetic_site):
+    context = browser.new_context()
+    page, _urls = _tracked_page(context)
+    _goto_explore_and_run_search_to_three_cards(page, synthetic_site)
+    # Beta is 2025-01-12; cap must be >= that day to include both January papers.
+    page.get_by_test_id("date-to").fill("2025-01-12")
+    page.get_by_test_id("date-to").press("Tab")
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 2")
+    assert page.get_by_test_id("results-meta").inner_text() == "2 results"
+    titles = page.locator(".paper-card h3").all_text_contents()
+    assert any("Alpha EEG" in t for t in titles)
+    assert any("Beta Survey" in t for t in titles)
+    context.close()
+
+
+def test_date_range_filter(browser, synthetic_site):
+    context = browser.new_context()
+    page, _urls = _tracked_page(context)
+    _goto_explore_and_run_search_to_three_cards(page, synthetic_site)
+    page.get_by_test_id("date-from").fill("2025-01-11")
+    page.get_by_test_id("date-from").press("Tab")
+    page.get_by_test_id("date-to").fill("2025-01-31")
+    page.get_by_test_id("date-to").press("Tab")
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 1")
+    assert page.get_by_test_id("results-meta").inner_text() == "1 results"
+    assert "Beta Survey of EEG Foundation Models" in page.locator(".paper-card h3").first.inner_text()
+    context.close()
+
+
+def test_date_filter_ands_with_tags(browser, synthetic_site):
+    context = browser.new_context()
+    page, _urls = _tracked_page(context)
+    page.goto(f"{synthetic_site['base_url']}/explore/index.html", wait_until="networkidle")
+    page.locator("input[data-tag-category='tokenization'][data-tag-value='time-patch']").check()
+    page.get_by_test_id("search-run-btn").click()
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 2")
+    page.get_by_test_id("date-from").fill("2025-01-12")
+    page.get_by_test_id("date-from").press("Tab")
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 1")
+    assert "Beta Survey of EEG Foundation Models" in page.locator(".paper-card h3").first.inner_text()
+    context.close()
+
+
+def test_date_filter_ands_with_text_query(browser, synthetic_site):
+    context = browser.new_context()
+    page, _urls = _tracked_page(context)
+    _goto_explore_and_run_search_to_three_cards(page, synthetic_site)
+    page.get_by_test_id("search-input").fill("Benchmark")
+    page.get_by_test_id("search-run-btn").click()
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 1")
+    page.get_by_test_id("date-from").fill("2025-02-01")
+    page.get_by_test_id("date-from").press("Tab")
+    page.get_by_test_id("date-to").fill("2025-02-28")
+    page.get_by_test_id("date-to").press("Tab")
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 1")
+    assert "Gamma Benchmark" in page.locator(".paper-card h3").first.inner_text()
+    context.close()
+
+
+def test_date_preset_last_3_months_sets_inputs_and_filters(browser, synthetic_site):
+    context = browser.new_context()
+    page, _urls = _tracked_page(context)
+    _goto_explore_and_run_search_to_three_cards(page, synthetic_site)
+    page.get_by_test_id("date-preset-3m").click()
+    d_from = page.get_by_test_id("date-from").input_value()
+    d_to = page.get_by_test_id("date-to").input_value()
+    assert len(d_from) == 10 and len(d_to) == 10
+    assert d_from <= d_to
+    pubs = _synthetic_published_dates()
+    expected = sum(1 for p in pubs if d_from <= p <= d_to)
+    page.wait_for_function(
+        f"() => document.querySelectorAll('.paper-card').length === {expected}",
+    )
+    assert page.get_by_test_id("results-meta").inner_text() == f"{expected} results"
+    context.close()
+
+
+def test_clear_search_resets_dates(browser, synthetic_site):
+    context = browser.new_context()
+    page, _urls = _tracked_page(context)
+    _goto_explore_and_run_search_to_three_cards(page, synthetic_site)
+    page.get_by_test_id("date-from").fill("2025-02-01")
+    page.get_by_test_id("date-from").press("Tab")
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 1")
+    page.get_by_role("button", name="Clear search").click()
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 3")
+    assert page.get_by_test_id("date-from").input_value() == ""
+    assert page.get_by_test_id("date-to").input_value() == ""
+    assert page.get_by_test_id("results-meta").inner_text() == "3 results"
+    context.close()
+
+
+def test_tag_checkbox_auto_triggers_load(browser, synthetic_site):
+    """Checking a tag before clicking Search should auto-load papers and filter live."""
+    context = browser.new_context()
+    page, urls = _tracked_page(context)
+    page.goto(f"{synthetic_site['base_url']}/explore/index.html", wait_until="networkidle")
+    # No search yet — zero cards, zero network requests for month payloads.
+    assert page.locator(".paper-card").count() == 0
+    assert _month_payload_request_count(urls) == 0
+
+    # Check the "survey" tag — should auto-trigger load and show only Beta Survey.
+    page.locator("input[data-tag-category='paper_type'][data-tag-value='survey']").check()
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 1")
+
+    assert _month_payload_request_count(urls) == 2  # both months loaded
+    title = page.locator(".paper-card h3").first.inner_text()
+    assert "Beta Survey of EEG Foundation Models" in title
+    assert page.get_by_test_id("results-meta").inner_text() == "1 results"
+
+    context.close()
+
+
+def test_csv_export_respects_date_filter(browser, synthetic_site):
+    context = browser.new_context(accept_downloads=True)
+    page, _urls = _tracked_page(context)
+    _goto_explore_and_run_search_to_three_cards(page, synthetic_site)
+    page.get_by_test_id("date-from").fill("2025-01-11")
+    page.get_by_test_id("date-from").press("Tab")
+    page.get_by_test_id("date-to").fill("2025-01-31")
+    page.get_by_test_id("date-to").press("Tab")
+    page.wait_for_function("() => document.querySelectorAll('.paper-card').length === 1")
+
+    with page.expect_download() as download_info:
+        page.get_by_test_id("export-results-btn").click()
+    download = download_info.value
+    csv_text = Path(download.path()).read_text(encoding="utf-8")
+    lines = [ln for ln in csv_text.strip().splitlines() if ln.strip()]
+    assert len(lines) >= 2
+    assert "Beta Survey of EEG Foundation Models" in csv_text
+    assert "Alpha EEG Foundation Model" not in csv_text
+    assert "Gamma Benchmark for EEG-FM Transfer" not in csv_text
     context.close()
