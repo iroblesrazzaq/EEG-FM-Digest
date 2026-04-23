@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -31,6 +32,8 @@ class MonthRunStats:
     candidates: int
     accepted: int
     summarized: int
+    triage_failures: int = 0
+    summary_failures: int = 0
 
 
 @dataclass(frozen=True)
@@ -46,6 +49,14 @@ class WindowRunStats:
     @property
     def total_accepted(self) -> int:
         return sum(m.accepted for m in self.per_month)
+
+    @property
+    def total_triage_failures(self) -> int:
+        return sum(m.triage_failures for m in self.per_month)
+
+    @property
+    def total_summary_failures(self) -> int:
+        return sum(m.summary_failures for m in self.per_month)
 
 _ORIGINAL_TRIAGE_PAPER = triage_paper
 _ORIGINAL_SUMMARIZE_PAPER = summarize_paper
@@ -162,6 +173,7 @@ def run_month(
 
         # Stage 2: triage
         triage_rows: list[dict] = []
+        triage_failure_count = 0
         for paper in candidates:
             try:
                 cached = None if force else db.get_triage_with_meta(paper["arxiv_id_base"])
@@ -193,25 +205,13 @@ def run_month(
             except Exception as exc:
                 if isinstance(exc, LLMRateLimitError):
                     raise
-                fallback = {
-                    "arxiv_id_base": paper["arxiv_id_base"],
-                    "decision": "reject",
-                    "confidence": 0.0,
-                    "reasons": [
-                        f"triage_exception:{type(exc).__name__}",
-                        "automatic_reject_fallback",
-                    ],
-                }
-                triage_rows.append(fallback)
-                db.upsert_triage(
-                    month,
-                    fallback,
-                    meta=build_stage_metadata(
-                        triage_descriptor,
-                        repair_used=False,
-                        updated_at_source=str(paper.get("updated", "")).strip() or None,
-                    ),
+                triage_failure_count += 1
+                print(
+                    f"[pipeline] WARNING: triage failed for {paper['arxiv_id_base']}: "
+                    f"{type(exc).__name__}: {exc}; skipping (will retry next run)",
+                    file=sys.stderr,
                 )
+                # Not written to DB so the paper is retried on the next run.
 
         write_jsonl(month_out / "triage.jsonl", sorted(triage_rows, key=lambda x: x["arxiv_id_base"]))
 
@@ -232,6 +232,7 @@ def run_month(
         summaries: list[dict] = []
         summary_map: dict[str, dict] = {}
         pdf_map: dict[str, dict[str, object | None]] = {}
+        summary_failure_count = 0
         for paper in accepted:
             arxiv_id_base = paper["arxiv_id_base"]
             pdf_state: dict[str, object | None] = _empty_pdf_state()
@@ -316,6 +317,12 @@ def run_month(
             except Exception as exc:
                 if isinstance(exc, LLMRateLimitError):
                     raise
+                summary_failure_count += 1
+                print(
+                    f"[pipeline] WARNING: summary failed for {arxiv_id_base}: "
+                    f"{type(exc).__name__}: {exc}; skipping (will retry next run)",
+                    file=sys.stderr,
+                )
             pdf_map[arxiv_id_base] = pdf_state
 
         summaries = sorted(summaries, key=lambda x: (x["published_date"], x["arxiv_id_base"]))
@@ -362,6 +369,8 @@ def run_month(
             candidates=len(candidates),
             accepted=sum(1 for t in triage_rows if t.get("decision") == "accept"),
             summarized=len(summaries),
+            triage_failures=triage_failure_count,
+            summary_failures=summary_failure_count,
         )
     finally:
         triage_llm.close()

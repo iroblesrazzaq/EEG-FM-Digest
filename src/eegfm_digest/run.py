@@ -107,12 +107,15 @@ def _run_daily(args: argparse.Namespace) -> int:
     print(
         f"[daily] fetched={stats.window_candidates} "
         f"affected_months={list(stats.affected_months)} "
-        f"accepted={stats.total_accepted}"
+        f"accepted={stats.total_accepted} "
+        f"triage_failures={stats.total_triage_failures} "
+        f"summary_failures={stats.total_summary_failures}"
     )
     for m in stats.per_month:
         print(
             f"[daily]   month={m.month} candidates={m.candidates} "
-            f"accepted={m.accepted} summarized={m.summarized}"
+            f"accepted={m.accepted} summarized={m.summarized} "
+            f"triage_failures={m.triage_failures} summary_failures={m.summary_failures}"
         )
 
     new_log = RunLog(
@@ -123,6 +126,16 @@ def _run_daily(args: argparse.Namespace) -> int:
         affected_months=stats.affected_months,
         run_id=format_utc(now),
     )
+    partial_failures = stats.total_triage_failures + stats.total_summary_failures
+    if partial_failures:
+        print(
+            f"[daily] WARNING: {partial_failures} paper(s) failed LLM processing "
+            f"(triage={stats.total_triage_failures} summary={stats.total_summary_failures}). "
+            "Run log NOT advanced; failed papers will be retried next run.",
+            file=sys.stderr,
+        )
+        return 1
+
     if not args.dry_run:
         save_run_log(run_log_path, new_log)
         print(f"[daily] success=true wrote {run_log_path}")
