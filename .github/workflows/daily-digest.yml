@@ -25,11 +25,56 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Resolve GitHub App token input
+        id: app_config
+        env:
+          DIGEST_APP_CLIENT_ID: ${{ vars.DIGEST_APP_CLIENT_ID }}
+          DIGEST_APP_ID: ${{ vars.DIGEST_APP_ID }}
+        run: |
+          set -euo pipefail
+          if [ -n "${DIGEST_APP_CLIENT_ID:-}" ]; then
+            echo "::add-mask::$DIGEST_APP_CLIENT_ID"
+            echo "mode=client-id" >> "$GITHUB_OUTPUT"
+            echo "client_id=$DIGEST_APP_CLIENT_ID" >> "$GITHUB_OUTPUT"
+          elif [ -n "${DIGEST_APP_ID:-}" ]; then
+            echo "::add-mask::$DIGEST_APP_ID"
+            echo "::warning title=Legacy GitHub App variable::Using vars.DIGEST_APP_ID with the deprecated app-id input. Rename the repository variable to DIGEST_APP_CLIENT_ID and store the GitHub App Client ID there."
+            echo "mode=app-id" >> "$GITHUB_OUTPUT"
+            echo "app_id=$DIGEST_APP_ID" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error title=Missing GitHub App client ID::Set repository variable DIGEST_APP_CLIENT_ID to the GitHub App Client ID. During migration, vars.DIGEST_APP_ID is also accepted as a fallback."
+            exit 1
+          fi
       - uses: actions/create-github-app-token@v3
-        id: app_token
+        id: app_token_client
+        if: steps.app_config.outputs.mode == 'client-id'
         with:
-          client-id: ${{ vars.DIGEST_APP_CLIENT_ID }}
+          client-id: ${{ steps.app_config.outputs.client_id }}
           private-key: ${{ secrets.DIGEST_APP_PRIVATE_KEY }}
+      - uses: actions/create-github-app-token@v3
+        id: app_token_legacy
+        if: steps.app_config.outputs.mode == 'app-id'
+        with:
+          app-id: ${{ steps.app_config.outputs.app_id }}
+          private-key: ${{ secrets.DIGEST_APP_PRIVATE_KEY }}
+      - name: Select GitHub App token
+        id: app_token
+        env:
+          TOKEN_CLIENT: ${{ steps.app_token_client.outputs.token }}
+          TOKEN_LEGACY: ${{ steps.app_token_legacy.outputs.token }}
+          APP_SLUG_CLIENT: ${{ steps.app_token_client.outputs.app-slug }}
+          APP_SLUG_LEGACY: ${{ steps.app_token_legacy.outputs.app-slug }}
+        run: |
+          set -euo pipefail
+          token="${TOKEN_CLIENT:-${TOKEN_LEGACY:-}}"
+          app_slug="${APP_SLUG_CLIENT:-${APP_SLUG_LEGACY:-}}"
+          if [ -z "$token" ] || [ -z "$app_slug" ]; then
+            echo "::error title=GitHub App token was not created::The token action did not return token/app-slug outputs."
+            exit 1
+          fi
+          echo "::add-mask::$token"
+          echo "token=$token" >> "$GITHUB_OUTPUT"
+          echo "app-slug=$app_slug" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v6
         with:
           token: ${{ steps.app_token.outputs.token }}
