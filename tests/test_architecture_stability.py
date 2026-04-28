@@ -3,12 +3,16 @@ from __future__ import annotations
 import json
 import sqlite3
 import sys
+from pathlib import Path
 
 from eegfm_digest.batch import run_batch
 from eegfm_digest.config import Config
 from eegfm_digest.pipeline import run_month
 from eegfm_digest.run import main as run_main
 from eegfm_digest.site import update_home, write_month_site
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 def _candidate(arxiv_id_base: str, published: str, title: str = "Paper") -> dict:
@@ -83,6 +87,21 @@ def _backend_rows(papers: list[dict], summary_map: dict[str, dict | None]) -> li
             }
         )
     return rows
+
+
+def test_daily_workflow_resolves_github_app_client_id_before_token_action():
+    workflow = (REPO_ROOT / ".github/workflows/daily-digest.yml").read_text(encoding="utf-8")
+
+    assert "id: app_config" in workflow
+    assert "DIGEST_APP_CLIENT_ID: ${{ vars.DIGEST_APP_CLIENT_ID }}" in workflow
+    assert "DIGEST_APP_ID: ${{ vars.DIGEST_APP_ID }}" in workflow
+    assert "Missing GitHub App client ID" in workflow
+    assert "id: app_token_client" in workflow
+    assert "client-id: ${{ steps.app_config.outputs.client_id }}" in workflow
+    assert "id: app_token_legacy" in workflow
+    assert "app-id: ${{ steps.app_config.outputs.app_id }}" in workflow
+    assert "id: app_token" in workflow
+    assert "client-id: ${{ vars.DIGEST_APP_CLIENT_ID }}" not in workflow
 
 
 def test_single_month_run_main_respects_configured_models(monkeypatch, tmp_path):
