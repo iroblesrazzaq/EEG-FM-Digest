@@ -519,7 +519,7 @@
       }
     },
     {
-      "arxiv_id": "2604.25131v1",
+      "arxiv_id": "2604.25131v2",
       "arxiv_id_base": "2604.25131",
       "authors": [
         "Sicheng Dai",
@@ -533,8 +533,8 @@
         "cs.AI"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2604.25131v1",
-        "pdf": "https://arxiv.org/pdf/2604.25131v1"
+        "abs": "http://arxiv.org/abs/2604.25131v2",
+        "pdf": "https://arxiv.org/pdf/2604.25131v2"
       },
       "published_date": "2026-04-28",
       "summary": {
@@ -639,7 +639,7 @@
   ],
   "stats": {
     "accepted": 6,
-    "candidates": 11,
+    "candidates": 13,
     "summarized": 6
   },
   "top_picks": [
