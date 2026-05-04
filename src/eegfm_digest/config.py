@@ -23,7 +23,7 @@ class Config:
     output_dir: Path = Path("outputs")
     data_dir: Path = Path("data")
     docs_dir: Path = Path("docs")
-    max_candidates: int = 500
+    max_candidates: int = 1000
     max_accepted: int = 80
     include_borderline: bool = False
     max_borderline_pdfs: int = 20
@@ -60,7 +60,7 @@ def load_config() -> Config:
         output_dir=Path(os.environ.get("OUTPUT_DIR", "outputs")),
         data_dir=Path(os.environ.get("DATA_DIR", "data")),
         docs_dir=Path(os.environ.get("DOCS_DIR", "docs")),
-        max_candidates=int(os.environ.get("MAX_CANDIDATES", "500")),
+        max_candidates=int(os.environ.get("MAX_CANDIDATES", "1000")),
         max_accepted=int(os.environ.get("MAX_ACCEPTED", "80")),
         include_borderline=os.environ.get("INCLUDE_BORDERLINE", "false").lower() in {"1", "true", "yes"},
         max_borderline_pdfs=int(os.environ.get("MAX_BORDERLINE_PDFS", "20")),

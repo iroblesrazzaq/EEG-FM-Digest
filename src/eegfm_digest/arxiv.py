@@ -8,7 +8,7 @@ from typing import Any
 
 import httpx
 
-from .keywords import ARXIV_CATEGORIES, QUERY_A, QUERY_B
+from .keywords import QUERY
 
 ARXIV_API_URL = "https://export.arxiv.org/api/query"
 ATOM_NS = {"atom": "http://www.w3.org/2005/Atom"}
@@ -77,10 +77,6 @@ def in_month(published: str, month: str) -> bool:
     dt = datetime.fromisoformat(published.replace("Z", "+00:00"))
     start, end = month_bounds(month)
     return start <= dt < end
-
-
-def category_match(categories: list[str]) -> bool:
-    return any(cat in ARXIV_CATEGORIES for cat in categories)
 
 
 def dedupe_latest(papers: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -168,15 +164,7 @@ def fetch_month_candidates(
     retry_backoff_seconds: float = 2.0,
 ) -> list[dict[str, Any]]:
     combined = fetch_query(
-        QUERY_A,
-        max_candidates,
-        rate_limit_seconds,
-        connect_timeout_seconds=connect_timeout_seconds,
-        read_timeout_seconds=read_timeout_seconds,
-        retries=retries,
-        retry_backoff_seconds=retry_backoff_seconds,
-    ) + fetch_query(
-        QUERY_B,
+        QUERY,
         max_candidates,
         rate_limit_seconds,
         connect_timeout_seconds=connect_timeout_seconds,
@@ -184,7 +172,7 @@ def fetch_month_candidates(
         retries=retries,
         retry_backoff_seconds=retry_backoff_seconds,
     )
-    filtered = [p for p in combined if category_match(p["categories"]) and in_month(p["published"], month)]
+    filtered = [p for p in combined if in_month(p["published"], month)]
     return dedupe_latest(filtered)
 
 
@@ -218,10 +206,10 @@ def fetch_window_candidates(
 ) -> list[dict[str, Any]]:
     """Return candidates with ``submittedDate`` in ``[since, until)``.
 
-    The ``submittedDate:[...]`` filter is appended to ``QUERY_A`` and
-    ``QUERY_B`` to keep the daily window tight at the source instead of
-    paging through a full month.  Client-side filtering still applies
-    because arXiv's minute-precision bounds are coarser than our window.
+    The ``submittedDate:[...]`` filter is appended to ``QUERY`` to keep
+    the daily window tight at the source instead of paging through a
+    full month.  Client-side filtering still applies because arXiv's
+    minute-precision bounds are coarser than our window.
     """
     if until <= since:
         raise ValueError(f"until ({until!r}) must be strictly greater than since ({since!r})")
@@ -234,16 +222,7 @@ def fetch_window_candidates(
     )
 
     combined = fetch_query(
-        QUERY_A + date_filter,
-        max_candidates,
-        rate_limit_seconds,
-        connect_timeout_seconds=connect_timeout_seconds,
-        read_timeout_seconds=read_timeout_seconds,
-        retries=retries,
-        retry_backoff_seconds=retry_backoff_seconds,
-        client=client,
-    ) + fetch_query(
-        QUERY_B + date_filter,
+        QUERY + date_filter,
         max_candidates,
         rate_limit_seconds,
         connect_timeout_seconds=connect_timeout_seconds,
@@ -256,7 +235,7 @@ def fetch_window_candidates(
     filtered = [
         p
         for p in combined
-        if category_match(p["categories"]) and _in_window(p["published"], since_utc, until_utc)
+        if _in_window(p["published"], since_utc, until_utc)
     ]
     return dedupe_latest(filtered)
 
