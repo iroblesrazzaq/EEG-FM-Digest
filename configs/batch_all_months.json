@@ -15,5 +15,5 @@
   "sync_cache_from_outputs": true,
   "max_candidates": null,
   "max_accepted": null,
-  "env_path": "~/2_cs_projects/env/.env"
+  "env_path": "~/2_cs_projects/env/llm_api/.env"
 }
