@@ -355,7 +355,7 @@ def test_pipeline_site_outputs_manifest_month_revision(monkeypatch, tmp_path):
     assert (cfg.docs_dir / "process" / "index.html").exists()
 
 
-def test_pipeline_removes_stale_summary_when_triage_flips_to_reject(monkeypatch, tmp_path):
+def test_pipeline_preserves_summary_when_triage_flips_to_reject(monkeypatch, tmp_path):
     candidate = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Flip Paper")
     candidates = [candidate]
 
@@ -461,15 +461,19 @@ def test_pipeline_removes_stale_summary_when_triage_flips_to_reject(monkeypatch,
     paper_rows = _read_jsonl(month_out / "papers.jsonl")
     backend_rows = _read_jsonl(month_out / "backend_rows.jsonl")
 
+    # Site is filtered: rejected paper is hidden from papers.jsonl and the
+    # backend row's paper_summary slot is not populated for the current run.
     assert paper_rows == []
     assert backend_rows[0]["paper_summary"] is None
 
+    # ...but the prior summary in the DB is preserved, so a future re-run
+    # (or model swap that flips the decision back) can reuse the work.
     conn = sqlite3.connect(cfg.data_dir / "digest.sqlite")
     try:
         summary_count = conn.execute("SELECT COUNT(*) FROM summaries WHERE arxiv_id_base=?", ("2501.00001",)).fetchone()[0]
     finally:
         conn.close()
-    assert summary_count == 0
+    assert summary_count == 1
 
 
 def test_pipeline_reraises_llm_rate_limit_errors(monkeypatch, tmp_path):

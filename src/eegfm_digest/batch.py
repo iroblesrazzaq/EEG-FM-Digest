@@ -313,10 +313,9 @@ def _run_summary_phase_for_month(
     )
 
     summary_map: dict[str, dict[str, Any]] = {}
-    rejected_ids = {aid for aid, triage in triage_map.items() if triage.get("decision") == "reject"}
-    for aid in rejected_ids:
-        summary_map.pop(aid, None)
-        db.delete_summary(aid)
+    # Summaries are preserved across triage flips: site rendering already
+    # filters by current triage decision, so a previously-accepted paper
+    # that now triages as reject is hidden but its summary work is kept.
 
     existing_backend = _load_jsonl(month_out / "backend_rows.jsonl")
     pdf_map: dict[str, dict[str, Any]] = {
