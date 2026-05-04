@@ -37,7 +37,7 @@ _PROCESS_DETAILS_STEPS = [
 ]
 
 _PROCESS_DETAILS_FOOTER = (
-    "Current triage and summary LLM calls use stepfun/step-3.5-flash:free via OpenRouter. "
+    "Current triage and summary LLM calls use gemma-4-31b-it via Google AI Studio. "
     "For all previous papers (2021 - Jan 2026), running this whole process cost ~3 million tokens, so each accepted paper costs "
     "~30,000 tokens (including averaged triage costs for papers that don't pass). Crucially, this digest "
     "excludes models pretrained on data from one specific task and fine-tuned specifically for that same task "

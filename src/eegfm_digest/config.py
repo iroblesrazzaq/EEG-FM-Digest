@@ -6,14 +6,14 @@ import os
 
 from .llm import infer_provider_from_env
 
-DEFAULT_OPENROUTER_MODEL = "stepfun/step-3.5-flash:free"
+DEFAULT_LLM_MODEL = "gemma-4-31b-it"
 
 
 @dataclass(frozen=True)
 class Config:
     llm_model_triage: str
     llm_model_summary: str
-    llm_provider: str = "openrouter"
+    llm_provider: str = "google"
     arxiv_rate_limit_seconds: float = 2.0
     arxiv_connect_timeout_seconds: float = 10.0
     arxiv_read_timeout_seconds: float = 60.0
@@ -43,13 +43,13 @@ def load_config() -> Config:
             os.environ.get("OPENROUTER_MODEL_TRIAGE")
             or os.environ.get("LLM_MODEL_TRIAGE")
             or os.environ.get("GEMINI_MODEL_TRIAGE")
-            or DEFAULT_OPENROUTER_MODEL
+            or DEFAULT_LLM_MODEL
         ),
         llm_model_summary=(
             os.environ.get("OPENROUTER_MODEL_SUMMARY")
             or os.environ.get("LLM_MODEL_SUMMARY")
             or os.environ.get("GEMINI_MODEL_SUMMARY")
-            or DEFAULT_OPENROUTER_MODEL
+            or DEFAULT_LLM_MODEL
         ),
         arxiv_rate_limit_seconds=float(os.environ.get("ARXIV_RATE_LIMIT_SECONDS", "2")),
         arxiv_connect_timeout_seconds=float(os.environ.get("ARXIV_CONNECT_TIMEOUT_SECONDS", "10")),
