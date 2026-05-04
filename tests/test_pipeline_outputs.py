@@ -502,3 +502,101 @@ def test_pipeline_reraises_llm_rate_limit_errors(monkeypatch, tmp_path):
 
     with pytest.raises(LLMRateLimitError):
         run_month(cfg, "2025-01", no_site=True)
+
+
+def test_pipeline_pdf_download_failure_bumps_summary_failures(monkeypatch, tmp_path):
+    candidates = [_candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")]
+
+    monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda *_args, **_kwargs: "test-key")
+
+    class DummyLMCall:
+        def close(self):  # noqa: ANN201
+            return None
+
+    monkeypatch.setattr("eegfm_digest.pipeline.build_llm_call", lambda *_args, **_kwargs: DummyLMCall())
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.triage_paper",
+        lambda paper, *_a, **_k: {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "decision": "accept",
+            "confidence": 0.9,
+            "reasons": ["r"],
+        },
+    )
+
+    def fail_download(_url, _out_path, _rate):  # noqa: ANN001
+        raise RuntimeError("simulated network failure")
+
+    monkeypatch.setattr("eegfm_digest.pipeline.download_pdf", fail_download)
+
+    summarize_called = False
+
+    def fake_summarize(*_a, **_k):  # noqa: ANN001
+        nonlocal summarize_called
+        summarize_called = True
+        raise AssertionError("summarize_paper should not be called when PDF fails")
+
+    monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", fake_summarize)
+
+    cfg = Config(
+        llm_model_triage="triage-model",
+        llm_model_summary="summary-model",
+        output_dir=tmp_path / "outputs",
+        data_dir=tmp_path / "data",
+        docs_dir=tmp_path / "docs",
+        max_candidates=20,
+        max_accepted=20,
+        arxiv_rate_limit_seconds=0.0,
+        pdf_rate_limit_seconds=0.0,
+    )
+
+    stats = run_month(cfg, "2025-01", no_site=True)
+
+    assert stats.summary_failures == 1
+    assert stats.summarized == 0
+    assert stats.accepted == 1
+    assert summarize_called is False
+
+
+def test_pipeline_missing_pdf_link_bumps_summary_failures(monkeypatch, tmp_path):
+    paper = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")
+    paper["links"]["pdf"] = ""  # accepted paper, no pdf URL
+    candidates = [paper]
+
+    monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda *_args, **_kwargs: "test-key")
+
+    class DummyLMCall:
+        def close(self):  # noqa: ANN201
+            return None
+
+    monkeypatch.setattr("eegfm_digest.pipeline.build_llm_call", lambda *_args, **_kwargs: DummyLMCall())
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.triage_paper",
+        lambda p, *_a, **_k: {
+            "arxiv_id_base": p["arxiv_id_base"],
+            "decision": "accept",
+            "confidence": 0.9,
+            "reasons": ["r"],
+        },
+    )
+    monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", lambda *_a, **_k: pytest.fail("should not be called"))
+
+    cfg = Config(
+        llm_model_triage="triage-model",
+        llm_model_summary="summary-model",
+        output_dir=tmp_path / "outputs",
+        data_dir=tmp_path / "data",
+        docs_dir=tmp_path / "docs",
+        max_candidates=20,
+        max_accepted=20,
+        arxiv_rate_limit_seconds=0.0,
+        pdf_rate_limit_seconds=0.0,
+    )
+
+    stats = run_month(cfg, "2025-01", no_site=True)
+
+    assert stats.summary_failures == 1
+    assert stats.summarized == 0
+    assert stats.accepted == 1
