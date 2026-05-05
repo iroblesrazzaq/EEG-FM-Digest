@@ -46,14 +46,8 @@ Exclude:
 
 ## 3) Stage 1: arXiv candidate retrieval
 
-### 3.1 Categories to search (recall net)
-Filter to candidates that have **any** of these categories (primary or cross-list):
-- `q-bio.NC`
-- `cs.LG`
-- `stat.ML`
-- `eess.SP`
-- `cs.AI`
-- `cs.NE` (optional but recommended)
+### 3.1 Category filter
+None.  Retrieval is keyword-only; Stage 2 LLM triage is the precision gate.
 
 ### 3.2 Keyword strategy (title+abstract)
 
@@ -70,14 +64,10 @@ FM / pretraining anchor terms (OR):
 - `masked`
 - `transfer` OR `generaliz*`
 
-### 3.3 arXiv query implementation (literal strings)
-Use 2 queries and union results:
+### 3.3 arXiv query implementation (literal string)
+Single merged query — EEG anchor terms AND the union of FM/pretraining anchor terms:
 
-- Query A (explicit FM/pretrain language):
-  - `all:(eeg OR electroencephalograph* OR brainwave*) AND all:("foundation model" OR pretrain OR pretrained OR "self-supervised" OR "self supervised")`
-
-- Query B (masked/representation/transfer language):
-  - `all:(eeg OR electroencephalograph* OR brainwave*) AND all:("representation learning" OR masked OR transfer OR generaliz*)`
+- `all:(eeg OR electroencephalograph* OR brainwave*) AND all:("foundation model" OR pretrain OR pretrained OR "self-supervised" OR "self supervised" OR "representation learning" OR masked OR transfer OR generaliz*)`
 
 Implementation notes:
 - Use arXiv API endpoint `https://export.arxiv.org/api/query`
@@ -231,7 +221,7 @@ State file: `data/last_successful_run.json` (git-tracked, version 1).
 Window resolution:
 - `until = --until` or wall-clock UTC.
 - `since = --since`, else `last_query_end_utc - overlap_hours` from the run log, else `until - 24h` (first-ever run, with a warning).
-- arXiv query: `QUERY_A` / `QUERY_B` appended with `AND submittedDate:[YYYYMMDDHHMM TO YYYYMMDDHHMM]`.
+- arXiv query: `QUERY` appended with `AND submittedDate:[YYYYMMDDHHMM TO YYYYMMDDHHMM]`.
 - Window results are grouped by `published[:7]`; each distinct month triggers a normal `run_month` invocation.  SQLite cache ensures already-triaged papers do not re-invoke the LLM.
 
 Success definition: the run is "successful" iff `run_window` returns without raising `ArxivFetchError` or `LLMRateLimitError`.  On success the run log is overwritten with the new window end.  On failure the run log is left untouched and the next run auto-covers the same window via the overlap.

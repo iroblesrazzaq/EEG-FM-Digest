@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2412.07236",
+  "featured_paper_id": null,
   "month": "2024-12",
   "papers": [
     {
@@ -126,12 +126,95 @@
       "summary_failed_reason": null,
       "title": "CBraMod: A Criss-Cross Brain Foundation Model for EEG Decoding",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "proposes EEG foundation model CBraMod",
-          "addresses challenges in EEG-FM generalizability",
-          "evaluates on 10 downstream BCI tasks"
+          "Explicitly proposes a novel EEG foundation model called CBraMod",
+          "Pre-trained on a very large corpus of EEG using patch-based masked reconstruction",
+          "Evaluated for generalizability across 10 downstream BCI tasks and 12 public datasets"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2412.09758v2",
+      "arxiv_id_base": "2412.09758",
+      "authors": [
+        "Yunfei Luo",
+        "Yuliang Chen",
+        "Asif Salekin",
+        "Tauhidur Rahman"
+      ],
+      "categories": [
+        "cs.LG",
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2412.09758v2",
+        "pdf": "https://arxiv.org/pdf/2412.09758v2"
+      },
+      "published_date": "2024-12-12",
+      "summary": {
+        "arxiv_id_base": "2412.09758",
+        "categories": [
+          "cs.LG",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 114021, \"error\": null, \"pages\": 35, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=30676;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2024-12-12",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Toward Foundation Model for Multivariate Wearable Sensing of Physiological Signals",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Toward Foundation Model for Multivariate Wearable Sensing of Physiological Signals",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly proposes 'NormWear', a foundation model for wearable sensing data.",
+          "EEG is explicitly listed as one of the core modalities used for pretraining.",
+          "Demonstrates broad transferability across 11 datasets and 18 applications using zero-shot, partial-shot, and full-shot settings."
         ]
       }
     },
@@ -246,20 +329,21 @@
         "confidence": 0.9,
         "decision": "accept",
         "reasons": [
-          "EEG used as large pre-training dataset",
-          "Masked auto-encoding for bio-signal transfer learning",
-          "Multimodal pre-training improves downstream performance"
+          "Proposes a pretrained convolution-transformer hybrid model using masked auto-encoding for bio-signal transfer learning.",
+          "Explicitly describes pre-training on large EEG datasets to create representations for broad transfer to various downstream bio-signal tasks.",
+          "Focuses on self-supervised pre-training and multimodal transfer, aligning with the definition of a foundation model for bio-signals."
         ]
       }
     }
   ],
   "stats": {
-    "accepted": 2,
-    "candidates": 15,
-    "summarized": 2
+    "accepted": 3,
+    "candidates": 18,
+    "summarized": 3
   },
   "top_picks": [
     "2412.07236",
-    "2412.11695"
+    "2412.11695",
+    "2412.09758"
   ]
 }

@@ -4,16 +4,19 @@
 ## Goal
 Implement SPEC.md using:
 - arXiv API (Atom feed)
-- OpenRouter chat completions API
+- Google AI Studio (primary) or OpenRouter (fallback) chat completions API
 - SQLite for state
 - deterministic HTML site output in docs/
 
 ## Key choices (do not deviate without updating SPEC.md)
-- LLM provider: OpenRouter
+- LLM provider: Google AI Studio (gemma-4-31b-it); OpenRouter still supported as fallback
 - Publishing: GitHub Pages from /docs (static HTML, no-Jekyll)
 
 ## Environment variables
-- OPENROUTER_API_KEY
+- GEMINI_API_KEY (primary)
+- GEMINI_MODEL_TRIAGE (default: gemma-4-31b-it)
+- GEMINI_MODEL_SUMMARY (default: gemma-4-31b-it)
+- OPENROUTER_API_KEY (optional fallback)
 - OPENROUTER_MODEL_TRIAGE
 - OPENROUTER_MODEL_SUMMARY
 

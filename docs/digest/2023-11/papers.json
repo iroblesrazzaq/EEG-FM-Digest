@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2311.03764",
+  "featured_paper_id": null,
   "month": "2023-11",
   "papers": [
     {
@@ -102,20 +102,19 @@
       "summary_failed_reason": null,
       "title": "Neuro-GPT: Towards A Foundation Model for EEG",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "EEG is central modality",
-          "Explicitly proposes EEG foundation model (Neuro-GPT)",
-          "Pre-trained on large-scale EEG data for broad transfer",
-          "Validated via fine-tuning on BCI task"
+          "Explicitly proposes 'Neuro-GPT' as a foundation model for EEG",
+          "Uses large-scale self-supervised pretraining via masked EEG segment reconstruction",
+          "Demonstrates generalizability and transferability through fine-tuning on a downstream BCI task"
         ]
       }
     }
   ],
   "stats": {
     "accepted": 1,
-    "candidates": 13,
+    "candidates": 16,
     "summarized": 1
   },
   "top_picks": [

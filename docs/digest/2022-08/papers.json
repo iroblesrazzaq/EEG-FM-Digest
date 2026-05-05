@@ -1,9 +1,10 @@
 {
+  "featured_paper_id": null,
   "month": "2022-08",
   "papers": [],
   "stats": {
     "accepted": 0,
-    "candidates": 3,
+    "candidates": 4,
     "summarized": 0
   },
   "top_picks": []

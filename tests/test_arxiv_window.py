@@ -88,7 +88,7 @@ def test_fetch_window_candidates_adds_date_filter_to_query(monkeypatch):
         client=client,
     )
 
-    assert len(client.calls) == 2  # QUERY_A + QUERY_B
+    assert len(client.calls) == 1  # single merged QUERY
     for params in client.calls:
         q = params["search_query"]
         assert "submittedDate:[202604220000 TO 202604230000]" in q

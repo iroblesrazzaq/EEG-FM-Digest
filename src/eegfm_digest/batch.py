@@ -47,9 +47,9 @@ class BatchRunConfig:
     triage_force: bool = False
     summary_force: bool = False
     include_borderline: bool = False
-    triage_provider: str = "openrouter"
+    triage_provider: str = "google"
     triage_model: str = ""
-    summary_provider: str = "openrouter"
+    summary_provider: str = "google"
     summary_model: str = ""
     triage_sleep_seconds: float = 0.0
     summary_sleep_seconds: float = 0.0
@@ -101,9 +101,9 @@ def _parse_batch_config(path: Path) -> BatchRunConfig:
         triage_force=bool(raw.get("triage_force", False)),
         summary_force=bool(raw.get("summary_force", False)),
         include_borderline=bool(raw.get("include_borderline", False)),
-        triage_provider=str(raw.get("triage_provider", raw.get("summary_provider", "openrouter"))),
+        triage_provider=str(raw.get("triage_provider", raw.get("summary_provider", "google"))),
         triage_model=str(raw.get("triage_model", raw.get("summary_model", ""))),
-        summary_provider=str(raw.get("summary_provider", "openrouter")),
+        summary_provider=str(raw.get("summary_provider", "google")),
         summary_model=str(raw.get("summary_model", "")),
         triage_sleep_seconds=float(raw.get("triage_sleep_seconds", 0.0)),
         summary_sleep_seconds=float(raw.get("summary_sleep_seconds", 0.0)),
@@ -313,23 +313,22 @@ def _run_summary_phase_for_month(
     )
 
     summary_map: dict[str, dict[str, Any]] = {}
-    rejected_ids = {aid for aid, triage in triage_map.items() if triage.get("decision") == "reject"}
-    for aid in rejected_ids:
-        summary_map.pop(aid, None)
-        db.delete_summary(aid)
+    # Summaries are preserved across triage flips: site rendering already
+    # filters by current triage decision, so a previously-accepted paper
+    # that now triages as reject is hidden but its summary work is kept.
 
     existing_backend = _load_jsonl(month_out / "backend_rows.jsonl")
     pdf_map: dict[str, dict[str, Any]] = {
         row.get("arxiv_id_base", ""): row.get("pdf") or _empty_pdf_state() for row in existing_backend
     }
 
-    print(f"[summary] {month}: accepted={len(accepted)} cached={len(summary_map)}")
-
+    cache_hit_count = 0
     for paper in accepted:
         aid = paper["arxiv_id_base"]
         cached_summary = None if run_cfg.summary_force else db.get_summary_with_meta(aid)
         if cached_summary and is_cache_current(cached_summary.get("meta"), summary_descriptor["cache_version"]):
             summary_map[aid] = cached_summary["data"]
+            cache_hit_count += 1
             continue
         pdf_state = _empty_pdf_state()
         raw_text = ""
@@ -445,7 +444,8 @@ def _run_summary_phase_for_month(
 
     db.upsert_run(month, digest["stats"])
     print(
-        f"[summary] {month}: done summarized={len(summaries)} accepted={digest['stats']['accepted']} candidates={digest['stats']['candidates']}"
+        f"[summary] {month}: done summarized={len(summaries)} cached={cache_hit_count} "
+        f"accepted={digest['stats']['accepted']} candidates={digest['stats']['candidates']}"
     )
 
 

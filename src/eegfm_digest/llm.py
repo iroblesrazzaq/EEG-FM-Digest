@@ -51,14 +51,14 @@ def normalize_provider(provider: str) -> str:
     return normalized
 
 
-def infer_provider_from_env(default: str = "openrouter") -> str:
+def infer_provider_from_env(default: str = "google") -> str:
     explicit = os.environ.get("LLM_PROVIDER") or os.environ.get("LLM_API_PROVIDER")
     if explicit:
         return normalize_provider(explicit)
-    if os.environ.get("OPENROUTER_API_KEY"):
-        return "openrouter"
     if os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"):
         return "google"
+    if os.environ.get("OPENROUTER_API_KEY"):
+        return "openrouter"
     if os.environ.get("OPENAI_API_KEY"):
         return "openai"
     return normalize_provider(default)

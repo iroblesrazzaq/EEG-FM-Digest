@@ -22,8 +22,8 @@ OpenRouter remains supported:
 ```bash
 export LLM_PROVIDER="openrouter"
 export OPENROUTER_API_KEY="..."
-export OPENROUTER_MODEL_TRIAGE="stepfun/step-3.5-flash:free"
-export OPENROUTER_MODEL_SUMMARY="stepfun/step-3.5-flash:free"
+export OPENROUTER_MODEL_TRIAGE="<your-openrouter-model>"
+export OPENROUTER_MODEL_SUMMARY="<your-openrouter-model>"
 ```
 
 ## Main run command
@@ -68,7 +68,7 @@ python -m eegfm_digest.batch --config configs/batch_all_months.json
 python -m eegfm_digest.batch --config configs/batch_single_month.json
 ```
 
-The checked-in batch configs still default to OpenRouter, but the runner now also accepts `triage_provider` / `summary_provider` values compatible with Google AI Studio.
+The checked-in batch configs default to Google AI Studio (`gemma-4-31b-it`); set `triage_provider` / `summary_provider` (and `triage_model` / `summary_model`) in the JSON to override.
 
 Wrapper scripts:
 ```bash

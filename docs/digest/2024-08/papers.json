@@ -1,128 +1,7 @@
 {
-  "featured_paper_id": "2409.00101",
+  "featured_paper_id": null,
   "month": "2024-08",
   "papers": [
-    {
-      "arxiv_id": "2409.00101v3",
-      "arxiv_id_base": "2409.00101",
-      "authors": [
-        "Wei-Bang Jiang",
-        "Yansen Wang",
-        "Bao-Liang Lu",
-        "Dongsheng Li"
-      ],
-      "categories": [
-        "eess.SP",
-        "cs.HC",
-        "cs.LG"
-      ],
-      "links": {
-        "abs": "http://arxiv.org/abs/2409.00101v3",
-        "pdf": "https://arxiv.org/pdf/2409.00101v3"
-      },
-      "published_date": "2024-08-27",
-      "summary": {
-        "arxiv_id_base": "2409.00101",
-        "categories": [
-          "eess.SP",
-          "cs.HC",
-          "cs.LG"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [
-            "TUAB",
-            "TUEV",
-            "SEED",
-            "HMC",
-            "Workload",
-            "TUSL"
-          ],
-          "eeg_hours": 25000.0,
-          "subjects": null
-        },
-        "detailed_summary": "NeuroLM introduces a novel approach to EEG signal processing by integrating EEG data into a Large Language Model (LLM) framework. The model employs a text-aligned neural tokenizer that encodes EEG signals into discrete tokens through vector-quantized temporal-frequency prediction, enabling alignment between EEG and text embedding spaces. This tokenizer is trained using adversarial methods to ensure the EEG embeddings fall into the same space as text embeddings. The model then undergoes multi-channel autoregressive pre-training on a large-scale corpus of approximately 25,000 hours of EEG data, allowing it to learn causal representations across different EEG channels. Finally, multi-task instruction tuning adapts NeuroLM to various downstream tasks, demonstrating its ability to perform multiple tasks within a single model. The largest variant, NeuroLM-XL, has 1.7 billion parameters, setting a record for EEG signal processing. When evaluated on six diverse downstream datasets, NeuroLM showcases the potential of this multi-task learning paradigm, achieving performance comparable to most single-task baselines while offering the advantage of unified task handling.",
-        "evaluation": {
-          "benchmarks": [
-            "TUAB",
-            "TUEV",
-            "SEED",
-            "HMC",
-            "Workload",
-            "TUSL"
-          ],
-          "headline_results": [
-            "Achieved performance comparable to most single-task baselines",
-            "NeuroLM-XL has 1.7 billion parameters",
-            "Used metrics such as balanced accuracy, AUC-PR, AUROC, Cohen's Kappa, and weighted F1 score"
-          ],
-          "tasks": [
-            "abnormal detection",
-            "event type classification",
-            "emotion recognition",
-            "sleep stage classification",
-            "cognitive workload classification",
-            "slowing event classification"
-          ]
-        },
-        "key_points": [
-          "New EEG foundation model: NeuroLM unifies diverse EEG tasks within a single model through instruction tuning, leveraging LLMs to treat EEG as a foreign language.",
-          "Novel text-aligned neural tokenizer: Encodes EEG signals into discrete tokens through vector-quantized temporal-frequency prediction, enabling alignment between EEG and text embedding spaces.",
-          "Large-scale multi-channel autoregressive pre-training: Pre-trained on 25,000 hours of EEG data to learn causal representations across different EEG channels, enhancing generalization across diverse tasks."
-        ],
-        "limitations": [
-          "NeuroLM still lags behind state-of-the-art methods that are end-to-end trained on each downstream dataset.",
-          "The model is somewhat sensitive to hyperparameter settings and may not yield satisfactory results without careful tuning.",
-          "With limited high-quality EEG-text pairs available, the paper only employs coarse-grained alignment between EEG and language, which can pose challenges for LLMs in extracting useful information from EEG tokens."
-        ],
-        "method": {
-          "architecture": "NeuroLM employs a text-aligned neural tokenizer that encodes EEG signals into discrete tokens through vector-quantized temporal-frequency prediction. These tokens are then fed into an LLM that learns causal EEG information via multi-channel autoregression.",
-          "finetuning": "Multi-task instruction tuning to adapt to various downstream tasks.",
-          "objective": "The model is pre-trained on a large-scale corpus of approximately 25,000 hours of EEG data and undergoes multi-task instruction tuning to adapt to various downstream tasks.",
-          "pretraining": "Multi-channel autoregressive pre-training on 25,000 hours of EEG data to learn causal representations across different EEG channels."
-        },
-        "notes": "{\"chars\": 107739, \"error\": null, \"pages\": 22, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=28732",
-        "one_liner": "NeuroLM is the first multi-task foundation model that unifies diverse EEG tasks within a single model through instruction tuning, leveraging LLMs to treat EEG as a foreign language.",
-        "open_source": {
-          "code_url": "https://github.com/935963004/NeuroLM",
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "new_model",
-        "published_date": "2024-08-27",
-        "tags": {
-          "backbone": [
-            "transformer"
-          ],
-          "objective": [
-            "autoregressive"
-          ],
-          "paper_type": [
-            "new-model"
-          ],
-          "tokenization": [
-            "discrete-tokens"
-          ],
-          "topology": [
-            "channel-flexible"
-          ]
-        },
-        "title": "NeuroLM: A Universal Multi-task Foundation Model for Bridging the Gap between Language and EEG Signals",
-        "unique_contribution": "NeuroLM is the first multi-task foundation model for EEG that unifies diverse tasks within a single model through instruction tuning, leveraging LLMs to treat EEG as a foreign language.",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
-      "title": "NeuroLM: A Universal Multi-task Foundation Model for Bridging the Gap between Language and EEG Signals",
-      "triage": {
-        "confidence": 0.95,
-        "decision": "accept",
-        "reasons": [
-          "proposes NeuroLM, a multi-task foundation model for EEG",
-          "explicitly frames EEG as a modality for foundation model pretraining",
-          "demonstrates pretraining on large-scale EEG corpus (25,000-hour)"
-        ]
-      }
-    },
     {
       "arxiv_id": "2409.00122v1",
       "arxiv_id_base": "2409.00122",
@@ -235,23 +114,22 @@
       "summary_failed_reason": null,
       "title": "Brant-X: A Unified Physiological Signal Alignment Framework",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 0.9,
         "decision": "accept",
         "reasons": [
-          "EEG foundation model used for knowledge transfer to other physiological signals",
-          "Framework explicitly models EEG-other signal correlations",
-          "Achieves SOTA on multiple downstream tasks using EEG-FM"
+          "Explicitly employs an EEG foundation model to transfer knowledge to other physiological signals",
+          "Focuses on a unified alignment framework to align EEG semantics with other modalities",
+          "Fits the EEG-FM ecosystem criteria regarding alignment and adaptation of foundation models"
         ]
       }
     }
   ],
   "stats": {
-    "accepted": 2,
-    "candidates": 11,
-    "summarized": 2
+    "accepted": 1,
+    "candidates": 12,
+    "summarized": 1
   },
   "top_picks": [
-    "2409.00122",
-    "2409.00101"
+    "2409.00122"
   ]
 }

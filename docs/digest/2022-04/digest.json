@@ -1,20 +1,11 @@
 {
-  "featured_paper": "2204.03272",
+  "featured_paper": null,
   "month": "2022-04",
-  "sections": [
-    {
-      "paper_ids": [
-        "2204.03272"
-      ],
-      "title": "new_model"
-    }
-  ],
+  "sections": [],
   "stats": {
-    "accepted": 1,
+    "accepted": 0,
     "candidates": 4,
-    "summarized": 1
+    "summarized": 0
   },
-  "top_picks": [
-    "2204.03272"
-  ]
+  "top_picks": []
 }

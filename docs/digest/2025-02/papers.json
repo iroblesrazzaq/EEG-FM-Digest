@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2502.17464",
+  "featured_paper_id": null,
   "month": "2025-02",
   "papers": [
     {
@@ -113,10 +113,10 @@
         "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "Explicitly proposes LEAD as a 'large-scale foundation model for EEG-based AD detection'",
-          "Uses a pre-training strategy on a large-scale corpus of 13 different EEG datasets",
-          "Demonstrates broad transferability by fine-tuning and testing on 5 downstream AD datasets",
-          "Directly compares performance against other state-of-the-art EEG foundation models"
+          "Explicitly proposes 'LEAD', described as a 'large-scale foundation model for EEG-based AD detection'.",
+          "Utilizes a pre-training strategy on a large-scale corpus comprising 13 different datasets.",
+          "Evaluates the model's transferability by fine-tuning on 5 downstream AD datasets.",
+          "Directly compares performance against existing state-of-the-art EEG foundation models."
         ]
       }
     },
@@ -228,8 +228,9 @@
         "decision": "accept",
         "reasons": [
           "Explicitly identifies as a 'Bidirectional Mamba Foundation Model' for EEG.",
-          "Utilizes a self-supervised framework trained on a large-scale dataset of 21,000 hours of unlabeled EEG.",
-          "Demonstrates broad transferability by fine-tuning on multiple downstream tasks for general-purpose analytics."
+          "Utilizes a self-supervised framework trained on a large-scale dataset of over 21,000 hours of unlabeled EEG.",
+          "Demonstrates broad transferability by fine-tuning the pretrained model on multiple downstream tasks.",
+          "Explicitly aims to provide 'general-purpose EEG analytics'."
         ]
       }
     },
@@ -336,9 +337,9 @@
         "confidence": 0.9,
         "decision": "accept",
         "reasons": [
-          "Explicitly utilizes 'EEG-based foundation models' as the starting point for transfer learning.",
+          "Explicitly utilizes 'EEG-based foundation models' as the core architecture.",
           "Investigates the transferability of representations learned from abundant EEG data to other biosignals (ECG/PPG).",
-          "Focuses on the adaptation and fine-tuning of an EEG-FM, fitting the ecosystem criteria for EEG-FM evaluation and transfer."
+          "Focuses on the adaptation and fine-tuning of an EEG-FM for a downstream task, fitting the ecosystem criteria."
         ]
       }
     },
@@ -443,9 +444,10 @@
         "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "Explicitly proposes a 'transformer-based foundation model' designed to generalize across diverse EEG datasets and tasks.",
-          "Utilizes large-scale self-supervised learning to capture 'universal EEG representations'.",
-          "Focuses on broad transferability and efficient fine-tuning for multiple downstream EEG applications."
+          "Title explicitly identifies the work as a 'Pretrained EEG Foundation Model'.",
+          "Abstract describes a transformer-based foundation model designed to generalize across diverse EEG datasets and downstream tasks.",
+          "Explicitly mentions using large-scale self-supervised learning to capture 'universal EEG representations'.",
+          "Focuses on efficient fine-tuning for multiple applications including cognitive state decoding and disease classification."
         ]
       }
     },
@@ -553,10 +555,10 @@
         "confidence": 0.9,
         "decision": "accept",
         "reasons": [
-          "Title explicitly frames the work as 'Toward Foundational Model for Sleep Analysis'.",
-          "Uses a hybrid self-supervised learning framework (masked prediction and contrastive learning) to learn expressive representations.",
-          "Demonstrates transferability across multiple downstream tasks including sleep-stage classification, apnea detection, and hypopnea detection.",
-          "EEG is a core modality within the multimodal PSG data used for the pretrained model."
+          "Explicitly frames the work as a 'Foundational Model' for sleep analysis in the title and abstract.",
+          "Employs a hybrid self-supervised learning framework (masked prediction and contrastive learning) to learn reusable representations.",
+          "Evaluates the model across multiple downstream tasks (sleep-stage classification, apnea, and hypopnea detection), demonstrating broad transferability.",
+          "EEG is a core target modality as part of the multimodal PSG data analyzed by the foundation model."
         ]
       }
     },
@@ -672,9 +674,9 @@
         "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "Explicitly addresses the challenge of EEG tokenization specifically for foundation models.",
+          "Explicitly addresses EEG tokenization as a challenge for foundation models.",
           "Designed as a plug-and-play component to enhance existing EEG-FMs such as BIOT and LaBraM.",
-          "Evaluated across multiple benchmarks and pretraining settings to improve generalizable EEG representations."
+          "Evaluates performance gains in both single- and multi-dataset pretraining settings."
         ]
       }
     },
@@ -751,12 +753,12 @@
       "summary_failed_reason": null,
       "title": "An Efficient Self-Supervised Framework for Long-Sequence EEG Modeling",
       "triage": {
-        "confidence": 0.85,
+        "confidence": 0.9,
         "decision": "accept",
         "reasons": [
-          "EEG is the primary modality and the central focus of the work.",
-          "Proposes a self-supervised pre-training framework (EEGM2) for EEG representation learning.",
-          "Explicitly claims strong generalization across multiple tasks and transferability across domains, aligning with foundation model goals."
+          "EEG is the primary modality.",
+          "Proposes EEGM2, a self-supervised pre-training framework for EEG representation learning.",
+          "Explicitly demonstrates strong generalization across subjects and tasks and transferability across domains."
         ]
       }
     },
@@ -856,26 +858,26 @@
       "summary_failed_reason": null,
       "title": "Are foundation models useful feature extractors for electroencephalography analysis?",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
           "Explicitly evaluates the utility of foundation models as feature extractors for EEG analysis.",
-          "Fits the ecosystem criteria as a benchmark/evaluation study of foundation models applied to EEG.",
-          "Focuses on the transferability of pretrained representations to reduce reliance on task-specific EEG datasets."
+          "Fits the ecosystem criteria for benchmark/evaluation of foundation models applied to EEG.",
+          "Tests the models across multiple diverse EEG tasks including age prediction and seizure detection."
         ]
       }
     }
   ],
   "stats": {
     "accepted": 8,
-    "candidates": 19,
+    "candidates": 20,
     "summarized": 8
   },
   "top_picks": [
+    "2502.21086",
     "2502.17464",
     "2502.16060",
     "2502.06438",
-    "2502.01678",
-    "2502.21086"
+    "2502.01678"
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2506.23075",
+  "featured_paper_id": null,
   "month": "2025-06",
   "papers": [
     {
@@ -29,50 +29,75 @@
           "eess.SP"
         ],
         "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
+          "channels": 8.0,
+          "datasets": [
+            "Temple University Hospital EEG corpus"
+          ],
+          "eeg_hours": 26496.0,
+          "subjects": 14979.0
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper proposes a two-stage self-supervised pre-training pipeline for EEG that adapts the HuBERT speech processing framework to predict discrete cluster labels from neural data. Unlike prior foundation models focused strictly on BCI benchmarks, this approach emphasizes real-time utility through minimal preprocessing and a restricted 8-channel scalp montage. Evaluation across three benchmark datasets demonstrates that the model learns diverse electrophysiological features, including alpha rhythms and individual variability, while significantly improving performance on P300 and motor imagery tasks compared to training from scratch.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "Dataset A (P300/RSVP)",
+            "Dataset B (Motor Imagery/Movement)",
+            "Dataset C (P300)"
+          ],
+          "headline_results": [
+            "Pre-training improved performance over de novo baselines (p < 0.001) across all tasks",
+            "Achieved near-ceiling accuracy for participant ID and eyes-open/closed detection"
+          ],
+          "tasks": [
+            "P300 speller",
+            "Motor imagery",
+            "Participant identification",
+            "Eyes open vs closed detection"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: A transformer-based architecture pre-trained on the Temple University Hospital EEG corpus using a two-stage masked prediction objective.",
+          "Learns diverse features: T-SNE visualizations and classification tasks reveal the model captures individual variability and alpha rhythms (eyes-closed state) alongside BCI signatures.",
+          "Performance gain: Pre-training significantly outperforms de novo training across P300 and motor imagery tasks, although it does not yet surpass current state-of-the-art BCI benchmarks."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Does not exceed current state-of-the-art results for standard BCI benchmarks.",
+          "Pre-training data from hospital settings may not capture features prominent in BCI tasks.",
+          "Model likely encodes non-neural physiological artifacts, such as eye movements."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "A stack of six 1D-convolutional layers followed by 12 transformer encoder layers (12 heads, 3072 FF dim), totaling 96.4M parameters.",
+          "finetuning": "Fine-tuned on P300 and motor imagery tasks using either full-model weight updates or linear probing of the final embedding and output layers.",
+          "objective": "Masked prediction of discrete k-means cluster labels (discrete-code-prediction).",
+          "pretraining": "Two-stage process: Stage 1 predicts 100 k-means labels derived from spectrograms; Stage 2 predicts 500 k-means labels derived from Stage 1 embeddings."
         },
-        "notes": "manual_resummary_prompt_update_arcee;input_mode=fulltext;prompt_tokens=9323;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 31848, \"error\": null, \"pages\": 6, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=9323",
+        "one_liner": "A self-supervised EEG foundation model based on the HuBERT framework designed for low-profile, real-time BCI applications using a minimal 8-channel montage.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2025-06-02",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "discrete-code-prediction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
         },
         "title": "EEG Foundation Models for BCI Learn Diverse Features of Electrophysiology",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Adapts the HuBERT framework to EEG to create a low-profile foundation model that captures both BCI-specific signatures and general neurophysiological features using only 8 channels.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -81,9 +106,9 @@
         "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "explicitly introduces EEG foundation model pre-training method",
-          "focuses on self-supervised objectives for robust EEG representations",
-          "evaluates model on standard BCI tasks and electrophysiological features"
+          "Explicitly proposes a self-supervised BCI foundation model pre-training method for EEG.",
+          "Utilizes a transformer-based architecture adapted from HuBERT to learn robust neurophysiological representations.",
+          "Demonstrates broad transferability across multiple BCI tasks (P300, motor imagery) and general electrophysiological features."
         ]
       }
     },
@@ -182,17 +207,17 @@
       "summary_failed_reason": null,
       "title": "Large Language Models for EEG: A Comprehensive Survey and Taxonomy",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "EEG is central to the survey",
-          "Explicitly covers LLM-inspired foundation models for EEG",
-          "Focuses on pretrained transferable EEG representations"
+          "Provides a systematic review and structured taxonomy of LLMs for EEG",
+          "Explicitly covers LLM-inspired foundation models for EEG representation learning",
+          "Functions as an EEG-FM ecosystem paper by surveying modeling strategies and system designs"
         ]
       }
     },
     {
-      "arxiv_id": "2506.09110v2",
+      "arxiv_id": "2506.09110v3",
       "arxiv_id_base": "2506.09110",
       "authors": [
         "Jingying Ma",
@@ -207,8 +232,8 @@
         "cs.LG"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2506.09110v2",
-        "pdf": "https://arxiv.org/pdf/2506.09110v2"
+        "abs": "http://arxiv.org/abs/2506.09110v3",
+        "pdf": "https://arxiv.org/pdf/2506.09110v3"
       },
       "published_date": "2025-06-10",
       "summary": {
@@ -293,14 +318,15 @@
         "used_fulltext": true
       },
       "summary_failed_reason": null,
-      "title": "CodeBrain: Towards Decoupled Interpretability and Multi-Scale Architecture for EEG Foundation Model",
+      "title": "CodeBrain: Bridging Decoupled Tokenizer and Multi-Scale Architecture for EEG Foundation Model",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "EEG foundation model (EFM) explicitly stated",
-          "Two-stage architecture for EEG pretraining",
-          "Pretrained on largest public EEG corpus with downstream generalization"
+          "Explicitly identifies CodeBrain as an EEG Foundation Model (EFM)",
+          "Pretrained on the largest public EEG corpus for broad transfer",
+          "Demonstrates generalization across eight downstream tasks and ten datasets",
+          "Includes scaling-law analysis and provides pretrained weights"
         ]
       }
     },
@@ -413,478 +439,139 @@
         "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "EEG is central modality",
-          "Explicitly proposes EEG foundation model",
-          "Focuses on pretraining for broad transfer",
-          "Addresses generalization across electrode configurations"
+          "Explicitly proposes DIVER-0 as a novel EEG foundation model",
+          "Discusses pretraining data and cross-dataset generalization",
+          "Addresses specific architectural challenges for EEG-FMs such as channel permutation equivariance"
         ]
       }
     },
     {
-      "arxiv_id": "2506.16056v1",
-      "arxiv_id_base": "2506.16056",
+      "arxiv_id": "2506.11830v1",
+      "arxiv_id_base": "2506.11830",
       "authors": [
-        "Puchun Liu",
-        "C. L. Philip Chen",
-        "Yubin He",
-        "Tong Zhang"
+        "Dingkun Liu",
+        "Zhu Chen",
+        "Dongrui Wu"
       ],
       "categories": [
-        "cs.LG",
-        "cs.AI"
+        "cs.CE",
+        "cs.LG"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2506.16056v1",
-        "pdf": "https://arxiv.org/pdf/2506.16056v1"
+        "abs": "http://arxiv.org/abs/2506.11830v1",
+        "pdf": "https://arxiv.org/pdf/2506.11830v1"
       },
-      "published_date": "2025-06-19",
+      "published_date": "2025-06-13",
       "summary": {
-        "arxiv_id_base": "2506.16056",
+        "arxiv_id_base": "2506.11830",
         "categories": [
-          "cs.LG",
-          "cs.AI"
+          "cs.CE",
+          "cs.LG"
         ],
         "data_scale": {
           "channels": null,
           "datasets": [
-            "Temple University EEG corpus",
-            "CHB-MIT dataset"
+            "AlexMI",
+            "BNCI2014001",
+            "BNCI2014004",
+            "BNCI2014002",
+            "BNCI2015001",
+            "BNCI2015004",
+            "Cho2017",
+            "Lee2019",
+            "GrosseWentrup2009",
+            "Ofner2017",
+            "PhysionetMI",
+            "Schirrmeister2017",
+            "Shin2017A",
+            "Shin2017B",
+            "Weibo2014",
+            "Zhou2016",
+            "Stieger2021",
+            "Liu2024"
           ],
           "eeg_hours": null,
-          "subjects": null
+          "subjects": 533.0
         },
-        "detailed_summary": "This paper proposes CRIA, a novel pre-training framework for EEG representation learning that addresses the challenge of extracting deep features from multi-view EEG data. CRIA introduces an asymmetric three-view interaction mechanism where spectral view is the dominant modality, employing cross-attention to fuse temporal, spectral, and spatial features. The framework uses variable-length and variable-channel coding to handle data heterogeneity across different EEG datasets, and incorporates a view-wise masking pre-training strategy based on information bottleneck principles. Experimental results on the Temple University EEG corpus and CHB-MIT dataset demonstrate that CRIA outperforms existing methods, achieving 57.02% balanced accuracy for multi-class event classification and 80.03% for anomaly detection.",
+        "detailed_summary": "The paper proposes CLEAN-MI, a scalable pipeline that integrates frequency filtering, channel template selection, expert subject screening, and marginal distribution alignment to curate high-quality motor imagery (MI) datasets. Unlike general EEG pre-processing, it leverages neurophysiological priors to select MI-relevant channels and filters out low-performing subjects to reduce noise. The effectiveness is demonstrated on three public datasets using EEGNet, showing improved classification accuracy and significant reductions in computational complexity.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "Weibo2014",
+            "Cho2017",
+            "BNCI2015001"
+          ],
+          "headline_results": [
+            "50-70% reduction in computational complexity on Cho2017",
+            "Improved classification accuracy using EEGNet backbone"
+          ],
+          "tasks": [
+            "Motor Imagery Classification"
+          ]
         },
         "key_points": [
-          "New EEG foundation model: CRIA introduces a cross-view interaction and instance-adapted pre-training framework for generalizable EEG representations.",
-          "Method novelty: Employs asymmetric three-view interaction with spectral view as dominant modality and cross-attention mechanism for feature fusion.",
-          "Strongest evidence: Achieves 57.02% balanced accuracy for multi-class event classification and 80.03% for anomaly detection on benchmark datasets."
+          "Method for EEG data construction: Proposes CLEAN-MI to standardize multi-source motor imagery data via frequency filtering, channel templates, and subject screening.",
+          "Reduces noise and redundancy: Uses a specific channel template covering FC, C, CP, and T regions and a 0.6 accuracy threshold to select expert subjects.",
+          "Demonstrated efficiency: Achieved up to 70% reduction in computational complexity and improved classification accuracy on the Cho2017 dataset."
         ],
         "limitations": [
-          "Practical effects and potential challenges in clinical applications need further exploration",
-          "Impact of diverse pathologic conditions on generalizability not fully characterized",
-          "Trade-off between computational efficiency and interpretability in real-time integration not addressed",
-          "Patient specificity and individual variability not explicitly modeled",
-          "Large-scale pre-training and real-time processing studies still needed"
+          "Does not propose a new foundation model architecture, only the data pipeline.",
+          "Euclidean Alignment is currently applied within single datasets; cross-dataset alignment remains a future goal.",
+          "Subject selection threshold (0.6) is a predefined heuristic that may vary across different tasks.",
+          "Evaluation is limited to a few public datasets rather than a massive-scale pretraining run."
         ],
         "method": {
-          "architecture": null,
+          "architecture": "Data construction pipeline",
           "finetuning": null,
-          "objective": null,
+          "objective": "Standardization and noise reduction of MI-EEG data",
           "pretraining": null
         },
-        "notes": "{\"chars\": 68526, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=18745;max_tokens=1",
-        "one_liner": "CRIA is a cross-view interaction and instance-adapted pre-training framework for generalizable EEG representations.",
+        "notes": "{\"chars\": 49045, \"error\": null, \"pages\": 10, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=14006",
+        "one_liner": "A systematic data construction pipeline designed to standardize and clean multi-source motor imagery EEG data for foundation model pretraining.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "new_model",
-        "published_date": "2025-06-19",
+        "paper_type": "method",
+        "published_date": "2025-06-13",
         "tags": {
-          "backbone": [
-            "transformer"
-          ],
-          "objective": [
-            "masked-reconstruction"
-          ],
+          "backbone": [],
+          "objective": [],
           "paper_type": [
-            "new-model"
+            "benchmark"
           ],
-          "tokenization": [
-            "time-patch"
-          ],
+          "tokenization": [],
           "topology": [
             "channel-flexible"
           ]
         },
-        "title": "CRIA: A Cross-View Interaction and Instance-Adapted Pre-training Framework for Generalizable EEG Representations",
-        "unique_contribution": "CRIA is the first EEG pre-training strategy to model view fusion from a dominant–auxiliary modality perspective, introducing asymmetric three-view lateral interaction with spectral view as dominant modality.",
+        "title": "CLEAN-MI: A Scalable and Efficient Pipeline for Constructing High-Quality Neurodata in Motor Imagery Paradigm",
+        "unique_contribution": "Introduces a systematic pipeline for constructing large-scale, high-quality MI-specific EEG datasets through neurophysiologically-informed channel selection and expert subject screening.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
-      "title": "CRIA: A Cross-View Interaction and Instance-Adapted Pre-training Framework for Generalizable EEG Representations",
+      "title": "CLEAN-MI: A Scalable and Efficient Pipeline for Constructing High-Quality Neurodata in Motor Imagery Paradigm",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 0.8,
         "decision": "accept",
         "reasons": [
-          "proposes CRIA, a generalizable pretraining framework for EEG representation learning",
-          "explicitly frames work as pretraining for broad transfer and generalization",
-          "outperforms existing methods in multi-class event classification and anomaly detection"
-        ]
-      }
-    },
-    {
-      "arxiv_id": "2506.17068v1",
-      "arxiv_id_base": "2506.17068",
-      "authors": [
-        "Runkai Zhang",
-        "Hua Yu",
-        "John Q. Gan",
-        "Haixian Wang"
-      ],
-      "categories": [
-        "q-bio.NC",
-        "cs.ET",
-        "eess.SP"
-      ],
-      "links": {
-        "abs": "http://arxiv.org/abs/2506.17068v1",
-        "pdf": "https://arxiv.org/pdf/2506.17068v1"
-      },
-      "published_date": "2025-06-20",
-      "summary": {
-        "arxiv_id_base": "2506.17068",
-        "categories": [
-          "q-bio.NC",
-          "cs.ET",
-          "eess.SP"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [
-            "TASMC-UCLA",
-            "CHB-MIT",
-            "MAYO",
-            "others"
-          ],
-          "eeg_hours": 2741.1,
-          "subjects": 1199
-        },
-        "detailed_summary": "This paper introduces EpiNT, a novel Transformer-based pre-trained model designed to address the challenges of unified EEG and iEEG analysis. EpiNT employs channel-independent modeling with masked autoencoders (MAE) and vector quantization (VQ), along with a frequency domain mapping quantizer to capture crucial frequency features. Pre-trained on over 2,700 hours of multi-modal clinical neurophysiological data from 1,199 patients, EpiNT outperformed both randomly initialized models and other pre-trained methods on six downstream classification tasks, demonstrating robust representation learning capabilities.",
-        "evaluation": {
-          "benchmarks": [
-            "TASMC-UCLA",
-            "CHB-MIT",
-            "MAYO",
-            "others"
-          ],
-          "headline_results": [
-            "F1_score: 0.925 (TASMC-UCLA), 0.913 (CHB-MIT), 0.965 (MAYO)",
-            "Outperformed MAE-EEG, Brant, MOMENT, PatchTST, and VQ-MTM"
-          ],
-          "tasks": [
-            "seizure detection",
-            "seizure type classification",
-            "sleep staging",
-            "others"
-          ]
-        },
-        "key_points": [
-          "New EEG foundation model: EpiNT uses masked autoencoders and vector quantization for unified EEG/iEEG analysis",
-          "Novel frequency domain quantizer captures modality-specific spectral features while addressing amplitude and SNR differences",
-          "Strong performance across six clinical tasks with cross-subject generalization on over 2,700 hours of multi-modal data"
-        ],
-        "limitations": [
-          "Performance variability across tasks suggests need for task-specific fine-tuning strategies",
-          "Domain shift between pre-training and downstream datasets may affect generalization",
-          "Class imbalance in clinical data presents challenges for robust model training"
-        ],
-        "method": {
-          "architecture": "Transformer encoder with masked autoencoders and vector quantization",
-          "finetuning": "Cross-entropy loss with linear-probing, last-layer, or full-parameter tuning",
-          "objective": "Masked signal reconstruction with frequency domain quantization",
-          "pretraining": "Unsupervised pre-training on 2,741.1 hours of EEG/iEEG data from 1,199 patients"
-        },
-        "notes": "{\"chars\": 77176, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=20647",
-        "one_liner": "EpiNT is a Transformer-based pre-trained model for unified EEG and iEEG analysis using masked autoencoders and vector quantization.",
-        "open_source": {
-          "code_url": "https://github.com/RunKZhang/EpiNT",
-          "license": "Unknown",
-          "weights_url": "Available"
-        },
-        "paper_type": "new_model",
-        "published_date": "2025-06-20",
-        "tags": {
-          "backbone": [
-            "transformer"
-          ],
-          "objective": [
-            "masked-reconstruction",
-            "contrastive"
-          ],
-          "paper_type": [
-            "new-model"
-          ],
-          "tokenization": [
-            "time-patch"
-          ],
-          "topology": [
-            "channel-flexible"
-          ]
-        },
-        "title": "Cross-Modal Epileptic Signal Harmonization: Frequency Domain Mapping Quantization for Pre-training a Unified Neurophysiological Transformer",
-        "unique_contribution": "EpiNT is the first pre-trained Transformer model specifically designed for unified EEG and iEEG analysis, addressing modality-specific challenges through channel-independent modeling and frequency domain quantization.",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
-      "title": "Cross-Modal Epileptic Signal Harmonization: Frequency Domain Mapping Quantization for Pre-training a Unified Neurophysiological Transformer",
-      "triage": {
-        "confidence": 0.95,
-        "decision": "accept",
-        "reasons": [
-          "EEG and iEEG are central modalities",
-          "Introduces a Transformer-based pre-trained model (EpiNT)",
-          "Uses masked autoencoders and vector quantization for foundation model-style pretraining",
-          "Demonstrates robust representation learning on downstream tasks"
-        ]
-      }
-    },
-    {
-      "arxiv_id": "2506.20354v2",
-      "arxiv_id_base": "2506.20354",
-      "authors": [
-        "Francesco Carzaniga",
-        "Michael Hersche",
-        "Abu Sebastian",
-        "Kaspar Schindler",
-        "Abbas Rahimi"
-      ],
-      "categories": [
-        "cs.LG",
-        "cs.AI"
-      ],
-      "links": {
-        "abs": "http://arxiv.org/abs/2506.20354v2",
-        "pdf": "https://arxiv.org/pdf/2506.20354v2"
-      },
-      "published_date": "2025-06-25",
-      "summary": {
-        "arxiv_id_base": "2506.20354",
-        "categories": [
-          "cs.LG",
-          "cs.AI"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [
-            "SWEC iEEG",
-            "MAYO",
-            "FNUSA",
-            "Brain TreeBank"
-          ],
-          "eeg_hours": 10000.0,
-          "subjects": 68.0
-        },
-        "detailed_summary": "This paper introduces MVPFormer, a generative foundation model for human electrophysiology, powered by a novel multi-variate parallel attention (MVPA) mechanism. MVPFormer is trained on the SWEC iEEG dataset, the largest publicly available iEEG corpus to date with nearly 10,000 hours of recordings. The model demonstrates expert-level performance in seizure detection across multiple institutional datasets and achieves state-of-the-art results on four Brain TreeBank iEEG decoding tasks. MVPA enables flexible and efficient modeling of time-series data with varying channel counts and configurations by disentangling content, temporal, and spatial attention. The work establishes MVPFormer as the first open-source, open-weights, and open-data iEEG foundation model with SOTA clinical performance.",
-        "evaluation": {
-          "benchmarks": [
-            "SWEC iEEG",
-            "Brain TreeBank"
-          ],
-          "headline_results": [
-            "Kappa score of 0.57 on seizure detection",
-            "SOTA performance on four Brain TreeBank tasks"
-          ],
-          "tasks": [
-            "Seizure detection",
-            "Brain TreeBank iEEG decoding"
-          ]
-        },
-        "key_points": [
-          "New EEG foundation model: MVPFormer uses multi-variate parallel attention (MVPA) to achieve expert-level seizure detection and SOTA performance on iEEG tasks.",
-          "Novel attention mechanism: MVPA disentangles content, temporal, and spatial attention, enabling flexible modeling of time-series with varying channel counts and configurations.",
-          "Largest iEEG dataset: Releases the SWEC iEEG dataset, comprising nearly 10,000 hours of recordings from heterogeneous clinical sources, supporting community foundation model efforts."
-        ],
-        "limitations": [
-          "The SWEC iEEG dataset, while large, may not be sufficient to fully train very large models according to scaling laws.",
-          "The model's performance may be affected by the quality of the data, as high-quality data is crucial for optimal performance.",
-          "The model is developed for research purposes and may not be used for diagnostic purposes."
-        ],
-        "method": {
-          "architecture": "MVPFormer with MVPA",
-          "finetuning": "LoRA for downstream classification tasks",
-          "objective": "Generative pre-training with contrastive loss",
-          "pretraining": "Trained on SWEC iEEG dataset"
-        },
-        "notes": "{\"chars\": 144420, \"error\": null, \"pages\": 59, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=38149",
-        "one_liner": "MVPFormer is the first open-source, open-weights, and open-data iEEG foundation model with SOTA clinical performance.",
-        "open_source": {
-          "code_url": "https://github.com/IBM/multi-variate-parallel-transformer",
-          "license": "open-source",
-          "weights_url": "open-weights"
-        },
-        "paper_type": "new_model",
-        "published_date": "2025-06-25",
-        "tags": {
-          "backbone": [
-            "transformer"
-          ],
-          "objective": [
-            "autoregressive"
-          ],
-          "paper_type": [
-            "new-model"
-          ],
-          "tokenization": [
-            "time-patch"
-          ],
-          "topology": [
-            "channel-flexible"
-          ]
-        },
-        "title": "A foundation model with multi-variate parallel attention to generate neuronal activity",
-        "unique_contribution": "Introduces MVPA, a novel self-attention mechanism that disentangles content, temporal, and spatial attention, enabling flexible and efficient modeling of heterogeneous time-series data, and applies it to build MVPFormer, the first open-source, open-weights, and open-data iEEG foundation model with SOTA clinical performance.",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
-      "title": "A foundation model with multi-variate parallel attention to generate neuronal activity",
-      "triage": {
-        "confidence": 1.0,
-        "decision": "accept",
-        "reasons": [
-          "EEG is central (iEEG) and explicitly framed as foundation model",
-          "Introduces MVPFormer, a generative foundation model for electrophysiology",
-          "Trained for broad transfer across diverse subjects and tasks",
-          "Releases largest iEEG dataset to support community FM efforts"
-        ]
-      }
-    },
-    {
-      "arxiv_id": "2506.23075v1",
-      "arxiv_id_base": "2506.23075",
-      "authors": [
-        "Yuchen Zhou",
-        "Jiamin Wu",
-        "Zichen Ren",
-        "Zhouheng Yao",
-        "Weiheng Lu",
-        "Kunyu Peng",
-        "Qihao Zheng",
-        "Chunfeng Song",
-        "Wanli Ouyang",
-        "Chao Gou"
-      ],
-      "categories": [
-        "cs.HC",
-        "cs.LG",
-        "eess.SP",
-        "q-bio.NC"
-      ],
-      "links": {
-        "abs": "http://arxiv.org/abs/2506.23075v1",
-        "pdf": "https://arxiv.org/pdf/2506.23075v1"
-      },
-      "published_date": "2025-06-29",
-      "summary": {
-        "arxiv_id_base": "2506.23075",
-        "categories": [
-          "cs.HC",
-          "cs.LG",
-          "eess.SP",
-          "q-bio.NC"
-        ],
-        "data_scale": {
-          "channels": 0.0,
-          "datasets": [
-            "datasets"
-          ],
-          "eeg_hours": 9000.0,
-          "subjects": 0.0
-        },
-        "detailed_summary": "CSBrain addresses a fundamental limitation in existing EEG foundation models: their reliance on scale-agnostic dense modeling inherited from NLP and vision, which fails to capture the intrinsic cross-scale spatiotemporal structure of neural activity. The model introduces two key innovations: Cross-scale Spatiotemporal Tokenization (CST), which aggregates multi-scale features from localized temporal windows and anatomical brain regions into compact scale-aware tokens, and Structured Sparse Attention (SSA), which captures cross-window and cross-region dependencies while eliminating spurious correlations. These components are alternately stacked to progressively integrate multi-scale dependencies. Extensive experiments across 11 representative EEG tasks and 16 public datasets demonstrate that CSBrain consistently outperforms both task-specific models and strong foundation model baselines, establishing cross-scale modeling as a key inductive bias for generalized EEG decoding.",
-        "evaluation": {
-          "benchmarks": [
-            "datasets"
-          ],
-          "headline_results": [
-            "balanced accuracy",
-            "Cohen's kappa",
-            "weighted F1",
-            "AUC-PR",
-            "AUROC",
-            "Pearson correlation",
-            "R2 score",
-            "RMSE"
-          ],
-          "tasks": [
-            "motor imagery classification",
-            "emotion recognition",
-            "seizure detection",
-            "sleep staging",
-            "imagined speech classification",
-            "vigilance estimation",
-            "mental stress detection",
-            "mental disorder diagnosis",
-            "event type classification",
-            "abnormal detection",
-            "slowing event classification"
-          ]
-        },
-        "key_points": [
-          "New EEG foundation model: CSBrain introduces cross-scale spatiotemporal modeling for generalized brain decoding across diverse tasks.",
-          "Novel architecture: Combines Cross-scale Spatiotemporal Tokenization (CST) with Structured Sparse Attention (SSA) to capture multi-scale neural patterns while avoiding spurious dependencies.",
-          "Strong empirical results: Achieves state-of-the-art performance across 11 tasks and 16 datasets, outperforming both task-specific and foundation model baselines."
-        ],
-        "limitations": [
-          "Computational resource constraints limit exploration of scaling behavior at the scale of vision-language or language-only models",
-          "Open question remains about how much EEG data is sufficient to pretrain high-quality foundation models",
-          "Sparse, noisy, and heterogeneous nature of EEG datasets requires further work on large-scale dataset unification and normalization"
-        ],
-        "method": {
-          "architecture": "Cross-scale Spatiotemporal Tokenization (CST) aggregates multi-scale features from localized temporal windows and anatomical brain regions into compact scale-aware tokens. Structured Sparse Attention (SSA) captures cross-window and cross-region dependencies while eliminating spurious correlations. CST and SSA are alternately stacked for L layers to progressively integrate cross-scale spatiotemporal dependencies.",
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 127123, \"error\": null, \"pages\": 37, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=33573",
-        "one_liner": "CSBrain introduces cross-scale spatiotemporal modeling to EEG foundation models, achieving state-of-the-art performance across 11 tasks and 16 datasets.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "new_model",
-        "published_date": "2025-06-29",
-        "tags": {
-          "backbone": [
-            "transformer"
-          ],
-          "objective": [
-            "masked-reconstruction"
-          ],
-          "paper_type": [
-            "new-model"
-          ],
-          "tokenization": [
-            "time-patch"
-          ],
-          "topology": [
-            "fixed-montage"
-          ]
-        },
-        "title": "CSBrain: A Cross-scale Spatiotemporal Brain Foundation Model for EEG Decoding",
-        "unique_contribution": "CSBrain is the first EEG foundation model to explicitly model cross-scale spatiotemporal structure through alternating CST and SSA modules, achieving state-of-the-art performance across diverse brain decoding tasks.",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
-      "title": "CSBrain: A Cross-scale Spatiotemporal Brain Foundation Model for EEG Decoding",
-      "triage": {
-        "confidence": 0.95,
-        "decision": "accept",
-        "reasons": [
-          "explicitly proposes EEG foundation model (CSBrain)",
-          "focuses on generalized EEG decoding via large-scale pretraining",
-          "introduces novel cross-scale modeling for EEG-FM"
+          "Explicitly frames the data construction pipeline as a fundamental prerequisite for developing robust and generalizable EEG foundation models.",
+          "Proposes a scalable system for constructing large-scale, standardized neurodata, which falls under the EEG-FM ecosystem (data curation/scaling).",
+          "EEG is the central modality of the study."
         ]
       }
     }
   ],
   "stats": {
-    "accepted": 8,
-    "candidates": 20,
-    "summarized": 8
+    "accepted": 5,
+    "candidates": 25,
+    "summarized": 5
   },
   "top_picks": [
     "2507.14141",
-    "2506.20354",
+    "2506.09110",
+    "2506.06353",
     "2506.01867",
-    "2506.23075",
-    "2506.17068"
+    "2506.11830"
   ]
 }

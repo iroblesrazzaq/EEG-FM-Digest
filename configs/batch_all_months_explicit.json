@@ -14,9 +14,7 @@
     "2021-12",
     "2022-01",
     "2022-02",
-    "2022-03",
     "2022-04",
-    "2022-05",
     "2022-06",
     "2022-07",
     "2022-08",
@@ -60,7 +58,10 @@
     "2025-10",
     "2025-11",
     "2025-12",
-    "2026-01"
+    "2026-01",
+    "2026-02",
+    "2026-03",
+    "2026-04"
   ],
   "months_from_outputs": false,
   "no_site": false,
@@ -74,8 +75,8 @@
   "triage_sleep_seconds": 0.0,
   "summary_sleep_seconds": 0.0,
   "stop_on_rate_limit": true,
-  "sync_cache_from_outputs": true,
+  "sync_cache_from_outputs": false,
   "max_candidates": null,
   "max_accepted": null,
-  "env_path": "~/2_cs_projects/env/.env"
+  "env_path": "~/2_cs_projects/env/llm_api/.env"
 }

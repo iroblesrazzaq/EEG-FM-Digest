@@ -217,9 +217,9 @@ def run_month(
 
         # Stage 3: summarize
         triage_map = {t["arxiv_id_base"]: t for t in triage_rows}
-        for arxiv_id_base, triage_row in triage_map.items():
-            if triage_row.get("decision") == "reject":
-                db.delete_summary(arxiv_id_base)
+        # Summaries are preserved across triage flips: site rendering already
+        # filters by current triage decision, so a previously-accepted paper
+        # that now triages as reject is hidden but its summary work is kept.
 
         accepted = [p for p in candidates if triage_map.get(p["arxiv_id_base"], {}).get("decision") == "accept"]
         if cfg.include_borderline:

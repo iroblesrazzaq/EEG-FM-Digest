@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2508.04956",
+  "featured_paper_id": null,
   "month": "2025-08",
   "papers": [
     {
@@ -449,7 +449,7 @@
       }
     },
     {
-      "arxiv_id": "2508.20705v2",
+      "arxiv_id": "2508.20705v3",
       "arxiv_id_base": "2508.20705",
       "authors": [
         "Shaocong Wang",
@@ -467,8 +467,8 @@
         "cs.AI"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2508.20705v2",
-        "pdf": "https://arxiv.org/pdf/2508.20705v2"
+        "abs": "http://arxiv.org/abs/2508.20705v3",
+        "pdf": "https://arxiv.org/pdf/2508.20705v3"
       },
       "published_date": "2025-08-28",
       "summary": {
@@ -697,7 +697,7 @@
   ],
   "stats": {
     "accepted": 6,
-    "candidates": 20,
+    "candidates": 23,
     "summarized": 6
   },
   "top_picks": [

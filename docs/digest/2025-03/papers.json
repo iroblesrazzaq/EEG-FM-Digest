@@ -1,112 +1,7 @@
 {
-  "featured_paper_id": "2503.10362",
+  "featured_paper_id": null,
   "month": "2025-03",
   "papers": [
-    {
-      "arxiv_id": "2503.02636v4",
-      "arxiv_id_base": "2503.02636",
-      "authors": [
-        "Yeganeh Farahzadi",
-        "Morteza Ansarinia",
-        "Zoltan Kekecs"
-      ],
-      "categories": [
-        "q-bio.NC",
-        "cs.AI"
-      ],
-      "links": {
-        "abs": "http://arxiv.org/abs/2503.02636v4",
-        "pdf": "https://arxiv.org/pdf/2503.02636v4"
-      },
-      "published_date": "2025-03-04",
-      "summary": {
-        "arxiv_id_base": "2503.02636",
-        "categories": [
-          "q-bio.NC",
-          "cs.AI"
-        ],
-        "data_scale": {
-          "channels": 8.0,
-          "datasets": [
-            "MPI-LEMON"
-          ],
-          "eeg_hours": 54.13,
-          "subjects": 216.0
-        },
-        "detailed_summary": "This paper introduces YARE-GAN, a Wasserstein GAN with gradient penalty designed to generate realistic multi-channel resting-state EEG signals and extract unsupervised representations. The model incorporates self-attention layers, positional encoding, and a subject-specific transformation layer to capture temporal dependencies and individual variability. Trained on the MPI-LEMON dataset (54.13 hours, 216 participants, 8 selected channels), it generates EEG signals that closely match real data in time/frequency domains and inter-channel connectivity. Critically, the discriminator's intermediate representations are repurposed for a downstream gender classification task, achieving 73% accuracy—outperforming raw EEG and matching CBraMod foundation model performance while using far less data and computational resources.",
-        "evaluation": {
-          "benchmarks": [
-            "CBraMod foundation model"
-          ],
-          "headline_results": [
-            "73% gender classification accuracy",
-            "comparable performance with 1/10th data and compute"
-          ],
-          "tasks": [
-            "signal synthesis validation",
-            "gender classification"
-          ]
-        },
-        "key_points": [
-          "New EEG foundation model: YARE-GAN generates realistic resting-state EEG signals and extracts unsupervised representations via a Wasserstein GAN with gradient penalty.",
-          "Method novelty: Incorporates self-attention, positional encoding, and subject-specific transformation layers to capture temporal dependencies and individual variability in EEG data.",
-          "Strong evidence: Generated signals match real EEG in spectral properties and connectivity; discriminator representations achieve 73% gender classification accuracy, outperforming raw EEG and matching CBraMod with 1/10th the data and compute."
-        ],
-        "limitations": [
-          "Trained on single dataset (MPI-LEMON) with limited 8-channel subset, restricting generalizability",
-          "Struggles with high-frequency components, especially in frontal regions due to spectral bias",
-          "Evaluation limited to one downstream task (gender classification) without fine-tuning",
-          "Scalability to more channels requires architectural adjustments and further experimentation"
-        ],
-        "method": {
-          "architecture": "Wasserstein GAN with gradient penalty (WGAN-GP) using DCGAN architecture with self-attention layers, positional encoding, and subject-specific transformation",
-          "finetuning": null,
-          "objective": "generate realistic resting-state EEG signals and extract unsupervised representations",
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 42047, \"error\": null, \"pages\": 28, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=11962",
-        "one_liner": "GAN-based framework for resting-state EEG synthesis and unsupervised feature extraction, achieving downstream gender classification performance comparable to foundation models with significantly less data and compute.",
-        "open_source": {
-          "code_url": "https://github.com/Yeganehfrh/YARE-GAN",
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "new_model",
-        "published_date": "2025-03-04",
-        "tags": {
-          "backbone": [
-            "transformer"
-          ],
-          "objective": [
-            "contrastive"
-          ],
-          "paper_type": [
-            "new-model"
-          ],
-          "tokenization": [
-            "time-patch"
-          ],
-          "topology": [
-            "fixed-montage"
-          ]
-        },
-        "title": "YARE-GAN: Yet Another Resting State EEG-GAN",
-        "unique_contribution": "Demonstrates that GAN-based architectures can serve dual roles in EEG research: high-fidelity signal synthesis and powerful unsupervised feature extraction, with downstream task performance matching data-intensive foundation models.",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
-      "title": "YARE-GAN: Yet Another Resting State EEG-GAN",
-      "triage": {
-        "confidence": 0.9,
-        "decision": "accept",
-        "reasons": [
-          "EEG is central modality",
-          "GAN-based framework for unsupervised feature extraction",
-          "Demonstrates learned representations repurposed for downstream task",
-          "Performs comparably to EEG foundation models"
-        ]
-      }
-    },
     {
       "arxiv_id": "2503.10362v1",
       "arxiv_id_base": "2503.10362",
@@ -213,23 +108,23 @@
       "summary_failed_reason": null,
       "title": "BioSerenity-E1: a self-supervised EEG model for medical applications",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "explicitly frames as self-supervised foundation model for clinical EEG",
-          "describes two-phase pretraining framework for generalizable EEG representations",
-          "achieves state-of-the-art performance on multiple clinical EEG tasks"
+          "Explicitly identifies BioSerenity-E1 as a 'self-supervised foundation model for clinical EEG applications'.",
+          "Describes a pretraining framework using VQ-VAE and masked token prediction to learn generalizable EEG representations.",
+          "Demonstrates utility across multiple distinct clinical tasks including seizure detection and pathology differentiation.",
+          "Highlights performance gains in low-data regimes, supporting the claim of a reusable foundation model."
         ]
       }
     }
   ],
   "stats": {
-    "accepted": 2,
-    "candidates": 4,
-    "summarized": 2
+    "accepted": 1,
+    "candidates": 6,
+    "summarized": 1
   },
   "top_picks": [
-    "2503.10362",
-    "2503.02636"
+    "2503.10362"
   ]
 }

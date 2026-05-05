@@ -1,7 +1,95 @@
 {
-  "featured_paper_id": "2401.10278",
+  "featured_paper_id": null,
   "month": "2024-01",
   "papers": [
+    {
+      "arxiv_id": "2401.05446v1",
+      "arxiv_id_base": "2401.05446",
+      "authors": [
+        "Weining Weng",
+        "Yang Gu",
+        "Shuai Guo",
+        "Yuan Ma",
+        "Zhaohua Yang",
+        "Yuchen Liu",
+        "Yiqiang Chen"
+      ],
+      "categories": [
+        "eess.SP",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2401.05446v1",
+        "pdf": "https://arxiv.org/pdf/2401.05446v1"
+      },
+      "published_date": "2024-01-09",
+      "summary": {
+        "arxiv_id_base": "2401.05446",
+        "categories": [
+          "eess.SP",
+          "cs.AI",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 147135, \"error\": null, \"pages\": 35, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=38693;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2024-01-09",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Self-supervised Learning for Electroencephalogram: A Systematic Survey",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Self-supervised Learning for Electroencephalogram: A Systematic Survey",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "EEG is the primary modality.",
+          "The paper is a systematic survey of self-supervised learning (SSL) for EEG, which is the core methodology for creating EEG foundation models.",
+          "It explicitly reviews representation learning and adaptation to various downstream tasks."
+        ]
+      }
+    },
     {
       "arxiv_id": "2401.10278v1",
       "arxiv_id_base": "2401.10278",
@@ -110,22 +198,23 @@
       "summary_failed_reason": null,
       "title": "EEGFormer: Towards Transferable and Interpretable Large-Scale EEG Foundation Model",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "explicitly frames as EEG foundation model",
-          "pretrained on large-scale compound EEG data",
-          "focuses on universal representations and transferability"
+          "Explicitly identifies as a 'novel EEG foundation model' named EEGFormer.",
+          "Pretrained on 'large-scale compound EEG data' to learn 'universal representations'.",
+          "Demonstrates broad transferability by evaluating on 'various downstream tasks' and 'different transfer settings'."
         ]
       }
     }
   ],
   "stats": {
-    "accepted": 1,
-    "candidates": 11,
-    "summarized": 1
+    "accepted": 2,
+    "candidates": 12,
+    "summarized": 2
   },
   "top_picks": [
-    "2401.10278"
+    "2401.10278",
+    "2401.05446"
   ]
 }

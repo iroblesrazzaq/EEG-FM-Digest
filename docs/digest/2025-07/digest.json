@@ -1,5 +1,5 @@
 {
-  "featured_paper": "2507.11783",
+  "featured_paper": null,
   "month": "2025-07",
   "sections": [
     {
@@ -10,17 +10,24 @@
     },
     {
       "paper_ids": [
+        "2507.20254"
+      ],
+      "title": "new_model"
+    },
+    {
+      "paper_ids": [
         "2507.11783"
       ],
       "title": "survey"
     }
   ],
   "stats": {
-    "accepted": 2,
-    "candidates": 17,
-    "summarized": 2
+    "accepted": 3,
+    "candidates": 20,
+    "summarized": 3
   },
   "top_picks": [
+    "2507.20254",
     "2507.11783",
     "2507.09882"
   ]

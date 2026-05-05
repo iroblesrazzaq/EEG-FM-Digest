@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2505.18185",
+  "featured_paper_id": null,
   "month": "2025-05",
   "papers": [
     {
@@ -106,12 +106,12 @@
       "summary_failed_reason": null,
       "title": "ALFEE: Adaptive Large Foundation Model for EEG Representation",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "explicitly proposes EEG foundation model (ALFEE)",
-          "describes pretraining on 25,000 hours of EEG data",
-          "focuses on robust EEG representation learning for broad transfer"
+          "Explicitly proposes the 'Adaptive Large Foundation model for EEG signal representation (ALFEE)'.",
+          "Utilizes a large-scale pretraining phase (25,000 hours) followed by fine-tuning for broad transfer.",
+          "Demonstrates performance across six different downstream EEG tasks, fitting the foundation model paradigm."
         ]
       }
     },
@@ -225,12 +225,13 @@
       "summary_failed_reason": null,
       "title": "Automatic detection of abnormal clinical EEG: comparison of a finetuned foundation model with two deep learning models",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "explicitly compares finetuned foundation model (BioSerenity-E1) with deep learning models",
-          "focuses on EEG classification task using pretrained EEG representations",
-          "demonstrates broader applicability and efficiency of pre-trained models for EEG"
+          "EEG is the central modality of the study.",
+          "Explicitly evaluates and finetunes a specific EEG foundation model (BioSerenity-E1).",
+          "Fits the ecosystem criteria by comparing a foundation model against standard deep learning models for clinical EEG classification.",
+          "Discusses the utility of leveraging pre-trained models for robust and efficient EEG interpretation."
         ]
       }
     },
@@ -336,13 +337,12 @@
       "summary_failed_reason": null,
       "title": "BrainOmni: A Brain Foundation Model for Unified EEG and MEG Signals",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "proposes BrainOmni, a brain foundation model for EEG and MEG",
-          "explicitly frames as first foundation model supporting both modalities",
-          "describes large-scale pretraining (1,997h EEG, 656h MEG) for unified representations",
-          "demonstrates generalization across devices and outperforms task-specific models"
+          "Explicitly proposes 'BrainOmni', a brain foundation model for unified EEG and MEG signals.",
+          "Utilizes large-scale self-supervised pretraining on 1,997 hours of EEG and 656 hours of MEG data.",
+          "Focuses on creating reusable representations that generalize across heterogeneous devices and various downstream tasks."
         ]
       }
     },
@@ -454,12 +454,12 @@
       "summary_failed_reason": null,
       "title": "Advancing Brainwave Modeling with a Codebook-Based Foundation Model",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "Introduces LaBraM++, an enhanced Large Brainwave Foundation Model (LBM)",
-          "Focuses on large-scale pre-trained EEG models for broad BCI tasks",
-          "Demonstrates improvements in representational capacity and generalizability"
+          "Explicitly identifies the proposed model, LaBraM++, as a 'Large Brainwave Foundation Model (LBM)",
+          "Focuses on large-scale pre-training to improve generalizability across diverse BCI tasks",
+          "Compares performance against other open-source LBMs"
         ]
       }
     },
@@ -558,12 +558,12 @@
       "summary_failed_reason": null,
       "title": "From Theory to Application: Fine-Tuning Large EEG Model with Real-World Stress Data",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "explicitly fine-tunes a foundation EEG model (LaBraM)",
-          "evaluates real-world applicability of LEMs",
-          "focuses on transferable EEG representations for stress classification"
+          "Explicitly focuses on fine-tuning LaBraM, which is identified as a state-of-the-art foundation EEG model.",
+          "Evaluates the efficacy and applicability of Large EEG Models (LEMs) on real-world stress data.",
+          "Fits the ecosystem criteria for adaptation and evaluation of existing EEG foundation models."
         ]
       }
     },
@@ -669,24 +669,23 @@
         "confidence": 0.95,
         "decision": "accept",
         "reasons": [
-          "explicitly proposes EEG Adapter (EAD) framework",
-          "leverages recent EEG foundational model",
-          "evaluates on multiple datasets with state-of-the-art results",
-          "demonstrates zero-shot EEG classification for generalization"
+          "Explicitly leverages a 'recent EEG foundational model' to learn robust representations.",
+          "Proposes an 'EEG Adapter (EAD)' which falls under the EEG-FM ecosystem (adaptation/fine-tuning).",
+          "Demonstrates generalization capabilities through zero-shot EEG classification."
         ]
       }
     }
   ],
   "stats": {
     "accepted": 6,
-    "candidates": 14,
+    "candidates": 17,
     "summarized": 6
   },
   "top_picks": [
-    "2505.23107",
     "2505.23042",
     "2505.21507",
     "2505.18185",
-    "2505.16724"
+    "2505.16724",
+    "2505.06291"
   ]
 }

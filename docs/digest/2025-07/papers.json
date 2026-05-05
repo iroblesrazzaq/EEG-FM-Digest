@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2507.11783",
+  "featured_paper_id": null,
   "month": "2025-07",
   "papers": [
     {
@@ -230,14 +230,127 @@
           "identifies future directions for EEG-FM development"
         ]
       }
+    },
+    {
+      "arxiv_id": "2507.20254v1",
+      "arxiv_id_base": "2507.20254",
+      "authors": [
+        "Dingkun Liu",
+        "Zhu Chen",
+        "Jingwei Luo",
+        "Shijie Lian",
+        "Dongrui Wu"
+      ],
+      "categories": [
+        "cs.CV"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2507.20254v1",
+        "pdf": "https://arxiv.org/pdf/2507.20254v1"
+      },
+      "published_date": "2025-07-27",
+      "summary": {
+        "arxiv_id_base": "2507.20254",
+        "categories": [
+          "cs.CV"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "BNCI2014002",
+            "PhysionetMI",
+            "Dreyer2023",
+            "Weibo2014",
+            "Zhou2016",
+            "Lee2019",
+            "Cho2017"
+          ],
+          "eeg_hours": null,
+          "subjects": 330.0
+        },
+        "detailed_summary": "The paper proposes MIRepNet, the first EEG foundation model dedicated to the motor imagery (MI) paradigm, addressing the limitations of generalist models that ignore paradigm-specific neurophysiology. It introduces a preprocessing pipeline featuring a neurophysiologically-informed channel template for spatial alignment and a hybrid pretraining objective combining masked token reconstruction with supervised MI classification. Evaluations across five public MI datasets demonstrate that MIRepNet achieves state-of-the-art performance and enables rapid adaptation with fewer than 30 trials per class.",
+        "evaluation": {
+          "benchmarks": [
+            "BNCI2014001",
+            "BNCI2015001",
+            "BNCI2014004",
+            "AlexMI",
+            "BNCI2014001-4"
+          ],
+          "headline_results": [
+            "Outperformed specialist (EEGNet, Conformer) and generalist (BIOT, LaBraM) models across 5 datasets.",
+            "Achieved state-of-the-art accuracy with fewer than 30 trials per class."
+          ],
+          "tasks": [
+            "Motor Imagery Classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: MIRepNet is specifically tailored for the motor imagery (MI) paradigm to capture task-specific neurophysiological features.",
+          "Hybrid pretraining: Combines masked token reconstruction with supervised classification to learn robust temporal-spatial representations.",
+          "Rapid adaptation: Achieves state-of-the-art accuracy on five MI datasets while requiring significantly fewer calibration trials (<30 per class) than generalist models."
+        ],
+        "limitations": [
+          "Focuses exclusively on the motor imagery paradigm, limiting its applicability to other BCI tasks like SSVEP or ERP.",
+          "Relies on spatial interpolation for channel alignment, which may introduce artifacts if electrode coverage is too sparse.",
+          "Pretraining data quality is managed by a screening threshold, which might exclude potentially useful but noisy data."
+        ],
+        "method": {
+          "architecture": "Convolutional temporal-spatial embedding followed by a Transformer encoder and a Transformer decoder.",
+          "finetuning": "Subject-specific adaptation using 30% of target session trials.",
+          "objective": "Joint loss of masked token reconstruction (Lrec) and supervised MI classification (Lcls).",
+          "pretraining": "Trained on 7 MI datasets using a hybrid self-supervised and supervised approach."
+        },
+        "notes": "{\"chars\": 54439, \"error\": null, \"pages\": 13, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=15678",
+        "one_liner": "A paradigm-specific EEG foundation model tailored for motor imagery classification using a hybrid pretraining strategy and a neurophysiologically-informed preprocessing pipeline.",
+        "open_source": {
+          "code_url": "https://github.com/staraink/MIRepNet",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-07-27",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "MIRepNet: A Pipeline and Foundation Model for EEG-Based Motor Imagery Classification",
+        "unique_contribution": "Introduces the first paradigm-specific EEG foundation model for motor imagery that combines a neurophysiologically-informed spatial alignment pipeline with a hybrid self-supervised and supervised pretraining objective.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "MIRepNet: A Pipeline and Foundation Model for EEG-Based Motor Imagery Classification",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies as an 'EEG foundation model tailored for the MI paradigm'",
+          "Utilizes a hybrid pretraining strategy involving self-supervised masked token reconstruction",
+          "Demonstrates broad transferability and rapid adaptation across five public MI datasets"
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 2,
-    "candidates": 17,
-    "summarized": 2
+    "accepted": 3,
+    "candidates": 20,
+    "summarized": 3
   },
   "top_picks": [
+    "2507.20254",
     "2507.11783",
     "2507.09882"
   ]

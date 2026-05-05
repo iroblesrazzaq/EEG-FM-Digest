@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2509.26301",
+  "featured_paper_id": null,
   "month": "2025-09",
   "papers": [
     {
@@ -576,7 +576,7 @@
       }
     },
     {
-      "arxiv_id": "2509.24222v1",
+      "arxiv_id": "2509.24222v2",
       "arxiv_id_base": "2509.24222",
       "authors": [
         "Zhisheng Chen",
@@ -596,8 +596,8 @@
         "cs.LG"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2509.24222v1",
-        "pdf": "https://arxiv.org/pdf/2509.24222v1"
+        "abs": "http://arxiv.org/abs/2509.24222v2",
+        "pdf": "https://arxiv.org/pdf/2509.24222v2"
       },
       "published_date": "2025-09-29",
       "summary": {
@@ -698,7 +698,7 @@
       }
     },
     {
-      "arxiv_id": "2509.24302v1",
+      "arxiv_id": "2509.24302v2",
       "arxiv_id_base": "2509.24302",
       "authors": [
         "Muyun Jiang",
@@ -718,8 +718,8 @@
         "cs.LG"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2509.24302v1",
-        "pdf": "https://arxiv.org/pdf/2509.24302v1"
+        "abs": "http://arxiv.org/abs/2509.24302v2",
+        "pdf": "https://arxiv.org/pdf/2509.24302v2"
       },
       "published_date": "2025-09-29",
       "summary": {
@@ -801,7 +801,7 @@
         "used_fulltext": true
       },
       "summary_failed_reason": null,
-      "title": "ELASTIQ: EEG-Language Alignment with Semantic Task Instruction and Querying",
+      "title": "LEAF: Language-EEG Aligned Foundation Model for Brain-Computer Interfaces",
       "triage": {
         "confidence": 0.95,
         "decision": "accept",
@@ -931,7 +931,7 @@
   ],
   "stats": {
     "accepted": 8,
-    "candidates": 18,
+    "candidates": 24,
     "summarized": 8
   },
   "top_picks": [

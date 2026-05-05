@@ -5,15 +5,15 @@
   "triage_force": false,
   "summary_force": false,
   "include_borderline": false,
-  "triage_provider": "openrouter",
-  "triage_model": "stepfun/step-3.5-flash:free",
-  "summary_provider": "openrouter",
-  "summary_model": "stepfun/step-3.5-flash:free",
-  "triage_sleep_seconds": 10.0,
-  "summary_sleep_seconds": 10.0,
+  "triage_provider": "google",
+  "triage_model": "gemma-4-31b-it",
+  "summary_provider": "google",
+  "summary_model": "gemma-4-31b-it",
+  "triage_sleep_seconds": 0.0,
+  "summary_sleep_seconds": 0.0,
   "stop_on_rate_limit": true,
   "sync_cache_from_outputs": true,
   "max_candidates": null,
   "max_accepted": null,
-  "env_path": "~/2_cs_projects/env/.env"
+  "env_path": "~/2_cs_projects/env/llm_api/.env"
 }

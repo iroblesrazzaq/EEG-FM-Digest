@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2410.19779",
+  "featured_paper_id": null,
   "month": "2024-10",
   "papers": [
     {
@@ -105,9 +105,10 @@
         "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "Introduces EEGPT, the first generalist EEG foundation model",
-          "Uses autoregressive pre-training for broad transfer",
-          "Evaluates on 5 tasks across 12 benchmarks outperforming specialist models"
+          "Explicitly introduces EEGPT as a 'generalist EEG foundation model' designed for broad transfer.",
+          "Utilizes large-scale autoregressive pre-training on 37.5M samples to create reusable representations.",
+          "Demonstrates generalizability by evaluating across 5 distinct tasks and 12 benchmarks.",
+          "Explores scaling laws with a model size up to 1.1B parameters, characteristic of foundation model research."
         ]
       }
     },
@@ -212,13 +213,12 @@
       "summary_failed_reason": null,
       "title": "Contrastive random lead coding for channel-agnostic self-supervision of biosignals",
       "triage": {
-        "confidence": 0.9,
+        "confidence": 0.85,
         "decision": "accept",
         "reasons": [
-          "proposes CRLC for channel-agnostic self-supervision of biosignals",
-          "validates on EEG with pretraining and fine-tuning",
-          "outperforms state-of-the-art reference model for EEG tasks",
-          "focuses on generalization across variable channel setups"
+          "Proposes a channel-agnostic self-supervised pre-training method (CRLC) specifically to improve the utility of large SSL models across different biosignal configurations.",
+          "Focuses on creating reusable representations for EEG and ECG that can be fine-tuned for various downstream tasks.",
+          "Directly addresses a core challenge for EEG foundation models: the variability of input channels across different datasets."
         ]
       }
     }

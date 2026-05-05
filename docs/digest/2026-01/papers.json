@@ -1,9 +1,9 @@
 {
-  "featured_paper_id": "2601.17883",
+  "featured_paper_id": null,
   "month": "2026-01",
   "papers": [
     {
-      "arxiv_id": "2601.00573v1",
+      "arxiv_id": "2601.00573v2",
       "arxiv_id_base": "2601.00573",
       "authors": [
         "Yihe Wang",
@@ -17,8 +17,8 @@
         "cs.CE"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2601.00573v1",
-        "pdf": "https://arxiv.org/pdf/2601.00573v1"
+        "abs": "http://arxiv.org/abs/2601.00573v2",
+        "pdf": "https://arxiv.org/pdf/2601.00573v2"
       },
       "published_date": "2026-01-02",
       "summary": {
@@ -125,7 +125,7 @@
       }
     },
     {
-      "arxiv_id": "2601.06134v1",
+      "arxiv_id": "2601.06134v2",
       "arxiv_id_base": "2601.06134",
       "authors": [
         "Jiquan Wang",
@@ -141,8 +141,8 @@
         "q-bio.NC"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2601.06134v1",
-        "pdf": "https://arxiv.org/pdf/2601.06134v1"
+        "abs": "http://arxiv.org/abs/2601.06134v2",
+        "pdf": "https://arxiv.org/pdf/2601.06134v2"
       },
       "published_date": "2026-01-05",
       "summary": {
@@ -487,7 +487,7 @@
       }
     },
     {
-      "arxiv_id": "2601.22197v1",
+      "arxiv_id": "2601.22197v2",
       "arxiv_id_base": "2601.22197",
       "authors": [
         "Jathurshan Pradeepkumar",
@@ -500,8 +500,8 @@
         "eess.SP"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2601.22197v1",
-        "pdf": "https://arxiv.org/pdf/2601.22197v1"
+        "abs": "http://arxiv.org/abs/2601.22197v2",
+        "pdf": "https://arxiv.org/pdf/2601.22197v2"
       },
       "published_date": "2026-01-29",
       "summary": {
@@ -591,18 +591,98 @@
           "Focus on pretrained EEG foundation models for broad transfer"
         ]
       }
+    },
+    {
+      "arxiv_id": "2601.21965v1",
+      "arxiv_id_base": "2601.21965",
+      "authors": [
+        "Deeksha M. Shama",
+        "Dimitra Emmanouilidou",
+        "Ivan J. Tashev"
+      ],
+      "categories": [
+        "cs.HC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2601.21965v1",
+        "pdf": "https://arxiv.org/pdf/2601.21965v1"
+      },
+      "published_date": "2026-01-29",
+      "summary": {
+        "arxiv_id_base": "2601.21965",
+        "categories": [
+          "cs.HC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 28420, \"error\": null, \"pages\": 5, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=8479;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-01-29",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Cognitive Load Estimation Using Brain Foundation Models and Interpretability for BCIs",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Cognitive Load Estimation Using Brain Foundation Models and Interpretability for BCIs",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "EEG is the central modality used for cognitive load estimation.",
+          "Explicitly leverages 'Brain Foundation Models (BFMs)' to extract generalizable EEG features.",
+          "Focuses on the adaptation and fine-tuning of BFMs, which falls under the EEG-FM ecosystem criteria."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 5,
-    "candidates": 15,
-    "summarized": 5
+    "accepted": 6,
+    "candidates": 22,
+    "summarized": 6
   },
   "top_picks": [
     "2601.17883",
     "2601.06134",
+    "2601.21965",
     "2601.22197",
-    "2601.07877",
-    "2601.00573"
+    "2601.07877"
   ]
 }

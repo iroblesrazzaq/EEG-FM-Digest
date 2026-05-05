@@ -1,5 +1,5 @@
 {
-  "featured_paper": "2602.18478",
+  "featured_paper": null,
   "month": "2026-02",
   "sections": [
     {
@@ -35,7 +35,7 @@
   ],
   "stats": {
     "accepted": 10,
-    "candidates": 24,
+    "candidates": 27,
     "summarized": 10
   },
   "top_picks": [

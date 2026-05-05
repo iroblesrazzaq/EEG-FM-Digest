@@ -438,6 +438,118 @@
       }
     },
     {
+      "arxiv_id": "2605.00857v1",
+      "arxiv_id_base": "2605.00857",
+      "authors": [
+        "Peiliang Gong",
+        "Han Zhang",
+        "Zhen Jiang",
+        "Chenyu Liu",
+        "Ziyu Jia",
+        "Xinliang Zhou",
+        "Daoqiang Zhang",
+        "Xiaoli Li"
+      ],
+      "categories": [
+        "eess.SP",
+        "cs.AI",
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.00857v1",
+        "pdf": "https://arxiv.org/pdf/2605.00857v1"
+      },
+      "published_date": "2026-04-21",
+      "summary": {
+        "arxiv_id_base": "2605.00857",
+        "categories": [
+          "eess.SP",
+          "cs.AI",
+          "cs.LG",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "BCIC-IV-2a",
+            "FACED",
+            "SSVEP"
+          ],
+          "eeg_hours": null,
+          "subjects": 167.0
+        },
+        "detailed_summary": "The paper proposes FUSED, a framework that combines a large-scale EEG Foundation Model (FM) and a compact Specialist Model (SM) to perform cross-subject decoding without source data. It employs a 'calibrate-then-distill' pipeline where the FM's decision boundaries are first aligned to the target domain via mutual information maximization, followed by knowledge distillation to the SM. The framework uses dual-view predictions (linear and prototype) and a two-stage refinement process to generate high-quality pseudo-labels, achieving state-of-the-art results on motor imagery, emotion recognition, and SSVEP tasks.",
+        "evaluation": {
+          "benchmarks": [
+            "BCIC-IV-2a",
+            "FACED",
+            "SSVEP"
+          ],
+          "headline_results": [
+            "68.77% on BCIC-IV-2a",
+            "61.16% on FACED",
+            "80.95% on SSVEP"
+          ],
+          "tasks": [
+            "Motor Imagery",
+            "Emotion Recognition",
+            "SSVEP"
+          ]
+        },
+        "key_points": [
+          "Method for source-free EEG decoding: FUSED integrates a large-scale foundation model with a compact specialist model to enable robust cross-subject adaptation without accessing source data.",
+          "Novel co-adaptation mechanism: Employs dual-view predictions (linear and prototype) and a two-stage refinement process to suppress pseudo-label noise and error accumulation.",
+          "Strong empirical evidence: Achieves state-of-the-art accuracy across three paradigms (motor imagery, emotion recognition, and SSVEP), outperforming existing SFDA baselines."
+        ],
+        "limitations": [
+          "Limited to closed-set scenarios where source and target domains share the same label space.",
+          "Does not explore cross-dataset transfer across entirely different EEG paradigms.",
+          "Requires a pre-existing large-scale foundation model to act as the guide."
+        ],
+        "method": {
+          "architecture": "Dual-branch (CbraMod FM + EEGNet SM)",
+          "finetuning": "FM classifier is calibrated via MI maximization; SM backbone is adapted on target data.",
+          "objective": "Mutual Information (MI) maximization for FM calibration; Masked Cross-Entropy, KL-divergence, and Diversity Regularization for SM adaptation.",
+          "pretraining": "FM is pretrained on large-scale data; SM is pretrained on source data."
+        },
+        "notes": "{\"chars\": 59326, \"error\": null, \"pages\": 11, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=16706",
+        "one_liner": "A source-free domain adaptation framework that leverages the generalizability of EEG foundation models to guide the adaptation of compact specialist models.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-04-21",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Foundation Model Guided Dual-Branch Co-Adaptation for Source-Free EEG Decoding",
+        "unique_contribution": "First framework to integrate large-scale EEG foundation models into a source-free domain adaptation paradigm using a dual-branch co-adaptation mechanism.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Foundation Model Guided Dual-Branch Co-Adaptation for Source-Free EEG Decoding",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "EEG is the primary modality.",
+          "Explicitly leverages EEG Foundation Models (FMs) to guide source-free domain adaptation.",
+          "Fits ecosystem criteria as a paper focusing on the adaptation and utilization of pretrained EEG-FMs."
+        ]
+      }
+    },
+    {
       "arxiv_id": "2604.23091v1",
       "arxiv_id_base": "2604.23091",
       "authors": [
@@ -461,49 +573,85 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
+          "datasets": [
+            "BCIC2A",
+            "PhysioNet",
+            "TUEV",
+            "FACED",
+            "MDD"
+          ],
           "eeg_hours": null,
-          "subjects": null
+          "subjects": 305.0
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper evaluates four channel adaptation methods (Conv1d projection, spherical spline interpolation, source-space decomposition, and Riemannian re-centering) to handle heterogeneous electrode montages in EEG foundation models. It identifies a dichotomy between rigid-montage models that require external adaptation and flexible models that can handle arbitrary channels natively. The study reveals a probe-SFT asymmetry where external adaptation can lead to negative transfer during fine-tuning of flexible models, and demonstrates that the optimal adaptation method is architecture-dependent.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "BCIC2A",
+            "PhysioNet",
+            "TUEV",
+            "FACED",
+            "MDD"
+          ],
+          "headline_results": [
+            "Rigid models require external adaptation; flexible models can be native.",
+            "Probe-SFT asymmetry: external adapters can cause negative transfer during SFT for flexible models.",
+            "CBraMod (5M) often outperforms larger models."
+          ],
+          "tasks": [
+            "Motor Imagery",
+            "Event Detection",
+            "Emotion Recognition",
+            "Depression Detection"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "Benchmark of EEG foundation models: systematically compares four channel adaptation methods across five models (5M-157M parameters) and five downstream tasks.",
+          "Rigid vs. flexible dichotomy: rigid models (BENDR, Neuro-GPT) require external adaptation, while flexible models (EEGPT, CBraMod) perform well natively but risk negative transfer during SFT with external adapters.",
+          "Architecture-dependent optimality: optimal adaptation varies by model (e.g., Conv1d for BENDR, Riemannian for Neuro-GPT) and task (e.g., source-space decomposition for depression detection)."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Only probe and full SFT regimes were evaluated; parameter-efficient methods like LoRA were not tested.",
+          "Emotion recognition (FACED) remains largely unsolved, with models underperforming specialized methods by ~40pp.",
+          "High variance in some experiments suggests seed-dependent convergence failures.",
+          "A single learning rate was used across all models, which may not be optimal for each.",
+          "Model performance is confounded by pretraining corpus size, sampling rates, and normalization schemes."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Benchmarking of five pretrained EEG-FMs (BENDR, Neuro-GPT, EEGPT, LUNA, CBraMod)",
+          "finetuning": "Probe (frozen encoder) and SFT (supervised fine-tuning)",
+          "objective": "Comparison of four adaptation methods (Conv1d, SSI, OmnEEG, Riemannian)",
+          "pretraining": "Various (Masked Reconstruction, Contrastive)"
         },
-        "notes": "{\"chars\": 32633, \"error\": null, \"pages\": 6, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=9625;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 32633, \"error\": null, \"pages\": 6, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=9620",
+        "one_liner": "A systematic benchmark of channel adaptation methods across five EEG foundation models, five downstream tasks, and two training regimes.",
         "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
+          "code_url": "https://github.com/OmnEEG/OmnEEG",
+          "license": "unknown",
+          "weights_url": "HuggingFace Hub"
         },
-        "paper_type": "other",
+        "paper_type": "benchmark",
         "published_date": "2026-04-25",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage",
+            "channel-flexible"
+          ]
         },
         "title": "Channel Adaptation for EEG Foundation Models: A Systematic Benchmark Across Architectures, Tasks, and Training Regimes",
-        "unique_contribution": "unknown",
+        "unique_contribution": "The first systematic cross-model comparison of channel adaptation methods for EEG foundation models, revealing a rigid/flexible dichotomy and a probe-SFT asymmetry.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -513,8 +661,8 @@
         "decision": "accept",
         "reasons": [
           "Explicitly targets EEG foundation models in both title and abstract.",
-          "Provides a systematic benchmark of channel adaptation methods for existing EEG-FMs like BENDR, Neuro-GPT, EEGPT, and CBraMod.",
-          "Focuses on the ecosystem of EEG-FMs, specifically addressing data pooling and downstream deployment across heterogeneous montages."
+          "Provides a systematic benchmark for channel adaptation across multiple existing EEG-FMs (BENDR, Neuro-GPT, EEGPT, CBraMod).",
+          "Focuses on the EEG-FM ecosystem through evaluation of adaptation methods and training regimes for broad transfer."
         ]
       }
     },
@@ -545,83 +693,49 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [
-            "TUAB",
-            "TUEV",
-            "SEED-V",
-            "CHB-MIT",
-            "Sleep-EDF",
-            "PhysioNet"
-          ],
-          "eeg_hours": 2000.0,
+          "datasets": [],
+          "eeg_hours": null,
           "subjects": null
         },
-        "detailed_summary": "The paper proposes MTEEG, a framework that integrates task-specific LoRA modules into a pre-trained LaBraM backbone to enable simultaneous multi-task EEG analysis. Unlike standard full fine-tuning or hard parameter sharing, MTEEG disentangles the parameter space to alleviate conflicts arising from EEG signal heterogeneity. Evaluation across six downstream tasks demonstrates that the MTEEG-DC variant, which balances task specification and interaction, outperforms most state-of-the-art single-task methods.",
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
         "evaluation": {
-          "benchmarks": [
-            "TUAB",
-            "TUEV",
-            "SEED-V",
-            "CHB-MIT",
-            "Sleep-EDF",
-            "PhysioNet"
-          ],
-          "headline_results": [
-            "MTEEG-DC surpasses state-of-the-art single-task methods on most metrics."
-          ],
-          "tasks": [
-            "abnormal detection",
-            "event type classification",
-            "emotion recognition",
-            "seizure detection",
-            "sleep stage classification",
-            "motor imagery classification"
-          ]
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
         },
         "key_points": [
-          "Method for multi-task EEG analysis: Proposes MTEEG, which uses task-specific LoRA modules to adapt a pre-trained LaBraM model to multiple tasks simultaneously.",
-          "Novel adaptation strategies: Explores three LoRA configurations (SP, RT, DC), finding that a shared down-projection with task-specific up-projection (MTEEG-DC) best mitigates task conflicts.",
-          "Strong empirical results: Outperforms state-of-the-art single-task methods on the majority of metrics across six diverse EEG datasets."
+          "unknown",
+          "unknown",
+          "unknown"
         ],
         "limitations": [
-          "MTEEG-RT variant performed poorly, suggesting basic linear routers may be insufficient for noisy EEG signals.",
-          "Performance gains are most notable on some tasks but not all.",
-          "The study relies on a specific pre-trained backbone (LaBraM), and generalizability to other backbones is not explored."
+          "unknown",
+          "summary_json_error"
         ],
         "method": {
-          "architecture": "Pre-trained LaBraM (Temporal Encoder + Transformer Encoder) with task-specific LoRA adapters.",
-          "finetuning": "Frozen backbone with trainable LoRA modules in MHSA and FFN layers.",
-          "objective": "Pre-trained via masked reconstruction of discrete tokens; fine-tuned using binary/cross-entropy loss.",
-          "pretraining": "Masked patch prediction on 2000 hours of data."
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
         },
-        "notes": "{\"chars\": 36906, \"error\": null, \"pages\": 7, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=10821",
-        "one_liner": "A multi-task EEG analysis framework using task-specific Low-Rank Adaptation (LoRA) to efficiently adapt a pre-trained model to multiple downstream tasks while mitigating task conflicts.",
+        "notes": "{\"chars\": 36986, \"error\": null, \"pages\": 7, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=10828;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "method",
+        "paper_type": "other",
         "published_date": "2026-04-28",
         "tags": {
-          "backbone": [
-            "transformer"
-          ],
-          "objective": [
-            "masked-reconstruction"
-          ],
-          "paper_type": [
-            "post-training"
-          ],
-          "tokenization": [
-            "discrete-tokens"
-          ],
-          "topology": [
-            "channel-flexible"
-          ]
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
         },
         "title": "Towards Unified Multi-task EEG Analysis with Low-Rank Adaptation",
-        "unique_contribution": "Introduces a multi-task EEG adaptation framework using three LoRA-based variants to balance task-specific knowledge and global knowledge reuse.",
+        "unique_contribution": "unknown",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -630,23 +744,23 @@
         "confidence": 0.9,
         "decision": "accept",
         "reasons": [
-          "Focuses on the adaptation and fine-tuning of pre-trained EEG models for multiple downstream tasks.",
-          "Proposes MTEEG, a framework using Low-Rank Adaptation (LoRA) to efficiently adapt a pre-trained model to multiple tasks.",
-          "Explicitly targets the development of general-purpose brain-computer interfaces using pre-trained EEG representations."
+          "EEG is the central modality of the study.",
+          "The paper focuses on the adaptation and fine-tuning of pre-trained EEG models for multi-task analysis.",
+          "It proposes a specific framework (MTEEG) using LoRA to optimize the use of pre-trained EEG representations across multiple downstream tasks."
         ]
       }
     }
   ],
   "stats": {
-    "accepted": 6,
-    "candidates": 13,
-    "summarized": 6
+    "accepted": 7,
+    "candidates": 19,
+    "summarized": 7
   },
   "top_picks": [
+    "2605.00857",
+    "2604.23091",
     "2604.16926",
     "2604.15016",
-    "2604.04297",
-    "2604.23091",
-    "2604.25131"
+    "2604.04297"
   ]
 }

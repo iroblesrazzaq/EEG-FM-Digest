@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2403.11772",
+  "featured_paper_id": null,
   "month": "2024-03",
   "papers": [
     {
@@ -99,20 +99,19 @@
       "summary_failed_reason": null,
       "title": "S-JEPA: towards seamless cross-dataset transfer through dynamic spatial attention",
       "triage": {
-        "confidence": 0.9,
+        "confidence": 0.85,
         "decision": "accept",
         "reasons": [
-          "Introduces Signal-JEPA for EEG signal representation",
-          "Focuses on cross-dataset transfer in EEG",
-          "Presents novel architectures for downstream EEG classification",
-          "Evaluates on multiple BCI paradigms"
+          "Proposes Signal-JEPA for representing EEG recordings using self-supervised learning.",
+          "Explicitly targets seamless cross-dataset transfer.",
+          "Evaluates the learned representations across three distinct BCI paradigms (motor imagery, ERP, and SSVEP)."
         ]
       }
     }
   ],
   "stats": {
     "accepted": 1,
-    "candidates": 8,
+    "candidates": 9,
     "summarized": 1
   },
   "top_picks": [
