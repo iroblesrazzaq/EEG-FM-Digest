@@ -262,6 +262,12 @@ def run_month(
                         "text_path": None,
                         "extract_meta": {"error": "missing_pdf_link"},
                     }
+                    summary_failure_count += 1
+                    print(
+                        f"[pipeline] WARNING: pdf missing for {arxiv_id_base}; "
+                        "skipping (will retry next run)",
+                        file=sys.stderr,
+                    )
                 else:
                     pdf_path = month_out / "pdfs" / f"{arxiv_id_base}.pdf"
                     txt_path = month_out / "text" / f"{arxiv_id_base}.txt"
@@ -284,6 +290,13 @@ def run_month(
                             "text_path": str(txt_path),
                             "extract_meta": {"error": f"download_or_extract_failed:{type(exc).__name__}"},
                         }
+                        summary_failure_count += 1
+                        print(
+                            f"[pipeline] WARNING: pdf download/extract failed for "
+                            f"{arxiv_id_base}: {type(exc).__name__}: {exc}; "
+                            "skipping (will retry next run)",
+                            file=sys.stderr,
+                        )
 
                 if raw_text.strip():
                     summary, summary_call_meta = _run_summary_call_with_meta(
