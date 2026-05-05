@@ -47,9 +47,9 @@ class BatchRunConfig:
     triage_force: bool = False
     summary_force: bool = False
     include_borderline: bool = False
-    triage_provider: str = "openrouter"
+    triage_provider: str = "google"
     triage_model: str = ""
-    summary_provider: str = "openrouter"
+    summary_provider: str = "google"
     summary_model: str = ""
     triage_sleep_seconds: float = 0.0
     summary_sleep_seconds: float = 0.0
@@ -101,9 +101,9 @@ def _parse_batch_config(path: Path) -> BatchRunConfig:
         triage_force=bool(raw.get("triage_force", False)),
         summary_force=bool(raw.get("summary_force", False)),
         include_borderline=bool(raw.get("include_borderline", False)),
-        triage_provider=str(raw.get("triage_provider", raw.get("summary_provider", "openrouter"))),
+        triage_provider=str(raw.get("triage_provider", raw.get("summary_provider", "google"))),
         triage_model=str(raw.get("triage_model", raw.get("summary_model", ""))),
-        summary_provider=str(raw.get("summary_provider", "openrouter")),
+        summary_provider=str(raw.get("summary_provider", "google")),
         summary_model=str(raw.get("summary_model", "")),
         triage_sleep_seconds=float(raw.get("triage_sleep_seconds", 0.0)),
         summary_sleep_seconds=float(raw.get("summary_sleep_seconds", 0.0)),
