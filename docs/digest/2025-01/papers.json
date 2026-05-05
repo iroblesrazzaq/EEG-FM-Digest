@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2501.10885",
+  "featured_paper_id": null,
   "month": "2025-01",
   "papers": [
     {
@@ -106,20 +106,19 @@
       "summary_failed_reason": null,
       "title": "CEReBrO: Compact Encoder for Representations of Brain Oscillations Using Efficient Alternating Attention",
       "triage": {
-        "confidence": 0.9,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "The paper introduces CEReBrO, a new small EEG foundation model.",
-          "It explicitly mentions 'pre-trained reusable EEG representations/models intended for broad transfer' by using 'large unlabeled datasets' and setting 'new benchmarks in emotion detection and seizure detection tasks'.",
-          "The model is designed to address limitations in current EEG signal modeling and model size, aiming for efficiency and reproducibility.",
-          "The abstract clearly states the goal of creating a 'Compact Encoder for Representations of Brain Oscillations' which aligns with the definition of an EEG foundation model."
+          "Explicitly identifies the proposed CEReBrO as a 'new small EEG foundation model'",
+          "Pre-trained on a large-scale dataset of over 20,000 hours of publicly available scalp EEG recordings",
+          "Demonstrates broad transferability across multiple diverse tasks including emotion detection, seizure detection, anomaly classification, and gait prediction"
         ]
       }
     }
   ],
   "stats": {
     "accepted": 1,
-    "candidates": 9,
+    "candidates": 14,
     "summarized": 1
   },
   "top_picks": [

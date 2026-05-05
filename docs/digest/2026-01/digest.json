@@ -1,5 +1,5 @@
 {
-  "featured_paper": "2601.17883",
+  "featured_paper": null,
   "month": "2026-01",
   "sections": [
     {
@@ -16,18 +16,24 @@
         "2601.22197"
       ],
       "title": "new_model"
+    },
+    {
+      "paper_ids": [
+        "2601.21965"
+      ],
+      "title": "other"
     }
   ],
   "stats": {
-    "accepted": 5,
-    "candidates": 15,
-    "summarized": 5
+    "accepted": 6,
+    "candidates": 22,
+    "summarized": 6
   },
   "top_picks": [
     "2601.17883",
     "2601.06134",
+    "2601.21965",
     "2601.22197",
-    "2601.07877",
-    "2601.00573"
+    "2601.07877"
   ]
 }

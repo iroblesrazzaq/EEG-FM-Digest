@@ -1,4 +1,5 @@
 {
+  "featured_paper_id": null,
   "month": "2023-09",
   "papers": [
     {
@@ -25,20 +26,20 @@
       "summary_failed_reason": "download_or_extract_failed:HTTPStatusError",
       "title": "BELT:Bootstrapping Electroencephalography-to-Language Decoding and Zero-Shot Sentiment Classification by Natural Language Supervision",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 0.85,
         "decision": "accept",
         "reasons": [
-          "EEG is central modality for brain-to-language translation",
-          "Presents BELT framework for EEG representation learning",
-          "Utilizes large language models for EEG-FM style pretraining",
-          "Achieves state-of-the-art results on EEG decoding tasks"
+          "EEG is the central modality focused on brain-to-language translation.",
+          "Proposes a generic framework to bootstrap EEG representation learning using large-scale pretrained language models.",
+          "Demonstrates zero-shot generalization capabilities, a key characteristic of foundation models.",
+          "Aims to create semantically discriminative EEG representations for broad application across decoding tasks."
         ]
       }
     }
   ],
   "stats": {
     "accepted": 1,
-    "candidates": 6,
+    "candidates": 7,
     "summarized": 0
   },
   "top_picks": []

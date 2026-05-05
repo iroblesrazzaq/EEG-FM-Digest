@@ -1,5 +1,5 @@
 {
-  "featured_paper": "2505.18185",
+  "featured_paper": null,
   "month": "2025-05",
   "sections": [
     {
@@ -16,14 +16,14 @@
   ],
   "stats": {
     "accepted": 6,
-    "candidates": 14,
+    "candidates": 17,
     "summarized": 6
   },
   "top_picks": [
-    "2505.23107",
     "2505.23042",
     "2505.21507",
     "2505.18185",
-    "2505.16724"
+    "2505.16724",
+    "2505.06291"
   ]
 }

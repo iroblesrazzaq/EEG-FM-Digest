@@ -1,7 +1,106 @@
 {
-  "featured_paper_id": "2405.18765",
+  "featured_paper_id": null,
   "month": "2024-05",
   "papers": [
+    {
+      "arxiv_id": "2405.19345v1",
+      "arxiv_id_base": "2405.19345",
+      "authors": [
+        "Pierre Guetschel",
+        "Sara Ahmadi",
+        "Michael Tangermann"
+      ],
+      "categories": [
+        "eess.SP",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2405.19345v1",
+        "pdf": "https://arxiv.org/pdf/2405.19345v1"
+      },
+      "published_date": "2024-05-17",
+      "summary": {
+        "arxiv_id_base": "2405.19345",
+        "categories": [
+          "eess.SP",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper synthesizes findings from 81 articles to analyze the state of deep representation learning in BCI, identifying a prevalence of autoencoders and a nascent use of self-supervised learning. It categorizes motivations for using embeddings—such as transfer learning and noise robustness—and evaluates various introspection methods like UMAP and linear probing. The authors conclude that the field lacks standard foundation models and recommend the creation of specialized benchmarks and large-scale datasets to accelerate progress.",
+        "evaluation": {
+          "benchmarks": [
+            "Various BCI datasets analyzed across 81 papers"
+          ],
+          "headline_results": [
+            "Predominance of autoencoders (31 articles)",
+            "Emergence of SSL (13 articles)"
+          ],
+          "tasks": [
+            "Representation introspection",
+            "Downstream task performance"
+          ]
+        },
+        "key_points": [
+          "Survey paper: reviews 81 articles on deep representation learning for BCI, highlighting the dominance of autoencoders and the emergence of SSL.",
+          "Identifies a critical gap in the lack of widely adopted EEG foundation models and standardized evaluation benchmarks.",
+          "Recommends a transition toward SSL-based pre-training on large-scale datasets to reduce calibration times and improve cross-subject transfer."
+        ],
+        "limitations": [
+          "Not a systematic review, so percentages may not reflect the absolute distribution of research.",
+          "Lack of standardized benchmarks makes comparison between the reviewed studies difficult.",
+          "Many reviewed studies treat embeddings as side products rather than explicit objectives.",
+          "Limited introspection of learned representations in the majority of existing BCI literature."
+        ],
+        "method": {
+          "architecture": "Autoencoders, Transformers, GANs",
+          "finetuning": "Downstream BCI tasks",
+          "objective": "Masked reconstruction, Contrastive learning, Triplet loss",
+          "pretraining": "Self-supervised learning (SSL)"
+        },
+        "notes": "{\"chars\": 112496, \"error\": null, \"pages\": 25, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=30350",
+        "one_liner": "A comprehensive review of deep representation learning and self-supervised learning techniques for EEG-based BCIs, advocating for the development of standardized foundation models.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "survey",
+        "published_date": "2024-05-17",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "survey"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Review of Deep Representation Learning Techniques for Brain-Computer Interfaces and Recommendations",
+        "unique_contribution": "Provides a systematic analysis of deep representation learning in BCI and proposes a roadmap for developing EEG foundation models through SSL and standardized benchmarking.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Review of Deep Representation Learning Techniques for Brain-Computer Interfaces and Recommendations",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Systematic review of deep representation learning and SSL techniques specifically for EEG signals.",
+          "Explicitly analyzes the current state of the field regarding the lack of standard EEG foundation models.",
+          "Provides recommendations for the advancement of EEG foundation models and the creation of specialized benchmarks."
+        ]
+      }
+    },
     {
       "arxiv_id": "2405.19373v1",
       "arxiv_id_base": "2405.19373",
@@ -102,10 +201,9 @@
         "confidence": 0.9,
         "decision": "accept",
         "reasons": [
-          "EEG is central modality for emotion recognition",
-          "Model uses pre-training on large-scale dataset for universal EEG representations",
-          "Presents interlinked spatial-temporal attention mechanism for EEG processing",
-          "Demonstrates cross-subject generalizability through pre-trained representations"
+          "Explicitly mentions learning 'universal latent representations of EEG signals through pre-training on large scale dataset'",
+          "Utilizes 'masked brain signal modeling', a characteristic technique of foundation models",
+          "EEG is the central modality for the proposed pre-trained model"
         ]
       }
     },
@@ -209,23 +307,24 @@
       "summary_failed_reason": null,
       "title": "Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "EEG foundation model (LaBraM) explicitly proposed",
-          "Unsupervised pre-training for universal EEG perceptual capabilities",
-          "Validated on multiple downstream tasks with SOTA performance"
+          "Explicitly proposes a 'unified foundation model for EEG' called Large Brain Model (LaBraM)",
+          "Uses unsupervised pre-training on a large-scale dataset of 2,500 hours from 20 datasets to learn generic representations",
+          "Demonstrates broad transferability by validating on multiple diverse downstream tasks"
         ]
       }
     }
   ],
   "stats": {
-    "accepted": 2,
+    "accepted": 3,
     "candidates": 7,
-    "summarized": 2
+    "summarized": 3
   },
   "top_picks": [
     "2405.18765",
-    "2405.19373"
+    "2405.19373",
+    "2405.19345"
   ]
 }

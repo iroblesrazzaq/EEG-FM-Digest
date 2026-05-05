@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2101.12037",
+  "featured_paper_id": null,
   "month": "2021-01",
   "papers": [
     {
@@ -110,9 +110,9 @@
         "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "The paper explicitly proposes 'encephalography modelling' (EM) as an analogue to large-scale language modeling using massive EEG datasets.",
-          "It introduces BENDR, a transformer-based model pretrained via self-supervision to learn reusable representations for broad transfer.",
-          "The model demonstrates generalizability across different hardware, subjects, and diverse downstream tasks like sleep stage classification and BCI."
+          "Uses massive EEG datasets to develop a single pre-trained model for general encephalography modelling.",
+          "Explicitly demonstrates transferability across different hardware, subjects, and tasks.",
+          "Provides reusable representations intended for fine-tuning across a variety of downstream BCI and EEG classification tasks."
         ]
       }
     }

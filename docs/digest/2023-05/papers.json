@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2305.10351",
+  "featured_paper_id": null,
   "month": "2023-05",
   "papers": [
     {
@@ -110,19 +110,19 @@
       "summary_failed_reason": null,
       "title": "BIOT: Cross-data Biosignal Learning in the Wild",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "proposes foundational model for biosignals",
-          "enables cross-data learning with mismatched channels",
-          "demonstrates improvements on EEG tasks"
+          "Explicitly aims to develop 'foundational models' for biosignals, including EEG, to enable broad transfer.",
+          "Proposes a pre-training and fine-tuning framework designed to handle diverse data sources and formats.",
+          "Demonstrates the utility of pre-trained models on EEG-specific downstream tasks like seizure detection."
         ]
       }
     }
   ],
   "stats": {
     "accepted": 1,
-    "candidates": 1,
+    "candidates": 2,
     "summarized": 1
   },
   "top_picks": [

@@ -1,10 +1,125 @@
 {
+  "featured_paper_id": null,
   "month": "2023-07",
-  "papers": [],
+  "papers": [
+    {
+      "arxiv_id": "2307.12745v2",
+      "arxiv_id_base": "2307.12745",
+      "authors": [
+        "Anders Gjølbye",
+        "William Lehn-Schiøler",
+        "Áshildur Jónsdóttir",
+        "Bergdís Arnardóttir",
+        "Lars Kai Hansen"
+      ],
+      "categories": [
+        "cs.LG",
+        "eess.SP",
+        "stat.ML"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2307.12745v2",
+        "pdf": "https://arxiv.org/pdf/2307.12745v2"
+      },
+      "published_date": "2023-07-24",
+      "summary": {
+        "arxiv_id_base": "2307.12745",
+        "categories": [
+          "cs.LG",
+          "eess.SP",
+          "stat.ML"
+        ],
+        "data_scale": {
+          "channels": 20.0,
+          "datasets": [
+            "TUH EEG Corpus",
+            "TUAR",
+            "TUEV",
+            "TUSZ",
+            "MMIDB"
+          ],
+          "eeg_hours": 70.0,
+          "subjects": 105.0
+        },
+        "detailed_summary": "The paper proposes a framework for concept-based explainability in EEG transformer models by adapting the TCAV method to identify human-aligned concepts in the latent space. It introduces two ways to define these concepts: using externally labeled EEG datasets and utilizing source localization (eLORETA) to create anatomically defined frequency-band concepts. The authors demonstrate that the BENDR model's internal representations align with known clinical markers for seizures and lateralized cortical activity for motor tasks.",
+        "evaluation": {
+          "benchmarks": [
+            "TUH EEG Corpus",
+            "MMIDB"
+          ],
+          "headline_results": [
+            "Seizure balanced accuracy: 0.73 ± 0.07",
+            "Motor task balanced accuracy: 0.83 ± 0.02"
+          ],
+          "tasks": [
+            "Seizure classification",
+            "Motor task classification"
+          ]
+        },
+        "key_points": [
+          "Method for EEG explainability: Applies Testing Concept Activation Vectors (TCAV) to the BENDR transformer to map latent states to human-understandable concepts.",
+          "Novel concept formation: Defines explanatory concepts using both labeled EEG event datasets and anatomically localized cortical activity in specific frequency bands.",
+          "Empirical validation: Shows that the model captures epileptiform discharges for seizure detection and lateralization in the somatosensory/motor cortex for motor imagery."
+        ],
+        "limitations": [
+          "Coarse spatial resolution of eLORETA makes pinpointing exact cortical sources challenging.",
+          "High data attrition rate (90%) when filtering TUH EEG Corpus for reliable resting-state data.",
+          "TCAV scores violated normality assumption, requiring non-parametric statistical tests.",
+          "Some noise (artifacts) still present in final classifier bottlenecks."
+        ],
+        "method": {
+          "architecture": "Linear Head BENDR (LHB) consisting of a convolutional feature encoder, transformer, summarizer (adaptive average pooling), and a linear classifier.",
+          "finetuning": "Binary classification for seizure detection and motor movement (left vs right fist).",
+          "objective": "Contrastive self-supervised learning (pre-training) and binary classification (fine-tuning).",
+          "pretraining": "Contrastive self-supervised learning on the TUH EEG Corpus."
+        },
+        "notes": "{\"chars\": 35907, \"error\": null, \"pages\": 6, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=10448",
+        "one_liner": "Applies Concept Activation Vectors (TCAV) to the BENDR transformer model to explain EEG representations using labeled events and anatomically defined brain regions.",
+        "open_source": {
+          "code_url": "https://github.com/AndersGMadsen/TCAV-BENDR",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2023-07-24",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Concept-based explainability for an EEG transformer model",
+        "unique_contribution": "Introduces the first TCAV workflow for EEG data, specifically proposing the use of anatomically defined concepts via source localization to interpret deep EEG model representations.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Concept-based explainability for an EEG transformer model",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "Targets BENDR (2021), which is explicitly described as a large-scale transformer model for EEG.",
+          "Focuses on analyzing the representations learned by a deep EEG model using concept-based explainability.",
+          "Fits the EEG-FM ecosystem criteria as an analysis of a foundation model's internal latent space."
+        ]
+      }
+    }
+  ],
   "stats": {
-    "accepted": 0,
+    "accepted": 1,
     "candidates": 8,
-    "summarized": 0
+    "summarized": 1
   },
-  "top_picks": []
+  "top_picks": [
+    "2307.12745"
+  ]
 }

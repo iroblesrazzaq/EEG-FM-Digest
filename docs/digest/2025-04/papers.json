@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2504.21214",
+  "featured_paper_id": null,
   "month": "2025-04",
   "papers": [
     {
@@ -104,17 +104,17 @@
       "summary_failed_reason": null,
       "title": "A Simple Review of EEG Foundation Models: Datasets, Advancements and Future Perspectives",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "explicitly reviews EEG foundation models (EEG-FMs)",
-          "focuses on first-generation EEG-FMs and their methodologies",
-          "discusses pretraining strategies and downstream applications"
+          "The paper is a systematic and comprehensive review specifically focused on EEG Foundation Models (EEG-FMs).",
+          "It analyzes 14 early EEG-FMs, including their architectures and pretraining strategies.",
+          "It explicitly targets the EEG-FM ecosystem by identifying research gaps and future directions for general-purpose EEG encoders."
         ]
       }
     },
     {
-      "arxiv_id": "2504.19596v2",
+      "arxiv_id": "2504.19596v3",
       "arxiv_id_base": "2504.19596",
       "authors": [
         "Wei-Bang Jiang",
@@ -127,8 +127,8 @@
         "cs.LG"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2504.19596v2",
-        "pdf": "https://arxiv.org/pdf/2504.19596v2"
+        "abs": "http://arxiv.org/abs/2504.19596v3",
+        "pdf": "https://arxiv.org/pdf/2504.19596v3"
       },
       "published_date": "2025-04-28",
       "summary": {
@@ -217,13 +217,12 @@
       "summary_failed_reason": null,
       "title": "Towards Robust Multimodal Physiological Foundation Models: Handling Arbitrary Missing Modalities",
       "triage": {
-        "confidence": 0.9,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "proposes PhysioOmni, a foundation model for multimodal physiological signals",
-          "explicitly handles EEG as a core modality",
-          "focuses on universal representations and generalization across datasets",
-          "includes masked signal pre-training and robust fine-tuning for missing modalities"
+          "Explicitly proposes PhysioOmni as a foundation model for multimodal physiological signals including EEG.",
+          "Focuses on learning universal representations via masked signal pre-training for broad transfer.",
+          "Evaluates the model on multiple downstream EEG-related tasks such as motor prediction and mental workload detection."
         ]
       }
     },
@@ -334,12 +333,13 @@
       "summary_failed_reason": null,
       "title": "Pretraining Large Brain Language Model for Active BCI: Silent Speech",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 0.9,
         "decision": "accept",
         "reasons": [
-          "EEG is central modality for silent speech decoding",
-          "Proposes LBLM pretrained with self-supervised FSTP paradigm",
-          "Focuses on reusable EEG representations for broad transfer"
+          "Proposes a 'Large Brain Language Model (LBLM)' specifically for EEG signals.",
+          "Employs a self-supervised pretraining paradigm (FSTP) to learn representations from unlabeled EEG data.",
+          "Explicitly frames the work within the context of pretraining large models to enhance EEG classification performance.",
+          "Demonstrates the utility of the pretrained model through finetuning on downstream classification tasks."
         ]
       }
     }
@@ -350,8 +350,8 @@
     "summarized": 3
   },
   "top_picks": [
-    "2504.21214",
     "2504.20069",
-    "2504.19596"
+    "2504.19596",
+    "2504.21214"
   ]
 }

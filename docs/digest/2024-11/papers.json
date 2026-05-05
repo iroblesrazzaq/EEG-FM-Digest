@@ -1,7 +1,219 @@
 {
-  "featured_paper_id": "2411.19230",
+  "featured_paper_id": null,
   "month": "2024-11",
   "papers": [
+    {
+      "arxiv_id": "2411.00718v1",
+      "arxiv_id_base": "2411.00718",
+      "authors": [
+        "Saurav R. Pandey",
+        "Aaqib Saeed",
+        "Harlin Lee"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2411.00718v1",
+        "pdf": "https://arxiv.org/pdf/2411.00718v1"
+      },
+      "published_date": "2024-11-01",
+      "summary": {
+        "arxiv_id_base": "2411.00718",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 16.0,
+          "datasets": [
+            "NCH Sleep DataBank"
+          ],
+          "eeg_hours": null,
+          "subjects": 2379.0
+        },
+        "detailed_summary": "PedSleepMAE proposes a transformer-based masked autoencoder trained on multimodal pediatric polysomnography (PSG) data, including EEG, EOG, EMG, and respiratory signals. Unlike previous supervised models, it uses self-supervised masked reconstruction to learn general-purpose embeddings that are flexible to missing channels. The model's utility is demonstrated through linear probing for sleep scoring and apnea detection, as well as its ability to impute missing channels and identify biomarkers for Prader-Willi Syndrome.",
+        "evaluation": {
+          "benchmarks": [
+            "NCH Sleep DataBank"
+          ],
+          "headline_results": [
+            "Sleep scoring: 69.2% accuracy, 71.3% F1, 0.899 AUC",
+            "Statistically significant separation of PWS patients in embedding space",
+            "Lower MSE/DTW for channel imputation compared to mean imputation baseline"
+          ],
+          "tasks": [
+            "5-stage sleep scoring",
+            "Binary detection of apnea, hypopnea, EEG arousal, and oxygen desaturation",
+            "Cluster analysis for Prader-Willi Syndrome",
+            "Missing channel imputation"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: A multimodal masked autoencoder (MAE) trained on pediatric PSG data to provide a general-purpose representation for sleep health.",
+          "Demonstrates versatility across multiple tasks, including 5-stage sleep scoring (71.3% F1) and the detection of apnea and oxygen desaturation via linear probing.",
+          "Capable of generative tasks such as missing channel imputation and the retrieval of representative sleep segments using embedding space arithmetic."
+        ],
+        "limitations": [
+          "High inter-patient variability hinders the formation of distinct clusters in 2D UMAP space across different subjects.",
+          "Generated synthetic signals are described as noisy.",
+          "The effect size for Prader-Willi Syndrome biomarker detection is small, despite being statistically significant.",
+          "Evaluation of downstream tasks primarily relied on linear probing rather than full fine-tuning."
+        ],
+        "method": {
+          "architecture": "Transformer-based Masked Autoencoder (MAE) using Vision Transformer (ViT) blocks (3 layers, 4 heads) for both encoder and decoder.",
+          "finetuning": "Downstream tasks are evaluated using linear probing (frozen encoder) or the decoder for signal generation and imputation.",
+          "objective": "Self-supervised masked reconstruction (50% masking ratio, patch size 8) of multimodal PSG signals.",
+          "pretraining": "Pre-trained on 2,379 pediatric PSG records using a masked reconstruction objective."
+        },
+        "notes": "{\"chars\": 37660, \"error\": null, \"pages\": null, \"tool\": \"cached\"};input_mode=fulltext;prompt_tokens=10915",
+        "one_liner": "A multimodal masked autoencoder for pediatric sleep signals capable of sleep scoring, event detection, and signal imputation.",
+        "open_source": {
+          "code_url": "https://github.com/sauravpandey123/PedSleepMAE",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2024-11-01",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "PedSleepMAE: Generative Model for Multimodal Pediatric Sleep Signals",
+        "unique_contribution": "The first general-purpose generative model specifically designed for multimodal pediatric sleep signals, leveraging a masked autoencoder to learn representations for diverse clinical tasks.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "PedSleepMAE: Generative Model for Multimodal Pediatric Sleep Signals",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "EEG is a central modality within the multimodal pediatric sleep signals used.",
+          "Uses a masked autoencoder (MAE) to create a 'general-purpose generative model'.",
+          "Produces embeddings used for multiple diverse downstream tasks, including sleep scoring and genetic disorder analysis.",
+          "Explicitly claims to be the first general-purpose model for these signals, aligning with foundation model goals."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2411.09723v1",
+      "arxiv_id_base": "2411.09723",
+      "authors": [
+        "Matteo Ferrante",
+        "Tommaso Boccato",
+        "Grigorii Rashkov",
+        "Nicola Toschi"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2411.09723v1",
+        "pdf": "https://arxiv.org/pdf/2411.09723v1"
+      },
+      "published_date": "2024-11-14",
+      "summary": {
+        "arxiv_id_base": "2411.09723",
+        "categories": [
+          "cs.CV",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "ImageNetEEG",
+            "THINGS-MEG",
+            "Natural Scenes Dataset (NSD)"
+          ],
+          "eeg_hours": null,
+          "subjects": 14.0
+        },
+        "detailed_summary": "The paper proposes a neural foundation model for vision that leverages contrastive learning to align representations from EEG, MEG, and fMRI into a shared space anchored by a frozen CLIP image encoder. Unlike prior work focused on single modalities or tasks, this framework enables bidirectional mapping between neural activity and visual stimuli, as well as translation between different neural modalities. The approach is validated through image retrieval tasks (decoding), neural pattern prediction (encoding), and cross-modal translation, achieving high CLIP 2-way accuracy across all three modalities.",
+        "evaluation": {
+          "benchmarks": [
+            "ImageNetEEG",
+            "THINGS-MEG",
+            "NSD"
+          ],
+          "headline_results": [
+            "fMRI CLIP 2-way: 93.8%",
+            "EEG CLIP 2-way: 85.5%",
+            "fMRI to MEG conversion: 95.4% normalized accuracy"
+          ],
+          "tasks": [
+            "Decoding (Neural to Image)",
+            "Encoding (Image to Neural)",
+            "Modality Conversion (Neural to Neural)"
+          ]
+        },
+        "key_points": [
+          "New new_model: Aligns EEG, MEG, and fMRI data into a shared representation space using a frozen CLIP image encoder.",
+          "Implements a bidirectional contrastive learning objective to support visual decoding, neural encoding, and translation between different brain imaging modalities.",
+          "Demonstrates strong performance in fMRI decoding (93.8% CLIP 2-way accuracy) and high fidelity in modality conversion (e.g., 95.4% normalized accuracy for fMRI to MEG)."
+        ],
+        "limitations": [
+          "The model is currently non-generative and relies on retrieval.",
+          "Performance is dependent on the availability of diverse, pre-existing datasets.",
+          "The framework is presented as a proof-of-concept rather than a fully scaled foundation model."
+        ],
+        "method": {
+          "architecture": "CNNs for EEG/MEG and MLPs for fMRI, consisting of a subject-specific alignment layer and a shared refinement network.",
+          "finetuning": null,
+          "objective": "Contrastive CLIP loss (maximizing cosine similarity for positive pairs).",
+          "pretraining": "Aligning neural representations to a frozen CLIP Image encoder."
+        },
+        "notes": "{\"chars\": 44225, \"error\": null, \"pages\": 18, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=12544",
+        "one_liner": "A multimodal framework that aligns EEG, MEG, and fMRI representations with CLIP image embeddings for visual decoding, encoding, and cross-modality conversion.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2024-11-14",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Towards Neural Foundation Models for Vision: Aligning EEG, MEG, and fMRI Representations for Decoding, Encoding, and Modality Conversion",
+        "unique_contribution": "Introduces a unified contrastive learning framework capable of simultaneous neural decoding, encoding, and cross-modality conversion across EEG, MEG, and fMRI.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Towards Neural Foundation Models for Vision: Aligning EEG, MEG, and fMRI Representations for Decoding, Encoding, and Modality Conversion",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly aims to create a 'foundational model' for aligning neural data",
+          "EEG is a core target modality alongside MEG and fMRI",
+          "Focuses on creating aligned representations for broad tasks including decoding, encoding, and modality conversion"
+        ]
+      }
+    },
     {
       "arxiv_id": "2411.16155v2",
       "arxiv_id_base": "2411.16155",
@@ -101,12 +313,12 @@
       "summary_failed_reason": null,
       "title": "Graph Adapter of EEG Foundation Models for Parameter Efficient Fine Tuning",
       "triage": {
-        "confidence": 0.95,
+        "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "explicitly targets EEG foundation models (BENDR)",
-          "proposes parameter-efficient fine-tuning for EEG spatial-temporal modeling",
-          "demonstrates improved performance on EEG healthcare tasks"
+          "Explicitly targets 'EEG Foundation Models' in the title.",
+          "Proposes a parameter-efficient fine-tuning (PEFT) approach specifically for pre-trained EEG backbone models.",
+          "Focuses on the EEG-FM ecosystem by improving the adaptation of the BENDR foundation model to downstream tasks."
         ]
       }
     },
@@ -217,9 +429,9 @@
         "confidence": 0.9,
         "decision": "accept",
         "reasons": [
-          "proposes EEG foundation model (EEG-DisGCMAE) for pretraining",
-          "focuses on pretraining reusable EEG representations",
-          "aims for broad transfer across tasks and data densities"
+          "Proposes a unified self-supervised pre-training paradigm combining graph contrastive learning and masked autoencoders for EEG.",
+          "Focuses on creating reusable representations to bridge the gap between high- and low-density EEG data.",
+          "Validates the pre-trained model across multiple classification tasks, demonstrating transferability."
         ]
       }
     },
@@ -324,22 +536,23 @@
         "confidence": 1.0,
         "decision": "accept",
         "reasons": [
-          "proposes Graph-Enhanced EEG Foundation Model (GEFM)",
-          "explicitly frames as foundation model for EEG",
-          "integrates temporal and inter-channel information",
-          "evaluated on downstream tasks"
+          "Title explicitly identifies the work as an 'EEG Foundation Model'.",
+          "Abstract describes a pre-training approach using masked autoencoders on unlabeled data for broad transfer.",
+          "Model is evaluated across multiple downstream tasks to demonstrate its utility as a foundation model."
         ]
       }
     }
   ],
   "stats": {
-    "accepted": 3,
+    "accepted": 5,
     "candidates": 16,
-    "summarized": 3
+    "summarized": 5
   },
   "top_picks": [
     "2411.19507",
     "2411.16155",
-    "2411.19230"
+    "2411.09723",
+    "2411.19230",
+    "2411.00718"
   ]
 }

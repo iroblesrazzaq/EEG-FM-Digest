@@ -1,10 +1,126 @@
 {
+  "featured_paper_id": null,
   "month": "2024-07",
-  "papers": [],
+  "papers": [
+    {
+      "arxiv_id": "2407.07595v1",
+      "arxiv_id_base": "2407.07595",
+      "authors": [
+        "Motoshige Sato",
+        "Kenichi Tomeoka",
+        "Ilya Horiguchi",
+        "Kai Arulkumaran",
+        "Ryota Kanai",
+        "Shuntaro Sasai"
+      ],
+      "categories": [
+        "q-bio.NC",
+        "cs.HC",
+        "cs.SD",
+        "eess.AS"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2407.07595v1",
+        "pdf": "https://arxiv.org/pdf/2407.07595v1"
+      },
+      "published_date": "2024-07-10",
+      "summary": {
+        "arxiv_id_base": "2407.07595",
+        "categories": [
+          "q-bio.NC",
+          "cs.HC",
+          "cs.SD",
+          "eess.AS"
+        ],
+        "data_scale": {
+          "channels": 128.0,
+          "datasets": [
+            "Single-subject EEG speech dataset"
+          ],
+          "eeg_hours": 175.0,
+          "subjects": 1.0
+        },
+        "detailed_summary": "The paper proposes a framework for non-invasive speech decoding using a CLIP-based contrastive learning objective to align EEG representations with pre-trained audio embeddings. Unlike prior work limited to small vocabularies or short recordings, this study utilizes 175 hours of EEG data from one participant to achieve 48.5% top-1 accuracy in a 512-phrase classification task. The authors provide evidence of a scaling effect where performance drops drastically when data is reduced to typical levels (~10 hours), and they validate that the model relies on neural signals rather than EMG artifacts.",
+        "evaluation": {
+          "benchmarks": [
+            "512-phrase open-vocabulary classification"
+          ],
+          "headline_results": [
+            "48.5% top-1 accuracy for 512-phrase classification",
+            "76.0% top-10 accuracy",
+            "4.68 dB Mel-Cepstral Distortion (MCD) for reconstruction"
+          ],
+          "tasks": [
+            "Zero-shot speech segment classification",
+            "Speech reconstruction"
+          ]
+        },
+        "key_points": [
+          "Method for EEG speech decoding: Uses a CLIP-based alignment between a Conformer-based EEG encoder and pre-trained audio encoders such as wav2vec2.0.",
+          "Evidence of scaling laws: Shows a dramatic increase in zero-shot classification accuracy as training data scales from 10 to 175 hours.",
+          "Robustness to artifacts: Employs adaptive filtering and EMG-mixing data augmentation to ensure decoding is driven by neural activity rather than muscle movements."
+        ],
+        "limitations": [
+          "Data collected from only a single participant, leaving cross-subject transferability unproven.",
+          "Study used healthy individuals performing overt speech, not patients with speech impairments.",
+          "Reconstructed speech waveforms lack the clarity needed for practical neuroprostheses.",
+          "Data was collected in a static seated position, limiting applicability to dynamic real-world movement."
+        ],
+        "method": {
+          "architecture": "EEG encoder combining HTNet and Conformer; pre-trained audio encoders (wav2vec2.0, Whisper, Encodec); 1D U-Net diffusion vocoder for reconstruction.",
+          "finetuning": "Zero-shot classification and speech reconstruction using a diffusion-based vocoder.",
+          "objective": "CLIP contrastive loss to align EEG and audio latent representations.",
+          "pretraining": "Contrastive alignment of EEG and audio embeddings on 175 hours of data."
+        },
+        "notes": "{\"chars\": 46626, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=13186",
+        "one_liner": "Investigates the scaling law of EEG-based open-vocabulary speech decoding using a large-scale 175-hour dataset from a single subject.",
+        "open_source": {
+          "code_url": null,
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2024-07-10",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Scaling Law in Neural Data: Non-Invasive Speech Decoding with 175 Hours of EEG Data",
+        "unique_contribution": "Demonstrates that increasing EEG training data to 175 hours significantly improves open-vocabulary speech decoding accuracy, revealing a clear scaling law for non-invasive neural data.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Scaling Law in Neural Data: Non-Invasive Speech Decoding with 175 Hours of EEG Data",
+      "triage": {
+        "confidence": 0.85,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly investigates scaling laws for EEG representations, a core component of foundation model research",
+          "Employs self-supervised representation learning to develop latent EEG structures",
+          "Conducts a systematic scaling analysis on the relationship between data volume and decoding performance"
+        ]
+      }
+    }
+  ],
   "stats": {
-    "accepted": 0,
+    "accepted": 1,
     "candidates": 10,
-    "summarized": 0
+    "summarized": 1
   },
-  "top_picks": []
+  "top_picks": [
+    "2407.07595"
+  ]
 }
