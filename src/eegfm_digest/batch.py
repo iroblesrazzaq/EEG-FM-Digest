@@ -322,13 +322,13 @@ def _run_summary_phase_for_month(
         row.get("arxiv_id_base", ""): row.get("pdf") or _empty_pdf_state() for row in existing_backend
     }
 
-    print(f"[summary] {month}: accepted={len(accepted)} cached={len(summary_map)}")
-
+    cache_hit_count = 0
     for paper in accepted:
         aid = paper["arxiv_id_base"]
         cached_summary = None if run_cfg.summary_force else db.get_summary_with_meta(aid)
         if cached_summary and is_cache_current(cached_summary.get("meta"), summary_descriptor["cache_version"]):
             summary_map[aid] = cached_summary["data"]
+            cache_hit_count += 1
             continue
         pdf_state = _empty_pdf_state()
         raw_text = ""
@@ -444,7 +444,8 @@ def _run_summary_phase_for_month(
 
     db.upsert_run(month, digest["stats"])
     print(
-        f"[summary] {month}: done summarized={len(summaries)} accepted={digest['stats']['accepted']} candidates={digest['stats']['candidates']}"
+        f"[summary] {month}: done summarized={len(summaries)} cached={cache_hit_count} "
+        f"accepted={digest['stats']['accepted']} candidates={digest['stats']['candidates']}"
     )
 
 
