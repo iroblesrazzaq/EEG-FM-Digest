@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": null,
+  "featured_paper_id": "2506.23075",
   "month": "2025-06",
   "papers": [
     {
@@ -560,12 +560,141 @@
           "EEG is the central modality of the study."
         ]
       }
+    },
+    {
+      "arxiv_id": "2506.23075v1",
+      "arxiv_id_base": "2506.23075",
+      "authors": [
+        "Yuchen Zhou",
+        "Jiamin Wu",
+        "Zichen Ren",
+        "Zhouheng Yao",
+        "Weiheng Lu",
+        "Kunyu Peng",
+        "Qihao Zheng",
+        "Chunfeng Song",
+        "Wanli Ouyang",
+        "Chao Gou"
+      ],
+      "categories": [
+        "cs.HC",
+        "cs.LG",
+        "eess.SP",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2506.23075v1",
+        "pdf": "https://arxiv.org/pdf/2506.23075v1"
+      },
+      "published_date": "2025-06-29",
+      "summary": {
+        "arxiv_id_base": "2506.23075",
+        "categories": [
+          "cs.HC",
+          "cs.LG",
+          "eess.SP",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": 0.0,
+          "datasets": [
+            "datasets"
+          ],
+          "eeg_hours": 9000.0,
+          "subjects": 0.0
+        },
+        "detailed_summary": "CSBrain addresses a fundamental limitation in existing EEG foundation models: their reliance on scale-agnostic dense modeling inherited from NLP and vision, which fails to capture the intrinsic cross-scale spatiotemporal structure of neural activity. The model introduces two key innovations: Cross-scale Spatiotemporal Tokenization (CST), which aggregates multi-scale features from localized temporal windows and anatomical brain regions into compact scale-aware tokens, and Structured Sparse Attention (SSA), which captures cross-window and cross-region dependencies while eliminating spurious correlations. These components are alternately stacked to progressively integrate multi-scale dependencies. Extensive experiments across 11 representative EEG tasks and 16 public datasets demonstrate that CSBrain consistently outperforms both task-specific models and strong foundation model baselines, establishing cross-scale modeling as a key inductive bias for generalized EEG decoding.",
+        "evaluation": {
+          "benchmarks": [
+            "datasets"
+          ],
+          "headline_results": [
+            "balanced accuracy",
+            "Cohen's kappa",
+            "weighted F1",
+            "AUC-PR",
+            "AUROC",
+            "Pearson correlation",
+            "R2 score",
+            "RMSE"
+          ],
+          "tasks": [
+            "motor imagery classification",
+            "emotion recognition",
+            "seizure detection",
+            "sleep staging",
+            "imagined speech classification",
+            "vigilance estimation",
+            "mental stress detection",
+            "mental disorder diagnosis",
+            "event type classification",
+            "abnormal detection",
+            "slowing event classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: CSBrain introduces cross-scale spatiotemporal modeling for generalized brain decoding across diverse tasks.",
+          "Novel architecture: Combines Cross-scale Spatiotemporal Tokenization (CST) with Structured Sparse Attention (SSA) to capture multi-scale neural patterns while avoiding spurious dependencies.",
+          "Strong empirical results: Achieves state-of-the-art performance across 11 tasks and 16 datasets, outperforming both task-specific and foundation model baselines."
+        ],
+        "limitations": [
+          "Computational resource constraints limit exploration of scaling behavior at the scale of vision-language or language-only models",
+          "Open question remains about how much EEG data is sufficient to pretrain high-quality foundation models",
+          "Sparse, noisy, and heterogeneous nature of EEG datasets requires further work on large-scale dataset unification and normalization"
+        ],
+        "method": {
+          "architecture": "Cross-scale Spatiotemporal Tokenization (CST) aggregates multi-scale features from localized temporal windows and anatomical brain regions into compact scale-aware tokens. Structured Sparse Attention (SSA) captures cross-window and cross-region dependencies while eliminating spurious correlations. CST and SSA are alternately stacked for L layers to progressively integrate cross-scale spatiotemporal dependencies.",
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 127123, \"error\": null, \"pages\": 37, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=33573",
+        "one_liner": "CSBrain introduces cross-scale spatiotemporal modeling to EEG foundation models, achieving state-of-the-art performance across 11 tasks and 16 datasets.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2025-06-29",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "CSBrain: A Cross-scale Spatiotemporal Brain Foundation Model for EEG Decoding",
+        "unique_contribution": "CSBrain is the first EEG foundation model to explicitly model cross-scale spatiotemporal structure through alternating CST and SSA modules, achieving state-of-the-art performance across diverse brain decoding tasks.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "CSBrain: A Cross-scale Spatiotemporal Brain Foundation Model for EEG Decoding",
+      "triage": {
+        "confidence": 0.0,
+        "decision": "accept",
+        "reasons": [
+          "editorial_override:featured_recovery",
+          "triage_exception:NotFoundError",
+          "automatic_reject_fallback"
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 5,
+    "accepted": 6,
     "candidates": 25,
-    "summarized": 5
+    "summarized": 6
   },
   "top_picks": [
     "2507.14141",
