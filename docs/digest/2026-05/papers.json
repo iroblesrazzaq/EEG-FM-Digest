@@ -1,0 +1,133 @@
+{
+  "featured_paper_id": null,
+  "month": "2026-05",
+  "papers": [
+    {
+      "arxiv_id": "2605.02500v1",
+      "arxiv_id_base": "2605.02500",
+      "authors": [
+        "William Lehn-Schiøler",
+        "Magnus Ruud Kjær",
+        "Phillip Hempel",
+        "Magnus Guldberg Pedersen",
+        "Rahul Thapa",
+        "Bryan He",
+        "Nicolai Spicher",
+        "Andreas Brink-Kjaer",
+        "Lars Kai Hansen",
+        "Emmanuel Mignot"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.02500v1",
+        "pdf": "https://arxiv.org/pdf/2605.02500v1"
+      },
+      "published_date": "2026-05-04",
+      "summary": {
+        "arxiv_id_base": "2605.02500",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "PSG pretraining cohort"
+          ],
+          "eeg_hours": 432000.0,
+          "subjects": 48093.0
+        },
+        "detailed_summary": "The paper proposes using sleep biosignals as a general pretraining distribution for adjacent biosignal domains. By employing multimodal contrastive pretraining on 432,000 hours of sleep data, the authors show that the resulting representations transfer to eight non-sleep EEG and ECG tasks. Results indicate that sleep pretraining consistently outperforms training from scratch and is competitive with domain-specific foundation models on several EEG benchmarks.",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "TUEV",
+            "TUSL",
+            "CHB-MIT",
+            "BrainCapture",
+            "PTB-XL",
+            "G12EC",
+            "CPSC"
+          ],
+          "headline_results": [
+            "Consistently outperforms training from scratch",
+            "Competitive with LUNA and LaBraM on TUAB, TUSL, and CHB-MIT",
+            "Maintains 95% performance with 16-50% EEG channels"
+          ],
+          "tasks": [
+            "EEG clinical tasks",
+            "ECG clinical tasks"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model approach: leverages large-scale sleep PSG data for pretraining to improve performance on non-sleep biosignal tasks.",
+          "Achieves competitive or state-of-the-art results on EEG benchmarks like TUAB, TUSL, and CHB-MIT, outperforming some much larger models.",
+          "Demonstrates high channel robustness, maintaining 95% performance with as few as 16-50% of available EEG channels."
+        ],
+        "limitations": [
+          "Transfer evaluated only on modalities proximal to PSG (EEG and ECG).",
+          "Mixed validation protocols across different datasets make direct cross-task statistical comparison difficult.",
+          "Limited baseline comparisons for the TUSL dataset.",
+          "ECG transfer gains were smaller than EEG gains due to sparser cardiac signals in PSG."
+        ],
+        "method": {
+          "architecture": "Transformer encoder (SleepFM1)",
+          "finetuning": "Full fine-tuning with a lightweight projector/classifier head.",
+          "objective": "multimodal contrastive leave-one-out",
+          "pretraining": "Pretrained on 432,000 hours of sleep data using 1s patches and 2m windows."
+        },
+        "notes": "{\"chars\": 60423, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=16785",
+        "one_liner": "Demonstrates that pretraining on large-scale sleep polysomnography data effectively transfers to non-sleep EEG and ECG clinical tasks.",
+        "open_source": {
+          "code_url": "https://anonymous.4open.science/r/sleepfm4biosignals-3A50",
+          "license": "unknown",
+          "weights_url": "https://anonymous.4open.science/r/sleepfm4biosignals-3A50"
+        },
+        "paper_type": "method",
+        "published_date": "2026-05-04",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Pretraining on Sleep Data Improves non-Sleep Biosignal Tasks",
+        "unique_contribution": "Establishes that sleep-only PSG pretraining provides a highly transferable representation for wake-state clinical EEG and ECG tasks, even without domain overlap.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Pretraining on Sleep Data Improves non-Sleep Biosignal Tasks",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly references sleep foundation models and the goal of learning representations that transfer to adjacent domains.",
+          "Evaluates the transferability of pretrained representations to non-sleep EEG tasks.",
+          "Focuses on the effectiveness of pretraining distributions for reusable biosignal models."
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 1,
+    "candidates": 7,
+    "summarized": 1
+  },
+  "top_picks": [
+    "2605.02500"
+  ]
+}
