@@ -1,7 +1,129 @@
 {
-  "featured_paper_id": null,
+  "featured_paper_id": "2402.17772",
   "month": "2024-02",
   "papers": [
+    {
+      "arxiv_id": "2402.17772v2",
+      "arxiv_id_base": "2402.17772",
+      "authors": [
+        "Navid Mohammadi Foumani",
+        "Geoffrey Mackellar",
+        "Soheila Ghane",
+        "Saad Irtza",
+        "Nam Nguyen",
+        "Mahsa Salehi"
+      ],
+      "categories": [
+        "eess.SP",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2402.17772v2",
+        "pdf": "https://arxiv.org/pdf/2402.17772v2"
+      },
+      "published_date": "2024-02-17",
+      "summary": {
+        "arxiv_id_base": "2402.17772",
+        "categories": [
+          "eess.SP",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 14.0,
+          "datasets": [
+            "DREAMER",
+            "Crowdsourced",
+            "STEW",
+            "Driver Distraction",
+            "TUAB",
+            "TUEV"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "EEG2Rep addresses three key challenges in EEG representation learning: low signal-to-noise ratio, wide amplitude ranges due to inter-subject variability, and lack of explicit segmentation in continuous sequences. The model introduces two core innovations: (1) predicting masked inputs in latent representation space rather than raw EEG space, and (2) using a novel semantic subsequence preserving (SSP) masking method that provides informative masked inputs. EEG2Rep significantly outperforms state-of-the-art methods on 6 diverse EEG tasks with subject variability, demonstrating improved semantic quality of representations and robustness to noise.",
+        "evaluation": {
+          "benchmarks": [
+            "DREAMER",
+            "Crowdsourced",
+            "STEW",
+            "Driver Distraction",
+            "TUAB",
+            "TUEV"
+          ],
+          "headline_results": [
+            "58.45% average accuracy across all tasks (linear probing)",
+            "60.37% average accuracy across all tasks (fine-tuning)",
+            "3-7% accuracy improvement over SOTA"
+          ],
+          "tasks": [
+            "Emotion detection",
+            "Mental workload classification",
+            "Eyes open/close detection",
+            "Driver distraction detection",
+            "Abnormal EEG classification",
+            "Event detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: EEG2Rep uses semantic subsequence preserving masking and latent space reconstruction to generate rich semantic representations",
+          "Core method novelty: Instead of reconstructing raw EEG, EEG2Rep predicts masked inputs in abstract representation space, eliminating noise and amplitude range issues",
+          "Strongest evidence: EEG2Rep significantly outperforms state-of-the-art methods on 6 diverse EEG tasks and demonstrates robustness to noise"
+        ],
+        "limitations": [
+          "Requires substantial computational resources for training",
+          "Performance depends on optimal masking ratio selection",
+          "Cross-domain generalization may require larger pre-training datasets"
+        ],
+        "method": {
+          "architecture": "Transformer-based encoder-decoder with context-driven target prediction",
+          "finetuning": "Linear probing and full model fine-tuning on downstream tasks",
+          "objective": "Masked reconstruction in latent representation space",
+          "pretraining": "Self-supervised learning with semantic subsequence preserving masking"
+        },
+        "notes": "{\"chars\": 69647, \"error\": null, \"pages\": 12, \"tool\": \"pypdf\"};input_mode=fulltext;prompt_tokens=19076",
+        "one_liner": "EEG2Rep is a self-supervised learning approach for EEG representation learning that uses semantic subsequence preserving masking and latent space reconstruction to generate rich semantic representations.",
+        "open_source": {
+          "code_url": "https://github.com/Navidfoumani/EEG2Rep",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2024-02-17",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "EEG2Rep: Enhancing Self-supervised EEG Representation Through Informative Masked Inputs",
+        "unique_contribution": "EEG2Rep is the first self-supervised EEG representation learning approach that predicts masked inputs in latent space using semantic subsequence preserving masking, addressing the fundamental challenges of noise, amplitude variability, and lack of segmentation in EEG data.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EEG2Rep: Enhancing Self-supervised EEG Representation Through Informative Masked Inputs",
+      "triage": {
+        "confidence": 0.8,
+        "decision": "accept",
+        "reasons": [
+          "editorial_override:featured_recovery",
+          "EEG is the central modality of the study.",
+          "Proposes a self-supervised representation learning method tested across 6 diverse EEG tasks, aligning with FM goals of broad transferability.",
+          "Does not explicitly use 'foundation model' terminology, making it ambiguous whether it is a general-purpose FM or a specific SSL technique."
+        ]
+      }
+    },
     {
       "arxiv_id": "2402.17433v3",
       "arxiv_id_base": "2402.17433",
@@ -87,11 +209,12 @@
     }
   ],
   "stats": {
-    "accepted": 1,
+    "accepted": 2,
     "candidates": 7,
-    "summarized": 1
+    "summarized": 2
   },
   "top_picks": [
-    "2402.17433"
+    "2402.17433",
+    "2402.17772"
   ]
 }

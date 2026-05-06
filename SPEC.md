@@ -189,8 +189,12 @@ Daily incremental run:
 `--feature-paper`:
 - optional explicit featured paper id for that month
 - defaults to null when omitted
-- this is the only supported way to set the featured paper; the pipeline and GitHub Actions must not auto-select one
+- monthly `run` sets the featured paper only via this flag; GitHub Actions must not auto-select one
+- batch backfill reads `configs/featured_papers.json` (map of `YYYY-MM` to arXiv id base or `null`; override path via `featured_papers_path` in the batch config JSON)
 - not supported in `--daily` mode
+
+Batch backfill:
+- `python -m eegfm_digest.batch --config path/to/config.json` — restores `featured_paper` into each month digest from `configs/featured_papers.json` so full regenerates do not wipe manual picks
 
 `--no-site` mode:
 - still writes all `outputs/YYYY-MM/*` artifacts and updates SQLite.
