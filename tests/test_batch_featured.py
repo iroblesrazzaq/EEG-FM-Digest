@@ -10,6 +10,7 @@ import pytest
 from eegfm_digest.batch import (
     BatchRunConfig,
     _run_summary_phase_for_month,
+    _run_summary_phase_for_month_with_featured_guard,
     load_featured_papers_map,
 )
 from eegfm_digest.config import Config
@@ -161,3 +162,94 @@ def test_summary_phase_passes_featured_to_build_digest(monkeypatch: pytest.Monke
     assert featured_kw == [aid]
     digest = json.loads((month_out / "digest.json").read_text(encoding="utf-8"))
     assert digest.get("featured_paper") == aid
+
+
+def test_summary_phase_featured_guard_retries_without_stale_featured(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    cfg = replace(
+        Config(
+            llm_provider="google",
+            llm_model_triage="m",
+            llm_model_summary="m",
+        ),
+        output_dir=tmp_path / "outputs",
+        data_dir=tmp_path / "data",
+        docs_dir=tmp_path / "docs",
+    )
+    run_cfg = BatchRunConfig(months=["2025-01"], no_site=True)
+    llm_config = LLMCallConfig(
+        provider="google",
+        api_key="k",
+        model="m",
+        temperature=0.2,
+        max_output_tokens=100,
+        base_url=None,
+    )
+    calls: list[str | None] = []
+
+    def fake_summary_phase(*_args, featured_paper=None, **_kwargs) -> None:
+        calls.append(featured_paper)
+        if featured_paper == "2501.99999":
+            raise RuntimeError(
+                "Featured paper 2501.99999 was not accepted for this month; "
+                "only accepted papers can be featured."
+            )
+
+    monkeypatch.setattr("eegfm_digest.batch._run_summary_phase_for_month", fake_summary_phase)
+
+    _run_summary_phase_for_month_with_featured_guard(
+        cfg,
+        run_cfg,
+        "2025-01",
+        MagicMock(),
+        MagicMock(),
+        llm_config,
+        featured_paper="2501.99999",
+    )
+
+    assert calls == ["2501.99999", None]
+    assert "continuing without featured paper" in capsys.readouterr().out
+
+
+def test_summary_phase_featured_guard_reraises_unrelated_runtime_error(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    cfg = replace(
+        Config(
+            llm_provider="google",
+            llm_model_triage="m",
+            llm_model_summary="m",
+        ),
+        output_dir=tmp_path / "outputs",
+        data_dir=tmp_path / "data",
+        docs_dir=tmp_path / "docs",
+    )
+    run_cfg = BatchRunConfig(months=["2025-01"], no_site=True)
+    llm_config = LLMCallConfig(
+        provider="google",
+        api_key="k",
+        model="m",
+        temperature=0.2,
+        max_output_tokens=100,
+        base_url=None,
+    )
+
+    def fake_summary_phase(*_args, **_kwargs) -> None:
+        raise RuntimeError("database is locked")
+
+    monkeypatch.setattr("eegfm_digest.batch._run_summary_phase_for_month", fake_summary_phase)
+
+    with pytest.raises(RuntimeError, match="database is locked"):
+        _run_summary_phase_for_month_with_featured_guard(
+            cfg,
+            run_cfg,
+            "2025-01",
+            MagicMock(),
+            MagicMock(),
+            llm_config,
+            featured_paper="2501.99999",
+        )

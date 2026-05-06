@@ -93,6 +93,11 @@ def load_featured_papers_map(path: Path) -> dict[str, str | None]:
     return result
 
 
+def _is_invalid_featured_paper_error(exc: RuntimeError) -> bool:
+    message = str(exc)
+    return message.startswith("Featured paper ") and "was not accepted for this month" in message
+
+
 def _discover_months_from_outputs(output_dir: Path) -> list[str]:
     if not output_dir.exists():
         return []
@@ -475,6 +480,44 @@ def _run_summary_phase_for_month(
     )
 
 
+def _run_summary_phase_for_month_with_featured_guard(
+    cfg: Config,
+    run_cfg: BatchRunConfig,
+    month: str,
+    db: DigestDB,
+    llm: Any,
+    llm_config: LLMCallConfig,
+    *,
+    featured_paper: str | None = None,
+) -> None:
+    try:
+        _run_summary_phase_for_month(
+            cfg,
+            run_cfg,
+            month,
+            db,
+            llm,
+            llm_config,
+            featured_paper=featured_paper,
+        )
+    except RuntimeError as exc:
+        if featured_paper is None or not _is_invalid_featured_paper_error(exc):
+            raise
+        print(
+            f"[summary] {month}: featured_paper={featured_paper} is not accepted; "
+            "continuing without featured paper"
+        )
+        _run_summary_phase_for_month(
+            cfg,
+            run_cfg,
+            month,
+            db,
+            llm,
+            llm_config,
+            featured_paper=None,
+        )
+
+
 def run_batch(config_path: Path) -> None:
     run_cfg = _parse_batch_config(config_path)
     cfg = load_config()
@@ -487,7 +530,12 @@ def run_batch(config_path: Path) -> None:
 
     months = _effective_months(run_cfg, cfg)
     print(f"[batch] months={months}")
-    featured_map = load_featured_papers_map(Path(run_cfg.featured_papers_path))
+    featured_path = Path(run_cfg.featured_papers_path)
+    featured_map = load_featured_papers_map(featured_path)
+    if featured_map:
+        print(f"[batch] featured_papers loaded from {featured_path} ({len(featured_map)} entries)")
+    else:
+        print(f"[batch] featured_papers: no entries loaded (path={featured_path}, exists={featured_path.exists()})")
 
     # Load API keys for providers from configured env file.
     load_dotenv(Path(run_cfg.env_path).expanduser())
@@ -541,7 +589,7 @@ def run_batch(config_path: Path) -> None:
         summary_llm: Any = build_llm_call(summary_llm_config)
         try:
             for month in months:
-                _run_summary_phase_for_month(
+                _run_summary_phase_for_month_with_featured_guard(
                     cfg,
                     run_cfg,
                     month,
