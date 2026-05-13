@@ -120,14 +120,685 @@
           "Focuses on the effectiveness of pretraining distributions for reusable biosignal models."
         ]
       }
+    },
+    {
+      "arxiv_id": "2605.08495v1",
+      "arxiv_id_base": "2605.08495",
+      "authors": [
+        "Hubert Banville",
+        "Stéphane d'Ascoli",
+        "Simon Dahan",
+        "Jérémy Rapin",
+        "Marlène Careil",
+        "Yohann Benchetrit",
+        "Jarod Lévy",
+        "Saarang Panchavati",
+        "Antoine Ratouchniak",
+        "Mingfang",
+        "Zhang",
+        "Elisa Cascardi",
+        "Katelyn Begany",
+        "Teon Brooks",
+        "Jean-Rémi King"
+      ],
+      "categories": [
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.08495v1",
+        "pdf": "https://arxiv.org/pdf/2605.08495v1"
+      },
+      "published_date": "2026-05-08",
+      "summary": {
+        "arxiv_id_base": "2605.08495",
+        "categories": [
+          "cs.LG",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "NeuralBench-EEG v1.0"
+          ],
+          "eeg_hours": 13603.0,
+          "subjects": 9478.0
+        },
+        "detailed_summary": "The paper introduces NeuralBench, a standardized framework designed to evaluate AI models of brain activity across multiple modalities, including EEG, MEG, and fMRI. NeuralBench-EEG v1.0 evaluates 14 architectures across 36 tasks and 94 datasets, utilizing a shared training recipe to ensure fair comparison between foundation and task-specific models. The results indicate that current EEG foundation models only marginally outperform task-specific baselines and that cognitive decoding tasks remain significantly challenging.",
+        "evaluation": {
+          "benchmarks": [
+            "NeuralBench-EEG v1.0"
+          ],
+          "headline_results": [
+            "Foundation models only marginally outperform task-specific models",
+            "REVE, LaBraM, and LUNA are top performers"
+          ],
+          "tasks": [
+            "Cognitive decoding",
+            "Clinical predictions",
+            "Classification",
+            "Regression",
+            "Retrieval"
+          ]
+        },
+        "key_points": [
+          "Benchmark framework: NeuralBench provides a standardized pipeline (NeuralFetch, NeuralSet, NeuralTrain) for evaluating NeuroAI models across EEG, MEG, and fMRI.",
+          "Large-scale EEG evaluation: NeuralBench-EEG v1.0 tests 14 models on 36 tasks and 94 datasets, finding that foundation models offer only marginal gains over task-specific ones.",
+          "Task difficulty insights: Identifies cognitive decoding and clinical predictions as high-difficulty areas where current models still struggle."
+        ],
+        "limitations": [
+          "Currently restricted to decoding models, excluding encoding, forecasting, and denoising tasks.",
+          "Relies primarily on end-to-end finetuning, omitting parameter-efficient strategies like LoRA.",
+          "Some foundation models were pretrained on data that overlaps with downstream benchmark datasets.",
+          "Uses fixed splitting strategies rather than comprehensive cross-validation for all tasks.",
+          "Preprocessing pipelines are inherited from original model papers rather than systematically optimized."
+        ],
+        "method": {
+          "architecture": "Framework consisting of NeuralFetch (data access), NeuralSet (preprocessing), and NeuralTrain (modular training).",
+          "finetuning": "Standardized recipe: AdamW optimizer, 10^-4 learning rate, cosine annealing, and a linear projection head.",
+          "objective": "Varies by task (Classification, Regression, Retrieval).",
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 107304, \"error\": null, \"pages\": 31, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=28825",
+        "one_liner": "A unified, open-source framework for benchmarking NeuroAI models across various brain recording modalities, starting with a large-scale EEG benchmark.",
+        "open_source": {
+          "code_url": "https://github.com/facebookresearch/neuroai/tree/main/neuralbench-repo",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-05-08",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "NeuralBench: A Unifying Framework to Benchmark NeuroAI Models",
+        "unique_contribution": "Provides a unified, modality-agnostic benchmarking framework and a large-scale EEG evaluation suite (NeuralBench-EEG v1.0) with 36 tasks and 94 datasets.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "NeuralBench: A Unifying Framework to Benchmark NeuroAI Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Introduces NeuralBench-EEG v1.0, a large-scale benchmark specifically for EEG AI models.",
+          "Explicitly evaluates and compares current foundation models against task-specific models.",
+          "Fits the ecosystem criteria as a systematic benchmarking framework for EEG-FMs."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2605.10337v1",
+      "arxiv_id_base": "2605.10337",
+      "authors": [
+        "Liuyin Yang",
+        "Qiang Sun",
+        "Bob Van Dyck",
+        "Eva Calvo Merino",
+        "Marc M. Van Hulle"
+      ],
+      "categories": [
+        "cs.AI",
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.10337v1",
+        "pdf": "https://arxiv.org/pdf/2605.10337v1"
+      },
+      "published_date": "2026-05-11",
+      "summary": {
+        "arxiv_id_base": "2605.10337",
+        "categories": [
+          "cs.AI",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Stanford fingerflex",
+            "Private audio envelope dataset"
+          ],
+          "eeg_hours": null,
+          "subjects": 25.0
+        },
+        "detailed_summary": "The paper proposes CORTEG, a framework that repurposes a pretrained scalp-EEG foundation model (ST-EEGFormer) for ECoG decoding using a KNNSoftFourier spatial adapter and a dual-stream tokenizer for low-frequency and high-gamma activity. Unlike prior subject-specific ECoG decoders, CORTEG enables cross-patient learning and rapid calibration via a leave-one-subject-out fine-tuning strategy with LoRA. Evaluation on finger trajectory and audio envelope regression tasks shows that CORTEG matches or exceeds state-of-the-art task-specific baselines while requiring significantly less per-patient data.",
+        "evaluation": {
+          "benchmarks": [
+            "DeepFingerNet",
+            "HiLoFuseNet",
+            "CNN-LSTM"
+          ],
+          "headline_results": [
+            "Finger trajectory: r=0.554 (pooled), beating DeepFingerNet (0.542)",
+            "Audio envelope: r=0.339 (pooled), beating CNN-LSTM (0.261)"
+          ],
+          "tasks": [
+            "Continuous finger trajectory regression",
+            "Audio envelope regression"
+          ]
+        },
+        "key_points": [
+          "New EEG-to-ECoG transfer framework: Adapts pretrained scalp-EEG foundation models to intracranial recordings using a coordinate-aware spatial adapter and dual-stream tokenization.",
+          "Efficient cross-subject deployment: Employs a two-stage leave-one-subject-out fine-tuning strategy with LoRA, allowing new patient calibration in 10-30 minutes.",
+          "Strong empirical performance: Achieves state-of-the-art mean correlation on finger trajectory (r=0.554) and audio envelope (r=0.339) regression tasks."
+        ],
+        "limitations": [
+          "Reliance on MNI-space localization which does not fully capture subject-specific functional anatomy.",
+          "Lack of cross-task transfer evaluation between different ECoG tasks.",
+          "No observed scaling law with increasing model size, possibly due to limited per-patient data.",
+          "Simple mean-pooling fusion of low-frequency and high-gamma streams may be suboptimal."
+        ],
+        "method": {
+          "architecture": "ST-EEGFormer backbone with a KNNSoftFourier spatial adapter and a dual-stream tokenizer (LFS 1-64Hz, HGA 70-200Hz).",
+          "finetuning": "Two-stage Leave-One-Subject-Out Fine-Tuning (LOO-FT) using LoRA on the final transformer blocks.",
+          "objective": "Regression (MSE).",
+          "pretraining": "Masked autoencoding on scalp EEG (via ST-EEGFormer)."
+        },
+        "notes": "{\"chars\": 83970, \"error\": null, \"pages\": 24, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=22918",
+        "one_liner": "A cross-modality transfer framework that adapts pretrained scalp-EEG foundation models to intracranial ECoG for data-efficient BCI decoding.",
+        "open_source": {
+          "code_url": "https://github.com/LiuyinYang1101/CORTEG/tree/main",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-05-11",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "CORTEG: Foundation Models Enable Cross-Modality Representation Transfer from Scalp to Intracranial Brain Recordings",
+        "unique_contribution": "Introduces a cross-modality transfer framework that enables pretrained scalp-EEG foundation models to be adapted to intracranial ECoG recordings for high-performance, data-efficient BCI decoding.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "CORTEG: Foundation Models Enable Cross-Modality Representation Transfer from Scalp to Intracranial Brain Recordings",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly utilizes and adapts 'pretrained scalp-EEG foundation models (EEG FMs)' as the core backbone.",
+          "Focuses on the adaptation and cross-modality transfer of EEG-FM representations to ECoG.",
+          "Proposes a specific framework (CORTEG) for fine-tuning and repurposing EEG foundation models."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2605.10817v1",
+      "arxiv_id_base": "2605.10817",
+      "authors": [
+        "Peng Cao",
+        "Ali Mirzazadeh",
+        "Jong Woo Lee",
+        "Aleksandar Videnovic",
+        "Dina Katabi"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.10817v1",
+        "pdf": "https://arxiv.org/pdf/2605.10817v1"
+      },
+      "published_date": "2026-05-11",
+      "summary": {
+        "arxiv_id_base": "2605.10817",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 19.0,
+          "datasets": [
+            "Harvard Electroencephalography Database (HEEDB)"
+          ],
+          "eeg_hours": 2000000.0,
+          "subjects": 108341.0
+        },
+        "detailed_summary": "CLEF proposes a two-stage framework that shifts EEG foundation modeling from short-window BCI decoding to session-scale patient representation. It first employs a VQGAN to tokenize multi-channel multitaper spectrograms and pretrains a ViT encoder via masked reconstruction. In the second stage, the model aligns these patient-level embeddings with LLM-summarized neurologist reports and structured EHR data using symmetric contrastive objectives. Evaluation on a new 234-task benchmark using over 260k sessions shows that CLEF significantly outperforms prior foundation models, improving mean AUROC from 0.65 to 0.74.",
+        "evaluation": {
+          "benchmarks": [
+            "234-task clinical benchmark",
+            "TUAB",
+            "TUEP",
+            "HSP"
+          ],
+          "headline_results": [
+            "Mean AUROC improved from 0.65 to 0.74",
+            "Outperformed baselines on 229/234 tasks"
+          ],
+          "tasks": [
+            "Disease phenotype classification",
+            "Medication exposure detection",
+            "EEG feature identification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: CLEF learns patient-level representations from full-session recordings rather than short segments.",
+          "Combines masked reconstruction of multi-channel spectrogram tokens with contrastive alignment to LLM-summarized clinical reports and EHR data.",
+          "Outperforms state-of-the-art baselines on 229 of 234 clinical tasks, improving mean AUROC from 0.65 to 0.74."
+        ],
+        "limitations": [
+          "Lack of real-time support",
+          "Context window insufficient for full sleep architecture or multi-day trends",
+          "Limited interpretability of embeddings"
+        ],
+        "method": {
+          "architecture": "Two-stage pipeline: VQGAN tokenizer and ViT Encoder for spectrograms, followed by a contrastive alignment stage with T5 and EHR Transformer.",
+          "finetuning": "Linear probing on 234 clinical tasks.",
+          "objective": "Masked reconstruction (Stage 1) and Contrastive alignment (Stage 2).",
+          "pretraining": "Stage 1: Masked Image Modeling on spectrogram tokens. Stage 2: Contrastive alignment with clinical text and EHR."
+        },
+        "notes": "{\"chars\": 132997, \"error\": null, \"pages\": 25, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=35656",
+        "one_liner": "A long-context EEG foundation model that aligns full-session representations with clinical reports and EHR data to learn patient-level clinical semantics.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-05-11",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "CLEF: EEG Foundation Model for Learning Clinical Semantics",
+        "unique_contribution": "Introduces a session-scale EEG foundation model that aligns long-context neural representations with neurologist reports and structured EHR data to capture clinical semantics.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "CLEF: EEG Foundation Model for Learning Clinical Semantics",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies as an 'EEG foundation model' (CLEF) designed for long-context clinical EEG.",
+          "Presents a pretrained model evaluated on a broad 234-task benchmark, demonstrating generalizable representations.",
+          "Utilizes large-scale pretraining on 260k EEG sessions to create reusable representations for clinical semantics."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2605.11380v1",
+      "arxiv_id_base": "2605.11380",
+      "authors": [
+        "Fan Ma",
+        "Qier An",
+        "Peng Chen",
+        "Lingfei Qian",
+        "Xiang Lan",
+        "Mingyang Jiang",
+        "Zhiling Gu",
+        "Xenophon Papademetris",
+        "Hua Xu"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.11380v1",
+        "pdf": "https://arxiv.org/pdf/2605.11380v1"
+      },
+      "published_date": "2026-05-12",
+      "summary": {
+        "arxiv_id_base": "2605.11380",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 128.0,
+          "datasets": [
+            "TUEG",
+            "HBN",
+            "CHB-MIT",
+            "PhysioNet-MI",
+            "SHU-MI",
+            "PhysioNet-MA"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "TRACE proposes an autoregressive pre-training framework that predicts future EEG patches using a Temporal Routing MoE (TR-MoE) architecture. Unlike standard token-wise MoE, TRACE employs a TemporalFormer router to apply a shared expert decision to all channels at each time step, preserving instantaneous cross-channel coherence. The model was pre-trained on a heterogeneous corpus of over 1.5 million segments and demonstrated state-of-the-art or competitive performance across eight downstream BCI and clinical benchmarks.",
+        "evaluation": {
+          "benchmarks": [
+            "FACED",
+            "SEED-V",
+            "BCIC2020-3",
+            "CHB-MIT",
+            "PhysioNet-MI",
+            "SHU-MI",
+            "TUEV"
+          ],
+          "headline_results": [
+            "SOTA on BCIC2020-3 (imagined speech) and FACED (emotion recognition).",
+            "Competitive performance on motor imagery and clinical event classification."
+          ],
+          "tasks": [
+            "Imagined speech",
+            "Emotion recognition",
+            "Seizure detection",
+            "Motor imagery"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: TRACE utilizes an autoregressive multi-horizon forecasting objective to learn causal representations from heterogeneous EEG data.",
+          "Novel TR-MoE architecture: Employs a TemporalFormer router to ensure all channels at a given time step share the same expert, preventing the fragmentation of multi-channel coherence.",
+          "Strong transferability: Achieves leading results on benchmarks such as BCIC2020-3 and FACED, generalizing effectively to both seen and completely unseen datasets."
+        ],
+        "limitations": [
+          "Evaluation is primarily focused on classification-oriented BCI and clinical tasks, lacking validation on regression-style prediction.",
+          "Pre-training corpus may not cover all possible acquisition hardware, rare neurological conditions, or artifact patterns.",
+          "Increased model and training complexity due to the MoE architecture and expert pool.",
+          "Does not address clinical interpretability, privacy-preserving training, or demographic fairness."
+        ],
+        "method": {
+          "architecture": "Time-frequency patch encoder, multi-scale channel positional encoding, and TR-MoE blocks combining causal spatial-temporal attention with a Cross-Channel Temporal Routing FFN.",
+          "finetuning": "Lightweight 3-layer MLP head for end-to-end fine-tuning on downstream tasks.",
+          "objective": "Multi-horizon autoregressive forecasting (predicting next 1, 2, and 4 patches) using Huber loss and an expert-balancing auxiliary loss.",
+          "pretraining": "Heterogeneous multi-source pre-training on over 1.5 million EEG segments."
+        },
+        "notes": "{\"chars\": 86212, \"error\": null, \"pages\": 25, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=23507",
+        "one_liner": "An autoregressive EEG foundation model using temporal routing MoE to preserve cross-channel coherence while adapting to non-stationary brain states.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-05-12",
+        "tags": {
+          "backbone": [
+            "transformer",
+            "moe"
+          ],
+          "objective": [
+            "autoregressive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "TRACE: Temporal Routing with Autoregressive Cross-channel Experts for EEG Representation Learning",
+        "unique_contribution": "Introduces a cross-channel temporal routing mechanism that applies shared expert decisions to all channels at each time step to maintain spatial coherence during autoregressive pre-training.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "TRACE: Temporal Routing with Autoregressive Cross-channel Experts for EEG Representation Learning",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Proposes an autoregressive EEG pre-training framework specifically for learning transferable representations.",
+          "Designed for heterogeneous pre-training across diverse corpora with varying channel counts, montages, and recording domains.",
+          "Evaluated on eight downstream benchmarks, including datasets completely unseen during pre-training, demonstrating foundation-model-style transfer."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2605.11410v1",
+      "arxiv_id_base": "2605.11410",
+      "authors": [
+        "Ling Tang",
+        "Qian Chen",
+        "Jilin Mei",
+        "Houshi Xu",
+        "Quanshi Zhang",
+        "Jing Shao",
+        "Na Zou",
+        "Xia Hu",
+        "Dongrui Liu"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.11410v1",
+        "pdf": "https://arxiv.org/pdf/2605.11410v1"
+      },
+      "published_date": "2026-05-12",
+      "summary": {
+        "arxiv_id_base": "2605.11410",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "MDD (Mumtaz)",
+            "Stress (Mental Arithmetic)",
+            "ISRUC-Sleep",
+            "TUSL",
+            "Siena"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes a three-stage interpretability pipeline—layer-wise ridge probing, LEACE-style subspace erasure, and transparent closure classifiers—to analyze the representations of CSBrain, CBraMod, and LaBraM. It reveals that while these models broadly encode a 63-feature clinical lexicon, only 68.6% of those features are representation-causal for task decisions. Results demonstrate that confirmed features recover an average of 79.3% of the foundation models' performance advantage over random baselines, with a clear task gradient from high recovery in MDD to lower recovery in stress detection.",
+        "evaluation": {
+          "benchmarks": [
+            "ROC-AUC",
+            "macro-F1"
+          ],
+          "headline_results": [
+            "89.6% of features encoded",
+            "68.6% of features representation-causal",
+            "79.3% average recovery of FM advantage"
+          ],
+          "tasks": [
+            "MDD",
+            "Stress",
+            "ISRUC-Sleep",
+            "TUSL",
+            "Siena"
+          ]
+        },
+        "key_points": [
+          "Benchmark analysis of EEG foundation models: Audits CSBrain, CBraMod, and LaBraM across five clinical tasks using a 63-feature hand-crafted lexicon.",
+          "Causal distinction: Finds that 89.6% of features are encoded, but only 68.6% are representation-causal, highlighting a gap between representation and usage.",
+          "Performance recovery: Confirmed features recover 79.3% of the FM advantage on average, though harder tasks like stress detection leave a significant unexplained residual."
+        ],
+        "limitations": [
+          "Linearity of both the probe and the eraser restricts analysis to linearly decodable components.",
+          "The eraser is a cross-covariance approximation rather than the full closed-form LEACE operator.",
+          "Several lexicon entries are GPU-friendly proxies rather than exact textbook estimators.",
+          "Findings are limited to the three specific models and five tasks tested."
+        ],
+        "method": {
+          "architecture": "Audit pipeline consisting of layer-wise ridge probing, LEACE-style cross-covariance subspace erasure, and transparent closure classifiers.",
+          "finetuning": null,
+          "objective": "Causal auditing of EEG-FM representations",
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 93940, \"error\": null, \"pages\": 26, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=25359",
+        "one_liner": "A systematic causal audit of three EEG foundation models across five clinical tasks to determine the extent to which they rely on established hand-crafted clinical features.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-05-12",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "What Do EEG Foundation Models Capture from Human Brain Signals?",
+        "unique_contribution": "Introduces a causal auditing framework using subspace erasure to distinguish between what EEG foundation models merely encode versus what they actually use for clinical predictions.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "What Do EEG Foundation Models Capture from Human Brain Signals?",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly analyzes and audits three specific EEG foundation models: CSBrain, CBraMod, and LaBraM.",
+          "Focuses on understanding the representations learned by EEG-FMs via self-supervised pretraining.",
+          "Fits the ecosystem criteria as a systematic evaluation/analysis of EEG-FM capabilities across multiple clinical tasks."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2605.11885v1",
+      "arxiv_id_base": "2605.11885",
+      "authors": [
+        "Justus Meyer zu Bexten",
+        "Nico Scherf",
+        "Bogdan Franczyk",
+        "Simon M. Hofmann"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.11885v1",
+        "pdf": "https://arxiv.org/pdf/2605.11885v1"
+      },
+      "published_date": "2026-05-12",
+      "summary": {
+        "arxiv_id_base": "2605.11885",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 64.0,
+          "datasets": [
+            "PhysioMI L/R",
+            "AffectiveVR"
+          ],
+          "eeg_hours": 2500.0,
+          "subjects": 153.0
+        },
+        "detailed_summary": "The paper proposes the use of attention-aware LRP as a post-hoc attribution method to explain the opaque decision-making of Transformer-based EEG foundation models. Unlike previous LRP applications focused on CNNs, this approach targets the Transformer architectures of models like LaBraM to verify biological plausibility and detect spurious correlations. Evidence from R-peak detection, motor imagery, and affect prediction demonstrates that LRP can identify 'Clever Hans' shortcut learning and surface novel sensorimotor hypotheses.",
+        "evaluation": {
+          "benchmarks": [
+            "CSP-LDA"
+          ],
+          "headline_results": [
+            "R-Peak: ~75% BAC",
+            "PhysioMI L/R: >70% BAC in some runs",
+            "AffectiveVR: ~55% BAC"
+          ],
+          "tasks": [
+            "R-Peak detection",
+            "Motor Imagery (PhysioMI L/R)",
+            "AffectiveVR (Arousal/Valence)"
+          ]
+        },
+        "key_points": [
+          "Method for EEG-FM interpretability: Employs attention-aware LRP to generate high-resolution attribution heatmaps for Transformer-based EEG models.",
+          "Detection of shortcut learning: Unmasked 'Clever Hans' behavior in motor imagery tasks where models relied on ocular artifacts rather than neural motor correlates.",
+          "Scientific discovery potential: Identified a recurring central electrode cluster signature for arousal prediction, suggesting a novel sensorimotor hypothesis."
+        ],
+        "limitations": [
+          "Interpretation of EEG heatmaps is difficult without domain expertise and susceptible to subjective bias.",
+          "The choice of LRP was based on simulations of non-Transformer models and lacks direct faithfulness validation on EEG-FMs.",
+          "Discovery potential is limited by the current performance gap where specialized CNNs still outperform finetuned FMs."
+        ],
+        "method": {
+          "architecture": "LaBraM (Temporal conv blocks followed by a Transformer encoder)",
+          "finetuning": "Standard finetuning, frozen feature extractor, and training from scratch",
+          "objective": "Masked Autoencoding (MA)",
+          "pretraining": "Pretrained on 2500 hours of EEG data"
+        },
+        "notes": "{\"chars\": 58554, \"error\": null, \"pages\": 18, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=16192",
+        "one_liner": "Applies attention-aware Layer-wise Relevance Propagation (LRP) to interpret the decision processes of Transformer-based EEG foundation models.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-05-12",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": []
+        },
+        "title": "From Clever Hans to Scientific Discovery: Interpreting EEG Foundational Transformers with LRP",
+        "unique_contribution": "Extends Layer-wise Relevance Propagation (LRP) to Transformer-based EEG foundation models to enable verification of biological plausibility and detection of spurious shortcut learning.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "From Clever Hans to Scientific Discovery: Interpreting EEG Foundational Transformers with LRP",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets 'EEG Foundational Transformers' and 'EEG-FMs' in both title and abstract.",
+          "Focuses on the interpretability and verification of EEG-FMs using Layer-wise relevance propagation (LRP).",
+          "Fits the ecosystem criteria as a tool for the evaluation and exploration of EEG foundation models."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 1,
-    "candidates": 8,
-    "summarized": 1
+    "accepted": 7,
+    "candidates": 16,
+    "summarized": 7
   },
   "top_picks": [
-    "2605.02500"
+    "2605.11885",
+    "2605.11410",
+    "2605.11380",
+    "2605.10817",
+    "2605.10337"
   ]
 }

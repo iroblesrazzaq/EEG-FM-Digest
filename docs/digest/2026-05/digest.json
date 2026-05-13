@@ -4,17 +4,37 @@
   "sections": [
     {
       "paper_ids": [
-        "2605.02500"
+        "2605.08495",
+        "2605.11410"
+      ],
+      "title": "benchmark"
+    },
+    {
+      "paper_ids": [
+        "2605.02500",
+        "2605.10337",
+        "2605.11885"
       ],
       "title": "method"
+    },
+    {
+      "paper_ids": [
+        "2605.10817",
+        "2605.11380"
+      ],
+      "title": "new_model"
     }
   ],
   "stats": {
-    "accepted": 1,
-    "candidates": 8,
-    "summarized": 1
+    "accepted": 7,
+    "candidates": 16,
+    "summarized": 7
   },
   "top_picks": [
-    "2605.02500"
+    "2605.11885",
+    "2605.11410",
+    "2605.11380",
+    "2605.10817",
+    "2605.10337"
   ]
 }
