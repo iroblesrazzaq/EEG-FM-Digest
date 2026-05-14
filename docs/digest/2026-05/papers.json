@@ -787,18 +787,137 @@
           "Fits the ecosystem criteria as a tool for the evaluation and exploration of EEG foundation models."
         ]
       }
+    },
+    {
+      "arxiv_id": "2605.13133v1",
+      "arxiv_id_base": "2605.13133",
+      "authors": [
+        "Haoning Wang",
+        "Wenchao Yang",
+        "Shuai Shen",
+        "Yang Li"
+      ],
+      "categories": [
+        "cs.LG",
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.13133v1",
+        "pdf": "https://arxiv.org/pdf/2605.13133v1"
+      },
+      "published_date": "2026-05-13",
+      "summary": {
+        "arxiv_id_base": "2605.13133",
+        "categories": [
+          "cs.LG",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Workload",
+            "SEED",
+            "TUAB",
+            "HMC",
+            "TUEV",
+            "TUSL"
+          ],
+          "eeg_hours": null,
+          "subjects": 1600.0
+        },
+        "detailed_summary": "The paper proposes KAST-BAR, a framework that employs a Dual-Stream Hierarchical Attention (DSHA) encoder to capture the brain's non-Euclidean 3D manifold through bidirectional local-global interactions. It introduces a Knowledge-Anchored Semantic Profiler (KASP) to synthesize instance-level medical profiles using a frozen LLM, which then guide a Semantic Text-Aware Refiner (STAR) to dynamically aggregate EEG features using latent expert queries. Pre-trained on 21 diverse datasets, the model demonstrates superior generalization across six downstream tasks, effectively bridging the gap between low-level physiological signals and high-level textual semantics.",
+        "evaluation": {
+          "benchmarks": [
+            "Workload",
+            "SEED",
+            "TUAB",
+            "HMC",
+            "TUEV",
+            "TUSL"
+          ],
+          "headline_results": [
+            "KAST-BAR-Large (2.2B) consistently outperformed THD-BAR-Huge and NeuroLM-XL across all six tasks.",
+            "Achieved 71.2% B-Acc on Workload and 70.8% B-Acc on TUEV."
+          ],
+          "tasks": [
+            "Mental Workload Recognition",
+            "Emotion Recognition",
+            "Abnormal Detection",
+            "Sleep Staging",
+            "Event Type Classification",
+            "Slowing Event Classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: KAST-BAR integrates a dual-stream hierarchical encoder with an LLM-driven semantic profiler to align brain signals with expert medical knowledge.",
+          "Dynamic feature aggregation: The STAR module uses latent expert queries to adaptively retrieve task-relevant physiological patterns based on synthesized semantic priors.",
+          "Strong empirical results: Pre-trained on 21 datasets, the 2.2B parameter model outperforms existing multi-task models like THD-BAR and NeuroLM across six benchmarks."
+        ],
+        "limitations": [
+          "Potential smoothing of microscopic frequency details during quantization, affecting performance on tasks like slowing detection.",
+          "High computational complexity due to the billion-parameter LLM backbone.",
+          "Inference latency introduced by the autoregressive generation of the KASP module.",
+          "Risk of LLM hallucinations in rare pathological scenarios where general-purpose medical knowledge may lack precision."
+        ],
+        "method": {
+          "architecture": "DSHA encoder (bidirectional global/local streams) + VQ-VAE tokenizer + KASP (frozen LLM profiler) + STAR (query-based refiner) + Qwen2.5 BAR backbone.",
+          "finetuning": "Multi-task instruction tuning using a decoupled LoRA strategy for the BAR backbone and full-parameter fine-tuning for the STAR module.",
+          "objective": "Two-stage objective: (1) VQ reconstruction loss for the tokenizer; (2) Next Token Prediction (NTP) for joint text-EEG autoregressive pre-training plus an expert orthogonality loss.",
+          "pretraining": "Two-stage process: self-supervised VQ reconstruction followed by joint autoregressive pre-training on a corpus of 21 diverse EEG datasets."
+        },
+        "notes": "{\"chars\": 119830, \"error\": null, \"pages\": 30, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=32370",
+        "one_liner": "An EEG foundation model that aligns multi-level brain topology with expert-level medical semantics via a dynamic query-based refinement mechanism.",
+        "open_source": {
+          "code_url": "https://github.com/KAST-BAR/KAST-BAR",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-05-13",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "autoregressive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "KAST-BAR: Knowledge-Anchored Semantically-Dynamic Topology Brain Autoregressive Modeling for Universal Neural Interpretation",
+        "unique_contribution": "Introduces a 'Topological Encoding - Knowledge Anchoring - Guided Refinement' paradigm that uses LLM-generated medical priors to dynamically steer the aggregation of brain-topology-aware EEG representations.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "KAST-BAR: Knowledge-Anchored Semantically-Dynamic Topology Brain Autoregressive Modeling for Universal Neural Interpretation",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly states the goal of building an EEG foundation model",
+          "Utilizes large-scale pre-training on 21 diverse datasets",
+          "Demonstrates broad transferability across six downstream tasks for universal neural decoding"
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 7,
-    "candidates": 16,
-    "summarized": 7
+    "accepted": 8,
+    "candidates": 17,
+    "summarized": 8
   },
   "top_picks": [
+    "2605.13133",
     "2605.11885",
     "2605.11410",
     "2605.11380",
-    "2605.10817",
-    "2605.10337"
+    "2605.10817"
   ]
 }
