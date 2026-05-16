@@ -575,7 +575,7 @@
       }
     },
     {
-      "arxiv_id": "2605.11410v1",
+      "arxiv_id": "2605.11410v2",
       "arxiv_id_base": "2605.11410",
       "authors": [
         "Ling Tang",
@@ -592,8 +592,8 @@
         "cs.AI"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2605.11410v1",
-        "pdf": "https://arxiv.org/pdf/2605.11410v1"
+        "abs": "http://arxiv.org/abs/2605.11410v2",
+        "pdf": "https://arxiv.org/pdf/2605.11410v2"
       },
       "published_date": "2026-05-12",
       "summary": {
@@ -906,18 +906,252 @@
           "Demonstrates broad transferability across six downstream tasks for universal neural decoding"
         ]
       }
+    },
+    {
+      "arxiv_id": "2605.13930v1",
+      "arxiv_id_base": "2605.13930",
+      "authors": [
+        "William Lehn-Schiøler",
+        "Magnus Ruud Kjær",
+        "Rahul Thapa",
+        "Magnus Guldberg Pedersen",
+        "Anton Storgaard Mosquera",
+        "Nick Williams",
+        "Radu Gatej",
+        "Tue Lehn-Schiøler",
+        "Sándor Beniczky",
+        "Sadasivan Puthusserypady",
+        "James Zou",
+        "Lars Kai Hansen"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.HC",
+        "cs.NE"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.13930v1",
+        "pdf": "https://arxiv.org/pdf/2605.13930v1"
+      },
+      "published_date": "2026-05-13",
+      "summary": {
+        "arxiv_id_base": "2605.13930",
+        "categories": [
+          "cs.LG",
+          "cs.HC",
+          "cs.NE"
+        ],
+        "data_scale": {
+          "channels": 27.0,
+          "datasets": [
+            "SleepFM",
+            "REVE",
+            "LaBraM"
+          ],
+          "eeg_hours": null,
+          "subjects": 3036.0
+        },
+        "detailed_summary": "The paper proposes a cross-architecture pipeline to audit the internal representations of three EEG transformers (SleepFM, REVE, and LaBraM) using TopK Sparse Autoencoders (SAEs). It introduces a clinical semanticity taxonomy and a 'target vs. off-target' probe area metric to quantify concept steering selectivity, distinguishing between surgical feature removal and 'wrecking-ball' interventions. The framework utilizes a spectral decoder to map latent manipulations back to physiologically interpretable frequency signatures, such as the restoration of alpha-band power.",
+        "evaluation": {
+          "benchmarks": [
+            "TCAV",
+            "Probe-based selectivity metric"
+          ],
+          "headline_results": [
+            "SAE reconstruction preserves AUROC within 0.017",
+            "Amplitude R2 between 0.772 and 0.816"
+          ],
+          "tasks": [
+            "Binary normal/abnormal classification",
+            "Concept steering selectivity",
+            "Spectral reconstruction"
+          ]
+        },
+        "key_points": [
+          "Method for mechanistic interpretability: Employs TopK Sparse Autoencoders to extract sparse, monosemantic feature dictionaries from frozen EEG foundation models.",
+          "Selectivity quantification: Introduces a probe-based metric to distinguish between selective concept manipulation and 'wrecking-ball' interventions that collapse global model performance.",
+          "Physiological grounding: Uses a spectral decoder to translate latent interventions into interpretable frequency signatures, such as restoring alpha-band power."
+        ],
+        "limitations": [
+          "Spectral decoder cannot reconstruct phase, preventing time-domain waveform generation.",
+          "Observational monosemanticity (separability) does not guarantee interventional selectivity.",
+          "Concept taxonomy is investigator-defined and limited by available cohort metadata."
+        ],
+        "method": {
+          "architecture": "TopK Sparse Autoencoders (SAEs) applied to frozen transformer encoders (SleepFM, REVE, LaBraM).",
+          "finetuning": "Binary normal/abnormal classification.",
+          "objective": "MSE on normalized activations for SAEs; TCAV for concept attribution.",
+          "pretraining": "The analyzed models used MMC (SleepFM), MAE (REVE), and MSP (LaBraM)."
+        },
+        "notes": "{\"chars\": 39269, \"error\": null, \"pages\": 14, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=11338",
+        "one_liner": "A mechanistic interpretability framework using Sparse Autoencoders to decompose EEG foundation model embeddings into clinically interpretable features.",
+        "open_source": {
+          "code_url": "https://github.com/BrainCapture/mechanistic-interpretability-for-eeg-foundation-models/tree/preprint",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-05-13",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Mechanistic Interpretability of EEG Foundation Models via Sparse Autoencoders",
+        "unique_contribution": "A unified mechanistic interpretability pipeline for EEG foundation models that bridges high-dimensional embeddings to clinical physiology via SAEs, concept steering, and spectral decoding.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Mechanistic Interpretability of EEG Foundation Models via Sparse Autoencoders",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets and analyzes three specific EEG foundation models: SleepFM, REVE, and LaBraM.",
+          "Focuses on mechanistic interpretability and representational analysis of EEG-FMs.",
+          "Fits the ecosystem criteria by providing a framework for evaluating the internal computations and feature dictionaries of EEG-FMs."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2605.14698v1",
+      "arxiv_id_base": "2605.14698",
+      "authors": [
+        "Konstantinos Kontras",
+        "Trui Osselaer",
+        "Stylianos G. Mouslech",
+        "Angeliki-Ilektra Karaiskou",
+        "Guido Gagliardi",
+        "Thomas Strypsteen",
+        "Mohammad Hossein Badiei",
+        "Anku Rani",
+        "Maarten Vanmarcke",
+        "Miguel Bhagubai",
+        "Chanakya Ekbote",
+        "Jaedong Hwang",
+        "Christos Chatzichristos",
+        "Paul Pu Liang",
+        "Maarten De Vos"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.14698v1",
+        "pdf": "https://arxiv.org/pdf/2605.14698v1"
+      },
+      "published_date": "2026-05-14",
+      "summary": {
+        "arxiv_id_base": "2605.14698",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "42 datasets"
+          ],
+          "eeg_hours": 260000.0,
+          "subjects": 17719.0
+        },
+        "detailed_summary": "The paper introduces NeuroAtlas, a comprehensive benchmark spanning approximately 260k hours of EEG data across epilepsy, sleep medicine, brain age estimation, and BCI domains. It employs a unified frozen-encoder linear probing protocol to compare EEG-specific foundation models, general-purpose time-series models, and supervised baselines. The results demonstrate that EEG-specific pretraining does not consistently outperform generic time-series pretraining and that standard machine learning metrics often obscure real-world clinical utility.",
+        "evaluation": {
+          "benchmarks": [
+            "NeuroAtlas"
+          ],
+          "headline_results": [
+            "EEG-FMs do not consistently outperform TS-FMs",
+            "NeuroLM and REVE are the most consistent EEG-FMs",
+            "Standard ML metrics often fail to reflect clinical utility"
+          ],
+          "tasks": [
+            "seizure detection",
+            "sleep staging",
+            "brain age estimation",
+            "BCI decoding"
+          ]
+        },
+        "key_points": [
+          "Benchmark for EEG foundation models: Evaluates 20 models across 42 datasets and ~260k hours of data in four clinical domains.",
+          "Clinical metric focus: Utilizes domain-specific measures such as event-level sensitivity and hypnogram features, finding that standard AUROC and accuracy can be misleading.",
+          "Comparative analysis: Reveals that general-purpose time-series FMs perform on par with EEG-specific FMs, suggesting current models lack a truly unified, out-of-the-box capability."
+        ],
+        "limitations": [
+          "Evaluation is restricted to linear probing, excluding fine-tuning and few-shot learning paradigms.",
+          "Certain promising models, such as BrainWave, were excluded due to unavailable implementations.",
+          "Brain-age gap (BAG) shows limited transfer for healthy-CI discrimination.",
+          "BCI performance is significantly influenced by non-neural confounds such as eye gaze."
+        ],
+        "method": {
+          "architecture": "Frozen-encoder linear probing",
+          "finetuning": "Linear probing only",
+          "objective": "Linear classification/regression",
+          "pretraining": "Various (EEG-FMs, TS-FMs)"
+        },
+        "notes": "{\"chars\": 180388, \"error\": null, \"pages\": 50, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=47701",
+        "one_liner": "A large-scale benchmark evaluating EEG and general time-series foundation models across 42 datasets and four clinical domains using clinically grounded metrics.",
+        "open_source": {
+          "code_url": "available",
+          "license": "CC-BY 4.0",
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-05-14",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "NeuroAtlas: Benchmarking Foundation Models for Clinical EEG and Brain-Computer Interfaces",
+        "unique_contribution": "Introduces the largest EEG benchmark to date, incorporating 42 datasets and bespoke clinical evaluation metrics to expose the performance gap in current unified EEG foundation models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "NeuroAtlas: Benchmarking Foundation Models for Clinical EEG and Brain-Computer Interfaces",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Introduces NeuroAtlas, a large-scale benchmark specifically designed for evaluating EEG foundation models.",
+          "Evaluates both EEG-specific FMs and generic time-series FMs across 42 datasets.",
+          "Explicitly targets the EEG-FM ecosystem by providing datasets and clinical metrics for the development of unified EEG models."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 8,
-    "candidates": 17,
-    "summarized": 8
+    "accepted": 10,
+    "candidates": 20,
+    "summarized": 10
   },
   "top_picks": [
+    "2605.14698",
+    "2605.13930",
     "2605.13133",
     "2605.11885",
-    "2605.11410",
-    "2605.11380",
-    "2605.10817"
+    "2605.11410"
   ]
 }
