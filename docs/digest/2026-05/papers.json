@@ -695,7 +695,8 @@
         "Simon M. Hofmann"
       ],
       "categories": [
-        "cs.AI"
+        "cs.AI",
+        "q-bio.NC"
       ],
       "links": {
         "abs": "http://arxiv.org/abs/2605.11885v1",
@@ -908,14 +909,14 @@
       }
     },
     {
-      "arxiv_id": "2605.13930v1",
+      "arxiv_id": "2605.13930v2",
       "arxiv_id_base": "2605.13930",
       "authors": [
         "William Lehn-Schiøler",
         "Magnus Ruud Kjær",
         "Rahul Thapa",
         "Magnus Guldberg Pedersen",
-        "Anton Storgaard Mosquera",
+        "Anton Mosquera Storgaard",
         "Nick Williams",
         "Radu Gatej",
         "Tue Lehn-Schiøler",
@@ -930,8 +931,8 @@
         "cs.NE"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2605.13930v1",
-        "pdf": "https://arxiv.org/pdf/2605.13930v1"
+        "abs": "http://arxiv.org/abs/2605.13930v2",
+        "pdf": "https://arxiv.org/pdf/2605.13930v2"
       },
       "published_date": "2026-05-13",
       "summary": {
@@ -1140,18 +1141,516 @@
           "Explicitly targets the EEG-FM ecosystem by providing datasets and clinical metrics for the development of unified EEG models."
         ]
       }
+    },
+    {
+      "arxiv_id": "2605.15698v1",
+      "arxiv_id_base": "2605.15698",
+      "authors": [
+        "Srinivas Ravishankar",
+        "Ishayu Ghosh",
+        "Nora Zajzon",
+        "Teng Fei",
+        "Virginia de Sa"
+      ],
+      "categories": [
+        "cs.HC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.15698v1",
+        "pdf": "https://arxiv.org/pdf/2605.15698v1"
+      },
+      "published_date": "2026-05-15",
+      "summary": {
+        "arxiv_id_base": "2605.15698",
+        "categories": [
+          "cs.HC"
+        ],
+        "data_scale": {
+          "channels": 32.0,
+          "datasets": [
+            "LOVW-8.5K"
+          ],
+          "eeg_hours": null,
+          "subjects": 4.0
+        },
+        "detailed_summary": "The paper introduces handwriting decoding as a challenging motor task to evaluate EEG foundation models (FMs), arguing that typical motor imagery tasks are too coarse. The authors introduce the LOVW-8.5K dataset, designed to be free of oculomotor and temporal confounds found in prior work. Their results demonstrate that current FMs, including REVE and CBraMod, are outperformed by smaller specialist models like EEGNet, and that performance is heavily bottlenecked by movement-onset uncertainty and low single-trial SNR.",
+        "evaluation": {
+          "benchmarks": [
+            "LOVW-8.5K"
+          ],
+          "headline_results": [
+            "EEGNet achieved 41.3% accuracy in movement-locked settings, significantly outperforming current FMs."
+          ],
+          "tasks": [
+            "Handwriting letter classification"
+          ]
+        },
+        "key_points": [
+          "Benchmark for EEG foundation models: Proposes handwriting decoding as a more challenging motor task than coarse motor imagery classification to drive FM progress.",
+          "Performance gap: Finds that specialist models like EEGNet outperform current FMs (e.g., REVE, CBraMod) on the new LOVW-8.5K dataset.",
+          "Critical bottlenecks: Identifies movement-onset uncertainty and low single-trial SNR as primary obstacles, where increasing test-time SNR provides larger gains than scaling training data."
+        ],
+        "limitations": [
+          "Small subject cohort (n=4) for the primary new dataset.",
+          "Limited number of letters (4) used for the classification task.",
+          "Cross-session stability for imagined handwriting (MI) was not significantly above chance.",
+          "High performance depends on movement-locked epoching, which is unrealistic for real-world BCI applications."
+        ],
+        "method": {
+          "architecture": "Comparison of specialist models (EEGNet, EEGConformer, SPaRCNet) and pretrained FMs (CBraMod, MIRepNet, REVE)",
+          "finetuning": "Linear probing and full fine-tuning on the LOVW-8.5K dataset",
+          "objective": "4-way letter classification",
+          "pretraining": "Evaluated existing FMs pretrained on large-scale EEG data"
+        },
+        "notes": "{\"chars\": 54416, \"error\": null, \"pages\": 17, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=15394",
+        "one_liner": "Proposes handwriting decoding as a rigorous benchmark for EEG foundation models, revealing that current FMs are outperformed by specialist models on fine-grained motor tasks.",
+        "open_source": {
+          "code_url": "https://anonymous.4open.science/r/EEG-Handwriting-BCI-DFCD/",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-05-15",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Handwriting decoding as a challenging motor task for EEG Foundation Models",
+        "unique_contribution": "Introduces a confound-free handwriting EEG dataset (LOVW-8.5K) and demonstrates that current EEG foundation models fail to outperform specialist models on fine-grained motor decoding.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Handwriting decoding as a challenging motor task for EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets the evaluation of EEG Foundation Models (FMs) using handwriting decoding.",
+          "Proposes a new dataset and task specifically to benchmark and challenge the progress of EEG-FMs.",
+          "Analyzes the performance of existing EEG-FMs compared to task-specific models."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2605.17562v1",
+      "arxiv_id_base": "2605.17562",
+      "authors": [
+        "Urban Širca",
+        "Maryam Alimardani",
+        "Stefanos Zafeiriou",
+        "Konstantinos Barmpas"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.HC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.17562v1",
+        "pdf": "https://arxiv.org/pdf/2605.17562v1"
+      },
+      "published_date": "2026-05-17",
+      "summary": {
+        "arxiv_id_base": "2605.17562",
+        "categories": [
+          "cs.LG",
+          "cs.AI",
+          "cs.HC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 105215, \"error\": null, \"pages\": 37, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=28578;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-05-17",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Beyond Accuracy: Robustness, Interpretability and Expressiveness of EEG Foundation Models",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Beyond Accuracy: Robustness, Interpretability and Expressiveness of EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly focuses on benchmarking and analyzing 'EEG foundation models (EEG-FMs)'",
+          "Evaluates six different EEG-FMs across eight datasets",
+          "Provides a systematic assessment of robustness, interpretability, and expressiveness specifically for EEG-FMs"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2605.18085v1",
+      "arxiv_id_base": "2605.18085",
+      "authors": [
+        "Wei Xiong",
+        "Jiangtong Li",
+        "Kun Zhu",
+        "Jie Li"
+      ],
+      "categories": [
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.18085v1",
+        "pdf": "https://arxiv.org/pdf/2605.18085v1"
+      },
+      "published_date": "2026-05-18",
+      "summary": {
+        "arxiv_id_base": "2605.18085",
+        "categories": [
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "17 public datasets"
+          ],
+          "eeg_hours": 28000.0,
+          "subjects": null
+        },
+        "detailed_summary": "PRiSE-EEG proposes a framework that balances shared EEG regularities with task-specific specialization through a depth-stratified Mixture-of-Experts (MoE) Transformer. It utilizes a prior-guided continuous tokenizer that integrates static cortical/network priors and dynamic short-time channel interactions. The model's expert allocation is calibrated using Centered Kernel Alignment (CKA) from a pilot model to assign more shared experts to early layers and specialized experts to deeper layers. Experiments on 12 public benchmarks show significant performance gains, particularly in disease-related and cognitive tasks.",
+        "evaluation": {
+          "benchmarks": [
+            "Siena",
+            "SEED",
+            "SEED-V",
+            "PhysioMI",
+            "Mimul-11",
+            "Workload",
+            "HMC",
+            "TUEV",
+            "TUAB",
+            "Things-EEG-2",
+            "ADFTD",
+            "TUSL"
+          ],
+          "headline_results": [
+            "6-8% improvement on ADFTD and SEED-V",
+            ">9% AUROC gain on Things-EEG-2"
+          ],
+          "tasks": [
+            "disease-related tasks",
+            "cognitive tasks"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: PRiSE-EEG combines prior-guided continuous tokenization with depth-stratified experts to learn reusable representations across heterogeneous EEG paradigms.",
+          "Method novelty: Uses CKA analysis of a pilot model to dynamically allocate shared and specialized experts across Transformer layers, following a general-to-specific transition.",
+          "Strong evidence: Outperforms existing EEG-FMs across 12 benchmarks, with primary metric improvements of 6-8% on complex tasks like ADFTD and SEED-V."
+        ],
+        "limitations": [
+          "Model scale is modest compared to contemporary large-scale vision or language foundation models.",
+          "Inherent low signal-to-noise ratio of EEG signals necessitates further preprocessing advancements.",
+          "Lack of zero-shot or few-shot prompting capabilities; new tasks require retraining.",
+          "Currently focused on single-modality EEG and lacks integration with other modalities like fMRI or video."
+        ],
+        "method": {
+          "architecture": "Prior-guided continuous tokenizer and a depth-stratified MoE Transformer with interleaved temporal and group layers.",
+          "finetuning": "Unified multi-dataset fine-tuning with dual-stream MLP heads.",
+          "objective": "Masked temporal-patch reconstruction (MAE-TP), masked channel reconstruction (MAE-CH), and future-patch prediction (GPT).",
+          "pretraining": "Self-supervised on 17 datasets using the three objectives + expert load-balancing loss."
+        },
+        "notes": "{\"chars\": 110663, \"error\": null, \"pages\": 32, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=29884",
+        "one_liner": "An EEG foundation model using CKA-calibrated depth-stratified experts and prior-guided continuous tokenization to optimize cross-paradigm representation learning.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-05-18",
+        "tags": {
+          "backbone": [
+            "transformer",
+            "moe"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "autoregressive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "PRiSE-EEG: A Prior-Guided Foundation Model with Depth-Stratified Experts for Cross-Paradigm EEG Representation Learning",
+        "unique_contribution": "Introduces a CKA-calibrated depth-stratified expert allocation mechanism that maps layer-wise representation sharedness to the proportion of shared versus specialized experts in an MoE Transformer.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "PRiSE-EEG: A Prior-Guided Foundation Model with Depth-Stratified Experts for Cross-Paradigm EEG Representation Learning",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly proposes PRiSE-EEG, defined as an EEG foundation model.",
+          "Focuses on learning reusable representations across heterogeneous EEG paradigms.",
+          "Evaluated on 12 public EEG benchmarks to demonstrate cross-paradigm performance."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2605.18172v1",
+      "arxiv_id_base": "2605.18172",
+      "authors": [
+        "Junyu Pan",
+        "Yansen Wang",
+        "Enze Zhang",
+        "Baoliang Lu",
+        "Weilong Zheng",
+        "Dongsheng Li"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.18172v1",
+        "pdf": "https://arxiv.org/pdf/2605.18172v1"
+      },
+      "published_date": "2026-05-18",
+      "summary": {
+        "arxiv_id_base": "2605.18172",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "SEED",
+            "SEED-IV",
+            "SEED-VII",
+            "TUEV",
+            "TUAB",
+            "HMC"
+          ],
+          "eeg_hours": 2500.0,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes Generative Visual Grounding (GVG), which uses an EEG-to-image model to hallucinate proxy images for both visually-evoked and non-visual clinical EEG. This approach maps neural signals into the discrete visual token space of MLLMs (X-Omni and Janus), bypassing the information loss associated with pure text alignment. Experiments across six benchmarks show that trimodal (Image+Text) alignment outperforms single-modality variants and remains competitive with larger text-aligned models like NeuroLM.",
+        "evaluation": {
+          "benchmarks": [
+            "SEED",
+            "SEED-IV",
+            "SEED-VII",
+            "TUEV",
+            "TUAB",
+            "HMC"
+          ],
+          "headline_results": [
+            "GVG-Janus (Trimodal) is the strongest multitask model",
+            "GVG-X-Omni matches NeuroLM-XL on SEED with 10x fewer trainable parameters"
+          ],
+          "tasks": [
+            "EEG understanding",
+            "Multitask classification",
+            "Visualization"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: GVG translates brainwaves into discrete visual tokens, allowing frozen MLLMs to interpret neural dynamics using pre-trained visual priors.",
+          "Method novelty: Employs a generative 'visual translator' to create proxy images for clinical EEG, enabling a unified visual-alignment pipeline for 'blind' datasets.",
+          "Strong evidence: GVG-X-Omni matches a 1.7B text-aligned baseline on SEED with 10x fewer trainable parameters."
+        ],
+        "limitations": [
+          "Synthesized proxy images lack high-frequency micro-details.",
+          "Reconstruction is a coarse visual summary rather than a literal physical reconstruction of internal percepts.",
+          "Reliance on the quality of the AVDE generative model for clinical proxy images.",
+          "High memory use for GVG-X-Omni due to the 7B frozen backbone."
+        ],
+        "method": {
+          "architecture": "LaBraM EEG encoder -> Transformer adapter -> MLLM (X-Omni/Janus)",
+          "finetuning": "Prompt-based multi-task generation",
+          "objective": "Trimodal contrastive alignment (EEG-Image-Text) followed by non-autoregressive discrete image token prediction",
+          "pretraining": "Three-stage pipeline: Alignment -> Token Prediction -> MLLM Understanding"
+        },
+        "notes": "{\"chars\": 58430, \"error\": null, \"pages\": 10, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=16232",
+        "one_liner": "A framework that translates EEG signals into discrete visual tokens using generative proxy images to leverage MLLM visual priors for universal EEG understanding.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-05-18",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive",
+            "discrete-code-prediction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": []
+        },
+        "title": "Visualizing the Invisible: Generative Visual Grounding Empowers Universal EEG Understanding in MLLMs",
+        "unique_contribution": "Introduces the use of generative visual proxies to ground non-visual clinical EEG in the visual representation space of MLLMs.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Visualizing the Invisible: Generative Visual Grounding Empowers Universal EEG Understanding in MLLMs",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly frames the work as a path toward 'brain foundation models'.",
+          "Aims for 'universal EEG understanding' by aligning EEG signals with MLLMs.",
+          "Proposes a generative visual grounding framework to create enriched neural representations for broad clinical-state interpretation."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2605.18298v1",
+      "arxiv_id_base": "2605.18298",
+      "authors": [
+        "Yang Shao",
+        "Peiliang Gong",
+        "Qun Dai",
+        "Daoqiang Zhang"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.HC",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.18298v1",
+        "pdf": "https://arxiv.org/pdf/2605.18298v1"
+      },
+      "published_date": "2026-05-18",
+      "summary": {
+        "arxiv_id_base": "2605.18298",
+        "categories": [
+          "cs.AI",
+          "cs.HC",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 96706, \"error\": null, \"pages\": 22, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=26189;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-05-18",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "DARE-EEG: A Foundation Model for Mining Dual-Aligned Representation of EEG",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "DARE-EEG: A Foundation Model for Mining Dual-Aligned Representation of EEG",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies DARE-EEG as a self-supervised foundation model for EEG.",
+          "Focuses on pre-training on large-scale EEG data to learn generalizable representations for diverse BCI applications.",
+          "Proposes a parameter-efficient adaptation strategy for heterogeneous electrode configurations and sampling rates.",
+          "Demonstrates superior cross-dataset portability across diverse EEG benchmarks."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 10,
-    "candidates": 20,
-    "summarized": 10
+    "accepted": 15,
+    "candidates": 29,
+    "summarized": 15
   },
   "top_picks": [
+    "2605.18085",
+    "2605.15698",
     "2605.14698",
     "2605.13930",
-    "2605.13133",
-    "2605.11885",
-    "2605.11410"
+    "2605.13133"
   ]
 }
