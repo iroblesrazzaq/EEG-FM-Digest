@@ -16,7 +16,8 @@
         "2605.02500",
         "2605.10337",
         "2605.11885",
-        "2605.13930"
+        "2605.13930",
+        "2605.20182"
       ],
       "title": "method"
     },
@@ -39,9 +40,9 @@
     }
   ],
   "stats": {
-    "accepted": 15,
-    "candidates": 29,
-    "summarized": 15
+    "accepted": 16,
+    "candidates": 31,
+    "summarized": 16
   },
   "top_picks": [
     "2605.18085",

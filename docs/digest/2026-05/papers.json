@@ -1639,12 +1639,120 @@
           "Demonstrates superior cross-dataset portability across diverse EEG benchmarks."
         ]
       }
+    },
+    {
+      "arxiv_id": "2605.20182v1",
+      "arxiv_id_base": "2605.20182",
+      "authors": [
+        "Xinyang Tian",
+        "Ruitao Liu",
+        "Ziyi Ye",
+        "Siyang Xue",
+        "Xin Wang",
+        "Xuesong Chen"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.20182v1",
+        "pdf": "https://arxiv.org/pdf/2605.20182v1"
+      },
+      "published_date": "2026-05-19",
+      "summary": {
+        "arxiv_id_base": "2605.20182",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 6.0,
+          "datasets": [
+            "Human Sleep Project (HSP)",
+            "SEED",
+            "Motor Movement/Imagery"
+          ],
+          "eeg_hours": null,
+          "subjects": 20000.0
+        },
+        "detailed_summary": "The paper introduces a universal microstate tokenizer created by clustering continuous EEG signals from a large medical dataset into discrete microstates using streaming k-means. This representation is then applied to sleep staging, emotion recognition, and motor imagery classification, consistently outperforming traditional time- and frequency-domain features. The authors demonstrate that microstates are more scalable with data size and provide biologically interpretable links to cognitive states.",
+        "evaluation": {
+          "benchmarks": [
+            "HSP",
+            "SEED",
+            "Motor Movement/Imagery"
+          ],
+          "headline_results": [
+            "Microstates achieved highest accuracy (e.g., 0.81 in sleep staging) and showed better scalability than time/frequency features."
+          ],
+          "tasks": [
+            "Sleep staging",
+            "Emotion recognition",
+            "Motor imagery classification"
+          ]
+        },
+        "key_points": [
+          "New EEG representation method: leverages biologically grounded microstates as discrete tokens to bridge deep learning and neural activity patterns.",
+          "Demonstrates superior performance over raw and STFT features across sleep staging, emotion recognition, and motor imagery tasks.",
+          "Shows that microstate representations are more scalable with increasing data size and offer higher interpretability regarding brain activity patterns."
+        ],
+        "limitations": [
+          "Tokenizer training was performed only on sleep data.",
+          "Evaluated on a limited number of tasks and datasets.",
+          "Focused primarily on the representation side rather than developing a full pre-trained model."
+        ],
+        "method": {
+          "architecture": "Tokenizer based on streaming k-means clustering of Global Field Power (GFP) peaks.",
+          "finetuning": "Downstream classification using CNN+LSTM, Sleep Transformer, and ResNet.",
+          "objective": "Unsupervised clustering into k=1000 discrete microstates.",
+          "pretraining": "Fitted on the Human Sleep Project (HSP) dataset."
+        },
+        "notes": "{\"chars\": 92028, \"error\": null, \"pages\": 23, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=25038",
+        "one_liner": "Proposes a universal EEG tokenizer based on biologically grounded microstates to improve performance and interpretability across diverse downstream tasks.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-05-19",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Atoms of Thought: Universal EEG Representation Learning with Microstates",
+        "unique_contribution": "Introduces a universal EEG tokenizer based on biologically grounded microstates that generalizes across diverse cognitive tasks and outperforms conventional time-frequency features.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Atoms of Thought: Universal EEG Representation Learning with Microstates",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Focuses on learning 'universal representations' from a 'large medical EEG dataset'",
+          "Develops a 'universal microstate tokenizer' intended for broad transfer",
+          "Evaluates the representation across multiple diverse downstream tasks including sleep staging, emotion recognition, and motor imagery"
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 15,
-    "candidates": 29,
-    "summarized": 15
+    "accepted": 16,
+    "candidates": 31,
+    "summarized": 16
   },
   "top_picks": [
     "2605.18085",
