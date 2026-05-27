@@ -909,7 +909,7 @@
       }
     },
     {
-      "arxiv_id": "2605.13930v2",
+      "arxiv_id": "2605.13930v3",
       "arxiv_id_base": "2605.13930",
       "authors": [
         "William Lehn-Schiøler",
@@ -920,8 +920,9 @@
         "Nick Williams",
         "Radu Gatej",
         "Tue Lehn-Schiøler",
-        "Sándor Beniczky",
+        "Andreas Brink-Kjær",
         "Sadasivan Puthusserypady",
+        "Sándor Beniczky",
         "James Zou",
         "Lars Kai Hansen"
       ],
@@ -931,8 +932,8 @@
         "cs.NE"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2605.13930v2",
-        "pdf": "https://arxiv.org/pdf/2605.13930v2"
+        "abs": "http://arxiv.org/abs/2605.13930v3",
+        "pdf": "https://arxiv.org/pdf/2605.13930v3"
       },
       "published_date": "2026-05-13",
       "summary": {
@@ -1440,22 +1441,22 @@
       }
     },
     {
-      "arxiv_id": "2605.18172v1",
+      "arxiv_id": "2605.18172v2",
       "arxiv_id_base": "2605.18172",
       "authors": [
-        "Junyu Pan",
+        "Jun-Yu Pan",
         "Yansen Wang",
         "Enze Zhang",
-        "Baoliang Lu",
-        "Weilong Zheng",
+        "Bao-Liang Lu",
+        "Wei-Long Zheng",
         "Dongsheng Li"
       ],
       "categories": [
         "cs.AI"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2605.18172v1",
-        "pdf": "https://arxiv.org/pdf/2605.18172v1"
+        "abs": "http://arxiv.org/abs/2605.18172v2",
+        "pdf": "https://arxiv.org/pdf/2605.18172v2"
       },
       "published_date": "2026-05-18",
       "summary": {
@@ -1747,12 +1748,454 @@
           "Evaluates the representation across multiple diverse downstream tasks including sleep staging, emotion recognition, and motor imagery"
         ]
       }
+    },
+    {
+      "arxiv_id": "2605.24523v1",
+      "arxiv_id_base": "2605.24523",
+      "authors": [
+        "Zexuan Chen",
+        "Sichao Liu",
+        "Runhao Lu",
+        "Huichao Qi",
+        "Alexandra Woolgar",
+        "Xi Vincent Wang",
+        "Lihui Wang"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.CL",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.24523v1",
+        "pdf": "https://arxiv.org/pdf/2605.24523v1"
+      },
+      "published_date": "2026-05-23",
+      "summary": {
+        "arxiv_id_base": "2605.24523",
+        "categories": [
+          "cs.LG",
+          "cs.CL",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 64786, \"error\": null, \"pages\": 20, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=18116;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-05-23",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "MindAlign: Bridging EEG, Vision, and Language for Zero-Shot Visual Decoding",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "MindAlign: Bridging EEG, Vision, and Language for Zero-Shot Visual Decoding",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "EEG is the central modality used for zero-shot visual decoding.",
+          "The method employs a two-stage design starting with pre-training an EEG encoder via masked reconstruction on unlabeled trials for robust transfer.",
+          "The framework aligns EEG representations with vision and language models in a unified latent space, characteristic of foundation model alignment strategies."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2605.24921v1",
+      "arxiv_id_base": "2605.24921",
+      "authors": [
+        "Jamiyan Sukhbaatar",
+        "Satoshi Imamura",
+        "Toshihisa Tanaka"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.24921v1",
+        "pdf": "https://arxiv.org/pdf/2605.24921v1"
+      },
+      "published_date": "2026-05-24",
+      "summary": {
+        "arxiv_id_base": "2605.24921",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 38046, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=11040;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-05-24",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "BandVQ: Band-Wise Vector-Quantized EEG Foundation Model",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "BandVQ: Band-Wise Vector-Quantized EEG Foundation Model",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies as an 'EEG foundation model' in both title and abstract.",
+          "Focuses on learning 'transferable representations' across diverse tasks, montages, and spectral characteristics.",
+          "Pretrained on a large-scale dataset comprising 71 public corpora and over 9,200 subjects.",
+          "Evaluated on multiple subject-independent classification datasets to demonstrate transfer performance."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2605.26434v1",
+      "arxiv_id_base": "2605.26434",
+      "authors": [
+        "Aditya Kommineni",
+        "Emily Zhou",
+        "Kleanthis Avramidis",
+        "Simon Bock Segaard",
+        "Jeppe Roden Münster",
+        "Andreas Peter Juhl Hansen",
+        "Takfarinas Medani",
+        "Tiantian Feng",
+        "Richard Leahy",
+        "Shrikanth Narayanan"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.26434v1",
+        "pdf": "https://arxiv.org/pdf/2605.26434v1"
+      },
+      "published_date": "2026-05-26",
+      "summary": {
+        "arxiv_id_base": "2605.26434",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 50623, \"error\": null, \"pages\": 18, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=14204;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-05-26",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Aperiodic and Low-Frequency Spectral Bias in Reconstruction based EEG Foundation Models",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Aperiodic and Low-Frequency Spectral Bias in Reconstruction based EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly focuses on analyzing and evaluating 'EEG foundation models' and their generalizable representations.",
+          "Provides a mechanistic account of failure modes in reconstruction-based EEG-FM embeddings.",
+          "Evaluates foundation model embeddings using linear probes on real-world BCI datasets."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2605.26624v1",
+      "arxiv_id_base": "2605.26624",
+      "authors": [
+        "Haoliang Gong",
+        "Qingshan She",
+        "Jiale Xua",
+        "Yunyan Gao",
+        "Xugang Xi"
+      ],
+      "categories": [
+        "cs.CV"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.26624v1",
+        "pdf": "https://arxiv.org/pdf/2605.26624v1"
+      },
+      "published_date": "2026-05-26",
+      "summary": {
+        "arxiv_id_base": "2605.26624",
+        "categories": [
+          "cs.CV"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "FACED",
+            "SEED-VII"
+          ],
+          "eeg_hours": null,
+          "subjects": 143.0
+        },
+        "detailed_summary": "The paper proposes MSCGC-KAN, a specialized classification head designed to be attached to the pre-trained CBraMod backbone for EEG emotion recognition. It introduces a multi-scale causal residual graph convolution module to capture temporal dynamics and channel connectivity, alongside a Kolmogorov-Arnold-inspired layer for nonlinear feature mapping. Evaluation on the FACED and SEED-VII datasets demonstrates that this structured head significantly outperforms simple linear projections, improving balanced accuracy by up to 5.91 percentage points.",
+        "evaluation": {
+          "benchmarks": [
+            "FACED",
+            "SEED-VII"
+          ],
+          "headline_results": [
+            "Balanced Accuracy of 60.66% on FACED",
+            "Balanced Accuracy of 33.27% on SEED-VII",
+            "Outperformed CBraMod+Linear baseline by 5.91% and 2.03% respectively"
+          ],
+          "tasks": [
+            "Multi-class EEG emotion recognition"
+          ]
+        },
+        "key_points": [
+          "New EEG emotion recognition method: Enhances pre-trained foundation models (CBraMod) using a structured task head instead of a simple linear classifier.",
+          "Combines multi-scale causal convolutions for temporal dynamics with learnable graph convolutions for inter-channel functional connectivity.",
+          "Utilizes a KAN-inspired analytic basis expansion layer to improve nonlinear discriminative power, achieving 60.66% balanced accuracy on the FACED dataset."
+        ],
+        "limitations": [
+          "Evaluated on only two public emotion datasets, requiring further validation for broader generalization.",
+          "Convolution kernel sizes and analytic basis functions are experience-driven rather than optimized via search.",
+          "Neurophysiological meaning of the learnable adjacency matrix requires deeper investigation through statistical tests.",
+          "Lacks incorporation of hemispheric asymmetry or cross-patch temporal attention."
+        ],
+        "method": {
+          "architecture": "Pre-trained CBraMod backbone followed by a task head consisting of MCRBlock-GCN (parallel causal Conv1D branches and a learnable GCN adjacency matrix) and a KANLinear layer (analytic basis expansion using h, h^2, sin(h), and tanh(h)).",
+          "finetuning": "Differential learning rates (1:5 ratio between backbone and head) with cosine annealing and gradient clipping.",
+          "objective": "Cross-entropy loss",
+          "pretraining": "Uses pre-trained CBraMod foundation model"
+        },
+        "notes": "{\"chars\": 62019, \"error\": null, \"pages\": 37, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=17154",
+        "one_liner": "A structured task head combining multi-scale causal graph convolutions and KAN-inspired nonlinear mapping to enhance the fine-tuning of pre-trained EEG foundation models for emotion recognition.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-05-26",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "MSCGC-KAN: Multi-scale Causal Graph Convolution and Kolmogorov-Arnold Feature Mapping for EEG Emotion Recognition",
+        "unique_contribution": "Introduces a structured task-head framework that integrates multi-scale causal temporal modeling, learnable graph-based spatial connectivity, and KAN-inspired nonlinear mapping for the downstream adaptation of EEG foundation models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "MSCGC-KAN: Multi-scale Causal Graph Convolution and Kolmogorov-Arnold Feature Mapping for EEG Emotion Recognition",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "EEG is the central modality.",
+          "The paper explicitly targets the adaptation and fine-tuning of a pre-trained EEG foundation model (CBraMod).",
+          "Proposes a structured task head specifically designed to enhance the downstream performance of EEG-FMs."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2605.26910v1",
+      "arxiv_id_base": "2605.26910",
+      "authors": [
+        "Xianheng Wang",
+        "Yige Yang",
+        "Damien Coyle"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.26910v1",
+        "pdf": "https://arxiv.org/pdf/2605.26910v1"
+      },
+      "published_date": "2026-05-26",
+      "summary": {
+        "arxiv_id_base": "2605.26910",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 72875, \"error\": null, \"pages\": 26, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=20179;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-05-26",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "EEG-FM-Audit: A Systematic Evaluation and Analysis Pipeline for EEG Foundation Models",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EEG-FM-Audit: A Systematic Evaluation and Analysis Pipeline for EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets the systematic evaluation and analysis of EEG Foundation Models (FMs) in both title and abstract.",
+          "Proposes a dedicated pipeline (EEG-FM-Audit) for benchmarking and probing EEG-FMs.",
+          "Evaluates four state-of-the-art EEG-FMs to analyze their effectiveness and neurophysiological properties."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 16,
-    "candidates": 31,
-    "summarized": 16
+    "accepted": 21,
+    "candidates": 37,
+    "summarized": 21
   },
   "top_picks": [
     "2605.18085",
