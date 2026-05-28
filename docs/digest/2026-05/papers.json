@@ -2008,12 +2008,12 @@
       }
     },
     {
-      "arxiv_id": "2605.26624v1",
+      "arxiv_id": "2605.26624v2",
       "arxiv_id_base": "2605.26624",
       "authors": [
         "Haoliang Gong",
         "Qingshan She",
-        "Jiale Xua",
+        "Jiale Xu",
         "Yunyan Gao",
         "Xugang Xi"
       ],
@@ -2021,8 +2021,8 @@
         "cs.CV"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2605.26624v1",
-        "pdf": "https://arxiv.org/pdf/2605.26624v1"
+        "abs": "http://arxiv.org/abs/2605.26624v2",
+        "pdf": "https://arxiv.org/pdf/2605.26624v2"
       },
       "published_date": "2026-05-26",
       "summary": {
@@ -2119,7 +2119,8 @@
       ],
       "categories": [
         "cs.LG",
-        "cs.AI"
+        "cs.AI",
+        "q-bio.NC"
       ],
       "links": {
         "abs": "http://arxiv.org/abs/2605.26910v1",
@@ -2190,18 +2191,137 @@
           "Evaluates four state-of-the-art EEG-FMs to analyze their effectiveness and neurophysiological properties."
         ]
       }
+    },
+    {
+      "arxiv_id": "2605.28563v1",
+      "arxiv_id_base": "2605.28563",
+      "authors": [
+        "Aditya Kommineni",
+        "Emily Zhou",
+        "Kleanthis Avramidis",
+        "Tiantian Feng",
+        "Shrikanth Narayanan"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.28563v1",
+        "pdf": "https://arxiv.org/pdf/2605.28563v1"
+      },
+      "published_date": "2026-05-27",
+      "summary": {
+        "arxiv_id_base": "2605.28563",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Physionet-MI",
+            "BCIC IV-2A",
+            "Kaggle ERN",
+            "MDD MAL",
+            "Sleep EDF",
+            "TUEV"
+          ],
+          "eeg_hours": null,
+          "subjects": 656.0
+        },
+        "detailed_summary": "The paper proposes a multi-dimensional evaluation framework to assess the generalization of EEG foundation models under realistic low-resource constraints. It evaluates models across three axes: parameter efficiency (using linear probing and LoRA), sample efficiency (varying label budgets), and channel efficiency (using sparse and lobe-restricted montages). By testing models like LaBraM, CSBrain, and CBraMod across six diverse datasets, the authors demonstrate that while foundation models significantly outperform supervised baselines in long-context tasks like sleep staging, they offer limited gains or even underperform in short-window BCI tasks. The results suggest that current coarse tokenization strategies may hinder the capture of fine-grained neural dynamics.",
+        "evaluation": {
+          "benchmarks": [
+            "Physionet-MI",
+            "BCIC IV-2A",
+            "Kaggle ERN",
+            "MDD MAL",
+            "Sleep EDF",
+            "TUEV"
+          ],
+          "headline_results": [
+            "FMs outperform supervised models in long-context tasks (e.g., Sleep EDF).",
+            "FMs show comparable or inferior performance in short-window BCI tasks.",
+            "FMs exhibit limited robustness to channel-constrained settings."
+          ],
+          "tasks": [
+            "Motor Imagery",
+            "Sleep Staging",
+            "Mental Health Classification",
+            "Epileptic Seizure Detection"
+          ]
+        },
+        "key_points": [
+          "Benchmark framework: Proposes a multi-dimensional evaluation of EEG foundation models focusing on parameter, sample, and channel efficiency.",
+          "Task-dependent utility: Foundation models excel in long-context clinical tasks but are comparable to small supervised models in short-window BCI tasks.",
+          "Robustness gaps: Current EEG-FMs show limited robustness to reduced channel counts and coarse tokenization may limit effectiveness for transient responses."
+        ],
+        "limitations": [
+          "Focuses primarily on masked reconstruction-based foundation models.",
+          "Does not evaluate models trained under identical settings to isolate specific pre-training axes.",
+          "Limited range of tasks and recording conditions for sample efficiency analysis.",
+          "Interaction between inter-subject and intra-subject variability in low-resource settings remains unexplored."
+        ],
+        "method": {
+          "architecture": "Transformer-based foundation models (LaBraM, CSBrain, CBraMod)",
+          "finetuning": "Downstream task adaptation via linear probing and LoRA",
+          "objective": "Evaluation of pre-trained models using Linear Probing and PEFT (LoRA)",
+          "pretraining": "Masked reconstruction on large-scale EEG corpora"
+        },
+        "notes": "{\"chars\": 69976, \"error\": null, \"pages\": 24, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=19392",
+        "one_liner": "A multi-dimensional framework to evaluate EEG foundation models across parameter, sample, and channel efficiency axes.",
+        "open_source": {
+          "code_url": "https://github.com/placeholder",
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-05-27",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "A Multi-dimensional Framework for Evaluating Generalization in EEG Foundation Models",
+        "unique_contribution": "Introduces a systematic evaluation protocol to assess EEG foundation models under realistic low-resource constraints, revealing a performance gap between long-context and short-window tasks.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "A Multi-dimensional Framework for Evaluating Generalization in EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly proposes a multi-dimensional evaluation framework for EEG foundation models.",
+          "Analyzes specific existing EEG-FMs including LaBraM, CSBrain, and CBraMod.",
+          "Focuses on the transferability and generalization of learned representations in EEG-FMs."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 21,
-    "candidates": 37,
-    "summarized": 21
+    "accepted": 22,
+    "candidates": 40,
+    "summarized": 22
   },
   "top_picks": [
+    "2605.28563",
     "2605.18085",
     "2605.15698",
     "2605.14698",
-    "2605.13930",
-    "2605.13133"
+    "2605.13930"
   ]
 }
