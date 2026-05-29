@@ -2310,12 +2310,91 @@
           "Focuses on the transferability and generalization of learned representations in EEG-FMs."
         ]
       }
+    },
+    {
+      "arxiv_id": "2605.29754v1",
+      "arxiv_id_base": "2605.29754",
+      "authors": [
+        "Ayse Betul Yuce",
+        "Sebastian Stober"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2605.29754v1",
+        "pdf": "https://arxiv.org/pdf/2605.29754v1"
+      },
+      "published_date": "2026-05-28",
+      "summary": {
+        "arxiv_id_base": "2605.29754",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 29966, \"error\": null, \"pages\": 6, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=8927;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-05-28",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Benchmarking Positional Encoding Strategies for Transformer-Based EEG Foundation Models",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Benchmarking Positional Encoding Strategies for Transformer-Based EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets transformer-based EEG foundation models in the title and abstract.",
+          "Focuses on benchmarking positional encoding strategies specifically for EEG-FM backbones.",
+          "Utilizes standard foundation model evaluation protocols, including linear probing and fine-tuning."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 22,
-    "candidates": 40,
-    "summarized": 22
+    "accepted": 23,
+    "candidates": 42,
+    "summarized": 23
   },
   "top_picks": [
     "2605.28563",

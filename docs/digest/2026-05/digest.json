@@ -40,15 +40,16 @@
         "2605.24523",
         "2605.24921",
         "2605.26434",
-        "2605.26910"
+        "2605.26910",
+        "2605.29754"
       ],
       "title": "other"
     }
   ],
   "stats": {
-    "accepted": 22,
-    "candidates": 40,
-    "summarized": 22
+    "accepted": 23,
+    "candidates": 42,
+    "summarized": 23
   },
   "top_picks": [
     "2605.28563",
