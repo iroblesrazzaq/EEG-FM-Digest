@@ -11,13 +11,8 @@ from typing import Any
 from dotenv import load_dotenv
 
 from .arxiv import fetch_month_candidates
-from .cache_meta import (
-    SUMMARY_STAGE_LOGIC_VERSION,
-    TRIAGE_STAGE_LOGIC_VERSION,
-    build_stage_descriptor,
-    build_stage_metadata,
-    is_cache_current,
-)
+from .backend_rows import build_backend_rows
+from .cache_meta import build_stage_metadata, is_cache_current
 from .config import Config, load_config
 from .db import DigestDB
 from .llm import (
@@ -28,11 +23,15 @@ from .llm import (
     normalize_provider,
     provider_base_url,
 )
-from .pdf import download_pdf, extract_text, slice_paper_text
+from .pdf import slice_paper_text
 from .render import build_digest, write_json, write_jsonl
+from .row_views import empty_pdf_state, normalize_triage_row
+from .selection import select_papers_for_summary
 from .site import update_home, write_month_site
+from .stage_context import load_summary_stage_context, load_triage_stage_context
 from .summarize import summarize_paper_with_meta
-from .triage import load_schema, triage_paper_with_meta
+from .summarize_stage import prepare_pdf_and_text
+from .triage import triage_paper_with_meta
 
 
 class RateLimitStop(BaseException):
@@ -57,7 +56,7 @@ class BatchRunConfig:
     sync_cache_from_outputs: bool = True
     max_candidates: int | None = None
     max_accepted: int | None = None
-    env_path: str = "~/2_cs_projects/env/.env"
+    env_path: str = ""
     featured_papers_path: str = "configs/featured_papers.json"
 
 
@@ -122,6 +121,8 @@ def _parse_batch_config(path: Path) -> BatchRunConfig:
         raise RuntimeError("`months` must be a list of YYYY-MM strings")
     months = [str(m) for m in months if str(m).strip()]
 
+    env_path = str(raw.get("env_path", "") or "").strip()
+
     return BatchRunConfig(
         months=months,
         months_from_outputs=bool(raw.get("months_from_outputs", True)),
@@ -139,7 +140,7 @@ def _parse_batch_config(path: Path) -> BatchRunConfig:
         sync_cache_from_outputs=bool(raw.get("sync_cache_from_outputs", True)),
         max_candidates=int(raw["max_candidates"]) if raw.get("max_candidates") is not None else None,
         max_accepted=int(raw["max_accepted"]) if raw.get("max_accepted") is not None else None,
-        env_path=str(raw.get("env_path", "~/2_cs_projects/env/.env")),
+        env_path=env_path,
         featured_papers_path=str(raw.get("featured_papers_path", "configs/featured_papers.json")),
     )
 
@@ -158,27 +159,6 @@ def _effective_months(cfg: BatchRunConfig, base_cfg: Config) -> list[str]:
     return months
 
 
-def _triage_view(triage: dict[str, Any] | None) -> dict[str, Any]:
-    triage = triage or {}
-    reasons = triage.get("reasons", [])
-    if not isinstance(reasons, list):
-        reasons = [str(reasons)]
-    return {
-        "decision": triage.get("decision", "reject"),
-        "confidence": float(triage.get("confidence", 0.0)),
-        "reasons": reasons,
-    }
-
-
-def _empty_pdf_state() -> dict[str, Any]:
-    return {
-        "downloaded": False,
-        "pdf_path": None,
-        "text_path": None,
-        "extract_meta": None,
-    }
-
-
 def _bootstrap_cache_from_outputs(db: DigestDB, month: str, month_out: Path) -> None:
     for row in _load_jsonl(month_out / "triage.jsonl"):
         db.upsert_triage(month, row)
@@ -188,31 +168,6 @@ def _bootstrap_cache_from_outputs(db: DigestDB, month: str, month_out: Path) -> 
     if raw_path.exists():
         for row in _load_json(raw_path):
             db.upsert_paper(month, row)
-
-
-def _triage_client_error_ids(month_out: Path) -> set[str]:
-    ids: set[str] = set()
-    for row in _load_jsonl(month_out / "triage.jsonl"):
-        reasons = row.get("reasons", [])
-        if not isinstance(reasons, list):
-            reasons = [str(reasons)]
-        if any("triage_exception:ClientError" in str(reason) for reason in reasons):
-            aid = row.get("arxiv_id_base")
-            if isinstance(aid, str) and aid:
-                ids.add(aid)
-    return ids
-
-
-def _normalize_triage_row(arxiv_id_base: str, result: dict[str, Any]) -> dict[str, Any]:
-    reasons = result.get("reasons", [])
-    if not isinstance(reasons, list):
-        reasons = [str(reasons)]
-    return {
-        "arxiv_id_base": arxiv_id_base,
-        "decision": result.get("decision", "reject"),
-        "confidence": float(result.get("confidence", 0.0)),
-        "reasons": reasons,
-    }
 
 
 def _run_triage_phase_for_month(
@@ -242,18 +197,7 @@ def _run_triage_phase_for_month(
     for row in candidates:
         db.upsert_paper(month, row)
 
-    triage_schema = load_schema(Path("schemas/triage.json"))
-    triage_prompt = Path("prompts/triage.md").read_text(encoding="utf-8")
-    repair_prompt = Path("prompts/repair_json.md").read_text(encoding="utf-8")
-    triage_descriptor = build_stage_descriptor(
-        stage="triage",
-        provider=llm_config.provider,
-        model=llm_config.model,
-        prompt_template=triage_prompt,
-        repair_template=repair_prompt,
-        schema=triage_schema,
-        stage_logic_version=TRIAGE_STAGE_LOGIC_VERSION,
-    )
+    triage_ctx = load_triage_stage_context(llm_config)
 
     triage_rows: list[dict[str, Any]] = []
     for paper in candidates:
@@ -262,18 +206,18 @@ def _run_triage_phase_for_month(
             cached = None
         else:
             cached = db.get_triage_with_meta(aid)
-        if cached and is_cache_current(cached.get("meta"), triage_descriptor["cache_version"]):
-            triage_rows.append(_normalize_triage_row(aid, cached["data"]))
+        if cached and is_cache_current(cached.get("meta"), triage_ctx.descriptor["cache_version"]):
+            triage_rows.append(normalize_triage_row(aid, cached["data"]))
             continue
         try:
             result, triage_call_meta = triage_paper_with_meta(
                 paper=paper,
                 llm=llm,
-                prompt_template=triage_prompt,
-                repair_template=repair_prompt,
-                schema=triage_schema,
+                prompt_template=triage_ctx.triage_prompt,
+                repair_template=triage_ctx.repair_prompt,
+                schema=triage_ctx.schema,
             )
-            row = _normalize_triage_row(aid, result)
+            row = normalize_triage_row(aid, result)
         except (LLMRateLimitError, RateLimitStop):
             raise
         except Exception as exc:
@@ -289,7 +233,7 @@ def _run_triage_phase_for_month(
             month,
             row,
             meta=build_stage_metadata(
-                triage_descriptor,
+                triage_ctx.descriptor,
                 repair_used=bool(triage_call_meta.get("repair_used", False)),
                 updated_at_source=str(paper.get("updated", "")).strip() or None,
             ),
@@ -323,25 +267,16 @@ def _run_summary_phase_for_month(
     triage_rows = _load_jsonl(triage_path)
     triage_map = {row["arxiv_id_base"]: row for row in triage_rows}
 
-    accepted = [p for p in candidates if triage_map.get(p["arxiv_id_base"], {}).get("decision") == "accept"]
-    if run_cfg.include_borderline:
-        accepted.extend(
-            p for p in candidates if triage_map.get(p["arxiv_id_base"], {}).get("decision") == "borderline"
-        )
-    accepted = sorted(accepted, key=lambda x: (x["published"], x["arxiv_id_base"]))[: cfg.max_accepted]
-
-    summary_schema = _load_json(Path("schemas/summary.json"))
-    summarize_prompt = Path("prompts/summarize.md").read_text(encoding="utf-8")
-    repair_prompt = Path("prompts/repair_json.md").read_text(encoding="utf-8")
-    summary_descriptor = build_stage_descriptor(
-        stage="summary",
-        provider=llm_config.provider,
-        model=llm_config.model,
-        prompt_template=summarize_prompt,
-        repair_template=repair_prompt,
-        schema=summary_schema,
-        stage_logic_version=SUMMARY_STAGE_LOGIC_VERSION,
+    accepted = select_papers_for_summary(
+        candidates,
+        triage_map,
+        include_borderline=run_cfg.include_borderline,
+        max_borderline_pdfs=cfg.max_borderline_pdfs,
+        max_accepted=cfg.max_accepted,
+        borderline_policy="batch",
     )
+
+    summary_ctx = load_summary_stage_context(llm_config)
 
     summary_map: dict[str, dict[str, Any]] = {}
     # Summaries are preserved across triage flips: site rendering already
@@ -350,68 +285,37 @@ def _run_summary_phase_for_month(
 
     existing_backend = _load_jsonl(month_out / "backend_rows.jsonl")
     pdf_map: dict[str, dict[str, Any]] = {
-        row.get("arxiv_id_base", ""): row.get("pdf") or _empty_pdf_state() for row in existing_backend
+        row.get("arxiv_id_base", ""): row.get("pdf") or empty_pdf_state() for row in existing_backend
     }
 
     cache_hit_count = 0
     for paper in accepted:
         aid = paper["arxiv_id_base"]
         cached_summary = None if run_cfg.summary_force else db.get_summary_with_meta(aid)
-        if cached_summary and is_cache_current(cached_summary.get("meta"), summary_descriptor["cache_version"]):
+        if cached_summary and is_cache_current(cached_summary.get("meta"), summary_ctx.descriptor["cache_version"]):
             summary_map[aid] = cached_summary["data"]
             cache_hit_count += 1
             continue
-        pdf_state = _empty_pdf_state()
-        raw_text = ""
-        notes = "summary_not_attempted"
 
-        if not paper.get("links", {}).get("pdf"):
-            notes = "summary_skipped:missing_pdf_link"
-            pdf_state = {
-                "downloaded": False,
-                "pdf_path": None,
-                "text_path": None,
-                "extract_meta": {"error": "missing_pdf_link"},
-            }
-        else:
-            pdf_path = month_out / "pdfs" / f"{aid}.pdf"
-            txt_path = month_out / "text" / f"{aid}.txt"
-            try:
-                download_pdf(paper["links"]["pdf"], pdf_path, cfg.pdf_rate_limit_seconds)
-                meta = extract_text(pdf_path, txt_path)
-                raw_text = txt_path.read_text(encoding="utf-8") if txt_path.exists() else ""
-                pdf_state = {
-                    "downloaded": True,
-                    "pdf_path": str(pdf_path),
-                    "text_path": str(txt_path),
-                    "extract_meta": meta,
-                }
-                notes = json.dumps(meta, sort_keys=True)
-            except Exception as exc:
-                notes = f"summary_skipped:pdf_failed:{type(exc).__name__}"
-                pdf_state = {
-                    "downloaded": False,
-                    "pdf_path": str(pdf_path),
-                    "text_path": str(txt_path),
-                    "extract_meta": {"error": f"download_or_extract_failed:{type(exc).__name__}"},
-                }
+        pdf_result = prepare_pdf_and_text(paper, month_out, cfg, no_pdf=False)
+        pdf_map[aid] = pdf_result.pdf_state
 
-        if raw_text.strip():
+        if pdf_result.raw_text.strip():
             summary, summary_call_meta = summarize_paper_with_meta(
                 paper=paper,
                 triage=triage_map.get(aid, {}),
-                raw_fulltext=raw_text,
+                raw_fulltext=pdf_result.raw_text,
                 fulltext_slices=slice_paper_text(
-                    raw_text,
+                    pdf_result.raw_text,
                     excerpt_chars=18_000,
                     tail_chars=cfg.text_tail_chars,
                 ),
                 used_fulltext=True,
-                notes=notes,
+                notes=pdf_result.notes,
                 llm=llm,
-                prompt_template=summarize_prompt,
-                repair_template=repair_prompt,
-                schema=summary_schema,
+                prompt_template=summary_ctx.summarize_prompt,
+                repair_template=summary_ctx.repair_prompt,
+                schema=summary_ctx.schema,
                 max_input_tokens=cfg.summary_max_input_tokens,
             )
             summary_map[aid] = summary
@@ -419,7 +323,7 @@ def _run_summary_phase_for_month(
                 month,
                 summary,
                 meta=build_stage_metadata(
-                    summary_descriptor,
+                    summary_ctx.descriptor,
                     repair_used=bool(summary_call_meta.get("repair_used", False)),
                     updated_at_source=str(paper.get("updated", "")).strip() or None,
                 ),
@@ -428,31 +332,10 @@ def _run_summary_phase_for_month(
             if run_cfg.summary_sleep_seconds > 0:
                 time.sleep(run_cfg.summary_sleep_seconds)
 
-        pdf_map[aid] = pdf_state
-
     summaries = sorted(summary_map.values(), key=lambda x: (x["published_date"], x["arxiv_id_base"]))
     write_jsonl(month_out / "papers.jsonl", summaries)
 
-    backend_rows: list[dict[str, Any]] = []
-    for paper in sorted(candidates, key=lambda x: (x["published"], x["arxiv_id_base"])):
-        aid = paper["arxiv_id_base"]
-        backend_rows.append(
-            {
-                "arxiv_id": paper["arxiv_id"],
-                "arxiv_id_base": aid,
-                "version": paper["version"],
-                "title": paper["title"],
-                "summary": paper["summary"],
-                "authors": paper["authors"],
-                "categories": paper["categories"],
-                "published": paper["published"],
-                "updated": paper["updated"],
-                "links": paper["links"],
-                "triage": _triage_view(triage_map.get(aid)),
-                "paper_summary": summary_map.get(aid),
-                "pdf": pdf_map.get(aid, _empty_pdf_state()),
-            }
-        )
+    backend_rows = build_backend_rows(candidates, triage_map, summary_map, pdf_map)
     write_jsonl(month_out / "backend_rows.jsonl", backend_rows)
 
     digest = build_digest(month, candidates, triage_rows, summaries, featured_paper=featured_paper)
@@ -537,8 +420,8 @@ def run_batch(config_path: Path) -> None:
     else:
         print(f"[batch] featured_papers: no entries loaded (path={featured_path}, exists={featured_path.exists()})")
 
-    # Load API keys for providers from configured env file.
-    load_dotenv(Path(run_cfg.env_path).expanduser())
+    if run_cfg.env_path:
+        load_dotenv(Path(run_cfg.env_path).expanduser())
     triage_provider = normalize_provider(run_cfg.triage_provider)
     summary_provider = normalize_provider(run_cfg.summary_provider)
     triage_api_key = load_api_key(triage_provider)
@@ -565,7 +448,6 @@ def run_batch(config_path: Path) -> None:
             base_url=provider_base_url(triage_provider),
         )
 
-        # Phase 1: triage all months first.
         try:
             for month in months:
                 month_out = cfg.output_dir / month
@@ -577,7 +459,6 @@ def run_batch(config_path: Path) -> None:
         finally:
             triage_llm.close()
 
-        # Phase 2: summarize accepted for all months.
         summary_llm_config = LLMCallConfig(
             provider=summary_provider,
             api_key=summary_api_key,
