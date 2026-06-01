@@ -1,27 +1,26 @@
 from __future__ import annotations
 
-import json
 import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
 from .arxiv import fetch_month_candidates, fetch_window_candidates
-from .cache_meta import (
-    SUMMARY_STAGE_LOGIC_VERSION,
-    TRIAGE_STAGE_LOGIC_VERSION,
-    build_stage_descriptor,
-    build_stage_metadata,
-    is_cache_current,
-)
+from .backend_rows import build_backend_rows
+from .cache_meta import build_stage_metadata, is_cache_current
 from .config import Config
 from .db import DigestDB
 from .llm import LLMCallConfig, LLMRateLimitError, build_llm_call, load_api_key, provider_base_url
+from .llm_logging import log_stage_failure
 from .pdf import download_pdf, extract_text, slice_paper_text
 from .render import build_digest, write_json, write_jsonl
+from .row_views import empty_pdf_state, normalize_triage_row
+from .selection import select_papers_for_summary
 from .site import update_home, write_month_site
+from .stage_context import load_summary_stage_context, load_triage_stage_context
 from .summarize import summarize_paper, summarize_paper_with_meta
-from .triage import load_schema, triage_paper, triage_paper_with_meta
+from .summarize_stage import prepare_pdf_and_text
+from .triage import triage_paper, triage_paper_with_meta
 
 
 @dataclass(frozen=True)
@@ -34,6 +33,8 @@ class MonthRunStats:
     summarized: int
     triage_failures: int = 0
     summary_failures: int = 0
+    failed_triage_ids: tuple[str, ...] = ()
+    failed_summary_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -58,33 +59,25 @@ class WindowRunStats:
     def total_summary_failures(self) -> int:
         return sum(m.summary_failures for m in self.per_month)
 
+    @property
+    def failed_triage_ids(self) -> tuple[str, ...]:
+        return tuple(
+            aid for month in self.per_month for aid in month.failed_triage_ids
+        )
+
+    @property
+    def failed_summary_ids(self) -> tuple[str, ...]:
+        return tuple(
+            aid for month in self.per_month for aid in month.failed_summary_ids
+        )
+
+
+def _read(path: Path) -> str:
+    return path.read_text(encoding="utf-8")
+
+
 _ORIGINAL_TRIAGE_PAPER = triage_paper
 _ORIGINAL_SUMMARIZE_PAPER = summarize_paper
-
-
-def _read(path: str) -> str:
-    return Path(path).read_text(encoding="utf-8")
-
-
-def _empty_pdf_state() -> dict[str, object | None]:
-    return {
-        "downloaded": False,
-        "pdf_path": None,
-        "text_path": None,
-        "extract_meta": None,
-    }
-
-
-def _triage_view(triage: dict[str, object] | None) -> dict[str, object]:
-    triage = triage or {}
-    reasons = triage.get("reasons", [])
-    if not isinstance(reasons, list):
-        reasons = [str(reasons)]
-    return {
-        "decision": triage.get("decision", "reject"),
-        "confidence": float(triage.get("confidence", 0.0)),
-        "reasons": reasons,
-    }
 
 
 def _run_triage_call_with_meta(*args, **kwargs) -> tuple[dict[str, object], dict[str, object]]:
@@ -110,9 +103,6 @@ def run_month(
     month_out = cfg.output_dir / month
     month_out.mkdir(parents=True, exist_ok=True)
     db = DigestDB(cfg.data_dir / "digest.sqlite")
-
-    triage_schema = load_schema(Path("schemas/triage.json"))
-    summary_schema = load_schema(Path("schemas/summary.json"))
 
     # Stage 1: fetch
     candidates = fetch_month_candidates(
@@ -149,69 +139,54 @@ def run_month(
     summary_llm = build_llm_call(summary_llm_config)
 
     try:
-        triage_prompt = _read("prompts/triage.md")
-        summarize_prompt = _read("prompts/summarize.md")
-        repair_prompt = _read("prompts/repair_json.md")
-        triage_descriptor = build_stage_descriptor(
-            stage="triage",
-            provider=triage_llm_config.provider,
-            model=triage_llm_config.model,
-            prompt_template=triage_prompt,
-            repair_template=repair_prompt,
-            schema=triage_schema,
-            stage_logic_version=TRIAGE_STAGE_LOGIC_VERSION,
-        )
-        summary_descriptor = build_stage_descriptor(
-            stage="summary",
-            provider=summary_llm_config.provider,
-            model=summary_llm_config.model,
-            prompt_template=summarize_prompt,
-            repair_template=repair_prompt,
-            schema=summary_schema,
-            stage_logic_version=SUMMARY_STAGE_LOGIC_VERSION,
-        )
+        triage_ctx = load_triage_stage_context(triage_llm_config)
+        summary_ctx = load_summary_stage_context(summary_llm_config)
 
         # Stage 2: triage
         triage_rows: list[dict] = []
         triage_failure_count = 0
+        failed_triage_ids: list[str] = []
         for paper in candidates:
+            arxiv_id_base = paper["arxiv_id_base"]
             try:
-                cached = None if force else db.get_triage_with_meta(paper["arxiv_id_base"])
-                if cached and is_cache_current(cached.get("meta"), triage_descriptor["cache_version"]):
+                cached = None if force else db.get_triage_with_meta(arxiv_id_base)
+                if cached and is_cache_current(cached.get("meta"), triage_ctx.descriptor["cache_version"]):
                     result_raw = cached["data"]
                 else:
                     result_raw, triage_call_meta = _run_triage_call_with_meta(
-                        paper, triage_llm, triage_prompt, repair_prompt, triage_schema
+                        paper,
+                        triage_llm,
+                        triage_ctx.triage_prompt,
+                        triage_ctx.repair_prompt,
+                        triage_ctx.schema,
                     )
                     db.upsert_triage(
                         month,
                         result_raw,
                         meta=build_stage_metadata(
-                            triage_descriptor,
+                            triage_ctx.descriptor,
                             repair_used=bool(triage_call_meta.get("repair_used", False)),
                             updated_at_source=str(paper.get("updated", "")).strip() or None,
                         ),
                     )
-                reasons_raw = result_raw.get("reasons", [])
-                if not isinstance(reasons_raw, list):
-                    reasons_raw = [str(reasons_raw)]
-                result = {
-                    "arxiv_id_base": paper["arxiv_id_base"],
-                    "decision": result_raw.get("decision", "reject"),
-                    "confidence": float(result_raw.get("confidence", 0.0)),
-                    "reasons": reasons_raw,
-                }
-                triage_rows.append(result)
+                triage_rows.append(normalize_triage_row(arxiv_id_base, result_raw))
             except Exception as exc:
                 if isinstance(exc, LLMRateLimitError):
                     raise
                 triage_failure_count += 1
+                failed_triage_ids.append(arxiv_id_base)
+                log_stage_failure(
+                    "pipeline.triage",
+                    arxiv_id_base=arxiv_id_base,
+                    provider=triage_llm_config.provider,
+                    model=triage_llm_config.model,
+                    exc=exc,
+                )
                 print(
-                    f"[pipeline] WARNING: triage failed for {paper['arxiv_id_base']}: "
+                    f"[pipeline] WARNING: triage failed for {arxiv_id_base}: "
                     f"{type(exc).__name__}: {exc}; skipping (will retry next run)",
                     file=sys.stderr,
                 )
-                # Not written to DB so the paper is retried on the next run.
 
         write_jsonl(month_out / "triage.jsonl", sorted(triage_rows, key=lambda x: x["arxiv_id_base"]))
 
@@ -221,99 +196,67 @@ def run_month(
         # filters by current triage decision, so a previously-accepted paper
         # that now triages as reject is hidden but its summary work is kept.
 
-        accepted = [p for p in candidates if triage_map.get(p["arxiv_id_base"], {}).get("decision") == "accept"]
-        if cfg.include_borderline:
-            borderline = [
-                p for p in candidates if triage_map.get(p["arxiv_id_base"], {}).get("decision") == "borderline"
-            ][: cfg.max_borderline_pdfs]
-            accepted.extend(borderline)
-        accepted = sorted(accepted, key=lambda x: (x["published"], x["arxiv_id_base"]))[: cfg.max_accepted]
+        accepted = select_papers_for_summary(
+            candidates,
+            triage_map,
+            include_borderline=cfg.include_borderline,
+            max_borderline_pdfs=cfg.max_borderline_pdfs,
+            max_accepted=cfg.max_accepted,
+            borderline_policy="pipeline",
+        )
 
         summaries: list[dict] = []
         summary_map: dict[str, dict] = {}
         pdf_map: dict[str, dict[str, object | None]] = {}
         summary_failure_count = 0
+        failed_summary_ids: list[str] = []
         for paper in accepted:
             arxiv_id_base = paper["arxiv_id_base"]
-            pdf_state: dict[str, object | None] = _empty_pdf_state()
+            pdf_state: dict[str, object | None] = empty_pdf_state()
             try:
                 cached_summary = None if force else db.get_summary_with_meta(arxiv_id_base)
-                if cached_summary and is_cache_current(cached_summary.get("meta"), summary_descriptor["cache_version"]):
+                if cached_summary and is_cache_current(
+                    cached_summary.get("meta"), summary_ctx.descriptor["cache_version"]
+                ):
                     summaries.append(cached_summary["data"])
                     summary_map[arxiv_id_base] = cached_summary["data"]
                     pdf_map[arxiv_id_base] = pdf_state
                     continue
 
-                raw_text = ""
-                notes = "summary_not_attempted"
-                if no_pdf:
-                    notes = "summary_skipped:no_pdf_mode"
-                    pdf_state = {
-                        "downloaded": False,
-                        "pdf_path": None,
-                        "text_path": None,
-                        "extract_meta": {"error": "no_pdf_mode"},
-                    }
-                elif not paper.get("links", {}).get("pdf"):
-                    notes = "summary_skipped:missing_pdf_link"
-                    pdf_state = {
-                        "downloaded": False,
-                        "pdf_path": None,
-                        "text_path": None,
-                        "extract_meta": {"error": "missing_pdf_link"},
-                    }
+                pdf_result = prepare_pdf_and_text(paper, month_out, cfg, no_pdf=no_pdf)
+                pdf_state = pdf_result.pdf_state
+                if pdf_result.notes == "summary_skipped:missing_pdf_link":
                     summary_failure_count += 1
+                    failed_summary_ids.append(arxiv_id_base)
                     print(
                         f"[pipeline] WARNING: pdf missing for {arxiv_id_base}; "
                         "skipping (will retry next run)",
                         file=sys.stderr,
                     )
-                else:
-                    pdf_path = month_out / "pdfs" / f"{arxiv_id_base}.pdf"
-                    txt_path = month_out / "text" / f"{arxiv_id_base}.txt"
-                    try:
-                        download_pdf(paper["links"]["pdf"], pdf_path, cfg.pdf_rate_limit_seconds)
-                        meta = extract_text(pdf_path, txt_path)
-                        raw_text = txt_path.read_text(encoding="utf-8") if txt_path.exists() else ""
-                        pdf_state = {
-                            "downloaded": True,
-                            "pdf_path": str(pdf_path),
-                            "text_path": str(txt_path),
-                            "extract_meta": meta,
-                        }
-                        notes = json.dumps(meta, sort_keys=True)
-                    except Exception as exc:
-                        notes = f"summary_skipped:pdf_failed:{type(exc).__name__}"
-                        pdf_state = {
-                            "downloaded": False,
-                            "pdf_path": str(pdf_path),
-                            "text_path": str(txt_path),
-                            "extract_meta": {"error": f"download_or_extract_failed:{type(exc).__name__}"},
-                        }
-                        summary_failure_count += 1
-                        print(
-                            f"[pipeline] WARNING: pdf download/extract failed for "
-                            f"{arxiv_id_base}: {type(exc).__name__}: {exc}; "
-                            "skipping (will retry next run)",
-                            file=sys.stderr,
-                        )
-
-                if raw_text.strip():
+                elif pdf_result.notes.startswith("summary_skipped:pdf_failed:"):
+                    summary_failure_count += 1
+                    failed_summary_ids.append(arxiv_id_base)
+                    print(
+                        f"[pipeline] WARNING: pdf download/extract failed for "
+                        f"{arxiv_id_base}; skipping (will retry next run)",
+                        file=sys.stderr,
+                    )
+                elif pdf_result.raw_text.strip():
                     summary, summary_call_meta = _run_summary_call_with_meta(
                         paper=paper,
                         triage=triage_map[arxiv_id_base],
-                        raw_fulltext=raw_text,
+                        raw_fulltext=pdf_result.raw_text,
                         fulltext_slices=slice_paper_text(
-                            raw_text,
+                            pdf_result.raw_text,
                             excerpt_chars=18_000,
                             tail_chars=cfg.text_tail_chars,
                         ),
                         used_fulltext=True,
-                        notes=notes,
+                        notes=pdf_result.notes,
                         llm=summary_llm,
-                        prompt_template=summarize_prompt,
-                        repair_template=repair_prompt,
-                        schema=summary_schema,
+                        prompt_template=summary_ctx.summarize_prompt,
+                        repair_template=summary_ctx.repair_prompt,
+                        schema=summary_ctx.schema,
                         max_input_tokens=cfg.summary_max_input_tokens,
                     )
                     summaries.append(summary)
@@ -322,7 +265,7 @@ def run_month(
                         month,
                         summary,
                         meta=build_stage_metadata(
-                            summary_descriptor,
+                            summary_ctx.descriptor,
                             repair_used=bool(summary_call_meta.get("repair_used", False)),
                             updated_at_source=str(paper.get("updated", "")).strip() or None,
                         ),
@@ -331,6 +274,14 @@ def run_month(
                 if isinstance(exc, LLMRateLimitError):
                     raise
                 summary_failure_count += 1
+                failed_summary_ids.append(arxiv_id_base)
+                log_stage_failure(
+                    "pipeline.summary",
+                    arxiv_id_base=arxiv_id_base,
+                    provider=summary_llm_config.provider,
+                    model=summary_llm_config.model,
+                    exc=exc,
+                )
                 print(
                     f"[pipeline] WARNING: summary failed for {arxiv_id_base}: "
                     f"{type(exc).__name__}: {exc}; skipping (will retry next run)",
@@ -341,26 +292,7 @@ def run_month(
         summaries = sorted(summaries, key=lambda x: (x["published_date"], x["arxiv_id_base"]))
         write_jsonl(month_out / "papers.jsonl", summaries)
 
-        backend_rows: list[dict] = []
-        for paper in sorted(candidates, key=lambda x: (x["published"], x["arxiv_id_base"])):
-            arxiv_id_base = paper["arxiv_id_base"]
-            backend_rows.append(
-                {
-                    "arxiv_id": paper["arxiv_id"],
-                    "arxiv_id_base": arxiv_id_base,
-                    "version": paper["version"],
-                    "title": paper["title"],
-                    "summary": paper["summary"],
-                    "authors": paper["authors"],
-                    "categories": paper["categories"],
-                    "published": paper["published"],
-                    "updated": paper["updated"],
-                    "links": paper["links"],
-                    "triage": _triage_view(triage_map.get(arxiv_id_base)),
-                    "paper_summary": summary_map.get(arxiv_id_base),
-                    "pdf": pdf_map.get(arxiv_id_base, _empty_pdf_state()),
-                }
-            )
+        backend_rows = build_backend_rows(candidates, triage_map, summary_map, pdf_map)
         write_jsonl(month_out / "backend_rows.jsonl", backend_rows)
 
         digest = build_digest(month, candidates, triage_rows, summaries, featured_paper=feature_paper)
@@ -384,6 +316,8 @@ def run_month(
             summarized=len(summaries),
             triage_failures=triage_failure_count,
             summary_failures=summary_failure_count,
+            failed_triage_ids=tuple(failed_triage_ids),
+            failed_summary_ids=tuple(failed_summary_ids),
         )
     finally:
         triage_llm.close()

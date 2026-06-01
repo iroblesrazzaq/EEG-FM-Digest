@@ -10,6 +10,7 @@ from dateutil.relativedelta import relativedelta
 
 from .config import load_config
 from .pipeline import run_month, run_window
+from .llm_logging import log_daily_failure_summary
 from .run_log import RunLog, compute_since, format_utc, load_run_log, save_run_log
 
 RUN_LOG_FILENAME = "last_successful_run.json"
@@ -128,6 +129,12 @@ def _run_daily(args: argparse.Namespace) -> int:
     )
     partial_failures = stats.total_triage_failures + stats.total_summary_failures
     if partial_failures:
+        log_daily_failure_summary(
+            triage_failures=stats.total_triage_failures,
+            summary_failures=stats.total_summary_failures,
+            failed_triage_ids=list(stats.failed_triage_ids),
+            failed_summary_ids=list(stats.failed_summary_ids),
+        )
         print(
             f"[daily] WARNING: {partial_failures} paper(s) failed LLM processing "
             f"(triage={stats.total_triage_failures} summary={stats.total_summary_failures}). "

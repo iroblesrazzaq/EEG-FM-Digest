@@ -12,6 +12,9 @@ GOOGLE_PROVIDER_ALIASES = {"google", "google_ai_studio", "gemini"}
 OPENAI_COMPAT_PROVIDER_ALIASES = {"openai", "openrouter"} | GOOGLE_PROVIDER_ALIASES
 DEFAULT_RATE_LIMIT_RETRIES = 5
 DEFAULT_RATE_LIMIT_BACKOFF_SECONDS = 5.0
+DEFAULT_TRANSIENT_RETRIES = 2
+DEFAULT_TRANSIENT_BACKOFF_SECONDS = 2.0
+TRANSIENT_HTTP_STATUSES = frozenset(range(500, 600))
 
 
 @dataclass(frozen=True)
@@ -181,9 +184,18 @@ class OpenAICall:
         if schema is not None and provider_supports_json_object(self.config.provider):
             req["response_format"] = {"type": "json_object"}
 
-        backoff_seconds = float(os.environ.get("LLM_RATE_LIMIT_BACKOFF_SECONDS", str(DEFAULT_RATE_LIMIT_BACKOFF_SECONDS)))
-        retry_count = int(os.environ.get("LLM_RATE_LIMIT_RETRIES", str(DEFAULT_RATE_LIMIT_RETRIES)))
-        for attempt in range(retry_count + 1):
+        rate_backoff = float(
+            os.environ.get("LLM_RATE_LIMIT_BACKOFF_SECONDS", str(DEFAULT_RATE_LIMIT_BACKOFF_SECONDS))
+        )
+        rate_retries = int(os.environ.get("LLM_RATE_LIMIT_RETRIES", str(DEFAULT_RATE_LIMIT_RETRIES)))
+        transient_backoff = float(
+            os.environ.get("LLM_TRANSIENT_BACKOFF_SECONDS", str(DEFAULT_TRANSIENT_BACKOFF_SECONDS))
+        )
+        transient_retries = int(
+            os.environ.get("LLM_TRANSIENT_RETRIES", str(DEFAULT_TRANSIENT_RETRIES))
+        )
+        max_attempts = max(rate_retries, transient_retries) + 1
+        for attempt in range(max_attempts):
             try:
                 response = self._client.chat.completions.create(**req)
                 break
@@ -196,12 +208,18 @@ class OpenAICall:
                     detail = ""
                     if response is not None:
                         detail = str(getattr(response, "text", "") or "")[:220]
-                    if attempt < retry_count:
-                        time.sleep(backoff_seconds * (2**attempt))
+                    if attempt < rate_retries:
+                        time.sleep(rate_backoff * (2**attempt))
                         continue
                     raise LLMRateLimitError(
                         f"openai_compat_rate_limit_or_quota status={status_code} body={detail}"
                     ) from exc
+                transient = status_code in TRANSIENT_HTTP_STATUSES or (
+                    status_code is None and type(exc).__name__ in {"APIConnectionError", "APITimeoutError"}
+                )
+                if transient and attempt < transient_retries:
+                    time.sleep(transient_backoff * (2**attempt))
+                    continue
                 raise
 
         text = self._extract_text(response)
