@@ -1,6 +1,20 @@
 {
-  "latest": "2026-05",
+  "latest": "2026-06",
   "months": [
+    {
+      "empty_state": "has_papers",
+      "featured": null,
+      "href": "digest/2026-06/index.html",
+      "json_path": "digest/2026-06/papers.json",
+      "month": "2026-06",
+      "month_label": "June 2026",
+      "month_rev": "bc4d75abe13723e1",
+      "stats": {
+        "accepted": 1,
+        "candidates": 2,
+        "summarized": 1
+      }
+    },
     {
       "empty_state": "has_papers",
       "featured": null,
@@ -8,11 +22,11 @@
       "json_path": "digest/2026-05/papers.json",
       "month": "2026-05",
       "month_label": "May 2026",
-      "month_rev": "a0812743de9e9938",
+      "month_rev": "d0fa3eaf1ed33bbb",
       "stats": {
-        "accepted": 23,
-        "candidates": 42,
-        "summarized": 23
+        "accepted": 24,
+        "candidates": 52,
+        "summarized": 24
       }
     },
     {

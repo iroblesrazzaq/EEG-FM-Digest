@@ -2389,18 +2389,125 @@
           "Utilizes standard foundation model evaluation protocols, including linear probing and fine-tuning."
         ]
       }
+    },
+    {
+      "arxiv_id": "2606.00815v1",
+      "arxiv_id_base": "2606.00815",
+      "authors": [
+        "Ziling Lu",
+        "Zongsheng Li",
+        "Xinke Shen",
+        "Kexin Lou",
+        "Yingyue Xin",
+        "Xiaoqi Chen",
+        "Shinan Wang",
+        "Xiang Chen",
+        "Jiahao Fan",
+        "Chenyu Huang",
+        "Xin Xu",
+        "Zhoujie Hou",
+        "Chen Wei",
+        "Quanying Liu"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2606.00815v1",
+        "pdf": "https://arxiv.org/pdf/2606.00815v1"
+      },
+      "published_date": "2026-05-30",
+      "summary": {
+        "arxiv_id_base": "2606.00815",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "OmniEEG-Bench (54 datasets)"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper introduces OmniEEG-Bench, a unified framework designed to evaluate EEG foundation models (FMs) across six task families, including signal reliability, biometrics, consciousness, cognition, naturalistic stimulus decoding, and motor interaction. It standardizes evaluation through task-card specifications and four protocols probing transferability, data efficiency, and robustness. Benchmarking 10 representative models reveals that performance scales with both model size and pretraining dataset diversity, while highlighting that frozen representations are currently limited compared to full fine-tuning.",
+        "evaluation": {
+          "benchmarks": [
+            "OmniEEG-Bench"
+          ],
+          "headline_results": [
+            "BrainOmni leads in linear probing; CBraMod, LaBraM, and FEMBA lead in full fine-tuning."
+          ],
+          "tasks": [
+            "Signal reliability",
+            "Biometrics and disease",
+            "Consciousness and state",
+            "Cognition and emotion",
+            "Naturalistic stimulus decoding",
+            "Motor and interaction"
+          ]
+        },
+        "key_points": [
+          "Benchmark for EEG foundation models: OmniEEG-Bench provides a unified evaluation framework across 54 datasets and six task families.",
+          "Identifies scaling laws where both model parameter count and pretraining dataset diversity significantly correlate with downstream performance.",
+          "Demonstrates that while foundation models benefit from fine-tuning, frozen representations often struggle to outperform task-specific baselines."
+        ],
+        "limitations": [
+          "Does not explore parameter-efficient transfer strategies (PEFT)",
+          "Datasets do not exhaustively cover all clinical populations or geographic regions",
+          "Channel corruption simulation simplifies real-world sensor degradation"
+        ],
+        "method": {
+          "architecture": "Evaluation framework using linear probing and full fine-tuning across four protocols: cross-subject transfer, multi-subject adaptation, zero-/few-shot adaptation, and channel masking robustness.",
+          "finetuning": "Comparison between linear probing (frozen) and full fine-tuning.",
+          "objective": "Standardized performance evaluation across 58 tasks.",
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 84394, \"error\": null, \"pages\": 28, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=23214",
+        "one_liner": "A standardized evaluation benchmark for EEG foundation models across 54 datasets and six diverse task families.",
+        "open_source": {
+          "code_url": "https://github.com/ncclab-sustech/omni-eegbench.git",
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-05-30",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "OmniEEG-Bench: A Standardized Evaluation Benchmark for EEG Foundation Models",
+        "unique_contribution": "Introduces a standardized task roadmap and benchmark for EEG foundation models covering 54 datasets and 58 tasks across six functional categories.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "OmniEEG-Bench: A Standardized Evaluation Benchmark for EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly introduces a standardized evaluation benchmark specifically for EEG foundation models.",
+          "Benchmarks 10 representative EEG foundation models across 54 datasets.",
+          "Analyzes scaling-law behavior and the impact of pretraining data diversity on EEG foundation models."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 23,
-    "candidates": 42,
-    "summarized": 23
+    "accepted": 24,
+    "candidates": 52,
+    "summarized": 24
   },
   "top_picks": [
+    "2606.00815",
     "2605.28563",
     "2605.18085",
     "2605.15698",
-    "2605.14698",
-    "2605.13930"
+    "2605.14698"
   ]
 }

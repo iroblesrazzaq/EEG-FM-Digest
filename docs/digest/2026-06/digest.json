@@ -1,0 +1,20 @@
+{
+  "featured_paper": null,
+  "month": "2026-06",
+  "sections": [
+    {
+      "paper_ids": [
+        "2606.01767"
+      ],
+      "title": "method"
+    }
+  ],
+  "stats": {
+    "accepted": 1,
+    "candidates": 2,
+    "summarized": 1
+  },
+  "top_picks": [
+    "2606.01767"
+  ]
+}

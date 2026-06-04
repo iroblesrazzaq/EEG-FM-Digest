@@ -1,0 +1,128 @@
+{
+  "featured_paper_id": null,
+  "month": "2026-06",
+  "papers": [
+    {
+      "arxiv_id": "2606.01767v2",
+      "arxiv_id_base": "2606.01767",
+      "authors": [
+        "Yangxuan Zhou",
+        "Sha Zhao",
+        "Jiquan Wang",
+        "Shijian Li",
+        "Gang Pan"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2606.01767v2",
+        "pdf": "https://arxiv.org/pdf/2606.01767v2"
+      },
+      "published_date": "2026-06-01",
+      "summary": {
+        "arxiv_id_base": "2606.01767",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "FACED",
+            "PhysioNet-MI",
+            "BCIC-IV-2a",
+            "ISRUC",
+            "BCIC2020-3",
+            "Mumtaz2016"
+          ],
+          "eeg_hours": null,
+          "subjects": 390.0
+        },
+        "detailed_summary": "EvoBrain proposes a task-aware continual learning framework to replace static, task-isolated fine-tuning for EEG foundation models. It introduces Neuro-Spectral Task Normalization (NSN) to align temporal statistics and recalibrate spectral responses, alongside Response-Affinity Distillation (RAD) to preserve old-task response geometry and enable selective knowledge transfer. Evaluations across six diverse BCI tasks using four different foundation backbones demonstrate that the model effectively balances plasticity and stability, retaining over 91% of single-task performance.",
+        "evaluation": {
+          "benchmarks": [
+            "FACED",
+            "PhysioNet-MI",
+            "BCIC-IV-2a",
+            "ISRUC",
+            "BCIC2020-3",
+            "Mumtaz2016"
+          ],
+          "headline_results": [
+            "Retained 91.3% of single-task fine-tuning performance",
+            "Relative Forgetting Rate (RFR) below 4%"
+          ],
+          "tasks": [
+            "Emotion Recognition",
+            "Motor Imagery",
+            "Sleep Staging",
+            "Imagined Speech",
+            "Mental Disorder Detection"
+          ]
+        },
+        "key_points": [
+          "Method for post-training EEG foundation models: EvoBrain enables a single unified backbone to incrementally learn diverse BCI tasks via a continual learning paradigm.",
+          "Combines Neuro-Spectral Task Normalization (NSN) for distributional alignment and Response-Affinity Distillation (RAD) to mitigate catastrophic forgetting.",
+          "Demonstrates architecture-agnostic efficacy across Transformer and Mamba backbones, maintaining low forgetting rates across six heterogeneous EEG datasets."
+        ],
+        "limitations": [
+          "Assumes known task boundaries and task-specific heads.",
+          "Relies on replay memory, which may raise privacy concerns in clinical settings.",
+          "Lacks subject-level validation for the spectral modulation patterns.",
+          "Does not address online settings with ambiguous task identities."
+        ],
+        "method": {
+          "architecture": "Architecture-agnostic framework integrating Neuro-Spectral Task Normalization and Response-Affinity Distillation.",
+          "finetuning": "Continual learning via task-aware normalization, response-geometry distillation, and time-dependent replay.",
+          "objective": "Supervised classification with distillation loss to preserve previous task knowledge.",
+          "pretraining": "Utilizes existing EEG-FMs (CBraMod, EEGMamba, CSBrain, DeeperBrain) as backbones."
+        },
+        "notes": "{\"chars\": 104962, \"error\": null, \"pages\": 18, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=28646",
+        "one_liner": "A continual learning framework for EEG foundation models that enables a single backbone to evolve across heterogeneous BCI tasks without catastrophic forgetting.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-06-01",
+        "tags": {
+          "backbone": [
+            "transformer",
+            "mamba-ssm"
+          ],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "EvoBrain: Continual Learning of EEG Foundation Models Across Heterogeneous BCI Tasks",
+        "unique_contribution": "Pioneers cross-task continual learning for EEG foundation models using a combination of neuro-spectral normalization and affinity-aware response distillation.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EvoBrain: Continual Learning of EEG Foundation Models Across Heterogeneous BCI Tasks",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets the post-training and downstream adaptation of EEG foundation models.",
+          "Proposes a continual learning framework (EvoBrain) specifically for unified EEG decoding using foundation model backbones.",
+          "Fits the ecosystem criteria for adaptation, fine-tuning, and scaling analysis of EEG-FMs."
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 1,
+    "candidates": 2,
+    "summarized": 1
+  },
+  "top_picks": [
+    "2606.01767"
+  ]
+}
