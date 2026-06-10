@@ -115,14 +115,451 @@
           "Fits the ecosystem criteria for adaptation, fine-tuning, and scaling analysis of EEG-FMs."
         ]
       }
+    },
+    {
+      "arxiv_id": "2606.06647v1",
+      "arxiv_id_base": "2606.06647",
+      "authors": [
+        "Jun-You Lin",
+        "Ying Choon Wu",
+        "Tzyy-Ping Jung"
+      ],
+      "categories": [
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2606.06647v1",
+        "pdf": "https://arxiv.org/pdf/2606.06647v1"
+      },
+      "published_date": "2026-06-04",
+      "summary": {
+        "arxiv_id_base": "2606.06647",
+        "categories": [
+          "cs.LG",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": 19.0,
+          "datasets": [
+            "EEGMAT",
+            "ADFTD",
+            "SleepDep",
+            "Stress"
+          ],
+          "eeg_hours": 60000.0,
+          "subjects": 154.0
+        },
+        "detailed_summary": "The paper introduces FMScope, a frozen-representation diagnostic protocol consisting of five tools to audit EEG foundation models for subject-identity confounding. It reveals a universal 'Identity Trap' where subject variance dominates representations and is amplified during fine-tuning, regardless of the clinical label's presence. Evidence from three FMs across four clinical datasets shows that removing the subject axis—often carried by the aperiodic 1/f background—can improve label decoding when a genuine cross-subject marker exists.",
+        "evaluation": {
+          "benchmarks": [
+            "EEGMAT",
+            "ADFTD",
+            "SleepDep",
+            "Stress"
+          ],
+          "headline_results": [
+            "Subject-variance fraction is 13-89x a random null",
+            "Erasing subject axis improves label decoding by +6 to +12 percentage points in primary cells"
+          ],
+          "tasks": [
+            "Clinical resting-state EEG classification (mental arithmetic, Alzheimer's/FTD, sleep deprivation, trait stress)"
+          ]
+        },
+        "key_points": [
+          "Benchmark diagnostic framework: FMScope audits frozen EEG-FM representations to distinguish genuine clinical biomarkers from subject-identity shortcuts.",
+          "Discovery of the 'Identity Trap': Subject variance dominates representations across tested FMs and is amplified during fine-tuning, often acting as a shortcut.",
+          "Physiological carrier: For LaBraM and CBraMod, the aperiodic 1/f background is a primary carrier of subject identity, which can be linearly erased to improve label decoding."
+        ],
+        "limitations": [
+          "Relies on one dataset per cell in the 2x2 layout",
+          "Small sample sizes (N=14 to 65 subjects per dataset)",
+          "Aperiodic ablation is a correlational intervention, not necessarily causal",
+          "Single-session ADFTD cannot separate disease state from stable traits by data alone"
+        ],
+        "method": {
+          "architecture": "Transformer-based (auditing LaBraM, CBraMod, REVE)",
+          "finetuning": "Linear classification head, full fine-tuning vs. frozen linear probe",
+          "objective": "Masked-modeling (pretraining of audited models)",
+          "pretraining": "Self-supervised on large EEG corpora"
+        },
+        "notes": "{\"chars\": 96372, \"error\": null, \"pages\": 28, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=26004",
+        "one_liner": "A diagnostic audit revealing that EEG foundation models often rely on subject-identity shortcuts (the 'Identity Trap') rather than genuine clinical biomarkers.",
+        "open_source": {
+          "code_url": "https://github.com/Jimmy110101013/fmscope",
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-06-04",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "The Identity Trap in EEG Foundation Models: A Diagnostic Audit",
+        "unique_contribution": "Introduces FMScope, a diagnostic framework to detect and linearly erase subject-identity confounding in frozen EEG-FM representations.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "The Identity Trap in EEG Foundation Models: A Diagnostic Audit",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets EEG foundation models (FMs) in both title and abstract.",
+          "Proposes FMScope, a diagnostic protocol specifically for auditing frozen representations of EEG-FMs.",
+          "Evaluates multiple existing EEG-FMs, including LaBraM, CBraMod, and REVE.",
+          "Fits the inclusion criteria for EEG-FM ecosystem papers focusing on evaluation and diagnostic auditing."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2606.08583v1",
+      "arxiv_id_base": "2606.08583",
+      "authors": [
+        "Jasmeet Singh Bindra",
+        "Siddharth Panwar",
+        "Shubhajit Roy Chowdhury"
+      ],
+      "categories": [
+        "cs.LG",
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2606.08583v1",
+        "pdf": "https://arxiv.org/pdf/2606.08583v1"
+      },
+      "published_date": "2026-06-07",
+      "summary": {
+        "arxiv_id_base": "2606.08583",
+        "categories": [
+          "cs.LG",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": 64.0,
+          "datasets": [
+            "Sleep-EDF",
+            "TUAB",
+            "PhysioNet MI",
+            "PTB-XL"
+          ],
+          "eeg_hours": null,
+          "subjects": 18610.0
+        },
+        "detailed_summary": "The paper proposes a spectral audit framework that uses phase-preserving Fourier interventions to decompose physiological signals into aperiodic and periodic components. It demonstrates that model reliance on aperiodic structure is task-dependent, being dominant in sleep-wake classification and clinical abnormality detection but minimal in motor imagery. The study reveals that six of seven evaluated EEG foundation models and several ECG architectures rely significantly on these broadband features, which can be confounded by demographics like age.",
+        "evaluation": {
+          "benchmarks": [
+            "Balanced Accuracy (BA)"
+          ],
+          "headline_results": [
+            "Sleep-wake classification showed high aperiodic reliance (BA drop > 0.42).",
+            "6/7 EEG foundation models showed significant aperiodic reliance on clinical EEG.",
+            "ECG models showed high aperiodic reliance (BA drop 0.32-0.36)."
+          ],
+          "tasks": [
+            "Sleep-wake classification",
+            "Clinical abnormality detection",
+            "Motor imagery classification",
+            "ECG arrhythmia detection"
+          ]
+        },
+        "key_points": [
+          "Benchmark framework: A spectral audit tool that quantifies model reliance on aperiodic 1/f-like envelopes across EEG and ECG tasks.",
+          "Foundation model vulnerability: Six of seven EEG foundation models showed significant aperiodic reliance on clinical EEG, suggesting scale does not eliminate broadband shortcuts.",
+          "Task-specific findings: Aperiodic reliance is high for sleep-wake and clinical abnormality detection but minimal for motor imagery."
+        ],
+        "limitations": [
+          "ECG SpecParam fit quality was lower than EEG due to QRS harmonics.",
+          "PhysioNet MI trials are short, making spectral fitting more challenging.",
+          "BENDR showed intervention fragility (sham collapse), making its aperiodic reliance estimate unreliable.",
+          "The framework identifies reliance but does not provide a training-time solution to eliminate it."
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": "Spectral audit using phase-preserving Fourier interventions (sham, aperiodic-shaped, and flattened) to test sufficiency and necessity of spectral components.",
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 59644, \"error\": null, \"pages\": 25, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=16563",
+        "one_liner": "Introduces a spectral audit framework to quantify how much EEG and ECG deep learning models rely on aperiodic 1/f-like spectral envelopes versus periodic oscillatory rhythms.",
+        "open_source": {
+          "code_url": null,
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-06-07",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "A spectral audit framework reveals task-dependent aperiodic reliance across EEG and ECG deep learning",
+        "unique_contribution": "A diagnostic framework using phase-preserving Fourier interventions to disentangle aperiodic spectral reliance from oscillatory biomarkers in physiological time-series models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "A spectral audit framework reveals task-dependent aperiodic reliance across EEG and ECG deep learning",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly evaluates 'six of seven EEG foundation models' using a spectral audit framework.",
+          "Focuses on the interpretability and aperiodic reliance of representations within EEG-FMs.",
+          "Fits the ecosystem criteria for evaluation and benchmarking of foundation models."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2606.09189v1",
+      "arxiv_id_base": "2606.09189",
+      "authors": [
+        "Jianwei Tai"
+      ],
+      "categories": [
+        "cs.CR",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2606.09189v1",
+        "pdf": "https://arxiv.org/pdf/2606.09189v1"
+      },
+      "published_date": "2026-06-08",
+      "summary": {
+        "arxiv_id_base": "2606.09189",
+        "categories": [
+          "cs.CR",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 54.0,
+          "datasets": [
+            "PhysioNet EEGMMI",
+            "Sleep-EDF",
+            "LIMO",
+            "CHB-MIT"
+          ],
+          "eeg_hours": null,
+          "subjects": 60.0
+        },
+        "detailed_summary": "The paper proposes a joint privacy audit framework for EEG foundation models (BIOT, LaBraM, EEGPT) that evaluates raw reconstruction, membership inference, identity linkage, and attribute leakage. It introduces a cross-encoder transfer audit where a ridge attribute decoder from one frozen encoder transfers to others via a linear bridge, proving that spectral attributes persist across different architectures and datasets. Empirical results across EEGMMI, Sleep-EDF, LIMO, and CHB-MIT show that standard defenses, including DP-SGD and noise injection, fail to eliminate attribute leakage without destroying task utility.",
+        "evaluation": {
+          "benchmarks": [
+            "EEGMMI",
+            "Sleep-EDF",
+            "LIMO",
+            "CHB-MIT"
+          ],
+          "headline_results": [
+            "AEDS positive (p < 0.001) across all subject-disjoint cells",
+            "Attribute leakage persists despite DP-SGD and Gaussian noise defenses"
+          ],
+          "tasks": [
+            "Raw reconstruction",
+            "Membership inference",
+            "Identity linkage",
+            "Spectral attribute extraction"
+          ]
+        },
+        "key_points": [
+          "Benchmark audit of EEG foundation models: Shows that BIOT, LaBraM, and EEGPT embeddings leak spectral attributes even when they pass raw-reconstruction and membership inference tests.",
+          "Cross-encoder transferability: Demonstrates that attribute decoders trained on one model can be bridged to others, indicating a shared vulnerability across different EEG-FM architectures.",
+          "Defense failure: Finds that DP-SGD and Gaussian noise cannot close the attribute leakage channel while maintaining downstream task utility."
+        ],
+        "limitations": [
+          "Does not establish population-level cross-dataset generality.",
+          "Evidence is limited to specific datasets and lacks larger clinical corpora like TUH.",
+          "Training-noise grid is a proxy and lacks a formal DP accountant.",
+          "The event-level task head used in some probes is relatively weak.",
+          "Subject-disjoint gains show transport within finite splits, not a universal law."
+        ],
+        "method": {
+          "architecture": "Audit framework using ridge, MLP, and kNN decoders to extract PSD attributes; employs a linear bridge for cross-encoder transfer.",
+          "finetuning": "Linear bridge and ridge regression for attribute transfer probes.",
+          "objective": "Audit-Endpoint Disagreement Score (AEDS) to quantify privacy leakage across multiple endpoints.",
+          "pretraining": "Audits existing pretrained models (BIOT, LaBraM, EEGPT)."
+        },
+        "notes": "{\"chars\": 105664, \"error\": null, \"pages\": 19, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=28653",
+        "one_liner": "An audit framework demonstrating that EEG foundation model embeddings leak spectral attributes even when standard privacy endpoints like raw reconstruction and membership inference are cleared.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-06-08",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Pretrained, Frozen, Still Leaking: Auditing Cross-Encoder Attribute Transfer in EEG Foundation Models",
+        "unique_contribution": "Introduces a cross-encoder transfer audit and the Audit-Endpoint Disagreement Score (AEDS) to reveal spectral attribute leakage that single-endpoint privacy audits typically miss.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Pretrained, Frozen, Still Leaking: Auditing Cross-Encoder Attribute Transfer in EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly audits and evaluates existing EEG foundation models including BIOT, LaBraM, and EEGPT.",
+          "Focuses on the security and privacy properties of pretrained EEG representations.",
+          "Fits the inclusion criteria for EEG-FM ecosystem papers regarding evaluation and auditing."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2606.09605v1",
+      "arxiv_id_base": "2606.09605",
+      "authors": [
+        "Jonathan F. Carter",
+        "Lionel Tarassenko"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2606.09605v1",
+        "pdf": "https://arxiv.org/pdf/2606.09605v1"
+      },
+      "published_date": "2026-06-08",
+      "summary": {
+        "arxiv_id_base": "2606.09605",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 8.0,
+          "datasets": [
+            "SHHS",
+            "CCSHS",
+            "CFS",
+            "CHAT",
+            "MESA",
+            "MrOS",
+            "NCHSDB",
+            "WSC"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes Hypnos, a foundation model trained on over 20,000 overnight polysomnography recordings across eight sensing modalities. Unlike prior work relying on masked reconstruction or contrastive objectives, Hypnos employs an auto-regressive RQ-Transformer to predict the next discrete token. Evaluation across sleep staging and cardiac benchmarks shows it significantly outperforms existing foundation models and matches supervised baselines using only 1% of the labeled data.",
+        "evaluation": {
+          "benchmarks": [
+            "MrOS",
+            "SHHS",
+            "CinC 2017",
+            "Apnea-ECG",
+            "CPSC 2021"
+          ],
+          "headline_results": [
+            "Matches U-Sleep performance using 1% of labeled data.",
+            "Outperforms OSF, SleepFM, and sleep2vec on sleep staging.",
+            "Surpasses dedicated ECG foundation models on cardiac benchmarks."
+          ],
+          "tasks": [
+            "Sleep stage classification",
+            "Cortical arousal detection",
+            "Apnoea detection",
+            "Desaturation detection",
+            "Atrial fibrillation detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: Hypnos uses an auto-regressive RQ-Transformer to learn representations from multi-modal sleep data via next-token prediction.",
+          "Demonstrates high sample efficiency, matching supervised sleep staging performance on held-out sets while using 100x less labeled data.",
+          "Shows strong cross-domain generalization, surpassing a dedicated ECG foundation model on atrial fibrillation detection tasks."
+        ],
+        "limitations": [
+          "Does not yet generalize to arbitrary high-density EEG electrode configurations.",
+          "Context length is limited and does not yet scale to hours or days of data.",
+          "Limited evaluation on broad clinical outcomes compared to some prior work."
+        ],
+        "method": {
+          "architecture": "RQ-Transformer (Temporal and Depth Transformers) with RVQ-based tokenization using SeaNet.",
+          "finetuning": "Linear probing and fine-tuning on downstream sleep and cardiac tasks.",
+          "objective": "Next-token prediction (conditional log-likelihood over next residual tokens).",
+          "pretraining": "Self-supervised training on 20,000+ PSG recordings using CRP-based group masking for modality robustness."
+        },
+        "notes": "{\"chars\": 86084, \"error\": null, \"pages\": 25, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=23654",
+        "one_liner": "Hypnos is a multi-modal sleep foundation model that utilizes next-token prediction on RVQ-tokenized physiological signals to learn generalisable representations.",
+        "open_source": {
+          "code_url": "https://github.com/joncarter1/hypnos",
+          "license": "unknown",
+          "weights_url": "https://github.com/joncarter1/hypnos"
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-06-08",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "autoregressive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Next-Token Prediction Learns Generalisable Representations of Sleep Physiology",
+        "unique_contribution": "Introduces next-token prediction as a scalable self-supervised objective for multi-modal physiological signals, unifying generative modeling and representation learning.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Next-Token Prediction Learns Generalisable Representations of Sleep Physiology",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly describes 'Hypnos' as a multi-modal sleep foundation model.",
+          "Includes EEG as one of the core sensing modalities used for pretraining.",
+          "Focuses on learning generalisable representations for various downstream tasks.",
+          "Compares performance against other existing foundation models."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 1,
-    "candidates": 3,
-    "summarized": 1
+    "accepted": 5,
+    "candidates": 8,
+    "summarized": 5
   },
   "top_picks": [
-    "2606.01767"
+    "2606.09605",
+    "2606.09189",
+    "2606.06647",
+    "2606.01767",
+    "2606.08583"
   ]
 }

@@ -8,11 +8,11 @@
       "json_path": "digest/2026-06/papers.json",
       "month": "2026-06",
       "month_label": "June 2026",
-      "month_rev": "4b3b0b152e93c42a",
+      "month_rev": "35cf0ca72ed4c887",
       "stats": {
-        "accepted": 1,
-        "candidates": 3,
-        "summarized": 1
+        "accepted": 5,
+        "candidates": 8,
+        "summarized": 5
       }
     },
     {
