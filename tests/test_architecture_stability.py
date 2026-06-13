@@ -374,13 +374,15 @@ def test_pipeline_migrates_old_db_rows_and_treats_missing_metadata_as_stale(monk
 
 
 def test_pipeline_cache_versions_reuse_and_invalidate(monkeypatch, tmp_path):
+    from eegfm_digest.resources import prompt_path
+
     candidate = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")
     triage_calls = {"count": 0}
     summary_calls = {"count": 0}
     prompts = {
-        "prompts/triage.md": "triage-a {{TITLE}} {{ABSTRACT}}",
-        "prompts/summarize.md": "summary-a {{INPUT_JSON}}",
-        "prompts/repair_json.md": "repair {{SCHEMA_JSON}} {{BAD_OUTPUT}}",
+        prompt_path("triage.md"): "triage-a {{TITLE}} {{ABSTRACT}}",
+        prompt_path("summarize.md"): "summary-a {{INPUT_JSON}}",
+        prompt_path("repair_json.md"): "repair {{SCHEMA_JSON}} {{BAD_OUTPUT}}",
     }
 
     monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: [candidate])
@@ -430,12 +432,12 @@ def test_pipeline_cache_versions_reuse_and_invalidate(monkeypatch, tmp_path):
     assert triage_calls["count"] == 1
     assert summary_calls["count"] == 1
 
-    prompts["prompts/triage.md"] = "triage-b {{TITLE}} {{ABSTRACT}}"
+    prompts[prompt_path("triage.md")] = "triage-b {{TITLE}} {{ABSTRACT}}"
     run_month(cfg, "2025-01", no_site=True)
     assert triage_calls["count"] == 2
     assert summary_calls["count"] == 1
 
-    prompts["prompts/summarize.md"] = "summary-b {{INPUT_JSON}}"
+    prompts[prompt_path("summarize.md")] = "summary-b {{INPUT_JSON}}"
     run_month(cfg, "2025-01", no_site=True)
     assert triage_calls["count"] == 2
     assert summary_calls["count"] == 2
