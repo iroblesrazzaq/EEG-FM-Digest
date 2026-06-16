@@ -227,20 +227,19 @@
       }
     },
     {
-      "arxiv_id": "2606.08583v1",
+      "arxiv_id": "2606.08583v2",
       "arxiv_id_base": "2606.08583",
       "authors": [
         "Jasmeet Singh Bindra",
-        "Siddharth Panwar",
-        "Shubhajit Roy Chowdhury"
+        "Siddharth Panwar"
       ],
       "categories": [
         "cs.LG",
         "eess.SP"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2606.08583v1",
-        "pdf": "https://arxiv.org/pdf/2606.08583v1"
+        "abs": "http://arxiv.org/abs/2606.08583v2",
+        "pdf": "https://arxiv.org/pdf/2606.08583v2"
       },
       "published_date": "2026-06-07",
       "summary": {
@@ -552,7 +551,7 @@
   ],
   "stats": {
     "accepted": 5,
-    "candidates": 8,
+    "candidates": 11,
     "summarized": 5
   },
   "top_picks": [
