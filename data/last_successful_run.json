@@ -1,9 +1,11 @@
 {
-  "affected_months": [],
-  "last_query_end_utc": "2026-06-15T15:51:16Z",
-  "last_success_utc": "2026-06-15T15:51:16Z",
-  "papers_accepted": 0,
-  "papers_fetched": 0,
-  "run_id": "2026-06-15T15:51:16Z",
+  "affected_months": [
+    "2026-06"
+  ],
+  "last_query_end_utc": "2026-06-16T15:15:18Z",
+  "last_success_utc": "2026-06-16T15:15:18Z",
+  "papers_accepted": 5,
+  "papers_fetched": 1,
+  "run_id": "2026-06-16T15:15:18Z",
   "version": 1
 }
