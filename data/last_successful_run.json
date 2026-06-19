@@ -2,10 +2,10 @@
   "affected_months": [
     "2026-06"
   ],
-  "last_query_end_utc": "2026-06-18T13:33:13Z",
-  "last_success_utc": "2026-06-18T13:33:13Z",
-  "papers_accepted": 5,
-  "papers_fetched": 1,
-  "run_id": "2026-06-18T13:33:13Z",
+  "last_query_end_utc": "2026-06-19T13:39:36Z",
+  "last_success_utc": "2026-06-19T13:39:36Z",
+  "papers_accepted": 6,
+  "papers_fetched": 2,
+  "run_id": "2026-06-19T13:39:36Z",
   "version": 1
 }
