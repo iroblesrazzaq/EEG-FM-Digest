@@ -21,18 +21,24 @@
         "2606.09605"
       ],
       "title": "new_model"
+    },
+    {
+      "paper_ids": [
+        "2606.20074"
+      ],
+      "title": "other"
     }
   ],
   "stats": {
-    "accepted": 5,
-    "candidates": 12,
-    "summarized": 5
+    "accepted": 6,
+    "candidates": 14,
+    "summarized": 6
   },
   "top_picks": [
     "2606.09605",
     "2606.09189",
     "2606.06647",
     "2606.01767",
-    "2606.08583"
+    "2606.20074"
   ]
 }

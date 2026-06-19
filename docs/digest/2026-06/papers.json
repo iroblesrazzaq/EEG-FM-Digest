@@ -547,18 +547,106 @@
           "Compares performance against other existing foundation models."
         ]
       }
+    },
+    {
+      "arxiv_id": "2606.20074v1",
+      "arxiv_id_base": "2606.20074",
+      "authors": [
+        "Elisa Vasta",
+        "Thorir Mar Ingolfsson",
+        "Andrea Cossettini",
+        "Luca Benini",
+        "Tilman Beck",
+        "Emanuela Keller",
+        "Una Pale"
+      ],
+      "categories": [
+        "eess.SP",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2606.20074v1",
+        "pdf": "https://arxiv.org/pdf/2606.20074v1"
+      },
+      "published_date": "2026-06-18",
+      "summary": {
+        "arxiv_id_base": "2606.20074",
+        "categories": [
+          "eess.SP",
+          "cs.AI",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 24279, \"error\": null, \"pages\": 4, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7600;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-06-18",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Evaluation of EEG Foundation Models for Event-Based Burst-Suppression Detection in ICU",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Evaluation of EEG Foundation Models for Event-Based Burst-Suppression Detection in ICU",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly evaluates multiple EEG Foundation Models including REVE-base, LUNA-large, and LuMamba-Tiny",
+          "Focuses on the adaptation and fine-tuning strategies for EEG-FMs (e.g., LoRA, frozen-backbone)",
+          "Analyzes the benefit of pretrained FM representations over random initialization for a downstream clinical task"
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 5,
-    "candidates": 12,
-    "summarized": 5
+    "accepted": 6,
+    "candidates": 14,
+    "summarized": 6
   },
   "top_picks": [
     "2606.09605",
     "2606.09189",
     "2606.06647",
     "2606.01767",
-    "2606.08583"
+    "2606.20074"
   ]
 }
