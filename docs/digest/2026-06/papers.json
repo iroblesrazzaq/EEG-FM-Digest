@@ -549,6 +549,220 @@
       }
     },
     {
+      "arxiv_id": "2606.23706v1",
+      "arxiv_id_base": "2606.23706",
+      "authors": [
+        "Baimam Boukar Jean Jacques",
+        "Brandone Fonya",
+        "Nchofon Tagha Ghogomu",
+        "Pauline Nyaboe",
+        "Kipngeno Koech"
+      ],
+      "categories": [
+        "eess.SP",
+        "cs.HC",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2606.23706v1",
+        "pdf": "https://arxiv.org/pdf/2606.23706v1"
+      },
+      "published_date": "2026-06-12",
+      "summary": {
+        "arxiv_id_base": "2606.23706",
+        "categories": [
+          "eess.SP",
+          "cs.HC",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 128.0,
+          "datasets": [
+            "Healthy Brain Network (HBN)"
+          ],
+          "eeg_hours": null,
+          "subjects": 3000.0
+        },
+        "detailed_summary": "The paper proposes a framework for generalizable EEG decoding using the BENDR Transformer-based foundation model to predict reaction times in a zero-shot cross-subject setting. To adapt the model for regression without catastrophic forgetting, the authors introduce a three-phase progressive unfreezing strategy that sequentially trains the regression head, the transformer contextualizer, and finally the full model. Using the Healthy Brain Network dataset, the approach achieved an nRMSE of 0.9799, successfully outperforming CNN baselines that failed to beat a mean-regressor baseline.",
+        "evaluation": {
+          "benchmarks": [
+            "Healthy Brain Network (HBN) dataset"
+          ],
+          "headline_results": [
+            "BENDR achieved 0.9799 nRMSE, outperforming EEGNeX (0.9991 nRMSE)"
+          ],
+          "tasks": [
+            "Zero-shot cross-subject reaction time prediction (Contrast Change Detection task)"
+          ]
+        },
+        "key_points": [
+          "Method for EEG foundation model adaptation: utilizes a progressive unfreezing strategy to fine-tune the BENDR model for zero-shot cross-subject behavioral prediction.",
+          "Demonstrates that Transformer-based priors can break the 'mean-barrier' (nRMSE < 1.0) in cross-subject regression, where SOTA CNNs like EEGNeX fail.",
+          "Evaluated on the Healthy Brain Network dataset with over 3,000 subjects using a strictly subject-disjoint splitting protocol."
+        ],
+        "limitations": [
+          "Restricted to 5-21 year age range",
+          "Evaluated only on a single 128-channel montage",
+          "Lack of robustness testing for different hardware or lower channel counts",
+          "Not tested on non-visual behaviors such as memory, language, or motor paradigms"
+        ],
+        "method": {
+          "architecture": "BENDR (Convolutional Encoder + Transformer Contextualizer + Regression Head)",
+          "finetuning": "Three-phase progressive unfreezing (Head -> Contextualizer -> Full Model) with differential learning rates",
+          "objective": "Regression (MSE loss)",
+          "pretraining": "Self-supervised representation learning on large-scale EEG"
+        },
+        "notes": "{\"chars\": 24935, \"error\": null, \"pages\": 8, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7542",
+        "one_liner": "A zero-shot cross-subject EEG decoding framework using a fine-tuned BENDR foundation model with a progressive unfreezing strategy to predict behavioral reaction times.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-06-12",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Zero-Shot Neural Priors for Generalizable Cross-Subject and Cross-Task EEG Decoding",
+        "unique_contribution": "A three-phase progressive unfreezing strategy with differential learning rates for adapting EEG foundation models to downstream regression tasks while preserving pretrained neural priors.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Zero-Shot Neural Priors for Generalizable Cross-Subject and Cross-Task EEG Decoding",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly benchmarks and utilizes a 'Transformer-based foundation model' for EEG decoding.",
+          "Focuses on cross-subject and cross-task generalization, which is a primary goal of EEG-FMs.",
+          "Proposes a progressive unfreezing strategy for adapting the foundation model, fitting the ecosystem criteria for adaptation and fine-tuning."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2606.20673v2",
+      "arxiv_id_base": "2606.20673",
+      "authors": [
+        "Matin Fallahi",
+        "Patricia Arias-Cabarcos",
+        "Thorsten Strufe"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2606.20673v2",
+        "pdf": "https://arxiv.org/pdf/2606.20673v2"
+      },
+      "published_date": "2026-06-12",
+      "summary": {
+        "arxiv_id_base": "2606.20673",
+        "categories": [
+          "cs.LG",
+          "cs.AI",
+          "cs.CV"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "TUH-EEG",
+            "DVS-rsEEG",
+            "PREDICT",
+            "PEERS",
+            "FRC-EEG"
+          ],
+          "eeg_hours": null,
+          "subjects": 15762.0
+        },
+        "detailed_summary": "NeuroShield proposes a dual-stage transformer architecture to learn identity-discriminative embeddings from heterogeneous EEG recordings. It decouples temporal modeling, using ALiBi biases for length extrapolation, from spatial aggregation, which utilizes 3D coordinate embeddings for layout flexibility. Pretrained on over 15,000 subjects, the model demonstrates superior transfer performance on unseen medical and consumer-grade datasets, reducing Equal Error Rate (EER) compared to state-of-the-art fixed-input baselines.",
+        "evaluation": {
+          "benchmarks": [
+            "PEERS",
+            "FRC-EEG"
+          ],
+          "headline_results": [
+            "Reduced PEERS all-data EER from 10.25% to 7.71% using full fine-tuning",
+            "Reduced FRC-EEG EER from 14.3% to 11.2% using full fine-tuning"
+          ],
+          "tasks": [
+            "EEG Authentication",
+            "User Verification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: NeuroShield enables device-agnostic authentication by supporting variable-channel and variable-length EEG inputs.",
+          "Dual-stage architecture: Employs a temporal transformer with ALiBi biases and a channel transformer with 3D geometry-aware embeddings to ensure spatial and temporal flexibility.",
+          "Strong transferability: Pretrained on 15,762 subjects, it reduces EER by up to 8.06 percentage points on unseen downstream datasets after fine-tuning."
+        ],
+        "limitations": [
+          "Error rates are still significantly higher than established biometrics like face recognition.",
+          "Requires further expansion to larger and more diverse EEG corpora.",
+          "Needs evaluation against more sophisticated threat models beyond zero-effort impostors.",
+          "Performance on consumer-grade devices is lower than on medical-grade devices."
+        ],
+        "method": {
+          "architecture": "Dual-stage transformer (Temporal Transformer followed by Channel Transformer)",
+          "finetuning": "Full-model, partial (last layers), and PEFT (adaptation modules)",
+          "objective": "Supervised Contrastive Loss (SupConLoss)",
+          "pretraining": "Pretrained on TUH-EEG, DVS-rsEEG, and PREDICT datasets"
+        },
+        "notes": "{\"chars\": 90278, \"error\": null, \"pages\": 18, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=24539",
+        "one_liner": "A device-agnostic foundation model for EEG authentication that handles variable channel layouts and signal durations via a dual-stage transformer.",
+        "open_source": {
+          "code_url": "https://github.com/NeuroShield-EEG/NeuroShield",
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-06-12",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible",
+            "topology-agnostic"
+          ]
+        },
+        "title": "NeuroShield: A Device-Agnostic Foundation Model for EEG Authentication",
+        "unique_contribution": "Introduces a dual-stage transformer architecture that decouples temporal and spatial encoding to enable EEG authentication across arbitrary channel layouts and signal durations.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "NeuroShield: A Device-Agnostic Foundation Model for EEG Authentication",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly describes NeuroShield as a 'reusable foundation model for EEG authentication'.",
+          "Pretrained on a large-scale dataset comprising 15,762 subjects and 28,116 sessions.",
+          "Demonstrates transferability to unseen downstream datasets and generalization across heterogeneous recording settings."
+        ]
+      }
+    },
+    {
       "arxiv_id": "2606.20074v1",
       "arxiv_id_base": "2606.20074",
       "authors": [
@@ -635,18 +849,443 @@
           "Analyzes the benefit of pretrained FM representations over random initialization for a downstream clinical task"
         ]
       }
+    },
+    {
+      "arxiv_id": "2606.20812v1",
+      "arxiv_id_base": "2606.20812",
+      "authors": [
+        "Jaedong Hwang",
+        "Kathleen Zhang",
+        "Wei Dai",
+        "Konstantinos Kontras",
+        "Maarten Vanmarcke",
+        "Maarten De Vos",
+        "Ila Fiete",
+        "Paul Pu Liang"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2606.20812v1",
+        "pdf": "https://arxiv.org/pdf/2606.20812v1"
+      },
+      "published_date": "2026-06-18",
+      "summary": {
+        "arxiv_id_base": "2606.20812",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 19.0,
+          "datasets": [
+            "TUEG"
+          ],
+          "eeg_hours": 307.0,
+          "subjects": null
+        },
+        "detailed_summary": "B[FM]^2 proposes a generative pretraining framework for EEG that operates directly on raw waveforms using optimal-transport conditional flow matching, eliminating the need for patches or tokenization. It introduces SplitUNet, which factorizes spatiotemporal convolutions into separate 1D temporal and 1D electrode operations to handle the asymmetry between dense time-series and sparse electrode arrays. The model achieves state-of-the-art results on 7 of 9 downstream tasks while requiring 30x less pretraining data than existing foundation models and generating clinically realistic synthetic EEG.",
+        "evaluation": {
+          "benchmarks": [
+            "Mumtaz",
+            "MAT",
+            "Siena",
+            "ISRUC",
+            "HMC",
+            "TUEV",
+            "TUAB",
+            "SEED-V",
+            "BCIC-IV-2a"
+          ],
+          "headline_results": [
+            "SOTA on 7 of 9 downstream classification tasks",
+            "Suite-averaged balanced accuracy of 0.754",
+            "Synthetic EEG indistinguishable from real data by neurologists (Cohen's kappa = -0.096)"
+          ],
+          "tasks": [
+            "Seizure detection",
+            "Sleep staging",
+            "Motor imagery"
+          ]
+        },
+        "key_points": [
+          "Uses continuous-time flow matching on raw waveforms instead of discrete masked-token reconstruction.",
+          "Introduces SplitUNet, which factorizes convolutions into 1D temporal and 1D electrode components to model brain signal asymmetry.",
+          "Demonstrates extreme sample efficiency, reaching SOTA on 7/9 tasks with only ~307 hours of pretraining data."
+        ],
+        "limitations": [
+          "Underperforms compared to REVE on motor imagery tasks due to lack of in-domain pretraining data.",
+          "Pretraining is limited to the TUEG clinical corpus, potentially limiting generalization to non-clinical EEG.",
+          "Generative quality was validated by a small sample of only two neurologists."
+        ],
+        "method": {
+          "architecture": "SplitUNet (factorized 1D temporal and 1D electrode convolutions, time-only downsampling, linear-attention blocks)",
+          "finetuning": "Linear classification head on penultimate layer activations at t=0",
+          "objective": "Optimal-Transport Conditional Flow Matching (OT-CFM)",
+          "pretraining": "Raw multi-channel waveform to Gaussian noise mapping"
+        },
+        "notes": "{\"chars\": 74950, \"error\": null, \"pages\": 24, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=20584",
+        "one_liner": "A sample-efficient EEG foundation model using continuous-time flow matching and a factorized SplitUNet architecture to avoid signal discretization.",
+        "open_source": {
+          "code_url": "https://jd730.github.io/projects/BFM2",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-06-18",
+        "tags": {
+          "backbone": [
+            "diffusion"
+          ],
+          "objective": [],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "B[FM]$^2$: Brain Foundation Model via Flow Matching with SplitUNet",
+        "unique_contribution": "Introduces a continuous-time flow matching paradigm for EEG pretraining combined with a factorized SplitUNet architecture that preserves electrode topology without signal discretization.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "B[FM]$^2$: Brain Foundation Model via Flow Matching with SplitUNet",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies as a 'Brain Foundation Model' for EEG designed for generalizable representations.",
+          "Targets single-backbone transfer across diverse clinical and BCI tasks.",
+          "Directly compares its pretraining efficiency and performance against existing EEG foundation models."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2606.21973v1",
+      "arxiv_id_base": "2606.21973",
+      "authors": [
+        "Yiyu Gui",
+        "Mingzhi Chen",
+        "Yuesheng Zhu",
+        "Guibo Luo",
+        "Yuchao Yang"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2606.21973v1",
+        "pdf": "https://arxiv.org/pdf/2606.21973v1"
+      },
+      "published_date": "2026-06-20",
+      "summary": {
+        "arxiv_id_base": "2606.21973",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "20 datasets including EEG, iEEG, ECG, and PPG"
+          ],
+          "eeg_hours": null,
+          "subjects": 450000.0
+        },
+        "detailed_summary": "SPOTR proposes a compress-reconstruct pretraining framework for EEG, iEEG, ECG, and PPG signals that forces the model to learn global representations by reconstructing the signal from a single-token bottleneck. It introduces an ST Compactor to reduce the token sequence length from C × N to C + N, significantly lowering computational costs compared to standard Transformer-based SSL. Evaluation across 17 downstream datasets demonstrates superior performance under linear probing and significantly lower inference latency and memory usage compared to general-purpose time-series models.",
+        "evaluation": {
+          "benchmarks": [
+            "17 downstream physiological signal datasets"
+          ],
+          "headline_results": [
+            "Average AUC improvements: iEEG 21.71%, EEG 18.49%, ECG 17.86%, PPG 4.64%",
+            "78.1% lower p50 latency and 206.3% higher throughput than MOMENT"
+          ],
+          "tasks": [
+            "Linear probing",
+            "Few-shot classification",
+            "Full fine-tuning",
+            "Inference efficiency analysis"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: A universal SSL framework (SPOTR) for physiological signals that employs a compress-reconstruct scheme with a single-token information bottleneck.",
+          "Method novelty: Uses an ST Compactor to reduce token sequence length from C × N to C + N, achieving 78% lower latency and 52% lower peak GPU memory than MOMENT.",
+          "Strong evidence: Outperforms strongest baselines in linear probing across iEEG, EEG, ECG, and PPG, with average AUC gains up to 21.71%."
+        ],
+        "limitations": [
+          "Performance gains on PPG are more marginal compared to EEG, iEEG, and ECG.",
+          "Strong bottleneck may smooth out fine-grained signal details in reconstructions.",
+          "Evaluation primarily focuses on AUC, which may not capture all clinical nuances."
+        ],
+        "method": {
+          "architecture": "ST Compactor (spatial/temporal pooling) -> Latent Aggregator (Transformer encoder) -> Latent Renderer (Transformer decoder)",
+          "finetuning": "Linear probing, few-shot classification, and full fine-tuning for downstream tasks",
+          "objective": "Reconstruction loss (MSE) between original signal and reconstruction from a single-token bottleneck",
+          "pretraining": "Self-supervised compress-reconstruct pretraining on 20 large-scale physiological datasets"
+        },
+        "notes": "{\"chars\": 70312, \"error\": null, \"pages\": 18, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=19646",
+        "one_liner": "A universal SSL framework for physiological signals using a single-token global bottleneck to prevent shortcut learning and an efficient spatiotemporal compaction module.",
+        "open_source": {
+          "code_url": "https://github.com/5GYYYYY/SPOTR",
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-06-20",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "SPOTR: Spatio-temporal Pooling One-Token Reconstruction for Universal Physiological Signal Self-supervised Learning",
+        "unique_contribution": "Introduces a single-token global bottleneck for physiological signal reconstruction to suppress shortcut learning and an ST Compactor for efficient spatiotemporal token reduction.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "SPOTR: Spatio-temporal Pooling One-Token Reconstruction for Universal Physiological Signal Self-supervised Learning",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Presents a universal pretraining framework (SPOTR) for physiological signals, with EEG as a core target modality.",
+          "Pretrained on 20 heterogeneous datasets across EEG, iEEG, ECG, and PPG to learn transferable representations.",
+          "Evaluated using linear probing to demonstrate broad transferability across datasets.",
+          "Explicitly compares its performance and efficiency against a general-purpose time-series foundation model."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2606.22657v1",
+      "arxiv_id_base": "2606.22657",
+      "authors": [
+        "Thi Kieu Khanh Ho",
+        "Thomas Lai",
+        "Petr Klimes",
+        "Jan Cimbalnik",
+        "Martin Pail",
+        "Milan Brazdil",
+        "Birgit Frauscher",
+        "Narges Armanfard"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2606.22657v1",
+        "pdf": "https://arxiv.org/pdf/2606.22657v1"
+      },
+      "published_date": "2026-06-21",
+      "summary": {
+        "arxiv_id_base": "2606.22657",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "MNI",
+            "Brno"
+          ],
+          "eeg_hours": 1868.26,
+          "subjects": 47.0
+        },
+        "detailed_summary": "The paper proposes EpiiSLM, which consists of a signal foundation model (SFM) and a language foundation model (LFM). The SFM uses unsupervised masked reconstruction on a large sEEG corpus followed by supervised fine-tuning anchored on a non-epileptic class to reduce label ambiguity. The LFM then integrates these signal-derived probabilities with MRI and SOZ priors to provide interpretable EZ predictions, achieving 0.978 contact-level PPV3 and 100% region-level accuracy on seizure-free patients.",
+        "evaluation": {
+          "benchmarks": [
+            "MNI dataset",
+            "Brno external dataset"
+          ],
+          "headline_results": [
+            "0.978 contact-level PPV3 on MNI dataset",
+            "100% region-level accuracy for Engel Class Ia patients",
+            "0.857 PPV3 on external Brno dataset"
+          ],
+          "tasks": [
+            "Epileptogenic Zone (EZ) identification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: EpiiSLM uses a dual-system approach combining a signal transformer (BIOT) and a medical LLM (MedGemma) for epileptogenic zone localization.",
+          "Novel training strategy: Employs unsupervised pre-training on 112,096 minutes of sEEG and anchors supervised learning on a well-defined non-epileptic class to mitigate ground-truth ambiguity.",
+          "Strong clinical evidence: Achieved 0.978 contact-level PPV3 and 100% region-level accuracy in seizure-free patients, outperforming the SOZ-as-EZ baseline by 15.1%."
+        ],
+        "limitations": [
+          "Small cohort size due to the invasive nature of sEEG.",
+          "Privacy and standardization constraints in cross-site data sharing.",
+          "Lack of formal quantitative evaluation of the LFM's medical reasoning.",
+          "Dependence on expert-identified MRI lesions and SOZ labels."
+        ],
+        "method": {
+          "architecture": "SFM based on BIOT transformer; LFM based on frozen MedGemma.",
+          "finetuning": "Supervised fine-tuning anchored on a non-epileptic class; LFM integration via prompt engineering.",
+          "objective": "SFM Phase I: unsupervised masked reconstruction with contrastive loss; Phase II: supervised fine-tuning using an ensemble of a One-Class Head (Deep SVDD) and a Binary Head anchored on non-epileptic signals.",
+          "pretraining": "Unsupervised masked reconstruction on a large sEEG corpus."
+        },
+        "notes": "{\"chars\": 93924, \"error\": null, \"pages\": 23, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=25162",
+        "one_liner": "A dual-foundation model system combining a signal transformer and a medical LLM to identify the epileptogenic zone from sEEG and clinical data.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-06-21",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Foundation Models for Epileptogenic Zone Identification in Drug-Resistant Epilepsy",
+        "unique_contribution": "Introduces a dual-foundation model framework that anchors EZ identification on a grounded non-epileptic class and leverages a medical LLM for multimodal clinical integration.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Foundation Models for Epileptogenic Zone Identification in Drug-Resistant Epilepsy",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly describes the development of 'EpiiSLM, a dual foundation model system'",
+          "Mentions training a 'signal foundation model' on a large-scale sEEG dataset (104,990 minutes)",
+          "EEG (sEEG) is the primary modality and the core target of the signal foundation model"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2606.22925v1",
+      "arxiv_id_base": "2606.22925",
+      "authors": [
+        "Chengxuan Qin",
+        "Zhige Chen",
+        "Shu Peng",
+        "Rui Yang",
+        "Jiping Cui",
+        "Yikai Dong",
+        "Jun Li",
+        "Liu Peng",
+        "Zhida Shang",
+        "Mingze Tang",
+        "Kay Chen Tan",
+        "Jibin Wu"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.NE"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2606.22925v1",
+        "pdf": "https://arxiv.org/pdf/2606.22925v1"
+      },
+      "published_date": "2026-06-22",
+      "summary": {
+        "arxiv_id_base": "2606.22925",
+        "categories": [
+          "cs.LG",
+          "cs.NE"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 194036, \"error\": null, \"pages\": 62, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=54587;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-06-22",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "EEG Benchmarking Needs a Task Specification Layer: NeuroDoc for Rulebook-Guided, Executable Benchmark Construction",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EEG Benchmarking Needs a Task Specification Layer: NeuroDoc for Rulebook-Guided, Executable Benchmark Construction",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets the benchmarking and evaluation ecosystem for EEG foundation models.",
+          "Proposes a standardized task specification layer (NeuroDoc) to create reusable benchmark units for EEG-FMs.",
+          "Validates the proposed infrastructure by testing it across four different EEG foundation model backbones."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 6,
-    "candidates": 14,
-    "summarized": 6
+    "accepted": 12,
+    "candidates": 26,
+    "summarized": 12
   },
   "top_picks": [
+    "2606.20812",
+    "2606.20673",
     "2606.09605",
     "2606.09189",
-    "2606.06647",
-    "2606.01767",
-    "2606.20074"
+    "2606.06647"
   ]
 }
