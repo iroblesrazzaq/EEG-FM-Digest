@@ -1274,18 +1274,125 @@
           "Validates the proposed infrastructure by testing it across four different EEG foundation model backbones."
         ]
       }
+    },
+    {
+      "arxiv_id": "2606.30104v1",
+      "arxiv_id_base": "2606.30104",
+      "authors": [
+        "Ayşe Betül Yüce",
+        "Chris Joey Leffler",
+        "Sarun Varghese",
+        "Myra Spiliopoulou",
+        "Sebastian Stober"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2606.30104v1",
+        "pdf": "https://arxiv.org/pdf/2606.30104v1"
+      },
+      "published_date": "2026-06-29",
+      "summary": {
+        "arxiv_id_base": "2606.30104",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 128.0,
+          "datasets": [
+            "HBN-EEG",
+            "PhysioNet-MI",
+            "FACED"
+          ],
+          "eeg_hours": null,
+          "subjects": 2449.0
+        },
+        "detailed_summary": "The paper proposes a unified EEG foundation model to systematically compare three temporal feature extraction strategies: linear projection, convolutional encoders, and a frozen pretrained time-series foundation model (MOMENT). Unlike prior work where embedding modules are often entangled with overall architecture, this study isolates the extractor's impact using a shared transformer backbone and a masked reconstruction objective. Evaluation on motor imagery and emotion recognition tasks reveals that while simple extractors suffice for motor imagery, richer temporal modeling (Conv/MOMENT) benefits emotion recognition, proving that general-purpose TSFMs can be effectively transferred to EEG.",
+        "evaluation": {
+          "benchmarks": [
+            "PhysioNet-MI",
+            "FACED"
+          ],
+          "headline_results": [
+            "Conv and MOMENT extractors outperformed linear projection in emotion recognition.",
+            "Linear and Conv extractors performed similarly on motor imagery tasks."
+          ],
+          "tasks": [
+            "Motor Imagery",
+            "Emotion Recognition"
+          ]
+        },
+        "key_points": [
+          "Methodological study on EEG foundation models: compares linear, convolutional, and pretrained TSFM (MOMENT) temporal extractors.",
+          "Finds that the optimal extractor depends on the task, with richer temporal modeling benefiting emotion recognition over motor imagery.",
+          "Shows that general-purpose time-series representations transfer effectively to EEG as frozen components."
+        ],
+        "limitations": [
+          "Evaluation is limited to only two downstream tasks.",
+          "The TSFM (MOMENT) was kept frozen, potentially limiting its ability to capture EEG-specific dynamics.",
+          "No single extractor consistently outperformed others across all benchmarks.",
+          "Pretraining was conducted on a specific pediatric/adolescent dataset (HBN-EEG)."
+        ],
+        "method": {
+          "architecture": "Unified EEG-FM with a transformer encoder and masked reconstruction objective, comparing three temporal extractors (linear, depthwise separable CNN, and frozen MOMENT-small) using Spherical Positional Encoding (SPE).",
+          "finetuning": "Linear probing and full backbone tuning on downstream tasks.",
+          "objective": "Masked reconstruction",
+          "pretraining": "Pretrained on HBN-EEG dataset using a 50% random masking strategy."
+        },
+        "notes": "{\"chars\": 37304, \"error\": null, \"pages\": 10, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=10787",
+        "one_liner": "A controlled study comparing linear, convolutional, and pretrained time-series foundation model (MOMENT) extractors within a unified EEG foundation model framework.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-06-29",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Temporal Feature Extractors in EEG Foundation Models: A Controlled Comparison Including a Pretrained Time-Series Model",
+        "unique_contribution": "Demonstrates that a frozen, general-purpose pretrained time-series foundation model (MOMENT) can serve as an effective temporal feature extractor for EEG foundation models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Temporal Feature Extractors in EEG Foundation Models: A Controlled Comparison Including a Pretrained Time-Series Model",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly focuses on 'EEG foundation models' and learning generalizable representations from large-scale recordings.",
+          "Conducts a controlled comparison of temporal feature extraction strategies within a unified EEG-FM framework.",
+          "Evaluates the transferability of a pretrained time-series foundation model (MOMENT) as a component of an EEG-FM."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 12,
-    "candidates": 26,
-    "summarized": 12
+    "accepted": 13,
+    "candidates": 28,
+    "summarized": 13
   },
   "top_picks": [
+    "2606.30104",
     "2606.20812",
     "2606.20673",
     "2606.09605",
-    "2606.09189",
-    "2606.06647"
+    "2606.09189"
   ]
 }
