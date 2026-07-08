@@ -1,0 +1,199 @@
+{
+  "featured_paper_id": null,
+  "month": "2026-07",
+  "papers": [
+    {
+      "arxiv_id": "2607.03094v1",
+      "arxiv_id_base": "2607.03094",
+      "authors": [
+        "Aymen Sarhane",
+        "Fouad Lbakali",
+        "Mouad Souissi",
+        "Jonathan Lys",
+        "Giulia Lioi"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.03094v1",
+        "pdf": "https://arxiv.org/pdf/2607.03094v1"
+      },
+      "published_date": "2026-07-03",
+      "summary": {
+        "arxiv_id_base": "2607.03094",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "BCI Competition IV-2a",
+            "PhysioNet Motor Imagery",
+            "Zuo2025"
+          ],
+          "eeg_hours": 22.5,
+          "subjects": 148.0
+        },
+        "detailed_summary": "The paper proposes Stacked LoRA, an adaptation framework designed to mitigate inter-subject variability when fine-tuning frozen EEG foundation models (REVE, LaBraM, and LUNA). The method structurally separates the low-rank update into a shared Global adapter for subject-invariant task knowledge and individual Subject-Specific adapters to absorb personal neural signatures. Experiments on three motor imagery datasets demonstrate that this decoupled approach generally outperforms single-path adaptation, with the optimal balance shifting toward global paths for large cohorts and subject-specific paths for high-variability clinical data.",
+        "evaluation": {
+          "benchmarks": [
+            "BCI Competition IV-2a",
+            "PhysioNet MI",
+            "Zuo2025"
+          ],
+          "headline_results": [
+            "Stacked LoRA achieved best or tied-best balanced accuracy in 7 out of 9 backbone-dataset combinations."
+          ],
+          "tasks": [
+            "Motor Imagery Decoding"
+          ]
+        },
+        "key_points": [
+          "Method for EEG-FM adaptation: Introduces Stacked LoRA to decouple subject-invariant and subject-specific knowledge during fine-tuning.",
+          "Versatile performance: Outperforms linear probing and single-path LoRA across REVE, LaBraM, and LUNA backbones on multiple MI datasets.",
+          "Population-dependent utility: Demonstrates that shared adapters suffice for large, diverse cohorts, while subject-specific paths are critical for high-variability clinical recordings."
+        ],
+        "limitations": [
+          "Requires subject identity at inference time, preventing zero-shot personalization for unseen subjects.",
+          "Training cost increases linearly with the number of subjects due to joint optimization of all subject-specific adapters.",
+          "Subject-specific adapters offer diminishing returns when data per subject is very scarce.",
+          "Evaluation was restricted to motor imagery decoding with within-dataset splits."
+        ],
+        "method": {
+          "architecture": "Frozen backbone (REVE, LaBraM, LUNA) + Stacked LoRA (Global adapter r=32, Subject-Specific adapters r=8) + linear classification head.",
+          "finetuning": "Joint optimization of Global and Subject-Specific LoRA weights using AdamW with cosine-annealing.",
+          "objective": "Cross-entropy loss for motor imagery classification.",
+          "pretraining": "Utilizes existing pretrained weights from REVE, LaBraM, and LUNA."
+        },
+        "notes": "{\"chars\": 34871, \"error\": null, \"pages\": 13, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=10319",
+        "one_liner": "A dual-path LoRA framework that decouples global task knowledge from subject-specific signatures to improve the adaptation of EEG foundation models for motor imagery decoding.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-07-03",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [],
+          "topology": [
+            "topology-agnostic"
+          ]
+        },
+        "title": "Stacked LoRA for Subject-Adaptive EEG Foundation Models in Motor Imagery Decoding",
+        "unique_contribution": "Proposes a dual-path adaptation architecture (Stacked LoRA) that explicitly decouples population-level task knowledge from individual subject variability during the fine-tuning of frozen EEG foundation models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Stacked LoRA for Subject-Adaptive EEG Foundation Models in Motor Imagery Decoding",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets the adaptation and fine-tuning of existing EEG foundation models such as REVE, LaBraM, and LUNA.",
+          "Proposes a specific framework (Stacked LoRA) to decouple subject-invariant and subject-specific knowledge within EEG-FMs.",
+          "Focuses on the EEG-FM ecosystem by addressing the challenge of adapting large pretrained EEG models to downstream tasks."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2607.03925v1",
+      "arxiv_id_base": "2607.03925",
+      "authors": [
+        "Weibin Li",
+        "Wendu Li",
+        "Yushan You",
+        "Chen Wei",
+        "Quanying Liu"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.03925v1",
+        "pdf": "https://arxiv.org/pdf/2607.03925v1"
+      },
+      "published_date": "2026-07-04",
+      "summary": {
+        "arxiv_id_base": "2607.03925",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 75817, \"error\": null, \"pages\": 22, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=20660;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-07-04",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "NeuroOnline: Bridging Pretraining and Online Adaptation for EEG Foundation Models",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "NeuroOnline: Bridging Pretraining and Online Adaptation for EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets EEG foundation models in both the title and abstract.",
+          "Proposes a framework for online adaptation and alignment of pretrained EEG representations.",
+          "Addresses the gap between pretraining and downstream deployment for EEG-FMs."
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 2,
+    "candidates": 5,
+    "summarized": 2
+  },
+  "top_picks": [
+    "2607.03094",
+    "2607.03925"
+  ]
+}
