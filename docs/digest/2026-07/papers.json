@@ -105,6 +105,92 @@
       }
     },
     {
+      "arxiv_id": "2607.07720v1",
+      "arxiv_id_base": "2607.07720",
+      "authors": [
+        "Zhoujie Hou",
+        "Song Wang",
+        "Kexin Lou",
+        "Mo Wang",
+        "Chen Wei",
+        "Quanying Liu"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.07720v1",
+        "pdf": "https://arxiv.org/pdf/2607.07720v1"
+      },
+      "published_date": "2026-07-04",
+      "summary": {
+        "arxiv_id_base": "2607.07720",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 30336, \"error\": null, \"pages\": 12, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=9085;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-07-04",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Omni-Sleep: A Sleep Foundation Model via Hierarchical Contrastive Learning of CNS--ANS Dynamic",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Omni-Sleep: A Sleep Foundation Model via Hierarchical Contrastive Learning of CNS--ANS Dynamic",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies as a 'sleep foundation model' (Omni-Sleep)",
+          "Pre-trained on a massive scale of over 100,000 hours of multimodal PSG data including EEG",
+          "Demonstrates broad transferability across sleep staging and multi-disease classification tasks",
+          "EEG is a central modality used to capture CNS dynamics within the foundation model framework"
+        ]
+      }
+    },
+    {
       "arxiv_id": "2607.03925v1",
       "arxiv_id_base": "2607.03925",
       "authors": [
@@ -185,15 +271,127 @@
           "Addresses the gap between pretraining and downstream deployment for EEG-FMs."
         ]
       }
+    },
+    {
+      "arxiv_id": "2607.06629v2",
+      "arxiv_id_base": "2607.06629",
+      "authors": [
+        "Roy Segal",
+        "Yoni Svechinsky",
+        "Tomer Fekete"
+      ],
+      "categories": [
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.06629v2",
+        "pdf": "https://arxiv.org/pdf/2607.06629v2"
+      },
+      "published_date": "2026-07-07",
+      "summary": {
+        "arxiv_id_base": "2607.06629",
+        "categories": [
+          "cs.LG",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": 128.0,
+          "datasets": [
+            "brain.space",
+            "Healthy Brain Network (HBN)"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes STST-JEPA, a transformer-based foundation model that combines a latent-prediction objective (predicting masked tokens against an EMA-of-tokenizer target) with an auxiliary signal-reconstruction term. It introduces a Pooled Multihead Attention (PMA) block to handle heterogeneous EEG montages by collapsing the channel axis into a fixed set of tokens. Pretrained on 47,703 sessions, the model achieves state-of-the-art results on the NeuralBench x brain.space leaderboard for sex, age, and psychopathology tasks.",
+        "evaluation": {
+          "benchmarks": [
+            "NeuralBench x brain.space",
+            "Internal validation set"
+          ],
+          "headline_results": [
+            "Rank 1 in sex, age, and psychopathology on NeuralBench x brain.space",
+            "Internal age regression MAE of 3.06 years"
+          ],
+          "tasks": [
+            "Age regression",
+            "Sex classification",
+            "Psychopathology regression",
+            "Cognitive efficiency correlation"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: STST-JEPA uses a joint latent-prediction and signal-reconstruction objective to learn representations from 47,703 heterogeneous EEG sessions.",
+          "Architecture novelty: Employs a Pooled Multihead Attention (PMA) block and coordinate embeddings to unify different electrode montages into a shared token space.",
+          "Strong evidence: Achieves rank-1 performance on the NeuralBench x brain.space leaderboard for sex, age, and psychopathology regression from a single backbone."
+        ],
+        "limitations": [
+          "Lack of controlled ablations for the joint objective components.",
+          "Internal age regression results reported as best validation rather than fixed protocol test.",
+          "Performance on age prediction drops to rank 4 when using standard 2s windows on NeuralBench.",
+          "Behavioral correlations are small in magnitude (|r| < 0.10).",
+          "No clinical validity claims made for the brain age biomarker.",
+          "Potential confounding of BAG by the mixture of resting and task paradigms in pretraining."
+        ],
+        "method": {
+          "architecture": "24-layer transformer encoder with a tokenizer using 1D convs and PMA channel pooling.",
+          "finetuning": "Downstream tasks use either a frozen attentive probe or light fine-tuning of final layers.",
+          "objective": "Joint MSE latent prediction (against an EMA tokenizer) and smooth-L1 signal reconstruction.",
+          "pretraining": "Self-supervised pretraining on 47,703 EEG sessions using a shallow-target JEPA framework."
+        },
+        "notes": "{\"chars\": 71495, \"error\": null, \"pages\": 24, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=19601",
+        "one_liner": "A self-supervised EEG foundation model using a joint latent-prediction and signal-reconstruction objective to enable robust brain-age estimation and cross-task transfer.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-07-07",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "STST-JEPA: Shallow-Target Spatio-Temporal Joint Embedding Prediction Architecture For EEG Self-Supervised Learning",
+        "unique_contribution": "Introduces a joint SSL objective combining shallow-target latent prediction with signal reconstruction, paired with a coordinate-aware PMA block for montage-flexible EEG tokenization.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "STST-JEPA: Shallow-Target Spatio-Temporal Joint Embedding Prediction Architecture For EEG Self-Supervised Learning",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly frames the work as addressing the need for EEG foundation models.",
+          "Pretrained on a large-scale dataset of 47,703 EEG sessions using a self-supervised transformer architecture.",
+          "Demonstrates broad transferability across multiple downstream tasks including age prediction, sex classification, and psychopathology regression."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 2,
-    "candidates": 5,
-    "summarized": 2
+    "accepted": 4,
+    "candidates": 8,
+    "summarized": 4
   },
   "top_picks": [
+    "2607.06629",
     "2607.03094",
+    "2607.07720",
     "2607.03925"
   ]
 }

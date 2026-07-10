@@ -10,18 +10,27 @@
     },
     {
       "paper_ids": [
-        "2607.03925"
+        "2607.06629"
+      ],
+      "title": "new_model"
+    },
+    {
+      "paper_ids": [
+        "2607.03925",
+        "2607.07720"
       ],
       "title": "other"
     }
   ],
   "stats": {
-    "accepted": 2,
-    "candidates": 5,
-    "summarized": 2
+    "accepted": 4,
+    "candidates": 8,
+    "summarized": 4
   },
   "top_picks": [
+    "2607.06629",
     "2607.03094",
+    "2607.07720",
     "2607.03925"
   ]
 }
