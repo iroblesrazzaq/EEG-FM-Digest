@@ -105,7 +105,7 @@
       }
     },
     {
-      "arxiv_id": "2607.07720v1",
+      "arxiv_id": "2607.07720v2",
       "arxiv_id_base": "2607.07720",
       "authors": [
         "Zhoujie Hou",
@@ -120,8 +120,8 @@
         "cs.AI"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2607.07720v1",
-        "pdf": "https://arxiv.org/pdf/2607.07720v1"
+        "abs": "http://arxiv.org/abs/2607.07720v2",
+        "pdf": "https://arxiv.org/pdf/2607.07720v2"
       },
       "published_date": "2026-07-04",
       "summary": {
@@ -178,7 +178,7 @@
         "used_fulltext": true
       },
       "summary_failed_reason": null,
-      "title": "Omni-Sleep: A Sleep Foundation Model via Hierarchical Contrastive Learning of CNS--ANS Dynamic",
+      "title": "Omni-Sleep: A Sleep Foundation Model via Hierarchical Contrastive Learning of CNS-ANS Dynamics",
       "triage": {
         "confidence": 1.0,
         "decision": "accept",
@@ -381,17 +381,243 @@
           "Demonstrates broad transferability across multiple downstream tasks including age prediction, sex classification, and psychopathology regression."
         ]
       }
+    },
+    {
+      "arxiv_id": "2607.09543v1",
+      "arxiv_id_base": "2607.09543",
+      "authors": [
+        "Gabriel Mahuas",
+        "Victoria Shevchenko",
+        "Ugo Tanielian",
+        "Yassir Bendou",
+        "Richard Gao"
+      ],
+      "categories": [
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.09543v1",
+        "pdf": "https://arxiv.org/pdf/2607.09543v1"
+      },
+      "published_date": "2026-07-10",
+      "summary": {
+        "arxiv_id_base": "2607.09543",
+        "categories": [
+          "cs.LG",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "TUEG",
+            "HBN"
+          ],
+          "eeg_hours": 27000.0,
+          "subjects": 10800.0
+        },
+        "detailed_summary": "The paper proposes CoCoT-EEG, which replaces standard patch-first tokenization with a convolution-first approach using parallel 1D convolutional branches to extract multiscale temporal features. Unlike most EEG foundation models that use masked reconstruction, CoCoT-EEG employs a MoCo-style contrastive pretraining objective to better handle the high noise and low information density of EEG signals. The model was pretrained on the TUEG corpus and demonstrated state-of-the-art performance across 10 diverse decoding tasks, including motor imagery and emotion recognition, outperforming reconstruction-based models on 8 out of 10 benchmarks.",
+        "evaluation": {
+          "benchmarks": [
+            "BCI-IV",
+            "PHYSIO",
+            "SHU",
+            "FACED",
+            "SEED-V",
+            "CHB-MIT",
+            "TUAB",
+            "HMC",
+            "ISRUC",
+            "SEED-VIG"
+          ],
+          "headline_results": [
+            "Outperformed reconstruction-pretrained models on 8/10 tasks without extra finetuning.",
+            "Outperformed reconstruction-pretrained models on 9/10 tasks when using Mixup."
+          ],
+          "tasks": [
+            "motor imagery",
+            "emotion recognition",
+            "seizure detection",
+            "sleep stage classification",
+            "vigilance detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: CoCoT-EEG uses multiscale 1D convolutions for feature extraction before patchification to filter noise and preserve temporal continuity.",
+          "Contrastive pretraining: Employs a MoCo-style objective that outperforms masked reconstruction on 8 out of 10 benchmark decoding tasks.",
+          "High data efficiency: The base architecture outperforms previous single-task models even when trained from scratch without pretraining."
+        ],
+        "limitations": [
+          "Pretraining datasets are smaller than those used by some other recent EEG foundation models.",
+          "Augmentation ablations were conducted at a reduced scale.",
+          "Reconstruction objectives may still be more appropriate for high-SNR tasks like seizure detection."
+        ],
+        "method": {
+          "architecture": "Parallel 1D convolutional branches (kernels 3-121), L2 pooling for patchification, Fourier positional encoding, and a Transformer encoder.",
+          "finetuning": "Supervised finetuning using a residual MLP head with GLU blocks.",
+          "objective": "MoCo-style contrastive objective using InfoNCE loss.",
+          "pretraining": "Self-supervised pretraining on TUEG and HBN datasets with EEG-specific augmentations."
+        },
+        "notes": "{\"chars\": 60182, \"error\": null, \"pages\": 18, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=16647",
+        "one_liner": "A contrastive-pretrained EEG foundation model utilizing a multiscale convolutional tokenizer to improve noise robustness and feature extraction.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-07-10",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "CoCoT-EEG: Contrastive-Pretrained Multiscale Convolutional Transformer for EEG Decoding",
+        "unique_contribution": "Introduces a convolution-first tokenizer and a contrastive pretraining objective as a more robust alternative to the prevailing masked reconstruction paradigm for EEG foundation models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "CoCoT-EEG: Contrastive-Pretrained Multiscale Convolutional Transformer for EEG Decoding",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly frames the work as developing a contrastive-pretrained model for 'building EEG FMs'.",
+          "Evaluates the model on 'extensive benchmark decoding tasks with heterogeneous electrode configurations', demonstrating broad transferability.",
+          "Directly compares the proposed approach against other 'reconstruction-pretrained EEG models' within the foundation model paradigm."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2607.11578v1",
+      "arxiv_id_base": "2607.11578",
+      "authors": [
+        "Abdulkader Helwan",
+        "Lina Abou-Abbas",
+        "Hussein El Amouri",
+        "Belkacem Chikhaoui",
+        "Khadidja Henni"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CV",
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.11578v1",
+        "pdf": "https://arxiv.org/pdf/2607.11578v1"
+      },
+      "published_date": "2026-07-13",
+      "summary": {
+        "arxiv_id_base": "2607.11578",
+        "categories": [
+          "cs.LG",
+          "cs.AI",
+          "cs.CV",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": 22.0,
+          "datasets": [
+            "TUHSZ",
+            "TUAB"
+          ],
+          "eeg_hours": null,
+          "subjects": 279.0
+        },
+        "detailed_summary": "DiffEEG proposes a 1D U-Net based foundation model pre-trained on 1.3 million unlabeled EEG segments using a denoising diffusion objective. It introduces a Reinforced Decision Layer (RDL) that uses policy gradient optimization to directly maximize the F1-score, addressing extreme class imbalance in clinical seizure data. Evaluation on the TUHSZ corpus shows 81% accuracy for binary detection and 61% accuracy for 4-class seizure subtyping under strict patient-wise splits.",
+        "evaluation": {
+          "benchmarks": [
+            "TUHSZ",
+            "TUAB"
+          ],
+          "headline_results": [
+            "Binary Detection: 81% accuracy, 85% weighted F1, 0.7557 AUROC",
+            "4-class Subtyping (LOFO): 61% accuracy, 59% F1",
+            "TUAB Abnormality Detection: 0.922 AUROC"
+          ],
+          "tasks": [
+            "Binary Seizure Detection",
+            "Seizure Subtyping",
+            "Abnormality Detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: DiffEEG uses a 1D U-Net with multi-head self-attention and FiLM conditioning, pre-trained via a denoising diffusion objective.",
+          "Introduces a Reinforced Decision Layer (RDL) using policy gradient optimization to prioritize sensitivity to rare seizure events over global accuracy.",
+          "Achieves 81% accuracy in binary seizure detection and 0.922 AUROC on the TUAB abnormality detection benchmark."
+        ],
+        "limitations": [
+          "Difficulty in cross-patient generalization due to neurophysiological diversity",
+          "Sensitivity to variations in recording equipment",
+          "Need for validation across more diverse datasets to ensure clinical reliability"
+        ],
+        "method": {
+          "architecture": "1D U-Net with multi-head self-attention, FiLM conditioning, and sinusoidal position embeddings",
+          "finetuning": "Reinforced Decision Layer (RDL) using policy gradient (REINFORCE) to maximize F1-score",
+          "objective": "Denoising diffusion (MSE between added and predicted noise)",
+          "pretraining": "Self-supervised pre-training on 1.3 million unlabeled EEG segments from the TUHSZ corpus"
+        },
+        "notes": "{\"chars\": 59591, \"error\": null, \"pages\": 19, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=16549",
+        "one_liner": "A self-supervised EEG foundation model using denoising diffusion pre-training and reinforcement learning for imbalanced seizure detection.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-07-13",
+        "tags": {
+          "backbone": [
+            "diffusion"
+          ],
+          "objective": [],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "DiffEEG: A Self-Supervised Denoising Diffusion Model for Learning EEG Generic Representations",
+        "unique_contribution": "Combines denoising diffusion pre-training with a reinforcement learning-based decision layer to optimize for F1-score in highly imbalanced EEG seizure datasets.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "DiffEEG: A Self-Supervised Denoising Diffusion Model for Learning EEG Generic Representations",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly describes DiffEEG as a 'self-supervised foundation model'",
+          "Pre-trained on a large-scale unlabeled dataset (1.3M segments) to learn 'generic neural representations'",
+          "Demonstrates downstream adaptation for seizure detection and subtyping tasks"
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 4,
-    "candidates": 8,
-    "summarized": 4
+    "accepted": 6,
+    "candidates": 11,
+    "summarized": 6
   },
   "top_picks": [
+    "2607.11578",
+    "2607.09543",
     "2607.06629",
     "2607.03094",
-    "2607.07720",
-    "2607.03925"
+    "2607.07720"
   ]
 }
