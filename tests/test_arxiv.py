@@ -1,7 +1,7 @@
 import httpx
 import pytest
 
-from eegfm_digest.arxiv import dedupe_latest, fetch_query, in_month, parse_arxiv_id
+from eegfm_digest.arxiv import dedupe_latest, fetch_paper_by_id, fetch_query, in_month, parse_arxiv_id
 
 
 FEED_ONE_ENTRY = """\
@@ -17,6 +17,11 @@ FEED_ONE_ENTRY = """\
     <link href="http://arxiv.org/abs/2501.00001v1" rel="alternate" type="text/html"/>
     <link title="pdf" href="http://arxiv.org/pdf/2501.00001v1" rel="related" type="application/pdf"/>
   </entry>
+</feed>
+"""
+
+FEED_NO_ENTRIES = """\
+<feed xmlns="http://www.w3.org/2005/Atom">
 </feed>
 """
 
@@ -43,6 +48,16 @@ class _RetryOnceClient:
 class _AlwaysTimeoutClient:
     def get(self, _url, params=None):  # noqa: ANN001
         raise httpx.ReadTimeout("timed out")
+
+
+class _SinglePaperClient:
+    def __init__(self, text: str):
+        self.text = text
+        self.params = None
+
+    def get(self, _url, params=None):  # noqa: ANN001
+        self.params = params
+        return _FakeResponse(self.text)
 
 
 def test_parse_arxiv_id_version():
@@ -97,3 +112,16 @@ def test_fetch_query_raises_after_retry_exhaustion(monkeypatch):
             retry_backoff_seconds=0,
             client=_AlwaysTimeoutClient(),
         )
+
+
+def test_fetch_paper_by_id_returns_entry():
+    client = _SinglePaperClient(FEED_ONE_ENTRY)
+    row = fetch_paper_by_id("2501.00001v2", client=client)
+    assert row is not None
+    assert client.params == {"id_list": "2501.00001"}
+    assert row["arxiv_id_base"] == "2501.00001"
+
+
+def test_fetch_paper_by_id_returns_none_when_missing():
+    client = _SinglePaperClient(FEED_NO_ENTRIES)
+    assert fetch_paper_by_id("9999.99999", client=client) is None
