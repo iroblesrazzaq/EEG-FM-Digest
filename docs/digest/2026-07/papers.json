@@ -606,18 +606,881 @@
           "Demonstrates downstream adaptation for seizure detection and subtyping tasks"
         ]
       }
+    },
+    {
+      "arxiv_id": "2607.21384v1",
+      "arxiv_id_base": "2607.21384",
+      "authors": [
+        "Targol Bakhtiarvand",
+        "Jugal Kalita",
+        "Adham Atyabi"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.21384v1",
+        "pdf": "https://arxiv.org/pdf/2607.21384v1"
+      },
+      "published_date": "2026-07-23",
+      "summary": {
+        "arxiv_id_base": "2607.21384",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 32677, \"error\": null, \"pages\": 7, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8133;max_tokens=8000;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-07-23",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Multimodal Pretraining for Generalizable EEG Representation Learning",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Multimodal Pretraining for Generalizable EEG Representation Learning",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly claims to develop a 'multimodal EEG foundation model' and an 'adaptable EEG backbone'.",
+          "Focuses on generalizable EEG representation learning using self-supervised pretraining techniques like masked modeling and contrastive alignment.",
+          "Demonstrates the model's ability for straightforward adaptation to new seizure detection scenarios across multiple datasets."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2607.21402v1",
+      "arxiv_id_base": "2607.21402",
+      "authors": [
+        "Tao Zhou",
+        "Jing Han",
+        "Lingyu Shu",
+        "Zixing Zhang"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.21402v1",
+        "pdf": "https://arxiv.org/pdf/2607.21402v1"
+      },
+      "published_date": "2026-07-23",
+      "summary": {
+        "arxiv_id_base": "2607.21402",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "12 public EEG datasets"
+          ],
+          "eeg_hours": 2400.0,
+          "subjects": null
+        },
+        "detailed_summary": "MSBraM introduces a multi-scale self-supervised framework for EEG analysis, addressing the challenge of capturing hierarchical temporal dynamics. It utilizes a multi-scale neural tokenizer with VQ-FFT reconstruction and a multi-branch Transformer architecture fused via a Bidirectional Feature Pyramid Network (BiFPN). The model is pretrained using a curriculum multi-scale masking strategy and demonstrates state-of-the-art performance across 10 downstream tasks and 12 public datasets.",
+        "evaluation": {
+          "benchmarks": [
+            "12 public EEG datasets"
+          ],
+          "headline_results": [
+            "Achieved SOTA performance on 11 out of 12 datasets",
+            "Average relative gain of 2.21% over existing baselines"
+          ],
+          "tasks": [
+            "EEG-based classification",
+            "Downstream brain-state decoding"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: MSBraM utilizes a multi-scale architecture to learn hierarchical brain dynamics.",
+          "Multi-scale Tokenizer: Employs VQ-FFT reconstruction to discretize EEG signals at multiple temporal scales.",
+          "Curriculum Masking: Implements a dynamic masking ratio during pretraining to improve representation learning."
+        ],
+        "limitations": [
+          "Computational overhead of multi-branch architecture",
+          "Dependence on the quality of the initial VQ-FFT tokenizer"
+        ],
+        "method": {
+          "architecture": "Multi-branch TransformerEncoder with BiFPN fusion and a multi-scale VQ-VAE tokenizer.",
+          "finetuning": "Linear probing and full fine-tuning on 10 downstream EEG tasks.",
+          "objective": "Masked discrete code prediction.",
+          "pretraining": "Two-stage process: first training the multi-scale tokenizer, then pretraining the Transformer via curriculum masking."
+        },
+        "notes": "{\"chars\": 76476, \"error\": null, \"pages\": 14, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7978",
+        "one_liner": "A multi-scale self-supervised EEG foundation model that learns hierarchical representations using a multi-scale tokenizer and curriculum masking.",
+        "open_source": {
+          "code_url": null,
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-07-23",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "discrete-code-prediction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "MSBraM: A Multi-scale Self-supervised Brain Foundation Model for Hierarchical EEG Dynamics Learning",
+        "unique_contribution": "Introduces a multi-scale neural tokenizer and a curriculum masking strategy to capture hierarchical EEG dynamics across different temporal resolutions.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "MSBraM: A Multi-scale Self-supervised Brain Foundation Model for Hierarchical EEG Dynamics Learning",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly proposes MSBraM as a 'Multi-Scale self-supervised Brain foundation Model' for EEG.",
+          "Utilizes a large-scale pretraining framework on over 2,400 hours of EEG data.",
+          "Demonstrates broad transferability and generalization across 10 downstream tasks and 12 public datasets."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2607.24834v1",
+      "arxiv_id_base": "2607.24834",
+      "authors": [
+        "Marzieh Zare"
+      ],
+      "categories": [
+        "q-bio.NC",
+        "cs.AI",
+        "cs.ET",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.24834v1",
+        "pdf": "https://arxiv.org/pdf/2607.24834v1"
+      },
+      "published_date": "2026-07-23",
+      "summary": {
+        "arxiv_id_base": "2607.24834",
+        "categories": [
+          "q-bio.NC",
+          "cs.AI",
+          "cs.ET",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 68414, \"error\": null, \"pages\": 21, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8012;max_tokens=8000;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-07-23",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Foundation Models for EEG Are Blind to Long-Range Temporal Correlations: A Spectral-Temporal Dissociation Behind Their Cross-Population Fragility",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Foundation Models for EEG Are Blind to Long-Range Temporal Correlations: A Spectral-Temporal Dissociation Behind Their Cross-Population Fragility",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly evaluates five specific EEG foundation models (REVE, LaBraM, BENDR, CBraMod, BIOT)",
+          "Analyzes the properties of pretrained EEG embeddings and their cross-population transferability",
+          "Fits the ecosystem criteria as a systematic evaluation and analysis of EEG-FMs"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2607.22397v1",
+      "arxiv_id_base": "2607.22397",
+      "authors": [
+        "Sergey Musienko"
+      ],
+      "categories": [
+        "cs.HC",
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.22397v1",
+        "pdf": "https://arxiv.org/pdf/2607.22397v1"
+      },
+      "published_date": "2026-07-24",
+      "summary": {
+        "arxiv_id_base": "2607.22397",
+        "categories": [
+          "cs.HC",
+          "cs.LG",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "BNCI2014-004",
+            "Zhou2016",
+            "Kumar2024",
+            "Shin2017-A"
+          ],
+          "eeg_hours": null,
+          "subjects": 40.0
+        },
+        "detailed_summary": "The paper introduces Nimbus Personalizer, a universal API that wraps frozen EEG encoders (both classical and foundation models) to enable subject-level personalization via a Bayesian head and optional affine mid-tier. Unlike per-model fine-tuning, this system provides a consistent contract for integration, allowing OEMs to swap trunks without redesigning the adaptation stack. Evaluation across five classical trunks and the REVE foundation model on four motor-imagery datasets shows that this approach recovers significant accuracy gains compared to frozen models while requiring orders of magnitude less adaptation time than full fine-tuning.",
+        "evaluation": {
+          "benchmarks": [
+            "Synthetic channel-mix stress test",
+            "Adaptation utility (Accuracy vs. Fit Time)"
+          ],
+          "headline_results": [
+            "Bayesian head achieves high accuracy with orders of magnitude lower adaptation wall time than full fine-tuning",
+            "Consistent performance across 6 different trunk architectures"
+          ],
+          "tasks": [
+            "Motor Imagery"
+          ]
+        },
+        "key_points": [
+          "Provides a universal API for integrating frozen EEG trunks (classical or foundation) with a Bayesian personalization head.",
+          "Demonstrates that Bayesian adaptation recovers 65-90% of full fine-tuning accuracy while being 14x to 40x faster.",
+          "Evaluated across multiple motor imagery datasets and architectures including EEGNet, Conformer, and REVE."
+        ],
+        "limitations": [
+          "Performance depends on the quality of the frozen trunk's embeddings",
+          "Evaluation was primarily limited to motor imagery tasks"
+        ],
+        "method": {
+          "architecture": "Frozen EEG Trunk -> Optional Affine Mid-tier -> Bayesian Head (LDA/QDA/Softmax)",
+          "finetuning": "Full fine-tuning is provided as an 'escape hatch' (L3) for comparison",
+          "objective": "Subject-level personalization of frozen embeddings",
+          "pretraining": "Trunks are pre-trained on large-scale or task-specific data and frozen during personalization"
+        },
+        "notes": "{\"chars\": 50378, \"error\": null, \"pages\": 20, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7985",
+        "one_liner": "A trunk-agnostic personalization API for frozen EEG encoders that uses a Bayesian head to achieve fast adaptation across diverse architectures.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-07-24",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Universal BCI Personalization: One API for Frozen EEG Trunks and Foundation Models",
+        "unique_contribution": "A trunk-agnostic personalization API that decouples the frozen EEG encoder from the adaptation head, enabling a single integration path for heterogeneous architectures.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Universal BCI Personalization: One API for Frozen EEG Trunks and Foundation Models",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets 'Foundation Models' and 'frozen EEG encoders' in the title and abstract.",
+          "Proposes a universal personalization API for adapting heterogeneous EEG trunks, including a foundation encoder (REVE).",
+          "Fits the ecosystem criteria for adaptation and fine-tuning of EEG-FMs."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2607.23554v1",
+      "arxiv_id_base": "2607.23554",
+      "authors": [
+        "Shuwen Yu",
+        "William P Marnane",
+        "Geraldine B. Boylan",
+        "Gordon Lightbody"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.23554v1",
+        "pdf": "https://arxiv.org/pdf/2607.23554v1"
+      },
+      "published_date": "2026-07-26",
+      "summary": {
+        "arxiv_id_base": "2607.23554",
+        "categories": [
+          "cs.LG",
+          "cs.AI",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 96099, \"error\": null, \"pages\": 25, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7967;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-07-26",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Neonatal Hypoxic-ischaemic Encephalopathy Classification from the EEG and HRV Signals Using a Conformer based Masked Autoencoder",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Neonatal Hypoxic-ischaemic Encephalopathy Classification from the EEG and HRV Signals Using a Conformer based Masked Autoencoder",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Uses a Masked Autoencoder for large-scale representation learning on 6,030 hours of unlabelled EEG data.",
+          "Explicitly frames the work around learning transferable representations for downstream tasks.",
+          "EEG is a central modality with a dedicated pretrained model (MAE-EEG)."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2607.24519v1",
+      "arxiv_id_base": "2607.24519",
+      "authors": [
+        "Marzieh Zare"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.NE"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.24519v1",
+        "pdf": "https://arxiv.org/pdf/2607.24519v1"
+      },
+      "published_date": "2026-07-27",
+      "summary": {
+        "arxiv_id_base": "2607.24519",
+        "categories": [
+          "cs.LG",
+          "cs.AI",
+          "cs.NE"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "CHB-MIT",
+            "TUH TUAB",
+            "ds004504",
+            "Sleep-EDF",
+            "CAUEEG"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "This paper evaluates six EEG foundation models (LaBraM, EEGMamba, CBraMod, REVE, BENDR, and BIOT) using frozen linear probes across five clinical decoding tasks. The authors implement a rigorous stress-testing framework including targeted negative controls and cross-population evaluations on a Korean dementia dataset. The results demonstrate that while some models show marginal improvements in specific tasks like ictal detection, frozen embeddings are highly susceptible to dataset identity, often decoding the source dataset with near-perfect accuracy while failing to decode clinical pathology. In several cases, classical features or randomly initialized encoders outperformed the pretrained foundation models, highlighting significant challenges in generalizability and the risk of overfitting to dataset-specific artifacts.",
+        "evaluation": {
+          "benchmarks": [
+            "CHB-MIT",
+            "TUH TUAB",
+            "ds004504",
+            "Sleep-EDF",
+            "CAUEEG"
+          ],
+          "headline_results": [
+            "Dataset identity AUROC: 1.000",
+            "Clinical diagnosis AUROC: 0.528",
+            "REVE on Korean Dementia AUROC: 0.568 vs Classical: 0.769"
+          ],
+          "tasks": [
+            "Ictal detection",
+            "Normal vs Abnormal",
+            "AD vs Control",
+            "Sleep staging",
+            "Dementia vs HC"
+          ]
+        },
+        "key_points": [
+          "This benchmark study shows that frozen EEG-FM embeddings often capture dataset identity (AUROC 1.000) far more effectively than clinical diagnosis.",
+          "Classical features outperformed pretrained models like REVE on out-of-domain clinical tasks, such as Korean dementia detection.",
+          "The study highlights that performance gains from foundation models are highly sensitive to the evaluation unit and dataset shift."
+        ],
+        "limitations": [
+          "Evaluation was limited to frozen linear probing rather than full fine-tuning.",
+          "Results are highly dependent on the specific foundation model's original pretraining data.",
+          "The number of clinical datasets used for stress-testing is relatively small."
+        ],
+        "method": {
+          "architecture": "Linear probing on frozen embeddings of six different EEG-FMs",
+          "finetuning": "Frozen encoder with Logistic Regression head",
+          "objective": "Clinical decoding (binary classification)",
+          "pretraining": "Various (Masked reconstruction, Contrastive, etc., as per original models)"
+        },
+        "notes": "{\"chars\": 72883, \"error\": null, \"pages\": 23, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7970",
+        "one_liner": "A systematic stress-test of six EEG foundation models across clinical tasks, revealing that dataset identity often dominates frozen representations over clinical signals.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-07-27",
+        "tags": {
+          "backbone": [
+            "transformer",
+            "mamba-ssm"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Stress-Testing EEG Foundation Models for Clinical Decoding: Dataset Identity and Targeted Negative Controls",
+        "unique_contribution": "Introduces a rigorous stress-testing framework for EEG-FMs using negative controls and cross-population tests to expose the dominance of dataset identity over clinical signals.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Stress-Testing EEG Foundation Models for Clinical Decoding: Dataset Identity and Targeted Negative Controls",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly benchmarks six pretrained EEG foundation models including LaBraM, EEGMamba, and BENDR.",
+          "Focuses on the evaluation, robustness, and transferability of EEG-FM representations across clinical tasks.",
+          "Fits the ecosystem criteria as a systematic benchmark and stress-testing study of EEG-FMs."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2607.27268v1",
+      "arxiv_id_base": "2607.27268",
+      "authors": [
+        "Owais Mujtaba Khanday",
+        "Mohamed Baha Ben Ticha",
+        "Sanae Belfrouh",
+        "Marc Ouellet",
+        "Jose A. Gonzalez-Lopez"
+      ],
+      "categories": [
+        "cs.SD"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.27268v1",
+        "pdf": "https://arxiv.org/pdf/2607.27268v1"
+      },
+      "published_date": "2026-07-29",
+      "summary": {
+        "arxiv_id_base": "2607.27268",
+        "categories": [
+          "cs.SD"
+        ],
+        "data_scale": {
+          "channels": 64.0,
+          "datasets": [
+            "UGR-MINDVOICE",
+            "BCI Competition 2020 Track 3"
+          ],
+          "eeg_hours": null,
+          "subjects": 30.0
+        },
+        "detailed_summary": "The paper evaluates the transferability of large-scale pretrained EEG models, specifically LaBraM and EEGMamba, to overt and imagined speech decoding tasks. Using the UGR-MINDVOICE and BCIC2020-T3 datasets, the authors compare these foundation models against convolutional baselines like EEGNet and EEGConformer under a unified fine-tuning protocol. The results indicate that pretraining on thousands of hours of general EEG data provides no significant advantage over a 16K-parameter CNN, with most models failing to achieve meaningful accuracy on complex lexical decoding tasks.",
+        "evaluation": {
+          "benchmarks": [
+            "UGR-MINDVOICE",
+            "BCIC2020-T3"
+          ],
+          "headline_results": [
+            "EEGNet (16K params) outperformed LaBraM (57.3%) and EEGMamba (56.6%) with 61.3% accuracy on UGR-MINDVOICE speech-mode decoding.",
+            "Cross-subject (LOSO) results for imagined speech were near chance for all models."
+          ],
+          "tasks": [
+            "Overt speech decoding",
+            "Imagined speech decoding",
+            "Lexical category decoding"
+          ]
+        },
+        "key_points": [
+          "Benchmark study: Evaluates LaBraM and EEGMamba against convolutional baselines for overt and imagined speech decoding.",
+          "Finding: Large-scale pretraining yields no consistent advantage over a compact 16K-parameter CNN (EEGNet) on speech tasks.",
+          "Evidence: On UGR-MINDVOICE, EEGNet achieved 61.3% accuracy in speech-mode decoding, surpassing both foundation models."
+        ],
+        "limitations": [
+          "Foundation models failed to generalize to complex lexical decoding tasks.",
+          "Cross-subject transferability remains extremely poor for imagined speech."
+        ],
+        "method": {
+          "architecture": "Comparison of Transformer (LaBraM), Mamba-SSM (EEGMamba), and CNNs (EEGNet, EEGConformer)",
+          "finetuning": "Supervised fine-tuning on speech decoding datasets",
+          "objective": "Fine-tuning for classification (speech vs non-speech, word/category decoding)",
+          "pretraining": "Masked reconstruction of discrete tokens (for LaBraM and EEGMamba)"
+        },
+        "notes": "{\"chars\": 31499, \"error\": null, \"pages\": 6, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7850",
+        "one_liner": "A systematic benchmark showing that current general-purpose EEG foundation models do not consistently outperform small CNNs for speech decoding.",
+        "open_source": {
+          "code_url": null,
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-07-29",
+        "tags": {
+          "backbone": [
+            "transformer",
+            "mamba-ssm"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Does EEG Foundation Models Transfer to Speech? A Benchmark on Overt and Imagined Speech Decoding",
+        "unique_contribution": "Provides the first controlled benchmark evaluating whether general-purpose EEG foundation models transfer to the demanding task of speech decoding.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Does EEG Foundation Models Transfer to Speech? A Benchmark on Overt and Imagined Speech Decoding",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly benchmarks existing EEG foundation models (LaBraM, EEGMamba)",
+          "Focuses on the transferability of general-purpose EEG pretraining to speech decoding",
+          "Fits the EEG-FM ecosystem criteria as a systematic evaluation and benchmark study"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2607.27308v1",
+      "arxiv_id_base": "2607.27308",
+      "authors": [
+        "Christopher Warner",
+        "Jonas Mago",
+        "JR Huml",
+        "Beren Millidge"
+      ],
+      "categories": [
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.27308v1",
+        "pdf": "https://arxiv.org/pdf/2607.27308v1"
+      },
+      "published_date": "2026-07-29",
+      "summary": {
+        "arxiv_id_base": "2607.27308",
+        "categories": [
+          "cs.LG",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": 256.0,
+          "datasets": [
+            "Multiple public EEG datasets"
+          ],
+          "eeg_hours": 3500000.0,
+          "subjects": null
+        },
+        "detailed_summary": "ZUNA1.1 is a transformer-based diffusion autoencoder designed for EEG denoising and super-resolution. It improves upon ZUNA1 by incorporating variable-length sequence training (0.5-30s), quality-aware preprocessing, and a curriculum of eight diverse dropout schemes to mimic real-world artifacts. Evaluation shows it substantially outperforms standard spherical-spline interpolation and matches or exceeds the performance of its predecessor across multiple EEG datasets.",
+        "evaluation": {
+          "benchmarks": [
+            "Spherical-spline interpolation (MNE)"
+          ],
+          "headline_results": [
+            "Substantially outperforms spherical-spline interpolation in reconstructing missing channels."
+          ],
+          "tasks": [
+            "EEG Denoising",
+            "EEG Super-resolution"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: A 380M-parameter diffusion autoencoder capable of reconstructing arbitrary EEG channels and temporal intervals.",
+          "Methodological novelty: Employs a diverse mixture of eight dropout schemes and flex attention for variable-length training (up to 30s).",
+          "Strong evidence: Substantially outperforms MNE's spherical-spline interpolation in channel reconstruction across heterogeneous datasets."
+        ],
+        "limitations": [
+          "Computational cost of diffusion sampling",
+          "Dependence on high-quality pretraining data for extreme super-resolution"
+        ],
+        "method": {
+          "architecture": "Transformer-based encoder-decoder diffusion autoencoder",
+          "finetuning": "Not specified",
+          "objective": "Rectified-flow loss for signal reconstruction",
+          "pretraining": "Pretrained on 3.5M channel-hours of EEG data using diverse dropout schemes"
+        },
+        "notes": "{\"chars\": 53835, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7812",
+        "one_liner": "A 380M-parameter diffusion autoencoder for flexible EEG signal reconstruction across variable lengths and arbitrary channel configurations.",
+        "open_source": {
+          "code_url": "https://github.com/ZUNA-EEG/ZUNA",
+          "license": "Apache 2.0",
+          "weights_url": "https://huggingface.co/ZUNA-EEG"
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-07-29",
+        "tags": {
+          "backbone": [
+            "transformer",
+            "diffusion"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "ZUNA1.1: A more flexible EEG foundation model for Denoising and Super-resolution",
+        "unique_contribution": "Introduces a flexible EEG reconstruction framework using a diverse dropout mixture and variable-length training to handle real-world noise and sparse consumer-grade montages.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "ZUNA1.1: A more flexible EEG foundation model for Denoising and Super-resolution",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Title explicitly identifies ZUNA1.1 as an 'EEG foundation model'.",
+          "Describes a 380M-parameter model designed for flexible, general-purpose EEG signal reconstruction.",
+          "Demonstrates broad applicability across variable sequence lengths and arbitrary channel configurations."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2607.27913v1",
+      "arxiv_id_base": "2607.27913",
+      "authors": [
+        "Glenn Anta Bucagu",
+        "Thorir Mar Ingolfsson",
+        "Yawei Li",
+        "Luca Benini"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2607.27913v1",
+        "pdf": "https://arxiv.org/pdf/2607.27913v1"
+      },
+      "published_date": "2026-07-30",
+      "summary": {
+        "arxiv_id_base": "2607.27913",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 26622, \"error\": null, \"pages\": 11, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8012;max_tokens=8000;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-07-30",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "S-CEReBrO: Breaking the Memory Barrier in Continuous EEG Monitoring",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "S-CEReBrO: Breaking the Memory Barrier in Continuous EEG Monitoring",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly frames the work within the foundation model paradigm for EEG analysis.",
+          "Pre-trained on a large-scale dataset of >25,000 hours from >12,000 subjects to create generalizable representations.",
+          "Evaluated on 11 downstream tasks, demonstrating the model's utility as a reusable foundation model.",
+          "Introduces architectural improvements specifically to address scaling and memory bottlenecks in EEG-FMs."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 6,
-    "candidates": 15,
-    "summarized": 6
+    "accepted": 15,
+    "candidates": 33,
+    "summarized": 15
   },
   "top_picks": [
-    "2607.11578",
-    "2607.09543",
-    "2607.06629",
-    "2607.03094",
-    "2607.07720"
+    "2607.27308",
+    "2607.27268",
+    "2607.24519",
+    "2607.21402",
+    "2607.11578"
   ]
 }
