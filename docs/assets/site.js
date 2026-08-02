@@ -1287,9 +1287,54 @@ function renderResults(app, state) {
   syncExploreExportState(app, state);
 }
 
+function buildVolumeSeries(monthRows, latestMonth) {
+  const rows = (Array.isArray(monthRows) ? monthRows : [])
+    .filter((row) => row && typeof row === "object" && row.month)
+    .slice()
+    .sort((a, b) => String(a.month).localeCompare(String(b.month)));
+  return rows.map((row) => ({
+    month: String(row.month),
+    accepted: safeNumber(row?.stats?.accepted, 0),
+    isCurrent: String(row.month) === String(latestMonth || ""),
+  }));
+}
+
+function renderVolumeChart(container, series) {
+  if (!container) {
+    return;
+  }
+  if (!series.length) {
+    container.innerHTML = "";
+    container.hidden = true;
+    return;
+  }
+  container.hidden = false;
+  const maxAccepted = Math.max(1, ...series.map((item) => item.accepted));
+  const bars = series
+    .map((item) => {
+      const heightPct = Math.max(2, Math.round((item.accepted / maxAccepted) * 100));
+      const year = item.month.slice(0, 4);
+      const showYear = item.month.endsWith("-01");
+      const barClass = item.isCurrent ? "volume-bar volume-bar-current" : "volume-bar";
+      return `
+        <div class="volume-col" title="${esc(item.month)}: ${item.accepted} accepted">
+          <div class="${barClass}" style="height:${heightPct}%"></div>
+          ${showYear ? `<span class="volume-year-label">${esc(year)}</span>` : `<span class="volume-year-label volume-year-label-spacer"></span>`}
+        </div>
+      `;
+    })
+    .join("");
+  container.innerHTML = `
+    <h2 class="volume-chart-title">Accepted papers over time</h2>
+    <p class="small volume-chart-subtitle">Monthly counts from the digest. Current month highlighted.</p>
+    <div class="volume-chart-plot" role="img" aria-label="Bar chart of accepted papers per month">${bars}</div>
+  `;
+}
+
 function renderHome(app, state) {
   const controls = app.querySelector("#home-controls");
   const results = app.querySelector("#home-results");
+  const chart = app.querySelector("#volume-chart");
   if (!controls || !results) {
     return;
   }
@@ -1297,6 +1342,7 @@ function renderHome(app, state) {
   controls.style.display = "none";
 
   const rows = visibleMonthRows(state);
+  renderVolumeChart(chart, buildVolumeSeries(rows, state.latestMonth));
   if (!rows.length) {
     results.innerHTML = "<p class='empty-state'>No monthly digests to show yet.</p>";
     return;
@@ -1514,6 +1560,7 @@ async function setupDigestApp() {
     const state = {
       view,
       monthRows: manifest.months,
+      latestMonth: manifest.latest || (manifest.months[0] && manifest.months[0].month) || "",
     };
     renderHome(app, state);
     return true;
