@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 from e2e.search_helpers import (
     MONTH_CACHE_PREFIX,
     MONTH_CACHE_SCHEMA_VERSION,
