@@ -29,7 +29,9 @@ class Config:
     max_borderline_pdfs: int = 20
     text_head_chars: int = 80_000
     text_tail_chars: int = 20_000
+    summary_excerpt_chars: int = 18_000
     summary_max_input_tokens: int = 120_000
+    llm_call_sleep_seconds: float = 0.0
     llm_temperature_triage: float = 0.2
     llm_temperature_summary: float = 0.2
     llm_max_output_tokens_triage: int = 1024
@@ -66,7 +68,9 @@ def load_config() -> Config:
         max_borderline_pdfs=int(os.environ.get("MAX_BORDERLINE_PDFS", "20")),
         text_head_chars=int(os.environ.get("TEXT_HEAD_CHARS", "80000")),
         text_tail_chars=int(os.environ.get("TEXT_TAIL_CHARS", "20000")),
+        summary_excerpt_chars=int(os.environ.get("SUMMARY_EXCERPT_CHARS", "18000")),
         summary_max_input_tokens=int(os.environ.get("SUMMARY_MAX_INPUT_TOKENS", "120000")),
+        llm_call_sleep_seconds=float(os.environ.get("LLM_CALL_SLEEP_SECONDS", "0")),
         llm_temperature_triage=float(os.environ.get("LLM_TEMPERATURE_TRIAGE", "0.2")),
         llm_temperature_summary=float(os.environ.get("LLM_TEMPERATURE_SUMMARY", "0.2")),
         llm_max_output_tokens_triage=int(os.environ.get("LLM_MAX_OUTPUT_TOKENS_TRIAGE", "1024")),

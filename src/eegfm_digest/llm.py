@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 from dataclasses import dataclass, replace
 from typing import Any, Protocol
@@ -12,6 +13,14 @@ GOOGLE_PROVIDER_ALIASES = {"google", "google_ai_studio", "gemini"}
 OPENAI_COMPAT_PROVIDER_ALIASES = {"openai", "openrouter"} | GOOGLE_PROVIDER_ALIASES
 DEFAULT_RATE_LIMIT_RETRIES = 5
 DEFAULT_RATE_LIMIT_BACKOFF_SECONDS = 5.0
+DEFAULT_RATE_LIMIT_MAX_SLEEP_SECONDS = 120.0
+DEFAULT_TRANSIENT_RETRIES = 2
+DEFAULT_TRANSIENT_BACKOFF_SECONDS = 2.0
+TRANSIENT_HTTP_STATUSES = frozenset(range(500, 600))
+_RETRY_IN_RE = re.compile(r"retry in\s+([0-9]+(?:\.[0-9]+)?)\s*s", re.IGNORECASE)
+_RETRY_DELAY_RE = re.compile(
+    r"['\"]retryDelay['\"]\s*:\s*['\"]([0-9]+(?:\.[0-9]+)?)s['\"]", re.IGNORECASE
+)
 
 
 @dataclass(frozen=True)
@@ -42,6 +51,62 @@ class LLMCaller(Protocol):
 
 class LLMRateLimitError(RuntimeError):
     pass
+
+
+def _exception_body_text(exc: Exception) -> str:
+    """Return the fullest available error body for retry parsing."""
+    response = getattr(exc, "response", None)
+    if response is not None:
+        text = getattr(response, "text", None)
+        if isinstance(text, str) and text.strip():
+            return text
+        try:
+            payload = response.json()
+        except Exception:
+            payload = None
+        if payload is not None:
+            return json.dumps(payload, ensure_ascii=False)
+    body = getattr(exc, "body", None)
+    if body is not None:
+        if isinstance(body, str):
+            return body
+        try:
+            return json.dumps(body, ensure_ascii=False)
+        except Exception:
+            return str(body)
+    return str(exc)
+
+
+def parse_retry_after_seconds(detail: str) -> float | None:
+    """Extract provider-suggested wait time from a 429 body (Gemini RetryInfo)."""
+    if not detail:
+        return None
+    match = _RETRY_IN_RE.search(detail) or _RETRY_DELAY_RE.search(detail)
+    if not match:
+        return None
+    try:
+        seconds = float(match.group(1))
+    except ValueError:
+        return None
+    if seconds < 0:
+        return None
+    return seconds
+
+
+def rate_limit_sleep_seconds(
+    detail: str,
+    *,
+    attempt: int,
+    floor_backoff_seconds: float,
+    max_sleep_seconds: float = DEFAULT_RATE_LIMIT_MAX_SLEEP_SECONDS,
+) -> float:
+    """Prefer provider RetryInfo; otherwise exponential backoff from floor."""
+    parsed = parse_retry_after_seconds(detail)
+    if parsed is not None:
+        sleep_for = parsed
+    else:
+        sleep_for = floor_backoff_seconds * (2**attempt)
+    return min(max(sleep_for, 0.0), max_sleep_seconds)
 
 
 def normalize_provider(provider: str) -> str:
@@ -181,9 +246,21 @@ class OpenAICall:
         if schema is not None and provider_supports_json_object(self.config.provider):
             req["response_format"] = {"type": "json_object"}
 
-        backoff_seconds = float(os.environ.get("LLM_RATE_LIMIT_BACKOFF_SECONDS", str(DEFAULT_RATE_LIMIT_BACKOFF_SECONDS)))
-        retry_count = int(os.environ.get("LLM_RATE_LIMIT_RETRIES", str(DEFAULT_RATE_LIMIT_RETRIES)))
-        for attempt in range(retry_count + 1):
+        rate_backoff = float(
+            os.environ.get("LLM_RATE_LIMIT_BACKOFF_SECONDS", str(DEFAULT_RATE_LIMIT_BACKOFF_SECONDS))
+        )
+        rate_retries = int(os.environ.get("LLM_RATE_LIMIT_RETRIES", str(DEFAULT_RATE_LIMIT_RETRIES)))
+        max_sleep_seconds = float(
+            os.environ.get("LLM_RATE_LIMIT_MAX_SLEEP_SECONDS", str(DEFAULT_RATE_LIMIT_MAX_SLEEP_SECONDS))
+        )
+        transient_backoff = float(
+            os.environ.get("LLM_TRANSIENT_BACKOFF_SECONDS", str(DEFAULT_TRANSIENT_BACKOFF_SECONDS))
+        )
+        transient_retries = int(
+            os.environ.get("LLM_TRANSIENT_RETRIES", str(DEFAULT_TRANSIENT_RETRIES))
+        )
+        max_attempts = max(rate_retries, transient_retries) + 1
+        for attempt in range(max_attempts):
             try:
                 response = self._client.chat.completions.create(**req)
                 break
@@ -193,15 +270,31 @@ class OpenAICall:
                 if status_code is None and response is not None:
                     status_code = getattr(response, "status_code", None)
                 if status_code in {402, 429}:
-                    detail = ""
-                    if response is not None:
-                        detail = str(getattr(response, "text", "") or "")[:220]
-                    if attempt < retry_count:
-                        time.sleep(backoff_seconds * (2**attempt))
+                    full_detail = _exception_body_text(exc)
+                    detail = full_detail[:500]
+                    if attempt < rate_retries:
+                        sleep_for = rate_limit_sleep_seconds(
+                            full_detail,
+                            attempt=attempt,
+                            floor_backoff_seconds=rate_backoff,
+                            max_sleep_seconds=max_sleep_seconds,
+                        )
+                        print(
+                            f"[llm] rate_limit status={status_code} attempt={attempt + 1}/"
+                            f"{rate_retries + 1} sleep={sleep_for:.1f}s model={self.config.model}",
+                            flush=True,
+                        )
+                        time.sleep(sleep_for)
                         continue
                     raise LLMRateLimitError(
                         f"openai_compat_rate_limit_or_quota status={status_code} body={detail}"
                     ) from exc
+                transient = status_code in TRANSIENT_HTTP_STATUSES or (
+                    status_code is None and type(exc).__name__ in {"APIConnectionError", "APITimeoutError"}
+                )
+                if transient and attempt < transient_retries:
+                    time.sleep(transient_backoff * (2**attempt))
+                    continue
                 raise
 
         text = self._extract_text(response)
