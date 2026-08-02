@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -12,7 +13,7 @@ from .config import Config
 from .db import DigestDB
 from .llm import LLMCallConfig, LLMRateLimitError, build_llm_call, load_api_key, provider_base_url
 from .llm_logging import log_stage_failure
-from .pdf import download_pdf, extract_text, slice_paper_text
+from .pdf import bounded_text, download_pdf, extract_text, slice_paper_text
 from .render import build_digest, write_json, write_jsonl
 from .row_views import empty_pdf_state, normalize_triage_row
 from .selection import select_papers_for_summary
@@ -21,6 +22,11 @@ from .stage_context import load_summary_stage_context, load_triage_stage_context
 from .summarize import summarize_paper, summarize_paper_with_meta
 from .summarize_stage import prepare_pdf_and_text
 from .triage import triage_paper, triage_paper_with_meta
+
+
+def _maybe_sleep_after_summary_call(cfg: Config) -> None:
+    if cfg.llm_call_sleep_seconds > 0:
+        time.sleep(cfg.llm_call_sleep_seconds)
 
 
 @dataclass(frozen=True)
@@ -242,14 +248,19 @@ def run_month(
                         file=sys.stderr,
                     )
                 elif pdf_result.raw_text.strip():
+                    bounded_raw = bounded_text(
+                        pdf_result.raw_text,
+                        cfg.text_head_chars,
+                        cfg.text_tail_chars,
+                    )
                     summary, summary_call_meta = _run_summary_call_with_meta(
                         paper=paper,
                         triage=triage_map[arxiv_id_base],
-                        raw_fulltext=pdf_result.raw_text,
+                        raw_fulltext=bounded_raw,
                         fulltext_slices=slice_paper_text(
-                            pdf_result.raw_text,
-                            excerpt_chars=18_000,
-                            tail_chars=cfg.text_tail_chars,
+                            bounded_raw,
+                            excerpt_chars=cfg.summary_excerpt_chars,
+                            tail_chars=min(cfg.text_tail_chars, cfg.summary_excerpt_chars),
                         ),
                         used_fulltext=True,
                         notes=pdf_result.notes,
@@ -270,6 +281,7 @@ def run_month(
                             updated_at_source=str(paper.get("updated", "")).strip() or None,
                         ),
                     )
+                    _maybe_sleep_after_summary_call(cfg)
             except Exception as exc:
                 if isinstance(exc, LLMRateLimitError):
                     raise

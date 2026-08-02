@@ -307,8 +307,8 @@ def _run_summary_phase_for_month(
                 raw_fulltext=pdf_result.raw_text,
                 fulltext_slices=slice_paper_text(
                     pdf_result.raw_text,
-                    excerpt_chars=18_000,
-                    tail_chars=cfg.text_tail_chars,
+                    excerpt_chars=cfg.summary_excerpt_chars,
+                    tail_chars=min(cfg.text_tail_chars, cfg.summary_excerpt_chars),
                 ),
                 used_fulltext=True,
                 notes=pdf_result.notes,

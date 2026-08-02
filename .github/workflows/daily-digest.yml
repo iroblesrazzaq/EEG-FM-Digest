@@ -95,6 +95,20 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL_TRIAGE: gemma-4-31b-it
           GEMINI_MODEL_SUMMARY: gemma-4-31b-it
+          # Gemma free-tier TPM is 16k input tokens/min. Cap prompts and space
+          # calls so backlog windows can drain without hard-failing on 429s.
+          # LLMRateLimitError still fails the job after retries (run log not advanced).
+          SUMMARY_MAX_INPUT_TOKENS: "8000"
+          SUMMARY_EXCERPT_CHARS: "8000"
+          TEXT_HEAD_CHARS: "24000"
+          TEXT_TAIL_CHARS: "2000"
+          LLM_MAX_OUTPUT_TOKENS_SUMMARY: "1024"
+          LLM_CALL_SLEEP_SECONDS: "45"
+          LLM_RATE_LIMIT_RETRIES: "8"
+          LLM_RATE_LIMIT_BACKOFF_SECONDS: "5"
+          LLM_RATE_LIMIT_MAX_SLEEP_SECONDS: "90"
+          ARXIV_RETRIES: "4"
+          ARXIV_RETRY_BACKOFF_SECONDS: "3"
           INPUT_SINCE: ${{ inputs.since }}
           INPUT_UNTIL: ${{ inputs.until }}
           INPUT_DRY_RUN: ${{ inputs.dry_run }}

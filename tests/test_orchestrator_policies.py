@@ -75,6 +75,11 @@ def test_documented_batch_vs_pipeline_divergences():
         "triage_failure": "pipeline skips DB row; batch persists synthetic reject",
         "summary_failure": "pipeline skips paper; batch fail-fast raises",
         "no_pdf": "pipeline supports --no-pdf; batch always downloads PDFs",
-        "feature_paper": "pipeline supports --feature-paper; batch does not",
+        "feature_paper": (
+            "pipeline --feature-paper CLI; batch uses featured_papers_path JSON map"
+        ),
+        "daily_run_log": (
+            "partial LLM failures and LLMRateLimitError do not advance last_successful_run.json"
+        ),
     }
-    assert len(divergences) == 5
+    assert len(divergences) == 6
