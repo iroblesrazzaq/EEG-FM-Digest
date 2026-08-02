@@ -43,6 +43,62 @@ def parse_arxiv_id(raw_id: str) -> tuple[str, int]:
     return base, ver
 
 
+def fetch_paper_by_id(
+    arxiv_id: str,
+    connect_timeout_seconds: float = 10.0,
+    read_timeout_seconds: float = 60.0,
+    retries: int = 2,
+    retry_backoff_seconds: float = 2.0,
+    client: httpx.Client | None = None,
+) -> dict[str, Any] | None:
+    """Fetch a single paper by arXiv id (``id_list`` query)."""
+    created_client = client is None
+    client = client or httpx.Client(
+        timeout=httpx.Timeout(
+            connect=connect_timeout_seconds,
+            read=read_timeout_seconds,
+            write=30.0,
+            pool=30.0,
+        )
+    )
+    query_id, _version = parse_arxiv_id(arxiv_id.strip())
+    params = {"id_list": query_id}
+    try:
+        attempt = 0
+        while True:
+            try:
+                resp = client.get(ARXIV_API_URL, params=params)
+                resp.raise_for_status()
+                break
+            except httpx.HTTPStatusError as exc:
+                status = exc.response.status_code if exc.response is not None else None
+                retryable = status == 429 or (status is not None and status >= 500)
+                attempt += 1
+                if (not retryable) or attempt > retries:
+                    raise ArxivFetchError(
+                        f"arXiv paper lookup failed after {attempt} attempts "
+                        f"(status={status}, arxiv_id={query_id})"
+                    ) from exc
+                time.sleep(retry_backoff_seconds * (2 ** (attempt - 1)))
+            except (httpx.ReadTimeout, httpx.TransportError) as exc:
+                attempt += 1
+                if attempt > retries:
+                    raise ArxivFetchError(
+                        f"arXiv paper lookup failed after {attempt} attempts "
+                        f"(arxiv_id={query_id})"
+                    ) from exc
+                time.sleep(retry_backoff_seconds * (2 ** (attempt - 1)))
+
+        root = ET.fromstring(resp.text)
+        entry = root.find("atom:entry", ATOM_NS)
+        if entry is None:
+            return None
+        return parse_entry(entry)
+    finally:
+        if created_client:
+            client.close()
+
+
 def parse_entry(entry: ET.Element) -> dict[str, Any]:
     paper_id = entry.findtext("atom:id", default="", namespaces=ATOM_NS)
     arxiv_id_base, version = parse_arxiv_id(paper_id)
