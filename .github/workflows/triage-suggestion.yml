@@ -3,6 +3,11 @@ on:
   issues:
     types: [opened]
 
+# Serialize SQLite commits with daily-digest so concurrent pushes do not clobber.
+concurrency:
+  group: digest-sqlite-write
+  cancel-in-progress: false
+
 jobs:
   triage:
     if: contains(github.event.issue.labels.*.name, 'paper-suggestion')
@@ -102,7 +107,17 @@ jobs:
           git add -A data/digest.sqlite
           if git diff --staged --quiet; then
             echo "no sqlite changes"
-          else
-            git commit -m "auto: triage suggestion seed $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            git push
+            exit 0
           fi
+          git commit -m "auto: triage suggestion seed $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          # Rebase onto tip before push; retry once if another writer landed first.
+          for attempt in 1 2; do
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            if git push; then
+              exit 0
+            fi
+            echo "push rejected (attempt ${attempt}); retrying after rebase"
+            sleep 2
+          done
+          echo "::error::failed to push triage SQLite seed after rebase retries"
+          exit 1

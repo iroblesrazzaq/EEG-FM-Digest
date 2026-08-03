@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 
+import json
 from datetime import datetime, timezone
 
 from eegfm_digest.config import Config
 from eegfm_digest.db import DigestDB
-from eegfm_digest.pipeline import resummarize_stragglers, run_window
+from eegfm_digest.pipeline import (
+    MonthRunStats,
+    StragglerStats,
+    _rerender_month_from_db,
+    resummarize_stragglers,
+    run_window,
+)
 
 
 def _candidate(arxiv_id_base: str, published: str, title: str) -> dict:
@@ -237,6 +244,112 @@ def test_resummarize_stragglers_bumps_failures_on_pdf_error(monkeypatch, tmp_pat
     db = DigestDB(cfg.data_dir / "digest.sqlite")
     assert db.get_summary("2501.00001") is None
     db.close()
+
+
+def test_resummarize_stragglers_honors_skip_ids(monkeypatch, tmp_path):
+    cfg = _cfg(tmp_path)
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    paper = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")
+    _seed_accept_without_summary(db, paper, "2025-01")
+    db.close()
+
+    calls = {"n": 0}
+
+    def counting_summarize(paper, *_a, **_k):  # noqa: ANN001
+        calls["n"] += 1
+        return _summary_payload(paper)
+
+    _patch_summary_stack(monkeypatch)
+    monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", counting_summarize)
+    stats = resummarize_stragglers(cfg, no_site=True, skip_ids={"2501.00001"})
+    assert stats.attempted == 0
+    assert calls["n"] == 0
+
+
+def test_run_window_skips_same_run_summary_failures_in_stragglers(monkeypatch, tmp_path):
+    cfg = _cfg(tmp_path)
+    paper = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    _seed_accept_without_summary(db, paper, "2025-01")
+    db.close()
+
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.fetch_window_candidates",
+        lambda *_a, **_k: [paper],
+    )
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.run_month",
+        lambda *_a, **_k: MonthRunStats(
+            month="2025-01",
+            candidates=1,
+            accepted=1,
+            summarized=0,
+            summary_failures=1,
+            failed_summary_ids=("2501.00001",),
+        ),
+    )
+    calls = {"n": 0}
+
+    def counting_resummarize(*_a, **kwargs):  # noqa: ANN001
+        calls["n"] += 1
+        assert kwargs.get("skip_ids") == {"2501.00001"}
+        return StragglerStats()
+
+    monkeypatch.setattr("eegfm_digest.pipeline.resummarize_stragglers", counting_resummarize)
+    since = datetime(2025, 1, 1, tzinfo=timezone.utc)
+    until = datetime(2025, 1, 3, tzinfo=timezone.utc)
+    run_window(cfg, since, until, no_site=True)
+    assert calls["n"] == 1
+
+
+def test_rerender_month_preserves_existing_pdf_state(tmp_path):
+    cfg = _cfg(tmp_path)
+    month = "2025-01"
+    paper = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    db.upsert_paper(month, paper)
+    db.upsert_triage(
+        month,
+        {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "decision": "accept",
+            "confidence": 0.9,
+            "reasons": ["r1", "r2"],
+        },
+    )
+    db.upsert_summary(month, _summary_payload(paper))
+    db.close()
+
+    month_out = cfg.output_dir / month
+    month_out.mkdir(parents=True)
+    existing_pdf = {
+        "downloaded": True,
+        "pdf_path": "outputs/2025-01/pdfs/2501.00001.pdf",
+        "text_path": "outputs/2025-01/text/2501.00001.txt",
+        "extract_meta": {"pages": 12},
+    }
+    (month_out / "backend_rows.jsonl").write_text(
+        json.dumps(
+            {
+                "arxiv_id_base": "2501.00001",
+                "pdf": existing_pdf,
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    (cfg.docs_dir).mkdir(parents=True, exist_ok=True)
+
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    _rerender_month_from_db(cfg, db, month)
+    db.close()
+
+    rows = [
+        json.loads(line)
+        for line in (month_out / "backend_rows.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert rows[0]["pdf"] == existing_pdf
 
 
 def test_run_window_invokes_stragglers_sweep(monkeypatch, tmp_path):
