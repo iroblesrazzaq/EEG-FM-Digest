@@ -252,7 +252,40 @@ def _summarize_one_paper(
         )
 
 
-def _rerender_month_from_db(cfg: Config, db: DigestDB, month: str) -> None:
+def _load_existing_pdf_map(month_out: Path) -> dict[str, dict]:
+    """Preserve PDF extract metadata already written to backend_rows.jsonl."""
+    path = month_out / "backend_rows.jsonl"
+    if not path.exists():
+        return {}
+    out: dict[str, dict] = {}
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return {}
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            continue
+        try:
+            row = json.loads(stripped)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(row, dict):
+            continue
+        aid = str(row.get("arxiv_id_base", "")).strip()
+        pdf = row.get("pdf")
+        if aid and isinstance(pdf, dict):
+            out[aid] = pdf
+    return out
+
+
+def _rerender_month_from_db(
+    cfg: Config,
+    db: DigestDB,
+    month: str,
+    *,
+    pdf_overrides: dict[str, dict] | None = None,
+) -> None:
     """Rebuild month outputs/site from SQLite after a straggler summary succeeds."""
     month_out = cfg.output_dir / month
     month_out.mkdir(parents=True, exist_ok=True)
@@ -267,7 +300,13 @@ def _rerender_month_from_db(cfg: Config, db: DigestDB, month: str) -> None:
         key=lambda x: (x.get("published_date", ""), x.get("arxiv_id_base", "")),
     )
     summary_map = {s["arxiv_id_base"]: s for s in summaries}
-    pdf_map = {c["arxiv_id_base"]: empty_pdf_state() for c in candidates}
+    pdf_map = _load_existing_pdf_map(month_out)
+    if pdf_overrides:
+        pdf_map.update(pdf_overrides)
+    for candidate in candidates:
+        aid = candidate["arxiv_id_base"]
+        if aid not in pdf_map:
+            pdf_map[aid] = empty_pdf_state()
 
     write_jsonl(month_out / "papers.jsonl", summaries)
     backend_rows = build_backend_rows(candidates, triage_map, summary_map, pdf_map)
@@ -303,15 +342,24 @@ def resummarize_stragglers(
     *,
     no_pdf: bool = False,
     no_site: bool = False,
+    skip_ids: set[str] | None = None,
 ) -> StragglerStats:
     """Re-attempt summarization for accept'd papers that have no summary row.
 
     Opens the DB first; if there are no stragglers, returns without building an
     LLM client. On success, re-renders affected months (unless ``no_site``).
+
+    ``skip_ids`` excludes papers that already failed summary earlier in the same
+    ``run_window`` so we do not double-process them before the next daily run.
     """
     db = DigestDB(cfg.data_dir / "digest.sqlite")
     try:
-        stragglers = db.get_accepted_without_summary()
+        skip = skip_ids or set()
+        stragglers = [
+            (month, aid)
+            for month, aid in db.get_accepted_without_summary()
+            if aid not in skip
+        ]
         if not stragglers:
             return StragglerStats()
 
@@ -332,6 +380,7 @@ def resummarize_stragglers(
             failed = 0
             failed_ids: list[str] = []
             months_touched: set[str] = set()
+            pdf_by_month: dict[str, dict[str, dict]] = {}
 
             for month, arxiv_id_base in stragglers:
                 paper = db.get_paper(arxiv_id_base)
@@ -367,10 +416,16 @@ def resummarize_stragglers(
                 else:
                     succeeded += 1
                     months_touched.add(month)
+                    pdf_by_month.setdefault(month, {})[arxiv_id_base] = outcome.pdf_state
 
             if months_touched and not no_site:
                 for month in sorted(months_touched):
-                    _rerender_month_from_db(cfg, db, month)
+                    _rerender_month_from_db(
+                        cfg,
+                        db,
+                        month,
+                        pdf_overrides=pdf_by_month.get(month),
+                    )
                 update_home(cfg.docs_dir)
 
             print(
@@ -620,7 +675,18 @@ def run_window(
         )
         per_month.append(stats)
 
-    straggler_stats = resummarize_stragglers(cfg, no_pdf=no_pdf, no_site=no_site)
+    # Same-run summary failures already logged a retry-next-run warning; do not
+    # immediately re-attempt them in the straggler sweep (avoids double LLM spend
+    # and keeps WindowRunStats.failed_summary_ids authoritative for this window).
+    same_run_failures = {
+        aid for month_stats in per_month for aid in month_stats.failed_summary_ids
+    }
+    straggler_stats = resummarize_stragglers(
+        cfg,
+        no_pdf=no_pdf,
+        no_site=no_site,
+        skip_ids=same_run_failures,
+    )
     merged_months = tuple(
         sorted(set(affected_months) | set(straggler_stats.affected_months))
     )
