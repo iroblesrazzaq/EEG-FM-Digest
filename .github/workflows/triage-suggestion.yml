@@ -7,26 +7,102 @@ jobs:
   triage:
     if: contains(github.event.issue.labels.*.name, 'paper-suggestion')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Resolve GitHub App token input
+        id: app_config
+        env:
+          DIGEST_APP_CLIENT_ID: ${{ vars.DIGEST_APP_CLIENT_ID }}
+          DIGEST_APP_ID: ${{ vars.DIGEST_APP_ID }}
+        run: |
+          set -euo pipefail
+          if [ -n "${DIGEST_APP_CLIENT_ID:-}" ]; then
+            echo "::add-mask::$DIGEST_APP_CLIENT_ID"
+            echo "mode=client-id" >> "$GITHUB_OUTPUT"
+            echo "client_id=$DIGEST_APP_CLIENT_ID" >> "$GITHUB_OUTPUT"
+          elif [ -n "${DIGEST_APP_ID:-}" ]; then
+            echo "::add-mask::$DIGEST_APP_ID"
+            echo "mode=app-id" >> "$GITHUB_OUTPUT"
+            echo "app_id=$DIGEST_APP_ID" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error title=Missing GitHub App client ID::Set DIGEST_APP_CLIENT_ID (or legacy DIGEST_APP_ID)."
+            exit 1
+          fi
+      - uses: actions/create-github-app-token@v3
+        id: app_token_client
+        if: steps.app_config.outputs.mode == 'client-id'
+        with:
+          client-id: ${{ steps.app_config.outputs.client_id }}
+          private-key: ${{ secrets.DIGEST_APP_PRIVATE_KEY }}
+      - uses: actions/create-github-app-token@v3
+        id: app_token_legacy
+        if: steps.app_config.outputs.mode == 'app-id'
+        with:
+          app-id: ${{ steps.app_config.outputs.app_id }}
+          private-key: ${{ secrets.DIGEST_APP_PRIVATE_KEY }}
+      - name: Select GitHub App token
+        id: app_token
+        env:
+          TOKEN_CLIENT: ${{ steps.app_token_client.outputs.token }}
+          TOKEN_LEGACY: ${{ steps.app_token_legacy.outputs.token }}
+          APP_SLUG_CLIENT: ${{ steps.app_token_client.outputs.app-slug }}
+          APP_SLUG_LEGACY: ${{ steps.app_token_legacy.outputs.app-slug }}
+        run: |
+          set -euo pipefail
+          token="${TOKEN_CLIENT:-${TOKEN_LEGACY:-}}"
+          app_slug="${APP_SLUG_CLIENT:-${APP_SLUG_LEGACY:-}}"
+          if [ -z "$token" ] || [ -z "$app_slug" ]; then
+            echo "::error::GitHub App token was not created."
+            exit 1
+          fi
+          echo "::add-mask::$token"
+          echo "token=$token" >> "$GITHUB_OUTPUT"
+          echo "app-slug=$app_slug" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ steps.app_token.outputs.token }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
       - run: pip install -e .
+
       - name: Extract and triage
         env:
+          LLM_PROVIDER: google
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL_TRIAGE: gemma-4-31b-it
           ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
-          ARXIV_ID=$(echo "$ISSUE_BODY" | grep -oP '\d{4}\.\d{4,5}')
-          if [ -n "$ARXIV_ID" ]; then
-            python scripts/triage_single.py "$ARXIV_ID" > result.md
-          else
-            echo "Could not parse an arXiv ID from the issue body." > result.md
+          set -euo pipefail
+          if [ ! -f scripts/triage_single.py ]; then
+            echo "scripts/triage_single.py is missing on this branch." > result.md
+            exit 1
           fi
+          ARXIV_ID=$(printf '%s\n' "$ISSUE_BODY" | grep -oE '[0-9]{4}\.[0-9]{4,5}' | head -n 1 || true)
+          if [ -z "${ARXIV_ID:-}" ]; then
+            echo "Could not parse an arXiv ID from the issue body." > result.md
+            exit 0
+          fi
+          python scripts/triage_single.py "$ARXIV_ID" > result.md
+
       - name: Comment result
         uses: peter-evans/create-or-update-comment@v4
         with:
           issue-number: ${{ github.event.issue.number }}
           body-path: result.md
+
+      - name: Commit SQLite straggler seed
+        run: |
+          set -euo pipefail
+          git config user.name "eeg-fm-daily-digest[bot]"
+          git config user.email "${{ steps.app_token.outputs.app-slug }}[bot]@users.noreply.github.com"
+          git add -A data/digest.sqlite
+          if git diff --staged --quiet; then
+            echo "no sqlite changes"
+          else
+            git commit -m "auto: triage suggestion seed $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git push
+          fi
