@@ -22,6 +22,18 @@ def test_site_js_uses_month_cache_loader_in_month_and_search_paths():
     assert "const monthRev = normalizeMonthRev(initialMonthRow?.month_rev);" in site_js
 
 
+def test_site_js_renders_volume_chart_with_current_month_highlight():
+    site_js = Path("docs/assets/site.js").read_text(encoding="utf-8")
+    assert "function buildVolumeSeries(monthRows, latestMonth)" in site_js
+    assert "function renderVolumeChart(container, series)" in site_js
+    assert "volume-bar volume-bar-current" in site_js
+    assert 'app.querySelector("#volume-chart")' in site_js
+    # Full manifest timeline — not visibleMonthRows (which drops zero-accept months).
+    assert "buildVolumeSeries(state.monthRows, state.latestMonth)" in site_js
+    assert "buildVolumeSeries(rows, state.latestMonth)" not in site_js
+    assert "buildVolumeSeriesForTest: (monthRows, latestMonth) => buildVolumeSeries(monthRows, latestMonth)" in site_js
+
+
 def test_site_js_exposes_test_hooks_and_submit_driven_search():
     site_js = Path("docs/assets/site.js").read_text(encoding="utf-8")
     assert "window.__digestTestHooks = {" in site_js
