@@ -28,6 +28,10 @@ def test_site_js_renders_volume_chart_with_current_month_highlight():
     assert "function renderVolumeChart(container, series)" in site_js
     assert "volume-bar volume-bar-current" in site_js
     assert 'app.querySelector("#volume-chart")' in site_js
+    # Full manifest timeline — not visibleMonthRows (which drops zero-accept months).
+    assert "buildVolumeSeries(state.monthRows, state.latestMonth)" in site_js
+    assert "buildVolumeSeries(rows, state.latestMonth)" not in site_js
+    assert "buildVolumeSeriesForTest: (monthRows, latestMonth) => buildVolumeSeries(monthRows, latestMonth)" in site_js
 
 
 def test_site_js_exposes_test_hooks_and_submit_driven_search():

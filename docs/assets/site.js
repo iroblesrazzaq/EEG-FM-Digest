@@ -1341,8 +1341,10 @@ function renderHome(app, state) {
   controls.innerHTML = "";
   controls.style.display = "none";
 
+  // Chart uses the full manifest timeline (including zero-accept months) so the
+  // current-month highlight and historical gaps stay visible; cards still hide empties.
   const rows = visibleMonthRows(state);
-  renderVolumeChart(chart, buildVolumeSeries(rows, state.latestMonth));
+  renderVolumeChart(chart, buildVolumeSeries(state.monthRows, state.latestMonth));
   if (!rows.length) {
     results.innerHTML = "<p class='empty-state'>No monthly digests to show yet.</p>";
     return;
@@ -1652,6 +1654,7 @@ if (typeof window !== "undefined") {
     getCacheStats: () => currentMonthCacheStats(),
     getCacheEntryCounts: () => currentMonthCacheEntryCounts(),
     buildCurrentCsvForTest: () => buildResultsCsv(window.__digestAppState?.lastFilteredPapers || []),
+    buildVolumeSeriesForTest: (monthRows, latestMonth) => buildVolumeSeries(monthRows, latestMonth),
     clearMemCacheForTest: () => clearMonthMemCache(),
     clearPersistentCacheForTest: () => clearMonthPersistentCache(),
     clearSessionCacheForTest: () => clearMonthSessionCache(),
