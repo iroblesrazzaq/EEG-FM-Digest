@@ -13,6 +13,8 @@ from pathlib import Path
 AWESOME_REPO = "iroblesrazzaq/awesome-eeg-fm"
 CLONE_DIR = Path("/tmp/awesome-eeg-fm")
 ARXIV_ID_RE = re.compile(r"(?:arxiv\.org/(?:abs|pdf)/|arXiv:)?(?P<id>\d{4}\.\d{4,5})(?:v\d+)?")
+GIT_AUTHOR_NAME = "eeg-fm-daily-digest[bot]"
+GIT_AUTHOR_EMAIL = "eeg-fm-daily-digest[bot]@users.noreply.github.com"
 
 
 class SyncError(RuntimeError):
@@ -159,6 +161,7 @@ def ensure_repo_checkout() -> Path:
     if CLONE_DIR.exists():
         if not (CLONE_DIR / ".git").exists():
             raise SyncError(f"Clone path exists but is not a git repo: {CLONE_DIR}")
+        run_command(["git", "fetch", "origin"], cwd=CLONE_DIR)
         return CLONE_DIR
 
     run_command(["gh", "repo", "clone", AWESOME_REPO, str(CLONE_DIR)])
@@ -188,15 +191,49 @@ def get_default_branch(repo_dir: Path) -> str:
     return "main"
 
 
-def ensure_branch_absent(repo_dir: Path, branch_name: str) -> None:
-    result = run_command(["git", "rev-parse", "--verify", branch_name], cwd=repo_dir, check=False)
-    if result.returncode == 0:
-        raise SyncError(f"Branch already exists in {repo_dir}: {branch_name}")
+def configure_git_identity(repo_dir: Path) -> None:
+    """Set local author identity so commits work on fresh Actions runners."""
+    run_command(["git", "config", "user.name", GIT_AUTHOR_NAME], cwd=repo_dir)
+    run_command(["git", "config", "user.email", GIT_AUTHOR_EMAIL], cwd=repo_dir)
 
 
-def checkout_branch(repo_dir: Path, *, default_branch: str, branch_name: str) -> None:
+def remote_branch_exists(repo_dir: Path, branch_name: str) -> bool:
+    result = run_command(
+        ["git", "rev-parse", "--verify", f"refs/remotes/origin/{branch_name}"],
+        cwd=repo_dir,
+        check=False,
+    )
+    return result.returncode == 0
+
+
+def prepare_month_branch(repo_dir: Path, *, default_branch: str, branch_name: str) -> None:
+    """Check out ``branch_name``, reusing ``origin/branch_name`` when it exists.
+
+    Fresh month: branch from updated default. Rerun: continue from the remote
+    monthly branch so pushes remain fast-forward and open PRs stay updateable.
+    """
+    run_command(["git", "fetch", "origin"], cwd=repo_dir)
     run_command(["git", "checkout", default_branch], cwd=repo_dir)
-    ensure_branch_absent(repo_dir, branch_name)
+    run_command(
+        ["git", "pull", "--ff-only", "origin", default_branch],
+        cwd=repo_dir,
+        check=False,
+    )
+
+    if remote_branch_exists(repo_dir, branch_name):
+        run_command(
+            ["git", "checkout", "-B", branch_name, f"origin/{branch_name}"],
+            cwd=repo_dir,
+        )
+        return
+
+    local = run_command(
+        ["git", "rev-parse", "--verify", f"refs/heads/{branch_name}"],
+        cwd=repo_dir,
+        check=False,
+    )
+    if local.returncode == 0:
+        run_command(["git", "branch", "-D", branch_name], cwd=repo_dir)
     run_command(["git", "checkout", "-b", branch_name], cwd=repo_dir)
 
 
@@ -212,14 +249,50 @@ def append_entries(readme_path: Path, entries: list[str]) -> None:
     readme_path.write_text(updated, encoding="utf-8")
 
 
+def find_existing_pr_url(branch_name: str) -> str | None:
+    owner = AWESOME_REPO.split("/", 1)[0]
+    result = run_command(
+        [
+            "gh",
+            "pr",
+            "list",
+            "--repo",
+            AWESOME_REPO,
+            "--head",
+            f"{owner}:{branch_name}",
+            "--state",
+            "open",
+            "--json",
+            "url",
+            "--jq",
+            ".[0].url // empty",
+        ],
+        check=False,
+    )
+    if result.returncode != 0:
+        return None
+    url = result.stdout.strip()
+    return url or None
+
+
 def commit_and_open_pr(repo_dir: Path, *, month: str, branch_name: str, base_branch: str) -> str:
+    configure_git_identity(repo_dir)
     commit_message = f"Add EEG-FM digest papers for {month}"
     run_command(["git", "add", "README.md"], cwd=repo_dir)
     run_command(["git", "commit", "-m", commit_message], cwd=repo_dir)
     run_command(["git", "push", "--set-upstream", "origin", branch_name], cwd=repo_dir)
 
+    existing_url = find_existing_pr_url(branch_name)
+    if existing_url:
+        return existing_url
+
     pr_title = commit_message
-    pr_body = f"Adds accepted EEG-FM Digest papers for {month} from `outputs/{month}/backend_rows.jsonl`."
+    pr_body = (
+        f"Adds accepted EEG-FM Digest papers for {month} from "
+        f"`outputs/{month}/backend_rows.jsonl`.\n\n"
+        "Volume chart (accepted papers / month): "
+        "https://iroblesrazzaq.github.io/EEG-FM-Digest/"
+    )
     result = run_command(
         [
             "gh",
@@ -250,31 +323,50 @@ def main(argv: list[str] | None = None) -> int:
             print(f"No accepted papers found in outputs/{args.month}/backend_rows.jsonl.")
             return 0
 
-        repo_dir: Path | None = None
         if args.dry_run:
             readme_text = fetch_remote_readme()
-        else:
-            repo_dir = ensure_repo_checkout()
-            readme_text = (repo_dir / "README.md").read_text(encoding="utf-8")
-
-        existing_ids = extract_arxiv_ids(readme_text)
-        new_entries = [format_markdown_entry(paper) for paper in papers if paper.arxiv_id not in existing_ids]
-
-        if not new_entries:
-            print(f"No new papers to add for {args.month}; all accepted arXiv IDs already appear in README.md.")
-            return 0
-
-        if args.dry_run:
+            existing_ids = extract_arxiv_ids(readme_text)
+            new_entries = [
+                format_markdown_entry(paper)
+                for paper in papers
+                if paper.arxiv_id not in existing_ids
+            ]
+            if not new_entries:
+                print(
+                    f"No new papers to add for {args.month}; "
+                    "all accepted arXiv IDs already appear in README.md."
+                )
+                return 0
             print(f"Would append {len(new_entries)} entries to {AWESOME_REPO}/README.md:")
             for entry in new_entries:
                 print(entry)
             return 0
 
-        assert repo_dir is not None
+        repo_dir = ensure_repo_checkout()
         ensure_clean_worktree(repo_dir)
         branch_name = f"digest-{args.month}"
         base_branch = get_default_branch(repo_dir)
-        checkout_branch(repo_dir, default_branch=base_branch, branch_name=branch_name)
+        prepare_month_branch(
+            repo_dir,
+            default_branch=base_branch,
+            branch_name=branch_name,
+        )
+
+        # Dedupe against the branch tip (default for new months, existing
+        # monthly branch for reruns) so already-synced IDs are skipped.
+        readme_text = (repo_dir / "README.md").read_text(encoding="utf-8")
+        existing_ids = extract_arxiv_ids(readme_text)
+        new_entries = [
+            format_markdown_entry(paper)
+            for paper in papers
+            if paper.arxiv_id not in existing_ids
+        ]
+        if not new_entries:
+            print(
+                f"No new papers to add for {args.month}; "
+                "all accepted arXiv IDs already appear in README.md."
+            )
+            return 0
 
         append_entries(repo_dir / "README.md", new_entries)
         pr_url = commit_and_open_pr(
