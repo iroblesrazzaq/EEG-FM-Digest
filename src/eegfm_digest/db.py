@@ -144,6 +144,60 @@ class DigestDB:
         self.conn.execute("DELETE FROM summaries WHERE arxiv_id_base=?", (arxiv_id_base,))
         self.conn.commit()
 
+    def get_paper(self, arxiv_id_base: str) -> dict[str, Any] | None:
+        row = self.conn.execute(
+            "SELECT metadata_json FROM papers WHERE arxiv_id_base=?",
+            (arxiv_id_base,),
+        ).fetchone()
+        if not row:
+            return None
+        return json.loads(row["metadata_json"])
+
+    def list_papers_for_month(self, month: str) -> list[dict[str, Any]]:
+        rows = self.conn.execute(
+            "SELECT metadata_json FROM papers WHERE month=? ORDER BY arxiv_id_base",
+            (month,),
+        ).fetchall()
+        return [json.loads(row["metadata_json"]) for row in rows]
+
+    def list_triage_for_month(self, month: str) -> list[dict[str, Any]]:
+        rows = self.conn.execute(
+            "SELECT triage_json FROM triage WHERE month=? ORDER BY arxiv_id_base",
+            (month,),
+        ).fetchall()
+        return [json.loads(row["triage_json"]) for row in rows]
+
+    def list_summaries_for_month(self, month: str) -> list[dict[str, Any]]:
+        rows = self.conn.execute(
+            "SELECT summary_json FROM summaries WHERE month=? ORDER BY arxiv_id_base",
+            (month,),
+        ).fetchall()
+        return [json.loads(row["summary_json"]) for row in rows]
+
+    def get_accepted_without_summary(self) -> list[tuple[str, str]]:
+        """Return ``(month, arxiv_id_base)`` for accepts that lack a summary row."""
+        rows = self.conn.execute(
+            """
+            SELECT t.month, t.arxiv_id_base, t.triage_json
+            FROM triage t
+            LEFT JOIN summaries s ON s.arxiv_id_base = t.arxiv_id_base
+            WHERE s.arxiv_id_base IS NULL
+            ORDER BY t.month, t.arxiv_id_base
+            """
+        ).fetchall()
+        out: list[tuple[str, str]] = []
+        for row in rows:
+            try:
+                data = json.loads(row["triage_json"])
+            except json.JSONDecodeError:
+                continue
+            if not isinstance(data, dict):
+                continue
+            if data.get("decision") != "accept":
+                continue
+            out.append((str(row["month"]), str(row["arxiv_id_base"])))
+        return out
+
     def upsert_run(self, month: str, stats: dict[str, Any]) -> None:
         self.conn.execute(
             """
