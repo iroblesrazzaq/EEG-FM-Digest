@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -17,48 +18,143 @@ def _load_sync_module():
     return module
 
 
-def test_load_backend_rows_filters_accepts_and_deduplicates(tmp_path, monkeypatch):
-    module = _load_sync_module()
-    month = "2025-01"
-    output_dir = tmp_path / "outputs" / month
-    output_dir.mkdir(parents=True)
-    backend_path = output_dir / "backend_rows.jsonl"
+def _paper(
+    *,
+    arxiv_id: str,
+    title: str,
+    paper_type: str,
+    one_liner: str = "A useful summary.",
+    published_date: str = "2026-07-02",
+    decision: str = "accept",
+    authors: list[str] | None = None,
+    code_url: str | None = None,
+) -> dict:
+    return {
+        "arxiv_id_base": arxiv_id,
+        "title": title,
+        "authors": authors or ["Ada Lovelace", "Alan Turing", "Grace Hopper"],
+        "published_date": published_date,
+        "triage": {"decision": decision},
+        "summary": {
+            "paper_type": paper_type,
+            "one_liner": one_liner,
+            "published_date": published_date,
+            "open_source": {"code_url": code_url, "weights_url": None, "license": None},
+        },
+    }
 
-    rows = [
-        {
-            "arxiv_id_base": "2501.00001",
-            "title": "Accepted Paper",
-            "published": "2025-01-02T00:00:00Z",
-            "triage": {"decision": "accept"},
-            "paper_summary": {"one_liner": "  Useful summary.  ", "published_date": "2025-01-02"},
-        },
-        {
-            "arxiv_id_base": "2501.00001",
-            "title": "Accepted Paper Duplicate",
-            "published": "2025-01-02T00:00:00Z",
-            "triage": {"decision": "accept"},
-            "paper_summary": {"one_liner": "Duplicate row.", "published_date": "2025-01-02"},
-        },
-        {
-            "arxiv_id_base": "2501.00002",
-            "title": "Rejected Paper",
-            "published": "2025-01-03T00:00:00Z",
-            "triage": {"decision": "reject"},
-            "paper_summary": None,
-        },
-    ]
-    backend_path.write_text("\n".join(json.dumps(row) for row in rows) + "\n", encoding="utf-8")
+
+def test_load_digest_papers_keeps_new_models_only(tmp_path, monkeypatch):
+    module = _load_sync_module()
+    month = "2026-07"
+    month_dir = tmp_path / "docs" / "digest" / month
+    month_dir.mkdir(parents=True)
+    payload = {
+        "papers": [
+            _paper(arxiv_id="2607.00001", title="New FM", paper_type="new_model"),
+            _paper(arxiv_id="2607.00001", title="Duplicate FM", paper_type="new_model"),
+            _paper(arxiv_id="2607.00002", title="LoRA method", paper_type="method"),
+            _paper(arxiv_id="2607.00003", title="Rejected FM", paper_type="new_model", decision="reject"),
+            _paper(
+                arxiv_id="2607.00004",
+                title="Broken summary FM",
+                paper_type="new_model",
+                one_liner="Summary unavailable due to JSON validation failure.",
+            ),
+            _paper(
+                arxiv_id="2607.00005",
+                title="Open FM",
+                paper_type="new_model",
+                code_url="https://github.com/example/open-fm",
+            ),
+        ]
+    }
+    (month_dir / "papers.json").write_text(json.dumps(payload), encoding="utf-8")
     monkeypatch.chdir(tmp_path)
 
-    papers = module.load_backend_rows(month)
+    papers = module.load_digest_papers(month, docs_dir=Path("docs"))
 
-    assert len(papers) == 1
-    assert papers[0].arxiv_id == "2501.00001"
-    assert papers[0].one_liner == "Useful summary."
-    assert papers[0].year == "2025"
-    assert module.format_markdown_entry(papers[0]) == (
-        "- [Accepted Paper](https://arxiv.org/abs/2501.00001) - Useful summary. (2025)"
+    assert [paper.arxiv_id for paper in papers] == ["2607.00001", "2607.00005"]
+    assert papers[0].year == "2026"
+    assert papers[0].authors[0] == "Ada Lovelace"
+    assert papers[1].code_url == "https://github.com/example/open-fm"
+    assert "method" not in {paper.title for paper in papers}
+
+
+def test_format_markdown_entry_matches_awesome_list_style():
+    module = _load_sync_module()
+    entry = module.PaperEntry(
+        arxiv_id="2607.03925",
+        title="NeuroOnline: Bridging Pretraining and Online Adaptation",
+        one_liner="A one liner.",
+        year="2026",
+        authors=("Weibin Li", "Wendu Li", "Yushan You"),
+        code_url="https://github.com/example/neuroonline",
     )
+
+    rendered = module.format_markdown_entry(entry)
+
+    assert rendered == (
+        "- **NeuroOnline: Bridging Pretraining and Online Adaptation**  \n"
+        "  [paper](https://arxiv.org/abs/2607.03925) · *Weibin Li et al.* "
+        "(arXiv 2026; [arXiv:2607.03925](https://arxiv.org/abs/2607.03925)) "
+        "· [code](https://github.com/example/neuroonline)\n"
+    )
+
+
+def test_insert_fm_entries_prepends_to_existing_year_and_creates_missing_year():
+    module = _load_sync_module()
+    readme = """# Awesome EEG Foundation Models
+
+## EEG Foundation Models
+
+### 2026 
+- **Uni-NTFM: A Unified Foundation Model**  
+  [paper](https://openreview.net/forum?id=oUMiuYHW21) · *Chen et al.* (ICLR 2026)
+
+### 2025
+- **ALFEE: Adaptive Large Foundation Model for EEG Representation**  
+  [paper](https://arxiv.org/abs/2505.06291) · *Wang et al.* (arXiv; [arXiv:2505.06291](https://arxiv.org/abs/2505.06291))
+
+---
+
+## Multimodal brainwave Foundation Models (EEG + other modalities)
+
+### 2025
+- **BrainOmni**  
+  [paper](https://arxiv.org/abs/2505.18185) · *Xiao et al.*
+"""
+    new_2026 = module.PaperEntry(
+        arxiv_id="2607.03925",
+        title="NeuroOnline",
+        one_liner="line",
+        year="2026",
+        authors=("Weibin Li",),
+        code_url=None,
+    )
+    new_2022 = module.PaperEntry(
+        arxiv_id="2204.03272",
+        title="MAEEG",
+        one_liner="line",
+        year="2022",
+        authors=("Author A", "Author B"),
+        code_url=None,
+    )
+
+    updated = module.insert_fm_entries(readme, [new_2026, new_2022])
+
+    fm_start = updated.index("## EEG Foundation Models")
+    multimodal_start = updated.index("## Multimodal")
+    fm_section = updated[fm_start:multimodal_start]
+    assert fm_section.index("### 2026") < fm_section.index("### 2025")
+    assert fm_section.index("### 2025") < fm_section.index("### 2022")
+    assert fm_section.index("NeuroOnline") < fm_section.index("Uni-NTFM")
+    assert "\n\n- **Uni-NTFM" in fm_section or "\n- **Uni-NTFM" in fm_section
+    neuro_block = fm_section[fm_section.index("NeuroOnline"):fm_section.index("Uni-NTFM")]
+    assert "2607.03925" in neuro_block
+    assert "2204.03272" in fm_section
+    assert updated[multimodal_start:].count("2505.18185") == 1
+    assert "BrainOmni" in updated[multimodal_start:]
 
 
 def test_extract_arxiv_ids_matches_base_and_versioned_urls():
@@ -74,24 +170,10 @@ def test_extract_arxiv_ids_matches_base_and_versioned_urls():
     assert found == {"2501.00001", "2501.00002", "2501.00003"}
 
 
-def test_append_entries_preserves_spacing(tmp_path):
+def test_default_months_includes_january_wrap():
     module = _load_sync_module()
-    readme_path = tmp_path / "README.md"
-    readme_path.write_text("# Awesome EEG FM\n", encoding="utf-8")
-
-    module.append_entries(
-        readme_path,
-        [
-            "- [Paper A](https://arxiv.org/abs/2501.00001) - Summary A. (2025)",
-            "- [Paper B](https://arxiv.org/abs/2501.00002) - Summary B. (2025)",
-        ],
-    )
-
-    assert readme_path.read_text(encoding="utf-8") == (
-        "# Awesome EEG FM\n\n"
-        "- [Paper A](https://arxiv.org/abs/2501.00001) - Summary A. (2025)\n"
-        "- [Paper B](https://arxiv.org/abs/2501.00002) - Summary B. (2025)\n"
-    )
+    assert module.default_months(datetime(2026, 8, 16, tzinfo=timezone.utc)) == ["2026-07", "2026-08"]
+    assert module.default_months(datetime(2026, 1, 2, tzinfo=timezone.utc)) == ["2025-12", "2026-01"]
 
 
 def test_configure_git_identity_sets_bot_author(tmp_path, monkeypatch):
@@ -172,7 +254,7 @@ def test_commit_and_open_pr_configures_identity_before_commit(tmp_path, monkeypa
     monkeypatch.setattr(module, "run_command", fake_run)
     url = module.commit_and_open_pr(
         tmp_path,
-        month="2025-01",
+        label="2025-01",
         branch_name="digest-2025-01",
         base_branch="main",
     )
@@ -181,3 +263,6 @@ def test_commit_and_open_pr_configures_identity_before_commit(tmp_path, monkeypa
     commit_idx = next(i for i, args in enumerate(calls) if args[:2] == ["git", "commit"])
     assert name_idx < commit_idx
     assert url == "https://example.com/pr/1"
+    create_call = next(args for args in calls if args[:3] == ["gh", "pr", "create"])
+    assert "paper_type=new_model" in " ".join(create_call)
+    assert "backend_rows.jsonl" not in " ".join(create_call)
