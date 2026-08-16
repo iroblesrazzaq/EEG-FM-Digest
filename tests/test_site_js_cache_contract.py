@@ -22,12 +22,15 @@ def test_site_js_uses_month_cache_loader_in_month_and_search_paths():
     assert "const monthRev = normalizeMonthRev(initialMonthRow?.month_rev);" in site_js
 
 
-def test_site_js_renders_volume_chart_with_current_month_highlight():
+def test_site_js_renders_volume_chart_with_current_year_highlight():
     site_js = Path("docs/assets/site.js").read_text(encoding="utf-8")
     assert "function buildVolumeSeries(monthRows, latestMonth)" in site_js
     assert "function renderVolumeChart(container, series)" in site_js
     assert "volume-bar volume-bar-current" in site_js
     assert 'app.querySelector("#volume-chart")' in site_js
+    assert "Yearly counts from the digest. Current year highlighted." in site_js
+    assert "Bar chart of accepted papers per year" in site_js
+    assert "byYear[year] = (byYear[year] || 0) + safeNumber(row?.stats?.accepted, 0)" in site_js
     # Full manifest timeline — not visibleMonthRows (which drops zero-accept months).
     assert "buildVolumeSeries(state.monthRows, state.latestMonth)" in site_js
     assert "buildVolumeSeries(rows, state.latestMonth)" not in site_js
