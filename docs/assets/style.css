@@ -201,7 +201,7 @@ a:hover {
 
 main,
 .container {
-  max-width: 1040px;
+  max-width: 1120px;
   margin: 0 auto;
   padding: 30px 24px 46px 24px;
 }
@@ -909,8 +909,9 @@ button:disabled {
 
 .volume-chart {
   margin: 8px 0 28px;
-  padding: 18px 18px 20px;
+  padding: 18px 20px 16px;
   border: 1px solid var(--line);
+  border-radius: 14px;
   background: var(--surface);
 }
 
@@ -927,18 +928,78 @@ button:disabled {
 
 .volume-chart-plot {
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
   gap: 10px;
-  height: 160px;
+  height: 240px;
   width: 100%;
-  overflow-x: auto;
-  padding-bottom: 22px;
+}
+
+.volume-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  min-width: 2.4rem;
+  padding-top: 16px;
+  padding-bottom: 28px;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.volume-y-tick {
+  transform: translateY(-50%);
+}
+
+.volume-plot-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.volume-plot-area {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-top: 16px;
+  overflow: visible;
+  border-left: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.volume-grid {
+  position: absolute;
+  inset: 16px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.volume-grid-line {
+  display: block;
+  width: 100%;
+  border-top: 1px solid var(--line);
+}
+
+.volume-grid-baseline {
+  border-top-color: transparent;
+}
+
+.volume-bars {
+  position: absolute;
+  inset: 16px 0 0 0;
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  padding: 0 8px;
 }
 
 .volume-col {
   flex: 1 1 0;
-  min-width: 28px;
-  max-width: 56px;
+  min-width: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -948,21 +1009,41 @@ button:disabled {
 }
 
 .volume-bar {
+  position: relative;
   width: 100%;
-  min-height: 2px;
+  min-height: 0;
   background: #3b6ea5;
-  border-radius: 1px 1px 0 0;
+  border-radius: 2px 2px 0 0;
+}
+
+.volume-bar-value {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, calc(-100% - 4px));
+  font-size: 11px;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
 }
 
 .volume-bar-current {
   background: #d97706;
 }
 
+.volume-x-axis {
+  display: flex;
+  align-items: start;
+  gap: 14px;
+  height: 28px;
+  padding: 6px 8px 0;
+}
+
 .volume-year-label {
-  position: absolute;
-  bottom: -16px;
-  left: 50%;
-  transform: translateX(-50%);
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: center;
   font-size: 11px;
   color: var(--muted);
   white-space: nowrap;
