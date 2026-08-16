@@ -22,8 +22,77 @@
         "pdf": "https://arxiv.org/pdf/2309.12056v2"
       },
       "published_date": "2023-09-21",
-      "summary": null,
-      "summary_failed_reason": "download_or_extract_failed:HTTPStatusError",
+      "summary": {
+        "arxiv_id_base": "2309.12056",
+        "categories": [
+          "cs.AI",
+          "cs.CL",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "BELT proposes a learning framework to translate noninvasive EEG signals into natural language by utilizing the semantic knowledge of off-the-shelf large language models. It employs a deep conformer encoder and a vector quantization encoder, using a contrastive learning objective to align EEG representations with natural language supervision. The model demonstrates state-of-the-art performance in brain-to-language translation and zero-shot sentiment classification.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [
+            "42.31% BLEU-1 for translation",
+            "67.32% precision for zero-shot sentiment classification"
+          ],
+          "tasks": [
+            "brain-to-language translation",
+            "zero-shot sentiment classification"
+          ]
+        },
+        "key_points": [
+          "Uses a conformer and vector quantization encoder to align brain signals with natural language semantics.",
+          "Employs contrastive learning with pretrained LMs to overcome the limitation of small-scale EEG datasets.",
+          "Achieves state-of-the-art results in brain-to-language translation and zero-shot sentiment classification."
+        ],
+        "limitations": [
+          "Dependence on the quality of the pretrained language model",
+          "Limited scale and quality of available EEG datasets for initial training"
+        ],
+        "method": {
+          "architecture": "Deep conformer encoder and vector quantization (VQ) encoder",
+          "finetuning": "Applied to translation and sentiment classification tasks",
+          "objective": "Contrastive learning with natural language supervision",
+          "pretraining": "Bootstrapping using off-the-shelf pretrained LMs"
+        },
+        "notes": "summary_skipped:pdf_failed:HTTPStatusError;abstract_only_fallback;input_mode=fulltext;prompt_tokens=1770",
+        "one_liner": "A framework that leverages pretrained language models via contrastive learning to bootstrap semantic EEG representations for brain-to-language translation.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2023-09-21",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "BELT:Bootstrapping Electroencephalography-to-Language Decoding and Zero-Shot Sentiment Classification by Natural Language Supervision",
+        "unique_contribution": "Bootstraps EEG representation learning by using contrastive alignment with large-scale pretrained language models to enable zero-shot semantic decoding.",
+        "used_fulltext": false
+      },
+      "summary_failed_reason": null,
       "title": "BELT:Bootstrapping Electroencephalography-to-Language Decoding and Zero-Shot Sentiment Classification by Natural Language Supervision",
       "triage": {
         "confidence": 0.85,
@@ -40,7 +109,9 @@
   "stats": {
     "accepted": 1,
     "candidates": 7,
-    "summarized": 0
+    "summarized": 1
   },
-  "top_picks": []
+  "top_picks": [
+    "2309.12056"
+  ]
 }

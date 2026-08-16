@@ -1,0 +1,523 @@
+{
+  "featured_paper_id": null,
+  "month": "2026-08",
+  "papers": [
+    {
+      "arxiv_id": "2608.01898v1",
+      "arxiv_id_base": "2608.01898",
+      "authors": [
+        "Junjie Yu",
+        "Zihan Deng",
+        "Jianyu Zhang",
+        "Junrong Mu",
+        "Jiahui An",
+        "Wenxiao Ma",
+        "Ziling Lu",
+        "Yue Wang",
+        "Yan Zhu",
+        "Kexin Lou",
+        "Quanying Liu"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2608.01898v1",
+        "pdf": "https://arxiv.org/pdf/2608.01898v1"
+      },
+      "published_date": "2026-08-03",
+      "summary": {
+        "arxiv_id_base": "2608.01898",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 95617, \"error\": null, \"pages\": 20, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7992;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-08-03",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Understanding and Correcting Low-Frequency Bias in EEG Foundation Model",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Understanding and Correcting Low-Frequency Bias in EEG Foundation Model",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets 'EEG foundation models' in both title and abstract.",
+          "Proposes FAME, a frequency-balanced masked autoencoding framework for learning transferable EEG representations.",
+          "Analyzes systemic bias across diverse EEG-FMs and evaluates performance on 41 downstream tasks via OmniEEG-Bench."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2608.02070v2",
+      "arxiv_id_base": "2608.02070",
+      "authors": [
+        "Zhu Chen",
+        "Dingkun Liu",
+        "Yuheng Chen",
+        "Dongrui Wu"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2608.02070v2",
+        "pdf": "https://arxiv.org/pdf/2608.02070v2"
+      },
+      "published_date": "2026-08-03",
+      "summary": {
+        "arxiv_id_base": "2608.02070",
+        "categories": [
+          "cs.CV",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "BNCI2014001",
+            "BNCI2015001",
+            "BNCI2014009",
+            "CHB-MIT",
+            "SEED",
+            "EEGMAT",
+            "SEED-VIG"
+          ],
+          "eeg_hours": null,
+          "subjects": 121.0
+        },
+        "detailed_summary": "STEAM addresses the challenge of EEG data heterogeneity through a dual-branch spatio-temporal encoder and a shared Soft Mixture-of-Experts (SSMoE) module that aligns spatial and temporal features. The model employs a hierarchical pre-training strategy, moving from general initialization via masked reconstruction and contrastive alignment to paradigm-specific specialization. This approach allows for efficient downstream adaptation by updating only a small fraction of parameters, significantly improving performance across various EEG decoding tasks.",
+        "evaluation": {
+          "benchmarks": [
+            "BNCI2014",
+            "CHB-MIT",
+            "SEED",
+            "EEGMAT",
+            "SEED-VIG"
+          ],
+          "headline_results": [
+            "Achieved the best average rank across 14 evaluation settings compared to other EEG-FMs.",
+            "Demonstrated superior performance in cross-subject and cross-dataset scenarios."
+          ],
+          "tasks": [
+            "Motor Imagery",
+            "Seizure Detection",
+            "Emotion Recognition",
+            "Sleep Stage Classification",
+            "Vigilance Detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: STEAM utilizes a dual-branch encoder with SSMoE for spatio-temporal alignment.",
+          "Hierarchical pre-training: Employs a two-stage process (General-to-Paradigm) to handle cross-dataset variability.",
+          "Efficient adaptation: Achieves state-of-the-art results by updating only 5.1% of model parameters for downstream tasks."
+        ],
+        "limitations": [
+          "Computational overhead associated with the Mixture-of-Experts architecture.",
+          "Dependence on the availability of large-scale paradigm-specific data for Stage-II pre-training."
+        ],
+        "method": {
+          "architecture": "Dual-branch spatio-temporal encoder with Shared Soft Mixture-of-Experts (SSMoE) and frequency-aware gated attention.",
+          "finetuning": "Lightweight adaptation updating only spatial/temporal embedding modules and the task head (~5.1% of parameters).",
+          "objective": "Masked reconstruction and spatio-temporal contrastive alignment for general pre-training; supervised objectives for paradigm specialization.",
+          "pretraining": "Two-stage hierarchical pre-training: Stage-I (General initialization) and Stage-II (Paradigm-specific specialization)."
+        },
+        "notes": "{\"chars\": 76432, \"error\": null, \"pages\": 21, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8017;max_tokens=8000",
+        "one_liner": "STEAM introduces a hierarchical pre-training framework using a Spatio-Temporal Alignment Mixture-of-Experts (SSMoE) model to improve EEG decoding across diverse paradigms.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-08-03",
+        "tags": {
+          "backbone": [
+            "transformer",
+            "moe"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "STEAM: A Spatio-TEmporal Alignment Mixture-of-Experts Model with Hierarchical Pre-training for EEG Decoding",
+        "unique_contribution": "A hierarchical pre-training framework (General-to-Paradigm) combined with a Spatio-Temporal Alignment Mixture-of-Experts (SSMoE) architecture for robust EEG feature alignment.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "STEAM: A Spatio-TEmporal Alignment Mixture-of-Experts Model with Hierarchical Pre-training for EEG Decoding",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly frames the work as an EEG foundation model and a hierarchical transfer framework.",
+          "Focuses on general-purpose representation learning to improve general transferability and downstream adaptation.",
+          "Evaluates the model across seven downstream datasets to demonstrate its utility as a foundation model."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2608.07033v1",
+      "arxiv_id_base": "2608.07033",
+      "authors": [
+        "Lingwei Li",
+        "Yirong Kan",
+        "Peng Chen",
+        "Xu Cao",
+        "Zheng Chen",
+        "Yasuhiko Nakashima"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2608.07033v1",
+        "pdf": "https://arxiv.org/pdf/2608.07033v1"
+      },
+      "published_date": "2026-08-07",
+      "summary": {
+        "arxiv_id_base": "2608.07033",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "TUAB",
+            "EEGMAT",
+            "TUEV",
+            "ISRUC",
+            "EarEEG"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "ZIPBrain addresses the quadratic complexity of Transformer-based EEG foundation models by introducing a redundancy-aware token pooling module. It identifies redundant tokens using L2-norm pivot selection and cosine similarity, merging them into unique tokens via norm-preserving pooling to prevent feature attenuation. The method is training-free and plug-and-play, demonstrating significant reductions in inference time and memory usage across multiple EFMs while maintaining or improving classification accuracy.",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "EEGMAT",
+            "TUEV",
+            "ISRUC",
+            "EarEEG"
+          ],
+          "headline_results": [
+            "Average accuracy improvement of 1.3% to 10.5% over baselines",
+            "Wall-clock inference time reduced by 32.7%",
+            "LaBraM on TUAB preserved 99.65% accuracy at ~80% compression ratio"
+          ],
+          "tasks": [
+            "EEG classification"
+          ]
+        },
+        "key_points": [
+          "New method: ZIPBrain reduces inference latency by up to 32.7% across various EEG foundation models.",
+          "Implements norm-preserving pooling to avoid the feature attenuation common in standard averaging.",
+          "Demonstrates compatibility with multiple architectures including LaBraM, EEGPT, BIOT, and TFM-Tokenizer."
+        ],
+        "limitations": [
+          "Performance gains may vary depending on the inherent redundancy of the specific EEG dataset",
+          "The method is specifically designed for Transformer-based encoders and may not apply to other architectures"
+        ],
+        "method": {
+          "architecture": "Plug-and-play module for Transformer encoders",
+          "finetuning": "None (plug-and-play)",
+          "objective": "Token sequence compression via redundancy-aware pooling",
+          "pretraining": "None (training-free)"
+        },
+        "notes": "{\"chars\": 56184, \"error\": null, \"pages\": 14, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8049;max_tokens=8000",
+        "one_liner": "A training-free, redundancy-aware token pooling module designed to reduce the computational overhead of EEG foundation models without sacrificing accuracy.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-08-07",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "topology-agnostic"
+          ]
+        },
+        "title": "ZIPBrain: Can EEG Foundation Models Be Faster, Locally Deployable, but Accurate?",
+        "unique_contribution": "Introduces a training-free, norm-preserving token pooling mechanism that reduces EEG sequence length by identifying and merging redundant tokens based on L2-norm and cosine similarity.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "ZIPBrain: Can EEG Foundation Models Be Faster, Locally Deployable, but Accurate?",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets the efficiency and local deployment of 'EEG foundation models (EFMs)'",
+          "Proposes a plug-and-play module (ZIPBrain) specifically for integration into EEG-FM Transformer encoders",
+          "Evaluates the proposed method across multiple existing EEG foundation models"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2608.11656v1",
+      "arxiv_id_base": "2608.11656",
+      "authors": [
+        "Myeong-Ju Cho",
+        "Hye-Bin Shin",
+        "Seo-Hyun Lee",
+        "Seong-Whan Lee"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2608.11656v1",
+        "pdf": "https://arxiv.org/pdf/2608.11656v1"
+      },
+      "published_date": "2026-08-12",
+      "summary": {
+        "arxiv_id_base": "2608.11656",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Temple University Hospital EEG Corpus (TUEG)"
+          ],
+          "eeg_hours": 27062.0,
+          "subjects": 14987.0
+        },
+        "detailed_summary": "The paper proposes the Brain Latent Predictive Model (BLPM), which treats EEG decoding as a continuous semantic embedding prediction task rather than discrete token generation. It introduces a Continuous EEG Latent Predictive (CELP) encoder for self-supervised pretraining and a Multi-Query Semantic Decomposition (MQSD) module to align EEG features with language semantics. Evaluation across seven diverse benchmarks using NeuralBench shows that BLPM outperforms existing foundation models while operating as a single unified model without task-specific heads.",
+        "evaluation": {
+          "benchmarks": [
+            "NeuralBench"
+          ],
+          "headline_results": [
+            "Outperforms BIOT, LaBraM, CBraMod, REVE, and LUNA across multiple benchmarks as a unified model."
+          ],
+          "tasks": [
+            "Mental Workload",
+            "Stress Detection",
+            "Abnormality Detection",
+            "Event Type Classification",
+            "Motor Imagery",
+            "Emotion Recognition",
+            "Sleep Staging"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: BLPM uses a continuous latent predictive approach to align EEG signals with language semantics.",
+          "Introduces the MQSD module to decompose EEG representations into task-relevant semantic components using language queries.",
+          "Demonstrates superior performance across seven diverse EEG benchmarks using a unified model architecture."
+        ],
+        "limitations": [
+          "Dependence on high-quality language-EEG aligned pairs for instruction tuning.",
+          "Computational overhead of the MQSD cross-attention mechanism."
+        ],
+        "method": {
+          "architecture": "CELP encoder (Online/Target encoders) and MQSD module (Cross-attention based semantic decomposition).",
+          "finetuning": "Multi-task instruction tuning using semantic embeddings of target answers.",
+          "objective": "Smooth L1 loss for latent target prediction and InfoNCE for semantic alignment.",
+          "pretraining": "Self-supervised latent predictive pretraining on TUEG corpus."
+        },
+        "notes": "{\"chars\": 86394, \"error\": null, \"pages\": 19, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7990",
+        "one_liner": "A non-generative EEG-language foundation model that aligns continuous EEG representations with natural-language semantics via latent embedding prediction.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-08-12",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Continuous-Latent Predictive Modeling with Semantic Alignment for EEG-Language Foundation Models",
+        "unique_contribution": "Introduces a continuous latent predictive paradigm for EEG-language alignment that avoids the information loss of discrete tokenization and the mismatch of autoregressive modeling.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Continuous-Latent Predictive Modeling with Semantic Alignment for EEG-Language Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly proposes the Brain Latent Predictive Model (BLPM) as an EEG-language foundation model.",
+          "Focuses on learning transferable EEG representations through a continuous latent predictive encoder.",
+          "Aims for generalizable neural decoding across diverse tasks and benchmarks."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2608.13072v1",
+      "arxiv_id_base": "2608.13072",
+      "authors": [
+        "Shuailei Zhang",
+        "Muyun Jiang",
+        "Wei Zhang",
+        "Jinbo Chen",
+        "Zhiwei Guo",
+        "Yong Li",
+        "Yi Ding",
+        "Cuntai Guan"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2608.13072v1",
+        "pdf": "https://arxiv.org/pdf/2608.13072v1"
+      },
+      "published_date": "2026-08-13",
+      "summary": {
+        "arxiv_id_base": "2608.13072",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 76656, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7984;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-08-13",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "EEG-PRIME: Prototype-Aligned Representation Learning with Multi-Level Conditioning for EEG Decoding",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EEG-PRIME: Prototype-Aligned Representation Learning with Multi-Level Conditioning for EEG Decoding",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies as a 'two-stage EEG foundation model' for cross-dataset multi-task decoding.",
+          "Utilizes masked pretraining to learn transferable representations across diverse BCI paradigms.",
+          "Demonstrates broad transferability and zero-shot capability across sixteen diverse EEG datasets."
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 5,
+    "candidates": 12,
+    "summarized": 5
+  },
+  "top_picks": [
+    "2608.11656",
+    "2608.07033",
+    "2608.02070",
+    "2608.13072",
+    "2608.01898"
+  ]
+}

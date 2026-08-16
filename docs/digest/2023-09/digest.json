@@ -1,11 +1,20 @@
 {
   "featured_paper": null,
   "month": "2023-09",
-  "sections": [],
+  "sections": [
+    {
+      "paper_ids": [
+        "2309.12056"
+      ],
+      "title": "new_model"
+    }
+  ],
   "stats": {
     "accepted": 1,
     "candidates": 7,
-    "summarized": 0
+    "summarized": 1
   },
-  "top_picks": []
+  "top_picks": [
+    "2309.12056"
+  ]
 }
