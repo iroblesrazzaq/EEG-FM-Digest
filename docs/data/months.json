@@ -17,12 +17,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2607.03925v1",
+        "arxiv_id_base": "2607.03925",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "title": "NeuroOnline: Bridging Pretraining and Online Adaptation for EEG Foundation Models"
+      },
       "href": "digest/2026-07/index.html",
       "json_path": "digest/2026-07/papers.json",
       "month": "2026-07",
       "month_label": "July 2026",
-      "month_rev": "533a04012374587d",
+      "month_rev": "df4c96a352be7ed1",
       "stats": {
         "accepted": 15,
         "candidates": 33,
@@ -31,12 +36,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2606.20812v1",
+        "arxiv_id_base": "2606.20812",
+        "one_liner": "A sample-efficient EEG foundation model using continuous-time flow matching and a factorized SplitUNet architecture to avoid signal discretization.",
+        "title": "B[FM]$^2$: Brain Foundation Model via Flow Matching with SplitUNet"
+      },
       "href": "digest/2026-06/index.html",
       "json_path": "digest/2026-06/papers.json",
       "month": "2026-06",
       "month_label": "June 2026",
-      "month_rev": "a8222b6cdc23579f",
+      "month_rev": "cce50a993cfbd555",
       "stats": {
         "accepted": 13,
         "candidates": 28,
@@ -45,12 +55,17 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": null,
+      "featured": {
+        "abs_url": "http://arxiv.org/abs/2605.18085v1",
+        "arxiv_id_base": "2605.18085",
+        "one_liner": "An EEG foundation model using CKA-calibrated depth-stratified experts and prior-guided continuous tokenization to optimize cross-paradigm representation learning.",
+        "title": "PRiSE-EEG: A Prior-Guided Foundation Model with Depth-Stratified Experts for Cross-Paradigm EEG Representation Learning"
+      },
       "href": "digest/2026-05/index.html",
       "json_path": "digest/2026-05/papers.json",
       "month": "2026-05",
       "month_label": "May 2026",
-      "month_rev": "d0fa3eaf1ed33bbb",
+      "month_rev": "1fc9e13f1e24db74",
       "stats": {
         "accepted": 24,
         "candidates": 52,
