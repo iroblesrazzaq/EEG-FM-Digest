@@ -175,13 +175,19 @@ class DigestDB:
         return [json.loads(row["summary_json"]) for row in rows]
 
     def get_accepted_without_summary(self) -> list[tuple[str, str]]:
-        """Return ``(month, arxiv_id_base)`` for accepts that lack a summary row."""
+        """Return ``(month, arxiv_id_base)`` for accepts that need a full-text summary.
+
+        Includes accepts with no summary row, and accepts whose stored summary is
+        abstract-only (``used_fulltext`` is not true) so a later PDF success can
+        upgrade them.
+        """
         rows = self.conn.execute(
             """
-            SELECT t.month, t.arxiv_id_base, t.triage_json
+            SELECT t.month, t.arxiv_id_base, t.triage_json, s.summary_json
             FROM triage t
             LEFT JOIN summaries s ON s.arxiv_id_base = t.arxiv_id_base
             WHERE s.arxiv_id_base IS NULL
+               OR IFNULL(json_extract(s.summary_json, '$.used_fulltext'), 0) != 1
             ORDER BY t.month, t.arxiv_id_base
             """
         ).fetchall()

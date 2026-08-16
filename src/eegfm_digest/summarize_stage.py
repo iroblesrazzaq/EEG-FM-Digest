@@ -79,6 +79,13 @@ def summary_inputs_from_pdf_result(
     )
 
 
+def summary_used_fulltext(summary: dict[str, Any] | None) -> bool:
+    """True when a stored summary was produced from extracted PDF text."""
+    if not isinstance(summary, dict):
+        return False
+    return bool(summary.get("used_fulltext"))
+
+
 def prepare_pdf_and_text(
     paper: dict[str, Any],
     month_out: Path,

@@ -43,10 +43,11 @@ def download_pdf(pdf_url: str, out_path: Path, rate_limit_seconds: float) -> Pat
                 resp = client.get(url)
                 resp.raise_for_status()
                 out_path.write_bytes(resp.content)
-                time.sleep(rate_limit_seconds)
                 return out_path
             except httpx.HTTPError as exc:
                 last_error = exc
+            finally:
+                time.sleep(rate_limit_seconds)
     if last_error is not None:
         raise last_error
     raise RuntimeError(f"PDF download failed for {pdf_url}")

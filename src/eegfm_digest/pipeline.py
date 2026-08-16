@@ -21,7 +21,11 @@ from .selection import select_papers_for_summary
 from .site import update_home, write_month_site
 from .stage_context import load_summary_stage_context, load_triage_stage_context
 from .summarize import summarize_paper, summarize_paper_with_meta
-from .summarize_stage import prepare_pdf_and_text, summary_inputs_from_pdf_result
+from .summarize_stage import (
+    prepare_pdf_and_text,
+    summary_inputs_from_pdf_result,
+    summary_used_fulltext,
+)
 from .triage import triage_paper, triage_paper_with_meta
 
 
@@ -140,12 +144,17 @@ def _summarize_one_paper(
     pdf_state: dict[str, object | None] = empty_pdf_state()
     try:
         cached_summary = None if force else db.get_summary_with_meta(arxiv_id_base)
-        if cached_summary and is_cache_current(
-            cached_summary.get("meta"), summary_ctx.descriptor["cache_version"]
-        ):
+        cache_current = bool(
+            cached_summary
+            and is_cache_current(
+                cached_summary.get("meta"), summary_ctx.descriptor["cache_version"]
+            )
+        )
+        cached_data = cached_summary["data"] if cached_summary else None
+        if cache_current and summary_used_fulltext(cached_data):
             return OnePaperSummaryOutcome(
                 arxiv_id_base=arxiv_id_base,
-                summary=cached_summary["data"],
+                summary=cached_data,
                 pdf_state=pdf_state,
                 failed=False,
             )
@@ -172,6 +181,18 @@ def _summarize_one_paper(
                 failed=True,
             )
         if not summary_inputs.used_fulltext:
+            if cache_current and cached_data is not None:
+                print(
+                    f"[pipeline] WARNING: pdf still unavailable for {arxiv_id_base}; "
+                    "keeping abstract-only summary",
+                    file=sys.stderr,
+                )
+                return OnePaperSummaryOutcome(
+                    arxiv_id_base=arxiv_id_base,
+                    summary=cached_data,
+                    pdf_state=pdf_state,
+                    failed=False,
+                )
             print(
                 f"[pipeline] WARNING: pdf unavailable for {arxiv_id_base}; "
                 "summarizing from abstract",
@@ -377,6 +398,7 @@ def resummarize_stragglers(
                 attempted += 1
                 month_out = cfg.output_dir / month
                 month_out.mkdir(parents=True, exist_ok=True)
+                prior_summary = db.get_summary(arxiv_id_base)
                 outcome = _summarize_one_paper(
                     paper=paper,
                     triage=normalize_triage_row(arxiv_id_base, triage),
@@ -388,15 +410,19 @@ def resummarize_stragglers(
                     summary_ctx=summary_ctx,
                     summary_llm_config=summary_llm_config,
                     no_pdf=no_pdf,
-                    force=True,
+                    force=False,
                 )
                 if outcome.failed or outcome.summary is None:
                     failed += 1
                     failed_ids.append(arxiv_id_base)
                 else:
                     succeeded += 1
-                    months_touched.add(month)
-                    pdf_by_month.setdefault(month, {})[arxiv_id_base] = outcome.pdf_state
+                    upgraded = summary_used_fulltext(outcome.summary) and not summary_used_fulltext(
+                        prior_summary
+                    )
+                    if prior_summary is None or upgraded:
+                        months_touched.add(month)
+                        pdf_by_month.setdefault(month, {})[arxiv_id_base] = outcome.pdf_state
 
             if months_touched and not no_site:
                 for month in sorted(months_touched):

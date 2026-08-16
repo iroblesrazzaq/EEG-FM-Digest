@@ -29,7 +29,11 @@ from .selection import select_papers_for_summary
 from .site import update_home, write_month_site
 from .stage_context import load_summary_stage_context, load_triage_stage_context
 from .summarize import summarize_paper_with_meta
-from .summarize_stage import prepare_pdf_and_text, summary_inputs_from_pdf_result
+from .summarize_stage import (
+    prepare_pdf_and_text,
+    summary_inputs_from_pdf_result,
+    summary_used_fulltext,
+)
 from .triage import triage_paper_with_meta
 
 
@@ -291,8 +295,13 @@ def _run_summary_phase_for_month(
     for paper in accepted:
         aid = paper["arxiv_id_base"]
         cached_summary = None if run_cfg.summary_force else db.get_summary_with_meta(aid)
-        if cached_summary and is_cache_current(cached_summary.get("meta"), summary_ctx.descriptor["cache_version"]):
-            summary_map[aid] = cached_summary["data"]
+        cache_current = bool(
+            cached_summary
+            and is_cache_current(cached_summary.get("meta"), summary_ctx.descriptor["cache_version"])
+        )
+        cached_data = cached_summary["data"] if cached_summary else None
+        if cache_current and summary_used_fulltext(cached_data):
+            summary_map[aid] = cached_data
             cache_hit_count += 1
             continue
 
@@ -308,6 +317,10 @@ def _run_summary_phase_for_month(
         if summary_inputs is None:
             continue
         if not summary_inputs.used_fulltext:
+            if cache_current and cached_data is not None:
+                summary_map[aid] = cached_data
+                cache_hit_count += 1
+                continue
             print(f"[summary] {month}: pdf unavailable for {aid}; summarizing from abstract")
 
         summary, summary_call_meta = summarize_paper_with_meta(

@@ -78,3 +78,40 @@ def test_download_pdf_retries_unversioned_url(monkeypatch, tmp_path):
         "https://arxiv.org/pdf/2309.12056",
     ]
     assert out.read_bytes() == b"%PDF-1.4"
+
+
+def test_download_pdf_sleeps_after_failed_and_retry_attempts(monkeypatch, tmp_path):
+    sleeps: list[float] = []
+    monkeypatch.setattr("eegfm_digest.pdf.time.sleep", lambda seconds: sleeps.append(seconds))
+
+    def fake_client(*args, **kwargs):  # noqa: ANN002
+        return _FakeClient(
+            *args,
+            **kwargs,
+            _responses=[_FakeResponse(status_code=403), _FakeResponse()],
+        )
+
+    monkeypatch.setattr("eegfm_digest.pdf.httpx.Client", fake_client)
+    download_pdf("https://arxiv.org/pdf/2309.12056v2", tmp_path / "paper.pdf", 1.5)
+    assert sleeps == [1.5, 1.5]
+
+
+def test_download_pdf_sleeps_when_all_attempts_fail(monkeypatch, tmp_path):
+    sleeps: list[float] = []
+    monkeypatch.setattr("eegfm_digest.pdf.time.sleep", lambda seconds: sleeps.append(seconds))
+
+    def fake_client(*args, **kwargs):  # noqa: ANN002
+        return _FakeClient(
+            *args,
+            **kwargs,
+            _responses=[_FakeResponse(status_code=403), _FakeResponse(status_code=403)],
+        )
+
+    monkeypatch.setattr("eegfm_digest.pdf.httpx.Client", fake_client)
+    try:
+        download_pdf("https://arxiv.org/pdf/2309.12056v2", tmp_path / "paper.pdf", 2.0)
+    except httpx.HTTPStatusError:
+        pass
+    else:
+        raise AssertionError("expected HTTPStatusError")
+    assert sleeps == [2.0, 2.0]

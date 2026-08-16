@@ -126,6 +126,8 @@ Proceed for:
 - Cache: skip if exists
 - Send an identifying `User-Agent`. If a versioned arXiv PDF URL fails, retry once with `https://arxiv.org/pdf/{arxiv_id_base}`.
 - If the PDF is missing, download/extract fails, or extracted text is empty: still summarize from the arXiv abstract (title+abstract already in metadata). Set `used_fulltext=false` and record the PDF error plus `abstract_only_fallback` in `notes`. Do not treat this as a summary failure.
+- Later runs retry the PDF for abstract-only summaries. If extract then succeeds, replace with a full-text summary. If it still fails, keep the cached abstract summary (no extra LLM call).
+- Space every PDF HTTP attempt (success or failure) by `PDF_RATE_LIMIT_SECONDS`.
 - `--no-pdf` remains a hard skip (no summary attempt).
 
 ### 5.3 Text extraction
