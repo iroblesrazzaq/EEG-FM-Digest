@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from .config import Config
+from .pdf import bounded_text, slice_paper_text
 from .row_views import empty_pdf_state
 
 
@@ -16,6 +17,66 @@ class PdfTextResult:
     raw_text: str
     pdf_state: dict[str, Any]
     notes: str
+
+
+@dataclass(frozen=True)
+class SummaryTextInputs:
+    raw_text: str
+    slices: dict[str, str]
+    used_fulltext: bool
+    notes: str
+
+
+_EMPTY_SLICES = {
+    "abstract": "",
+    "introduction": "",
+    "methods": "",
+    "results": "",
+    "conclusion": "",
+    "excerpt": "",
+}
+
+
+def summary_inputs_from_pdf_result(
+    paper: dict[str, Any],
+    pdf_result: PdfTextResult,
+    *,
+    head_chars: int,
+    excerpt_chars: int,
+    tail_chars: int,
+) -> SummaryTextInputs | None:
+    """Build summarizer inputs from extracted PDF text, or abstract-only fallback.
+
+    Returns ``None`` for ``--no-pdf`` so callers skip summarization entirely.
+    Missing/failed/empty PDFs still produce inputs with ``used_fulltext=False``.
+    """
+    if pdf_result.notes == "summary_skipped:no_pdf_mode":
+        return None
+
+    raw = (pdf_result.raw_text or "").strip()
+    if raw:
+        bounded = bounded_text(pdf_result.raw_text, head_chars, tail_chars)
+        return SummaryTextInputs(
+            raw_text=bounded,
+            slices=slice_paper_text(
+                bounded,
+                excerpt_chars=excerpt_chars,
+                tail_chars=min(tail_chars, excerpt_chars),
+            ),
+            used_fulltext=True,
+            notes=pdf_result.notes,
+        )
+
+    abstract = str(paper.get("summary") or "").strip()
+    slices = dict(_EMPTY_SLICES)
+    slices["abstract"] = abstract
+    slices["excerpt"] = abstract
+    return SummaryTextInputs(
+        raw_text=abstract,
+        slices=slices,
+        used_fulltext=False,
+        notes=f"{pdf_result.notes};abstract_only_fallback",
+    )
 
 
 def prepare_pdf_and_text(

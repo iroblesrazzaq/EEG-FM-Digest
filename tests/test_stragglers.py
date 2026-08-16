@@ -125,10 +125,16 @@ def _patch_summary_stack(monkeypatch, *, download_raises: bool = False) -> None:
 
     monkeypatch.setattr("eegfm_digest.pipeline.download_pdf", fake_download_pdf)
     monkeypatch.setattr("eegfm_digest.pipeline.extract_text", fake_extract_text)
-    monkeypatch.setattr(
-        "eegfm_digest.pipeline.summarize_paper",
-        lambda paper, *_a, **_k: _summary_payload(paper),
-    )
+
+    def fake_summarize(paper, *_a, **kwargs):  # noqa: ANN001
+        payload = _summary_payload(paper)
+        if "used_fulltext" in kwargs:
+            payload["used_fulltext"] = kwargs["used_fulltext"]
+        if "notes" in kwargs:
+            payload["notes"] = kwargs["notes"]
+        return payload
+
+    monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", fake_summarize)
 
 
 def test_get_accepted_without_summary(tmp_path):
@@ -227,7 +233,7 @@ def test_resummarize_stragglers_skips_rejected(monkeypatch, tmp_path):
     assert stats.attempted == 0
 
 
-def test_resummarize_stragglers_bumps_failures_on_pdf_error(monkeypatch, tmp_path):
+def test_resummarize_stragglers_summarizes_from_abstract_on_pdf_error(monkeypatch, tmp_path):
     cfg = _cfg(tmp_path)
     db = DigestDB(cfg.data_dir / "digest.sqlite")
     paper = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")
@@ -237,12 +243,15 @@ def test_resummarize_stragglers_bumps_failures_on_pdf_error(monkeypatch, tmp_pat
     _patch_summary_stack(monkeypatch, download_raises=True)
     stats = resummarize_stragglers(cfg, no_site=True)
     assert stats.attempted == 1
-    assert stats.succeeded == 0
-    assert stats.failed == 1
-    assert stats.failed_ids == ("2501.00001",)
+    assert stats.succeeded == 1
+    assert stats.failed == 0
+    assert stats.failed_ids == ()
 
     db = DigestDB(cfg.data_dir / "digest.sqlite")
-    assert db.get_summary("2501.00001") is None
+    summary = db.get_summary("2501.00001")
+    assert summary is not None
+    assert summary["used_fulltext"] is False
+    assert "abstract_only_fallback" in summary["notes"]
     db.close()
 
 

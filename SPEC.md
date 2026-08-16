@@ -124,6 +124,9 @@ Proceed for:
 - Save to: `outputs/YYYY-MM/pdfs/{arxiv_id_base}.pdf`
 - Rate limit: `PDF_RATE_LIMIT_SECONDS` default 5
 - Cache: skip if exists
+- Send an identifying `User-Agent`. If a versioned arXiv PDF URL fails, retry once with `https://arxiv.org/pdf/{arxiv_id_base}`.
+- If the PDF is missing, download/extract fails, or extracted text is empty: still summarize from the arXiv abstract (title+abstract already in metadata). Set `used_fulltext=false` and record the PDF error plus `abstract_only_fallback` in `notes`. Do not treat this as a summary failure.
+- `--no-pdf` remains a hard skip (no summary attempt).
 
 ### 5.3 Text extraction
 - Extract to: `outputs/YYYY-MM/text/{arxiv_id_base}.txt`
@@ -140,6 +143,7 @@ For extracted paper text:
 - If fulltext is too large (or token count fails), send deterministic `fulltext_slices` with fixed keys:
   - `abstract`, `introduction`, `methods`, `results`, `conclusion`, `excerpt`.
 - Missing slices are empty strings; `excerpt` is always populated as fallback.
+- If no PDF text is available, send the arXiv abstract as `fulltext_slices.abstract` / `excerpt` with `used_fulltext=false`.
 
 ### 5.5 Output schema: `PaperSummary`
 Validate with `schemas/summary.json`.

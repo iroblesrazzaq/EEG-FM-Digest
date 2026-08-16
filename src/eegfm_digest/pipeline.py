@@ -14,14 +14,14 @@ from .config import Config
 from .db import DigestDB
 from .llm import LLMCallConfig, LLMRateLimitError, build_llm_call, load_api_key, provider_base_url
 from .llm_logging import log_stage_failure
-from .pdf import bounded_text, download_pdf, extract_text, slice_paper_text
+from .pdf import download_pdf, extract_text
 from .render import build_digest, write_json, write_jsonl
 from .row_views import empty_pdf_state, normalize_triage_row
 from .selection import select_papers_for_summary
 from .site import update_home, write_month_site
 from .stage_context import load_summary_stage_context, load_triage_stage_context
 from .summarize import summarize_paper, summarize_paper_with_meta
-from .summarize_stage import prepare_pdf_and_text
+from .summarize_stage import prepare_pdf_and_text, summary_inputs_from_pdf_result
 from .triage import triage_paper, triage_paper_with_meta
 
 
@@ -152,9 +152,16 @@ def _summarize_one_paper(
 
         pdf_result = prepare_pdf_and_text(paper, month_out, cfg, no_pdf=no_pdf)
         pdf_state = pdf_result.pdf_state
-        if pdf_result.notes == "summary_skipped:missing_pdf_link":
+        summary_inputs = summary_inputs_from_pdf_result(
+            paper,
+            pdf_result,
+            head_chars=cfg.text_head_chars,
+            excerpt_chars=cfg.summary_excerpt_chars,
+            tail_chars=cfg.text_tail_chars,
+        )
+        if summary_inputs is None:
             print(
-                f"[pipeline] WARNING: pdf missing for {arxiv_id_base}; "
+                f"[pipeline] WARNING: pdf skipped for {arxiv_id_base} (--no-pdf); "
                 "skipping (will retry next run)",
                 file=sys.stderr,
             )
@@ -164,47 +171,20 @@ def _summarize_one_paper(
                 pdf_state=pdf_state,
                 failed=True,
             )
-        if pdf_result.notes.startswith("summary_skipped:pdf_failed:"):
+        if not summary_inputs.used_fulltext:
             print(
-                f"[pipeline] WARNING: pdf download/extract failed for "
-                f"{arxiv_id_base}; skipping (will retry next run)",
+                f"[pipeline] WARNING: pdf unavailable for {arxiv_id_base}; "
+                "summarizing from abstract",
                 file=sys.stderr,
-            )
-            return OnePaperSummaryOutcome(
-                arxiv_id_base=arxiv_id_base,
-                summary=None,
-                pdf_state=pdf_state,
-                failed=True,
-            )
-        if not pdf_result.raw_text.strip():
-            print(
-                f"[pipeline] WARNING: empty extracted text for {arxiv_id_base}; "
-                "skipping (will retry next run)",
-                file=sys.stderr,
-            )
-            return OnePaperSummaryOutcome(
-                arxiv_id_base=arxiv_id_base,
-                summary=None,
-                pdf_state=pdf_state,
-                failed=True,
             )
 
-        bounded_raw = bounded_text(
-            pdf_result.raw_text,
-            cfg.text_head_chars,
-            cfg.text_tail_chars,
-        )
         summary, summary_call_meta = _run_summary_call_with_meta(
             paper=paper,
             triage=triage,
-            raw_fulltext=bounded_raw,
-            fulltext_slices=slice_paper_text(
-                bounded_raw,
-                excerpt_chars=cfg.summary_excerpt_chars,
-                tail_chars=min(cfg.text_tail_chars, cfg.summary_excerpt_chars),
-            ),
-            used_fulltext=True,
-            notes=pdf_result.notes,
+            raw_fulltext=summary_inputs.raw_text,
+            fulltext_slices=summary_inputs.slices,
+            used_fulltext=summary_inputs.used_fulltext,
+            notes=summary_inputs.notes,
             llm=summary_llm,
             prompt_template=summary_ctx.summarize_prompt,
             repair_template=summary_ctx.repair_prompt,

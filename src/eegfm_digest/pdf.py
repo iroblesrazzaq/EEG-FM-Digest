@@ -7,17 +7,49 @@ from typing import Any
 
 import httpx
 
+ARXIV_USER_AGENT = (
+    "eegfm-digest/0.1 (https://github.com/iroblesrazzaq/EEG-FM-Digest; "
+    "mailto:ismaelroblesrazzaq@gmail.com)"
+)
+_ARXIV_PDF_ID_RE = re.compile(
+    r"arxiv\.org/pdf/(?P<id>\d{4}\.\d{4,5})(?:v\d+)?(?:\.pdf)?",
+    re.IGNORECASE,
+)
+
+
+def unversioned_arxiv_pdf_url(pdf_url: str) -> str | None:
+    match = _ARXIV_PDF_ID_RE.search(pdf_url)
+    if not match:
+        return None
+    return f"https://arxiv.org/pdf/{match.group('id')}"
+
 
 def download_pdf(pdf_url: str, out_path: Path, rate_limit_seconds: float) -> Path:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     if out_path.exists():
         return out_path
-    with httpx.Client(timeout=60) as client:
-        resp = client.get(pdf_url)
-        resp.raise_for_status()
-        out_path.write_bytes(resp.content)
-    time.sleep(rate_limit_seconds)
-    return out_path
+    urls = [pdf_url]
+    canonical = unversioned_arxiv_pdf_url(pdf_url)
+    if canonical and canonical != pdf_url:
+        urls.append(canonical)
+    last_error: Exception | None = None
+    with httpx.Client(
+        timeout=60,
+        headers={"User-Agent": ARXIV_USER_AGENT},
+        follow_redirects=True,
+    ) as client:
+        for url in urls:
+            try:
+                resp = client.get(url)
+                resp.raise_for_status()
+                out_path.write_bytes(resp.content)
+                time.sleep(rate_limit_seconds)
+                return out_path
+            except httpx.HTTPError as exc:
+                last_error = exc
+    if last_error is not None:
+        raise last_error
+    raise RuntimeError(f"PDF download failed for {pdf_url}")
 
 
 def extract_text(pdf_path: Path, text_path: Path) -> dict[str, Any]:
