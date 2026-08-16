@@ -29,7 +29,14 @@ def test_site_js_renders_volume_chart_with_current_year_highlight():
     assert "volume-bar volume-bar-current" in site_js
     assert 'app.querySelector("#volume-chart")' in site_js
     assert "Yearly counts from the digest. Current year highlighted." in site_js
+    assert "function volumeAxisTicks(maxValue)" in site_js
+    assert "volume-y-axis" in site_js
+    assert "volume-bar-value" in site_js
     assert "Bar chart of accepted papers per year" in site_js
+    assert "volumeAxisTicksForTest: (maxValue) => volumeAxisTicks(maxValue)" in site_js
+    style_css = Path("docs/assets/style.css").read_text(encoding="utf-8")
+    assert ".volume-y-axis" in style_css
+    assert "max-width: 56px" not in style_css
     assert "byYear[year] = (byYear[year] || 0) + safeNumber(row?.stats?.accepted, 0)" in site_js
     # Full manifest timeline — not visibleMonthRows (which drops zero-accept months).
     assert "buildVolumeSeries(state.monthRows, state.latestMonth)" in site_js

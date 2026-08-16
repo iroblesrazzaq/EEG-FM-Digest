@@ -1308,6 +1308,33 @@ function buildVolumeSeries(monthRows, latestMonth) {
     }));
 }
 
+function volumeAxisTicks(maxValue) {
+  const max = Math.max(0, Number(maxValue) || 0);
+  if (max <= 0) {
+    return { axisMax: 1, ticks: [1, 0] };
+  }
+  const rough = max / 4;
+  const mag = Math.pow(10, Math.floor(Math.log10(Math.max(rough, 1))));
+  const residual = rough / mag;
+  let nice;
+  if (residual <= 1.5) {
+    nice = 1;
+  } else if (residual <= 3) {
+    nice = 2;
+  } else if (residual <= 7) {
+    nice = 5;
+  } else {
+    nice = 10;
+  }
+  const step = Math.max(1, nice * mag);
+  const axisMax = Math.ceil(max / step) * step;
+  const ticks = [];
+  for (let value = axisMax; value >= 0 - 1e-9; value -= step) {
+    ticks.push(Math.round(value));
+  }
+  return { axisMax, ticks };
+}
+
 function renderVolumeChart(container, series) {
   if (!container) {
     return;
@@ -1318,23 +1345,47 @@ function renderVolumeChart(container, series) {
     return;
   }
   container.hidden = false;
-  const maxAccepted = Math.max(1, ...series.map((item) => item.accepted));
+  const maxAccepted = Math.max(0, ...series.map((item) => item.accepted));
+  const { axisMax, ticks } = volumeAxisTicks(maxAccepted);
+  const axisLabels = ticks
+    .map((tick) => `<span class="volume-y-tick">${esc(String(tick))}</span>`)
+    .join("");
+  const gridLines = ticks
+    .map((tick, index) => {
+      const lineClass = index === ticks.length - 1 ? "volume-grid-line volume-grid-baseline" : "volume-grid-line";
+      return `<span class="${lineClass}" data-tick="${esc(String(tick))}"></span>`;
+    })
+    .join("");
   const bars = series
     .map((item) => {
-      const heightPct = Math.max(2, Math.round((item.accepted / maxAccepted) * 100));
+      const heightPct = axisMax > 0 ? (item.accepted / axisMax) * 100 : 0;
       const barClass = item.isCurrent ? "volume-bar volume-bar-current" : "volume-bar";
       return `
         <div class="volume-col" title="${esc(item.year)}: ${item.accepted} accepted">
-          <div class="${barClass}" style="height:${heightPct}%"></div>
-          <span class="volume-year-label">${esc(item.year)}</span>
+          <div class="${barClass}" style="height:${heightPct.toFixed(2)}%">
+            <span class="volume-bar-value">${esc(String(item.accepted))}</span>
+          </div>
         </div>
       `;
     })
     .join("");
+  const yearLabels = series
+    .map((item) => `<span class="volume-year-label">${esc(item.year)}</span>`)
+    .join("");
+  const ariaCounts = series.map((item) => `${item.year} ${item.accepted}`).join(", ");
   container.innerHTML = `
     <h2 class="volume-chart-title">Accepted papers over time</h2>
     <p class="small volume-chart-subtitle">Yearly counts from the digest. Current year highlighted.</p>
-    <div class="volume-chart-plot" role="img" aria-label="Bar chart of accepted papers per year">${bars}</div>
+    <div class="volume-chart-plot" role="img" aria-label="Bar chart of accepted papers per year: ${esc(ariaCounts)}">
+      <div class="volume-y-axis" aria-hidden="true">${axisLabels}</div>
+      <div class="volume-plot-main">
+        <div class="volume-plot-area">
+          <div class="volume-grid" aria-hidden="true">${gridLines}</div>
+          <div class="volume-bars">${bars}</div>
+        </div>
+        <div class="volume-x-axis" aria-hidden="true">${yearLabels}</div>
+      </div>
+    </div>
   `;
 }
 
@@ -1661,6 +1712,7 @@ if (typeof window !== "undefined") {
     getCacheEntryCounts: () => currentMonthCacheEntryCounts(),
     buildCurrentCsvForTest: () => buildResultsCsv(window.__digestAppState?.lastFilteredPapers || []),
     buildVolumeSeriesForTest: (monthRows, latestMonth) => buildVolumeSeries(monthRows, latestMonth),
+    volumeAxisTicksForTest: (maxValue) => volumeAxisTicks(maxValue),
     clearMemCacheForTest: () => clearMonthMemCache(),
     clearPersistentCacheForTest: () => clearMonthPersistentCache(),
     clearSessionCacheForTest: () => clearMonthSessionCache(),
