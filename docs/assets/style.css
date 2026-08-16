@@ -928,17 +928,17 @@ button:disabled {
 .volume-chart-plot {
   display: flex;
   align-items: flex-end;
-  gap: 2px;
-  height: 140px;
+  gap: 10px;
+  height: 160px;
   width: 100%;
   overflow-x: auto;
-  padding-bottom: 18px;
+  padding-bottom: 22px;
 }
 
 .volume-col {
   flex: 1 1 0;
-  min-width: 4px;
-  max-width: 14px;
+  min-width: 28px;
+  max-width: 56px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -963,13 +963,9 @@ button:disabled {
   bottom: -16px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   white-space: nowrap;
-}
-
-.volume-year-label-spacer {
-  visibility: hidden;
 }
 
 @media (max-width: 980px) {

@@ -64,7 +64,7 @@ PROJECT_REPO_URL = "https://github.com/iroblesrazzaq/EEG-FM-Digest"
 PERSONAL_WEBSITE_URL = "https://iroblesrazzaq.github.io/"
 LINKEDIN_URL = "https://www.linkedin.com/in/ismaelroblesrazzaq"
 EMAIL_ADDRESS = "ismaelroblesrazzaq@gmail.com"
-ASSET_VERSION = "20260802-2"
+ASSET_VERSION = "20260816-1"
 SITE_TAB_TITLE_BASE = "EEG-FM Digest"
 
 ICON_SVGS = {
@@ -319,7 +319,7 @@ def render_home_page(months: list[str]) -> str:
 {nav}
 <main id='digest-app' class='container' data-view='home' data-month='' data-manifest-json='data/months.json' data-fallback-months='{fallback_months}'>
 {about_digest_block("process/index.html", include_process_cta=False)}
-<section id='volume-chart' class='volume-chart' aria-label='Accepted papers per month'></section>
+<section id='volume-chart' class='volume-chart' aria-label='Accepted papers per year'></section>
 <section id='home-controls' class='controls'></section>
 <section id='home-results'></section>
 </main>

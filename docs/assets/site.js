@@ -1289,14 +1289,23 @@ function renderResults(app, state) {
 
 function buildVolumeSeries(monthRows, latestMonth) {
   const rows = (Array.isArray(monthRows) ? monthRows : [])
-    .filter((row) => row && typeof row === "object" && row.month)
-    .slice()
-    .sort((a, b) => String(a.month).localeCompare(String(b.month)));
-  return rows.map((row) => ({
-    month: String(row.month),
-    accepted: safeNumber(row?.stats?.accepted, 0),
-    isCurrent: String(row.month) === String(latestMonth || ""),
-  }));
+    .filter((row) => row && typeof row === "object" && row.month);
+  const byYear = {};
+  for (const row of rows) {
+    const year = String(row.month).slice(0, 4);
+    if (!/^\d{4}$/.test(year)) {
+      continue;
+    }
+    byYear[year] = (byYear[year] || 0) + safeNumber(row?.stats?.accepted, 0);
+  }
+  const latestYear = String(latestMonth || "").slice(0, 4);
+  return Object.keys(byYear)
+    .sort((a, b) => a.localeCompare(b))
+    .map((year) => ({
+      year,
+      accepted: byYear[year],
+      isCurrent: year === latestYear,
+    }));
 }
 
 function renderVolumeChart(container, series) {
@@ -1313,21 +1322,19 @@ function renderVolumeChart(container, series) {
   const bars = series
     .map((item) => {
       const heightPct = Math.max(2, Math.round((item.accepted / maxAccepted) * 100));
-      const year = item.month.slice(0, 4);
-      const showYear = item.month.endsWith("-01");
       const barClass = item.isCurrent ? "volume-bar volume-bar-current" : "volume-bar";
       return `
-        <div class="volume-col" title="${esc(item.month)}: ${item.accepted} accepted">
+        <div class="volume-col" title="${esc(item.year)}: ${item.accepted} accepted">
           <div class="${barClass}" style="height:${heightPct}%"></div>
-          ${showYear ? `<span class="volume-year-label">${esc(year)}</span>` : `<span class="volume-year-label volume-year-label-spacer"></span>`}
+          <span class="volume-year-label">${esc(item.year)}</span>
         </div>
       `;
     })
     .join("");
   container.innerHTML = `
     <h2 class="volume-chart-title">Accepted papers over time</h2>
-    <p class="small volume-chart-subtitle">Monthly counts from the digest. Current month highlighted.</p>
-    <div class="volume-chart-plot" role="img" aria-label="Bar chart of accepted papers per month">${bars}</div>
+    <p class="small volume-chart-subtitle">Yearly counts from the digest. Current year highlighted.</p>
+    <div class="volume-chart-plot" role="img" aria-label="Bar chart of accepted papers per year">${bars}</div>
   `;
 }
 
@@ -1341,8 +1348,7 @@ function renderHome(app, state) {
   controls.innerHTML = "";
   controls.style.display = "none";
 
-  // Chart uses the full manifest timeline (including zero-accept months) so the
-  // current-month highlight and historical gaps stay visible; cards still hide empties.
+  // Chart uses the full manifest timeline so yearly totals include zero-accept months.
   const rows = visibleMonthRows(state);
   renderVolumeChart(chart, buildVolumeSeries(state.monthRows, state.latestMonth));
   if (!rows.length) {
