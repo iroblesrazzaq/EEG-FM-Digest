@@ -508,7 +508,7 @@ def test_pipeline_reraises_llm_rate_limit_errors(monkeypatch, tmp_path):
         run_month(cfg, "2025-01", no_site=True)
 
 
-def test_pipeline_pdf_download_failure_bumps_summary_failures(monkeypatch, tmp_path):
+def test_pipeline_pdf_download_failure_summarizes_from_abstract(monkeypatch, tmp_path):
     candidates = [_candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")]
 
     monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
@@ -534,12 +534,41 @@ def test_pipeline_pdf_download_failure_bumps_summary_failures(monkeypatch, tmp_p
 
     monkeypatch.setattr("eegfm_digest.pipeline.download_pdf", fail_download)
 
-    summarize_called = False
+    captured: dict[str, object] = {}
 
-    def fake_summarize(*_a, **_k):  # noqa: ANN001
-        nonlocal summarize_called
-        summarize_called = True
-        raise AssertionError("summarize_paper should not be called when PDF fails")
+    def fake_summarize(paper, *_a, **kwargs):  # noqa: ANN001
+        captured["used_fulltext"] = kwargs.get("used_fulltext")
+        captured["notes"] = kwargs.get("notes")
+        return {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "title": paper["title"],
+            "published_date": paper["published"][:10],
+            "categories": paper["categories"],
+            "paper_type": "method",
+            "one_liner": "Concise summary line.",
+            "detailed_summary": "Abstract-only summary.",
+            "unique_contribution": "Deterministic contribution sentence.",
+            "key_points": ["point one", "point two", "point three"],
+            "data_scale": {"datasets": [], "subjects": None, "eeg_hours": None, "channels": None},
+            "method": {
+                "architecture": "Transformer",
+                "objective": None,
+                "pretraining": None,
+                "finetuning": None,
+            },
+            "evaluation": {"tasks": [], "benchmarks": [], "headline_results": []},
+            "open_source": {"code_url": None, "weights_url": None, "license": None},
+            "tags": {
+                "paper_type": [],
+                "backbone": [],
+                "objective": [],
+                "tokenization": [],
+                "topology": [],
+            },
+            "limitations": [],
+            "used_fulltext": kwargs.get("used_fulltext", True),
+            "notes": kwargs.get("notes", ""),
+        }
 
     monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", fake_summarize)
 
@@ -557,15 +586,28 @@ def test_pipeline_pdf_download_failure_bumps_summary_failures(monkeypatch, tmp_p
 
     stats = run_month(cfg, "2025-01", no_site=True)
 
-    assert stats.summary_failures == 1
-    assert stats.summarized == 0
+    assert stats.summary_failures == 0
+    assert stats.summarized == 1
     assert stats.accepted == 1
-    assert summarize_called is False
+    assert captured["used_fulltext"] is False
+    assert "abstract_only_fallback" in str(captured["notes"])
+
+    conn = sqlite3.connect(cfg.data_dir / "digest.sqlite")
+    try:
+        row = conn.execute(
+            "SELECT summary_json FROM summaries WHERE arxiv_id_base = ?",
+            ("2501.00001",),
+        ).fetchone()
+    finally:
+        conn.close()
+    assert row is not None
+    stored = json.loads(row[0])
+    assert stored["used_fulltext"] is False
 
 
-def test_pipeline_missing_pdf_link_bumps_summary_failures(monkeypatch, tmp_path):
+def test_pipeline_missing_pdf_link_summarizes_from_abstract(monkeypatch, tmp_path):
     paper = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")
-    paper["links"]["pdf"] = ""  # accepted paper, no pdf URL
+    paper["links"]["pdf"] = ""
     candidates = [paper]
 
     monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_args, **_kwargs: candidates)
@@ -585,7 +627,40 @@ def test_pipeline_missing_pdf_link_bumps_summary_failures(monkeypatch, tmp_path)
             "reasons": ["r"],
         },
     )
-    monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", lambda *_a, **_k: pytest.fail("should not be called"))
+
+    def fake_summarize(paper, *_a, **kwargs):  # noqa: ANN001
+        return {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "title": paper["title"],
+            "published_date": paper["published"][:10],
+            "categories": paper["categories"],
+            "paper_type": "method",
+            "one_liner": "Concise summary line.",
+            "detailed_summary": "Abstract-only summary.",
+            "unique_contribution": "Deterministic contribution sentence.",
+            "key_points": ["point one", "point two", "point three"],
+            "data_scale": {"datasets": [], "subjects": None, "eeg_hours": None, "channels": None},
+            "method": {
+                "architecture": "Transformer",
+                "objective": None,
+                "pretraining": None,
+                "finetuning": None,
+            },
+            "evaluation": {"tasks": [], "benchmarks": [], "headline_results": []},
+            "open_source": {"code_url": None, "weights_url": None, "license": None},
+            "tags": {
+                "paper_type": [],
+                "backbone": [],
+                "objective": [],
+                "tokenization": [],
+                "topology": [],
+            },
+            "limitations": [],
+            "used_fulltext": kwargs.get("used_fulltext", True),
+            "notes": kwargs.get("notes", ""),
+        }
+
+    monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", fake_summarize)
 
     cfg = Config(
         llm_model_triage="triage-model",
@@ -601,6 +676,59 @@ def test_pipeline_missing_pdf_link_bumps_summary_failures(monkeypatch, tmp_path)
 
     stats = run_month(cfg, "2025-01", no_site=True)
 
-    assert stats.summary_failures == 1
-    assert stats.summarized == 0
+    assert stats.summary_failures == 0
+    assert stats.summarized == 1
     assert stats.accepted == 1
+
+    conn = sqlite3.connect(cfg.data_dir / "digest.sqlite")
+    try:
+        row = conn.execute(
+            "SELECT summary_json FROM summaries WHERE arxiv_id_base = ?",
+            ("2501.00001",),
+        ).fetchone()
+    finally:
+        conn.close()
+    stored = json.loads(row[0])
+    assert stored["used_fulltext"] is False
+    assert "abstract_only_fallback" in stored["notes"]
+
+
+def test_pipeline_no_pdf_skips_summary(monkeypatch, tmp_path):
+    candidates = [_candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")]
+    monkeypatch.setattr("eegfm_digest.pipeline.fetch_month_candidates", lambda *_a, **_k: candidates)
+    monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda *_a, **_k: "test-key")
+
+    class DummyLMCall:
+        def close(self):  # noqa: ANN201
+            return None
+
+    monkeypatch.setattr("eegfm_digest.pipeline.build_llm_call", lambda *_a, **_k: DummyLMCall())
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.triage_paper",
+        lambda paper, *_a, **_k: {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "decision": "accept",
+            "confidence": 0.9,
+            "reasons": ["r"],
+        },
+    )
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.summarize_paper",
+        lambda *_a, **_k: pytest.fail("summarize must not run under --no-pdf"),
+    )
+
+    cfg = Config(
+        llm_model_triage="triage-model",
+        llm_model_summary="summary-model",
+        output_dir=tmp_path / "outputs",
+        data_dir=tmp_path / "data",
+        docs_dir=tmp_path / "docs",
+        max_candidates=20,
+        max_accepted=20,
+        arxiv_rate_limit_seconds=0.0,
+        pdf_rate_limit_seconds=0.0,
+    )
+    stats = run_month(cfg, "2025-01", no_site=True, no_pdf=True)
+    assert stats.accepted == 1
+    assert stats.summarized == 0
+    assert stats.summary_failures == 1

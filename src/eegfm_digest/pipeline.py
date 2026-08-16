@@ -14,14 +14,18 @@ from .config import Config
 from .db import DigestDB
 from .llm import LLMCallConfig, LLMRateLimitError, build_llm_call, load_api_key, provider_base_url
 from .llm_logging import log_stage_failure
-from .pdf import bounded_text, download_pdf, extract_text, slice_paper_text
+from .pdf import download_pdf, extract_text
 from .render import build_digest, write_json, write_jsonl
 from .row_views import empty_pdf_state, normalize_triage_row
 from .selection import select_papers_for_summary
 from .site import update_home, write_month_site
 from .stage_context import load_summary_stage_context, load_triage_stage_context
 from .summarize import summarize_paper, summarize_paper_with_meta
-from .summarize_stage import prepare_pdf_and_text
+from .summarize_stage import (
+    prepare_pdf_and_text,
+    summary_inputs_from_pdf_result,
+    summary_used_fulltext,
+)
 from .triage import triage_paper, triage_paper_with_meta
 
 
@@ -140,21 +144,33 @@ def _summarize_one_paper(
     pdf_state: dict[str, object | None] = empty_pdf_state()
     try:
         cached_summary = None if force else db.get_summary_with_meta(arxiv_id_base)
-        if cached_summary and is_cache_current(
-            cached_summary.get("meta"), summary_ctx.descriptor["cache_version"]
-        ):
+        cache_current = bool(
+            cached_summary
+            and is_cache_current(
+                cached_summary.get("meta"), summary_ctx.descriptor["cache_version"]
+            )
+        )
+        cached_data = cached_summary["data"] if cached_summary else None
+        if cache_current and summary_used_fulltext(cached_data):
             return OnePaperSummaryOutcome(
                 arxiv_id_base=arxiv_id_base,
-                summary=cached_summary["data"],
+                summary=cached_data,
                 pdf_state=pdf_state,
                 failed=False,
             )
 
         pdf_result = prepare_pdf_and_text(paper, month_out, cfg, no_pdf=no_pdf)
         pdf_state = pdf_result.pdf_state
-        if pdf_result.notes == "summary_skipped:missing_pdf_link":
+        summary_inputs = summary_inputs_from_pdf_result(
+            paper,
+            pdf_result,
+            head_chars=cfg.text_head_chars,
+            excerpt_chars=cfg.summary_excerpt_chars,
+            tail_chars=cfg.text_tail_chars,
+        )
+        if summary_inputs is None:
             print(
-                f"[pipeline] WARNING: pdf missing for {arxiv_id_base}; "
+                f"[pipeline] WARNING: pdf skipped for {arxiv_id_base} (--no-pdf); "
                 "skipping (will retry next run)",
                 file=sys.stderr,
             )
@@ -164,47 +180,32 @@ def _summarize_one_paper(
                 pdf_state=pdf_state,
                 failed=True,
             )
-        if pdf_result.notes.startswith("summary_skipped:pdf_failed:"):
+        if not summary_inputs.used_fulltext:
+            if cache_current and cached_data is not None:
+                print(
+                    f"[pipeline] WARNING: pdf still unavailable for {arxiv_id_base}; "
+                    "keeping abstract-only summary",
+                    file=sys.stderr,
+                )
+                return OnePaperSummaryOutcome(
+                    arxiv_id_base=arxiv_id_base,
+                    summary=cached_data,
+                    pdf_state=pdf_state,
+                    failed=False,
+                )
             print(
-                f"[pipeline] WARNING: pdf download/extract failed for "
-                f"{arxiv_id_base}; skipping (will retry next run)",
+                f"[pipeline] WARNING: pdf unavailable for {arxiv_id_base}; "
+                "summarizing from abstract",
                 file=sys.stderr,
-            )
-            return OnePaperSummaryOutcome(
-                arxiv_id_base=arxiv_id_base,
-                summary=None,
-                pdf_state=pdf_state,
-                failed=True,
-            )
-        if not pdf_result.raw_text.strip():
-            print(
-                f"[pipeline] WARNING: empty extracted text for {arxiv_id_base}; "
-                "skipping (will retry next run)",
-                file=sys.stderr,
-            )
-            return OnePaperSummaryOutcome(
-                arxiv_id_base=arxiv_id_base,
-                summary=None,
-                pdf_state=pdf_state,
-                failed=True,
             )
 
-        bounded_raw = bounded_text(
-            pdf_result.raw_text,
-            cfg.text_head_chars,
-            cfg.text_tail_chars,
-        )
         summary, summary_call_meta = _run_summary_call_with_meta(
             paper=paper,
             triage=triage,
-            raw_fulltext=bounded_raw,
-            fulltext_slices=slice_paper_text(
-                bounded_raw,
-                excerpt_chars=cfg.summary_excerpt_chars,
-                tail_chars=min(cfg.text_tail_chars, cfg.summary_excerpt_chars),
-            ),
-            used_fulltext=True,
-            notes=pdf_result.notes,
+            raw_fulltext=summary_inputs.raw_text,
+            fulltext_slices=summary_inputs.slices,
+            used_fulltext=summary_inputs.used_fulltext,
+            notes=summary_inputs.notes,
             llm=summary_llm,
             prompt_template=summary_ctx.summarize_prompt,
             repair_template=summary_ctx.repair_prompt,
@@ -397,6 +398,7 @@ def resummarize_stragglers(
                 attempted += 1
                 month_out = cfg.output_dir / month
                 month_out.mkdir(parents=True, exist_ok=True)
+                prior_summary = db.get_summary(arxiv_id_base)
                 outcome = _summarize_one_paper(
                     paper=paper,
                     triage=normalize_triage_row(arxiv_id_base, triage),
@@ -408,15 +410,19 @@ def resummarize_stragglers(
                     summary_ctx=summary_ctx,
                     summary_llm_config=summary_llm_config,
                     no_pdf=no_pdf,
-                    force=True,
+                    force=False,
                 )
                 if outcome.failed or outcome.summary is None:
                     failed += 1
                     failed_ids.append(arxiv_id_base)
                 else:
                     succeeded += 1
-                    months_touched.add(month)
-                    pdf_by_month.setdefault(month, {})[arxiv_id_base] = outcome.pdf_state
+                    upgraded = summary_used_fulltext(outcome.summary) and not summary_used_fulltext(
+                        prior_summary
+                    )
+                    if prior_summary is None or upgraded:
+                        months_touched.add(month)
+                        pdf_by_month.setdefault(month, {})[arxiv_id_base] = outcome.pdf_state
 
             if months_touched and not no_site:
                 for month in sorted(months_touched):

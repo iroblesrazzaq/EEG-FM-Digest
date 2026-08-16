@@ -23,14 +23,17 @@ from .llm import (
     normalize_provider,
     provider_base_url,
 )
-from .pdf import slice_paper_text
 from .render import build_digest, write_json, write_jsonl
 from .row_views import empty_pdf_state, normalize_triage_row
 from .selection import select_papers_for_summary
 from .site import update_home, write_month_site
 from .stage_context import load_summary_stage_context, load_triage_stage_context
 from .summarize import summarize_paper_with_meta
-from .summarize_stage import prepare_pdf_and_text
+from .summarize_stage import (
+    prepare_pdf_and_text,
+    summary_inputs_from_pdf_result,
+    summary_used_fulltext,
+)
 from .triage import triage_paper_with_meta
 
 
@@ -292,45 +295,60 @@ def _run_summary_phase_for_month(
     for paper in accepted:
         aid = paper["arxiv_id_base"]
         cached_summary = None if run_cfg.summary_force else db.get_summary_with_meta(aid)
-        if cached_summary and is_cache_current(cached_summary.get("meta"), summary_ctx.descriptor["cache_version"]):
-            summary_map[aid] = cached_summary["data"]
+        cache_current = bool(
+            cached_summary
+            and is_cache_current(cached_summary.get("meta"), summary_ctx.descriptor["cache_version"])
+        )
+        cached_data = cached_summary["data"] if cached_summary else None
+        if cache_current and summary_used_fulltext(cached_data):
+            summary_map[aid] = cached_data
             cache_hit_count += 1
             continue
 
         pdf_result = prepare_pdf_and_text(paper, month_out, cfg, no_pdf=False)
         pdf_map[aid] = pdf_result.pdf_state
+        summary_inputs = summary_inputs_from_pdf_result(
+            paper,
+            pdf_result,
+            head_chars=cfg.text_head_chars,
+            excerpt_chars=cfg.summary_excerpt_chars,
+            tail_chars=cfg.text_tail_chars,
+        )
+        if summary_inputs is None:
+            continue
+        if not summary_inputs.used_fulltext:
+            if cache_current and cached_data is not None:
+                summary_map[aid] = cached_data
+                cache_hit_count += 1
+                continue
+            print(f"[summary] {month}: pdf unavailable for {aid}; summarizing from abstract")
 
-        if pdf_result.raw_text.strip():
-            summary, summary_call_meta = summarize_paper_with_meta(
-                paper=paper,
-                triage=triage_map.get(aid, {}),
-                raw_fulltext=pdf_result.raw_text,
-                fulltext_slices=slice_paper_text(
-                    pdf_result.raw_text,
-                    excerpt_chars=cfg.summary_excerpt_chars,
-                    tail_chars=min(cfg.text_tail_chars, cfg.summary_excerpt_chars),
-                ),
-                used_fulltext=True,
-                notes=pdf_result.notes,
-                llm=llm,
-                prompt_template=summary_ctx.summarize_prompt,
-                repair_template=summary_ctx.repair_prompt,
-                schema=summary_ctx.schema,
-                max_input_tokens=cfg.summary_max_input_tokens,
-            )
-            summary_map[aid] = summary
-            db.upsert_summary(
-                month,
-                summary,
-                meta=build_stage_metadata(
-                    summary_ctx.descriptor,
-                    repair_used=bool(summary_call_meta.get("repair_used", False)),
-                    updated_at_source=str(paper.get("updated", "")).strip() or None,
-                ),
-            )
-            print(f"[summary] {month}: summarized {aid}")
-            if run_cfg.summary_sleep_seconds > 0:
-                time.sleep(run_cfg.summary_sleep_seconds)
+        summary, summary_call_meta = summarize_paper_with_meta(
+            paper=paper,
+            triage=triage_map.get(aid, {}),
+            raw_fulltext=summary_inputs.raw_text,
+            fulltext_slices=summary_inputs.slices,
+            used_fulltext=summary_inputs.used_fulltext,
+            notes=summary_inputs.notes,
+            llm=llm,
+            prompt_template=summary_ctx.summarize_prompt,
+            repair_template=summary_ctx.repair_prompt,
+            schema=summary_ctx.schema,
+            max_input_tokens=cfg.summary_max_input_tokens,
+        )
+        summary_map[aid] = summary
+        db.upsert_summary(
+            month,
+            summary,
+            meta=build_stage_metadata(
+                summary_ctx.descriptor,
+                repair_used=bool(summary_call_meta.get("repair_used", False)),
+                updated_at_source=str(paper.get("updated", "")).strip() or None,
+            ),
+        )
+        print(f"[summary] {month}: summarized {aid}")
+        if run_cfg.summary_sleep_seconds > 0:
+            time.sleep(run_cfg.summary_sleep_seconds)
 
     summaries = sorted(summary_map.values(), key=lambda x: (x["published_date"], x["arxiv_id_base"]))
     write_jsonl(month_out / "papers.jsonl", summaries)
