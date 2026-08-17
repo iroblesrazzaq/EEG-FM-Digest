@@ -196,7 +196,24 @@ def test_automatic_workflow_scans_all_published_months():
     workflow = Path(".github/workflows/awesome-sync.yml").read_text(encoding="utf-8")
     assert 'if [ "${GITHUB_EVENT_NAME}" = "workflow_run" ] || [ "${INPUT_ALL_MONTHS:-}" = "true" ]; then' in workflow
     assert "args+=(--all-months)" in workflow
+    assert "gh auth setup-git" in workflow
     assert "default_months()" not in workflow
+
+
+def test_configure_github_https_auth_sets_bearer_header(tmp_path, monkeypatch):
+    module = _load_sync_module()
+    calls: list[list[str]] = []
+
+    def fake_run(args, *, cwd=None, check=True):  # noqa: ANN001
+        calls.append(list(args))
+        return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+
+    monkeypatch.setenv("GH_TOKEN", "test-token")
+    monkeypatch.setattr(module, "run_command", fake_run)
+    module.configure_github_https_auth(tmp_path)
+
+    assert calls[0][0:3] == ["git", "config", "http.https://github.com/.extraheader"]
+    assert calls[0][3].startswith("AUTHORIZATION: basic ")
 
 
 def test_configure_git_identity_sets_bot_author(tmp_path, monkeypatch):

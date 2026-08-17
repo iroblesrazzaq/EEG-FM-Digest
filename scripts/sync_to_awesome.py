@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import json
+import os
 import re
 import subprocess
 import sys
@@ -345,14 +347,33 @@ def fetch_remote_readme() -> str:
     return result.stdout
 
 
+def configure_github_https_auth(repo_dir: Path) -> None:
+    """Let git push/fetch use GH_TOKEN on Actions runners that have no interactive prompt."""
+    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    if not token:
+        return
+    basic = base64.b64encode(f"x-access-token:{token}".encode("ascii")).decode("ascii")
+    run_command(
+        [
+            "git",
+            "config",
+            "http.https://github.com/.extraheader",
+            f"AUTHORIZATION: basic {basic}",
+        ],
+        cwd=repo_dir,
+    )
+
+
 def ensure_repo_checkout() -> Path:
     if CLONE_DIR.exists():
         if not (CLONE_DIR / ".git").exists():
             raise SyncError(f"Clone path exists but is not a git repo: {CLONE_DIR}")
+        configure_github_https_auth(CLONE_DIR)
         run_command(["git", "fetch", "origin"], cwd=CLONE_DIR)
         return CLONE_DIR
 
     run_command(["gh", "repo", "clone", AWESOME_REPO, str(CLONE_DIR)])
+    configure_github_https_auth(CLONE_DIR)
     return CLONE_DIR
 
 
