@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+import pytest
 
 
 def _load_sync_module():
@@ -196,7 +199,64 @@ def test_automatic_workflow_scans_all_published_months():
     workflow = Path(".github/workflows/awesome-sync.yml").read_text(encoding="utf-8")
     assert 'if [ "${GITHUB_EVENT_NAME}" = "workflow_run" ] || [ "${INPUT_ALL_MONTHS:-}" = "true" ]; then' in workflow
     assert "args+=(--all-months)" in workflow
+    assert "gh auth setup-git" in workflow
     assert "default_months()" not in workflow
+
+
+def test_configure_github_https_auth_sets_bearer_header(tmp_path, monkeypatch):
+    module = _load_sync_module()
+    calls: list[list[str]] = []
+
+    def fake_run(args, *, cwd=None, check=True, redact=False):  # noqa: ANN001
+        calls.append(list(args))
+        return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+
+    monkeypatch.setenv("GH_TOKEN", "test-token")
+    monkeypatch.setattr(module, "run_command", fake_run)
+    module.configure_github_https_auth(tmp_path)
+
+    assert calls[0][0:3] == ["git", "config", "http.https://github.com/.extraheader"]
+    encoded = module._github_basic_auth_value("test-token")
+    assert calls[0][3] == f"AUTHORIZATION: basic {encoded}"
+
+
+def test_configure_github_https_auth_unsets_header_without_token(tmp_path, monkeypatch):
+    module = _load_sync_module()
+    calls: list[list[str]] = []
+
+    def fake_run(args, *, cwd=None, check=True, redact=False):  # noqa: ANN001
+        calls.append(list(args))
+        return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+
+    monkeypatch.delenv("GH_TOKEN", raising=False)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    monkeypatch.setattr(module, "run_command", fake_run)
+    module.configure_github_https_auth(tmp_path)
+
+    assert calls == [
+        ["git", "config", "--unset-all", "http.https://github.com/.extraheader"],
+    ]
+
+
+def test_run_command_redact_does_not_leak_token_on_failure(monkeypatch):
+    module = _load_sync_module()
+    token = "super-secret-app-token"
+    encoded_token = module._github_basic_auth_value(token)
+    header = f"AUTHORIZATION: basic {encoded_token}"
+
+    def boom(*args, **kwargs):  # noqa: ANN001
+        raise subprocess.CalledProcessError(1, ["git", "config", header], stderr=f"failed {header}")
+
+    monkeypatch.setenv("GH_TOKEN", token)
+    monkeypatch.setattr(module.subprocess, "run", boom)
+    with pytest.raises(module.SyncError) as excinfo:
+        module.run_command(["git", "config", header], redact=True)
+
+    message = str(excinfo.value)
+    assert token not in message
+    assert encoded_token not in message
+    assert header not in message
+    assert "<redacted>" in message
 
 
 def test_configure_git_identity_sets_bot_author(tmp_path, monkeypatch):

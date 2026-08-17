@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import json
+import os
 import re
 import subprocess
 import sys
@@ -72,7 +74,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return args
 
 
-def run_command(args: list[str], *, cwd: Path | None = None, check: bool = True) -> subprocess.CompletedProcess[str]:
+def run_command(
+    args: list[str],
+    *,
+    cwd: Path | None = None,
+    check: bool = True,
+    redact: bool = False,
+) -> subprocess.CompletedProcess[str]:
     try:
         return subprocess.run(
             args,
@@ -84,10 +92,13 @@ def run_command(args: list[str], *, cwd: Path | None = None, check: bool = True)
     except FileNotFoundError as exc:
         raise SyncError(f"Required command not found: {args[0]}") from exc
     except subprocess.CalledProcessError as exc:
-        command = " ".join(args)
+        command = "<redacted>" if redact else " ".join(args)
         stderr = (exc.stderr or "").strip()
         stdout = (exc.stdout or "").strip()
         details = stderr or stdout or f"exit code {exc.returncode}"
+        if redact:
+            details = _redact_github_token(details)
+            raise SyncError(f"Command failed: {command}\n{details}") from None
         raise SyncError(f"Command failed: {command}\n{details}") from exc
 
 
@@ -345,14 +356,56 @@ def fetch_remote_readme() -> str:
     return result.stdout
 
 
+def _github_token() -> str:
+    return os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or ""
+
+
+def _github_basic_auth_value(token: str) -> str:
+    return base64.b64encode(f"x-access-token:{token}".encode("ascii")).decode("ascii")
+
+
+def _redact_github_token(text: str) -> str:
+    token = _github_token()
+    if not token:
+        return text
+    redacted = text.replace(token, "<redacted>")
+    return redacted.replace(_github_basic_auth_value(token), "<redacted>")
+
+
+def configure_github_https_auth(repo_dir: Path) -> None:
+    """Let git push/fetch use GH_TOKEN on Actions runners that have no interactive prompt."""
+    token = _github_token()
+    extraheader_key = "http.https://github.com/.extraheader"
+    if not token:
+        run_command(
+            ["git", "config", "--unset-all", extraheader_key],
+            cwd=repo_dir,
+            check=False,
+            redact=True,
+        )
+        return
+    run_command(
+        [
+            "git",
+            "config",
+            extraheader_key,
+            f"AUTHORIZATION: basic {_github_basic_auth_value(token)}",
+        ],
+        cwd=repo_dir,
+        redact=True,
+    )
+
+
 def ensure_repo_checkout() -> Path:
     if CLONE_DIR.exists():
         if not (CLONE_DIR / ".git").exists():
             raise SyncError(f"Clone path exists but is not a git repo: {CLONE_DIR}")
+        configure_github_https_auth(CLONE_DIR)
         run_command(["git", "fetch", "origin"], cwd=CLONE_DIR)
         return CLONE_DIR
 
     run_command(["gh", "repo", "clone", AWESOME_REPO, str(CLONE_DIR)])
+    configure_github_https_auth(CLONE_DIR)
     return CLONE_DIR
 
 

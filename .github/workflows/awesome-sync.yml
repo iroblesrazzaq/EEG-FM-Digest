@@ -108,4 +108,5 @@ jobs:
           if [ "${INPUT_DRY_RUN:-}" = "true" ]; then
             args+=(--dry-run)
           fi
+          gh auth setup-git
           python scripts/sync_to_awesome.py "${args[@]}"
