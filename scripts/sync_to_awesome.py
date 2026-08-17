@@ -97,9 +97,7 @@ def run_command(
         stdout = (exc.stdout or "").strip()
         details = stderr or stdout or f"exit code {exc.returncode}"
         if redact:
-            token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or ""
-            if token:
-                details = details.replace(token, "<redacted>")
+            details = _redact_github_token(details)
             raise SyncError(f"Command failed: {command}\n{details}") from None
         raise SyncError(f"Command failed: {command}\n{details}") from exc
 
@@ -358,18 +356,40 @@ def fetch_remote_readme() -> str:
     return result.stdout
 
 
+def _github_token() -> str:
+    return os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or ""
+
+
+def _github_basic_auth_value(token: str) -> str:
+    return base64.b64encode(f"x-access-token:{token}".encode("ascii")).decode("ascii")
+
+
+def _redact_github_token(text: str) -> str:
+    token = _github_token()
+    if not token:
+        return text
+    redacted = text.replace(token, "<redacted>")
+    return redacted.replace(_github_basic_auth_value(token), "<redacted>")
+
+
 def configure_github_https_auth(repo_dir: Path) -> None:
     """Let git push/fetch use GH_TOKEN on Actions runners that have no interactive prompt."""
-    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    token = _github_token()
+    extraheader_key = "http.https://github.com/.extraheader"
     if not token:
+        run_command(
+            ["git", "config", "--unset-all", extraheader_key],
+            cwd=repo_dir,
+            check=False,
+            redact=True,
+        )
         return
-    basic = base64.b64encode(f"x-access-token:{token}".encode("ascii")).decode("ascii")
     run_command(
         [
             "git",
             "config",
-            "http.https://github.com/.extraheader",
-            f"AUTHORIZATION: basic {basic}",
+            extraheader_key,
+            f"AUTHORIZATION: basic {_github_basic_auth_value(token)}",
         ],
         cwd=repo_dir,
         redact=True,

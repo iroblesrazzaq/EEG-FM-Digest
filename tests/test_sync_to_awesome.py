@@ -216,16 +216,36 @@ def test_configure_github_https_auth_sets_bearer_header(tmp_path, monkeypatch):
     module.configure_github_https_auth(tmp_path)
 
     assert calls[0][0:3] == ["git", "config", "http.https://github.com/.extraheader"]
-    assert calls[0][3].startswith("AUTHORIZATION: basic ")
+    encoded = module._github_basic_auth_value("test-token")
+    assert calls[0][3] == f"AUTHORIZATION: basic {encoded}"
+
+
+def test_configure_github_https_auth_unsets_header_without_token(tmp_path, monkeypatch):
+    module = _load_sync_module()
+    calls: list[list[str]] = []
+
+    def fake_run(args, *, cwd=None, check=True, redact=False):  # noqa: ANN001
+        calls.append(list(args))
+        return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+
+    monkeypatch.delenv("GH_TOKEN", raising=False)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    monkeypatch.setattr(module, "run_command", fake_run)
+    module.configure_github_https_auth(tmp_path)
+
+    assert calls == [
+        ["git", "config", "--unset-all", "http.https://github.com/.extraheader"],
+    ]
 
 
 def test_run_command_redact_does_not_leak_token_on_failure(monkeypatch):
     module = _load_sync_module()
     token = "super-secret-app-token"
-    header = f"AUTHORIZATION: basic {token}"
+    encoded_token = module._github_basic_auth_value(token)
+    header = f"AUTHORIZATION: basic {encoded_token}"
 
     def boom(*args, **kwargs):  # noqa: ANN001
-        raise subprocess.CalledProcessError(1, ["git", "config", header], stderr=f"failed {token}")
+        raise subprocess.CalledProcessError(1, ["git", "config", header], stderr=f"failed {header}")
 
     monkeypatch.setenv("GH_TOKEN", token)
     monkeypatch.setattr(module.subprocess, "run", boom)
@@ -234,6 +254,7 @@ def test_run_command_redact_does_not_leak_token_on_failure(monkeypatch):
 
     message = str(excinfo.value)
     assert token not in message
+    assert encoded_token not in message
     assert header not in message
     assert "<redacted>" in message
 
