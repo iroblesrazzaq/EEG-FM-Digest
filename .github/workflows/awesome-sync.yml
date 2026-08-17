@@ -1,14 +1,25 @@
 name: Awesome EEG-FM Sync
 
-# Manual sync of accepted digest papers into iroblesrazzaq/awesome-eeg-fm.
+# Sync new EEG foundation models (paper_type=new_model) into iroblesrazzaq/awesome-eeg-fm.
+# After a successful Daily Digest, scan every published month so backfills and
+# recovery windows are not dropped. Manual dispatch can still target one month.
 # Requires the EEG-FM Daily Digest GitHub App installed on BOTH this repo and
 # awesome-eeg-fm with Contents + Pull requests permissions.
 on:
+  workflow_run:
+    workflows: ["Daily Digest"]
+    types:
+      - completed
   workflow_dispatch:
     inputs:
       month:
-        description: 'Digest month YYYY-MM (e.g. 2026-07)'
-        required: true
+        description: 'Digest month YYYY-MM. Leave empty to sync current and previous UTC months.'
+        required: false
+        default: ''
+      all_months:
+        description: 'Set to "true" to sync every digest month (backfill).'
+        required: false
+        default: 'false'
       dry_run:
         description: 'Set to "true" to print entries without opening a PR'
         required: false
@@ -16,6 +27,7 @@ on:
 
 jobs:
   sync:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -70,19 +82,29 @@ jobs:
           echo "::add-mask::$token"
           echo "token=$token" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
       - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
-      - run: pip install -e .
 
-      - name: Sync accepted papers to awesome-eeg-fm
+      - name: Sync new EEG foundation models to awesome-eeg-fm
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
-          INPUT_MONTH: ${{ inputs.month }}
-          INPUT_DRY_RUN: ${{ inputs.dry_run }}
+          INPUT_MONTH: ${{ github.event.inputs.month }}
+          INPUT_ALL_MONTHS: ${{ github.event.inputs.all_months }}
+          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
           set -euo pipefail
-          args=(--month "$INPUT_MONTH")
+          args=()
+          # workflow_run has no month input. Scan every published month so a
+          # Daily Digest backfill into older folders still gets synced.
+          # README arXiv-id dedupe keeps reruns from duplicating entries.
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_run" ] || [ "${INPUT_ALL_MONTHS:-}" = "true" ]; then
+            args+=(--all-months)
+          elif [ -n "${INPUT_MONTH:-}" ]; then
+            args+=(--month "$INPUT_MONTH")
+          fi
           if [ "${INPUT_DRY_RUN:-}" = "true" ]; then
             args+=(--dry-run)
           fi
