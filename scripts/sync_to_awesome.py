@@ -74,7 +74,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return args
 
 
-def run_command(args: list[str], *, cwd: Path | None = None, check: bool = True) -> subprocess.CompletedProcess[str]:
+def run_command(
+    args: list[str],
+    *,
+    cwd: Path | None = None,
+    check: bool = True,
+    redact: bool = False,
+) -> subprocess.CompletedProcess[str]:
     try:
         return subprocess.run(
             args,
@@ -86,10 +92,15 @@ def run_command(args: list[str], *, cwd: Path | None = None, check: bool = True)
     except FileNotFoundError as exc:
         raise SyncError(f"Required command not found: {args[0]}") from exc
     except subprocess.CalledProcessError as exc:
-        command = " ".join(args)
+        command = "<redacted>" if redact else " ".join(args)
         stderr = (exc.stderr or "").strip()
         stdout = (exc.stdout or "").strip()
         details = stderr or stdout or f"exit code {exc.returncode}"
+        if redact:
+            token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or ""
+            if token:
+                details = details.replace(token, "<redacted>")
+            raise SyncError(f"Command failed: {command}\n{details}") from None
         raise SyncError(f"Command failed: {command}\n{details}") from exc
 
 
@@ -361,6 +372,7 @@ def configure_github_https_auth(repo_dir: Path) -> None:
             f"AUTHORIZATION: basic {basic}",
         ],
         cwd=repo_dir,
+        redact=True,
     )
 
 

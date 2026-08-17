@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+import pytest
 
 
 def _load_sync_module():
@@ -204,7 +207,7 @@ def test_configure_github_https_auth_sets_bearer_header(tmp_path, monkeypatch):
     module = _load_sync_module()
     calls: list[list[str]] = []
 
-    def fake_run(args, *, cwd=None, check=True):  # noqa: ANN001
+    def fake_run(args, *, cwd=None, check=True, redact=False):  # noqa: ANN001
         calls.append(list(args))
         return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
 
@@ -214,6 +217,25 @@ def test_configure_github_https_auth_sets_bearer_header(tmp_path, monkeypatch):
 
     assert calls[0][0:3] == ["git", "config", "http.https://github.com/.extraheader"]
     assert calls[0][3].startswith("AUTHORIZATION: basic ")
+
+
+def test_run_command_redact_does_not_leak_token_on_failure(monkeypatch):
+    module = _load_sync_module()
+    token = "super-secret-app-token"
+    header = f"AUTHORIZATION: basic {token}"
+
+    def boom(*args, **kwargs):  # noqa: ANN001
+        raise subprocess.CalledProcessError(1, ["git", "config", header], stderr=f"failed {token}")
+
+    monkeypatch.setenv("GH_TOKEN", token)
+    monkeypatch.setattr(module.subprocess, "run", boom)
+    with pytest.raises(module.SyncError) as excinfo:
+        module.run_command(["git", "config", header], redact=True)
+
+    message = str(excinfo.value)
+    assert token not in message
+    assert header not in message
+    assert "<redacted>" in message
 
 
 def test_configure_git_identity_sets_bot_author(tmp_path, monkeypatch):
