@@ -176,6 +176,29 @@ def test_default_months_includes_january_wrap():
     assert module.default_months(datetime(2026, 1, 2, tzinfo=timezone.utc)) == ["2025-12", "2026-01"]
 
 
+def test_resolve_months_all_months_includes_older_digest_folders(tmp_path):
+    module = _load_sync_module()
+    docs_dir = tmp_path / "docs"
+    for month in ("2025-03", "2026-07", "2026-08"):
+        month_dir = docs_dir / "digest" / month
+        month_dir.mkdir(parents=True)
+        (month_dir / "papers.json").write_text("{}", encoding="utf-8")
+    (docs_dir / "digest" / "notes").mkdir()
+
+    args = module.parse_args(["--all-months", "--docs-dir", str(docs_dir)])
+    months, missing_ok = module.resolve_months(args, docs_dir)
+
+    assert months == ["2025-03", "2026-07", "2026-08"]
+    assert missing_ok is False
+
+
+def test_automatic_workflow_scans_all_published_months():
+    workflow = Path(".github/workflows/awesome-sync.yml").read_text(encoding="utf-8")
+    assert 'if [ "${GITHUB_EVENT_NAME}" = "workflow_run" ] || [ "${INPUT_ALL_MONTHS:-}" = "true" ]; then' in workflow
+    assert "args+=(--all-months)" in workflow
+    assert "default_months()" not in workflow
+
+
 def test_configure_git_identity_sets_bot_author(tmp_path, monkeypatch):
     module = _load_sync_module()
     calls: list[list[str]] = []
