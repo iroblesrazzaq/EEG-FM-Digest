@@ -506,18 +506,119 @@
           "Demonstrates broad transferability and zero-shot capability across sixteen diverse EEG datasets."
         ]
       }
+    },
+    {
+      "arxiv_id": "2608.13676v1",
+      "arxiv_id_base": "2608.13676",
+      "authors": [
+        "Deeksha M Shama",
+        "Punnisa Amornsirikul",
+        "Archana Venkataraman"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2608.13676v1",
+        "pdf": "https://arxiv.org/pdf/2608.13676v1"
+      },
+      "published_date": "2026-08-13",
+      "summary": {
+        "arxiv_id_base": "2608.13676",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Simulated EEG",
+            "Epilepsy",
+            "Autism"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "EEG-PRISM is a model-agnostic framework designed to enhance the interpretability of EEG foundation models by translating time-channel attribution scores into spectral and spatial domains. By utilizing linear transformations and backpropagation rules, it maps attribution maps from post-hoc explainers (like Grad-CAM or SHAP) into frequency-domain biomarkers via invertible DFT and into source-domain localizations via an approximately invertible EEG generative model. The method was validated across five different foundation models and four explainers, showing high accuracy in recovering simulated biomarkers and identifying clinically relevant regions in epilepsy and autism datasets.",
+        "evaluation": {
+          "benchmarks": [
+            "Simulated EEG data",
+            "Epilepsy dataset",
+            "Autism dataset"
+          ],
+          "headline_results": [
+            "Near-perfect spectral recovery in simulated data",
+            "69.2% spatial accuracy in simulated data",
+            "50% accuracy in seizure onset localization"
+          ],
+          "tasks": [
+            "Spectral recovery",
+            "Spatial localization",
+            "Clinical biomarker identification"
+          ]
+        },
+        "key_points": [
+          "New method: Maps time-channel attribution scores to spectral and spatial domains using linear transformations.",
+          "Demonstrated effectiveness across 5 foundation models and 4 explainers on simulated and clinical data.",
+          "Successfully localized seizure onset zones in epilepsy and identified delta-alpha biomarkers in autism."
+        ],
+        "limitations": [
+          "Spatial localization depends on the quality of the approximately invertible generative model.",
+          "Performance varies depending on the choice of the initial post-hoc explainer used."
+        ],
+        "method": {
+          "architecture": "Post-hoc attribution mapping framework",
+          "finetuning": null,
+          "objective": "Physiologically-grounded interpretability",
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 66249, \"error\": null, \"pages\": 10, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8085;max_tokens=8000",
+        "one_liner": "A universal post-hoc framework to map EEG foundation model attribution scores from time-channel space to physiologically meaningful spectral and spatial domains.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-08-13",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [],
+          "topology": [
+            "topology-agnostic"
+          ]
+        },
+        "title": "EEG-PRISM: Physiologically-Grounded Interpretability of Predictions by EEG Foundation Models",
+        "unique_contribution": "Provides a theoretically-grounded method to project post-hoc attribution scores into physiologically relevant domains without requiring model retraining.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EEG-PRISM: Physiologically-Grounded Interpretability of Predictions by EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets the interpretability of EEG foundation models.",
+          "Proposed method (EEG-PRISM) is designed as a universal tool for any EEG-FM without retraining.",
+          "Evaluated the method using five different EEG foundation models.",
+          "Fits the ecosystem criteria for evaluation and interpretability of EEG-FMs."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 5,
-    "candidates": 12,
-    "summarized": 5
+    "accepted": 6,
+    "candidates": 16,
+    "summarized": 6
   },
   "top_picks": [
+    "2608.13676",
     "2608.11656",
     "2608.07033",
     "2608.02070",
-    "2608.13072",
-    "2608.01898"
+    "2608.13072"
   ]
 }
