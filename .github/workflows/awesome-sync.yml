@@ -59,6 +59,8 @@ jobs:
           private-key: ${{ secrets.DIGEST_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
           repositories: EEG-FM-Digest,awesome-eeg-fm
+          permission-contents: write
+          permission-pull-requests: write
       - uses: actions/create-github-app-token@v3
         id: app_token_legacy
         if: steps.app_config.outputs.mode == 'app-id'
@@ -67,6 +69,8 @@ jobs:
           private-key: ${{ secrets.DIGEST_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
           repositories: EEG-FM-Digest,awesome-eeg-fm
+          permission-contents: write
+          permission-pull-requests: write
       - name: Select GitHub App token
         id: app_token
         env:
@@ -90,7 +94,10 @@ jobs:
 
       - name: Sync new EEG foundation models to awesome-eeg-fm
         env:
+          # Overwrite the job token so gh cannot fall back to GraphQL against
+          # EEG-FM-Digest with contents:read only.
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
           INPUT_MONTH: ${{ github.event.inputs.month }}
           INPUT_ALL_MONTHS: ${{ github.event.inputs.all_months }}
           INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
