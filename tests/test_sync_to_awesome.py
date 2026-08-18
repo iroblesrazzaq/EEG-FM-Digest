@@ -200,6 +200,8 @@ def test_automatic_workflow_scans_all_published_months():
     assert 'if [ "${GITHUB_EVENT_NAME}" = "workflow_run" ] || [ "${INPUT_ALL_MONTHS:-}" = "true" ]; then' in workflow
     assert "args+=(--all-months)" in workflow
     assert "gh auth setup-git" in workflow
+    assert "GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}" in workflow
+    assert "permission-pull-requests: write" in workflow
     assert "default_months()" not in workflow
 
 
@@ -321,12 +323,14 @@ def test_prepare_month_branch_creates_fresh_branch_when_remote_missing(tmp_path,
 def test_commit_and_open_pr_configures_identity_before_commit(tmp_path, monkeypatch):
     module = _load_sync_module()
     calls: list[list[str]] = []
+    payloads: list[str | None] = []
 
-    def fake_run(args, *, cwd=None, check=True):  # noqa: ANN001
+    def fake_run(args, *, cwd=None, check=True, redact=False, input_text=None):  # noqa: ANN001
         calls.append(list(args))
-        if args[:3] == ["gh", "pr", "list"]:
+        payloads.append(input_text)
+        if args[:2] == ["gh", "api"] and args[2].startswith("repos/") and "pulls?" in args[2]:
             return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
-        if args[:3] == ["gh", "pr", "create"]:
+        if args[:4] == ["gh", "api", "--method", "POST"]:
             return type(
                 "R",
                 (),
@@ -346,6 +350,28 @@ def test_commit_and_open_pr_configures_identity_before_commit(tmp_path, monkeypa
     commit_idx = next(i for i, args in enumerate(calls) if args[:2] == ["git", "commit"])
     assert name_idx < commit_idx
     assert url == "https://example.com/pr/1"
-    create_call = next(args for args in calls if args[:3] == ["gh", "pr", "create"])
-    assert "paper_type=new_model" in " ".join(create_call)
-    assert "backend_rows.jsonl" not in " ".join(create_call)
+    assert not any(args[:3] == ["gh", "pr", "create"] for args in calls)
+    create_call = next(args for args in calls if args[:4] == ["gh", "api", "--method", "POST"])
+    assert f"repos/{module.AWESOME_REPO}/pulls" in create_call
+    body = next(payload for payload in payloads if payload)
+    assert "paper_type=new_model" in body
+    assert "backend_rows.jsonl" not in body
+
+
+def test_create_pull_request_explains_missing_app_permission(monkeypatch):
+    module = _load_sync_module()
+
+    def boom(*args, **kwargs):  # noqa: ANN001
+        raise module.SyncError(
+            "Command failed: gh api\n"
+            "GraphQL: Resource not accessible by integration (createPullRequest)"
+        )
+
+    monkeypatch.setattr(module, "run_command", boom)
+    with pytest.raises(module.SyncError, match="Pull requests: Read and write"):
+        module.create_pull_request(
+            base_branch="main",
+            branch_name="digest-sync",
+            title="Add models",
+            body="body",
+        )

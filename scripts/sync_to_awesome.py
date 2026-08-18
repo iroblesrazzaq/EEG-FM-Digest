@@ -80,6 +80,7 @@ def run_command(
     cwd: Path | None = None,
     check: bool = True,
     redact: bool = False,
+    input_text: str | None = None,
 ) -> subprocess.CompletedProcess[str]:
     try:
         return subprocess.run(
@@ -88,6 +89,7 @@ def run_command(
             check=check,
             capture_output=True,
             text=True,
+            input=input_text,
         )
     except FileNotFoundError as exc:
         raise SyncError(f"Required command not found: {args[0]}") from exc
@@ -478,23 +480,22 @@ def prepare_month_branch(repo_dir: Path, *, default_branch: str, branch_name: st
     run_command(["git", "checkout", "-b", branch_name], cwd=repo_dir)
 
 
+PR_PERMISSION_HINT = (
+    "Cannot open a pull request on awesome-eeg-fm. Grant the EEG-FM Daily Digest "
+    "GitHub App Pull requests: Read and write on that repository, then accept the "
+    "new permissions on the installation."
+)
+
+
 def find_existing_pr_url(branch_name: str) -> str | None:
     owner = AWESOME_REPO.split("/", 1)[0]
     result = run_command(
         [
             "gh",
-            "pr",
-            "list",
-            "--repo",
-            AWESOME_REPO,
-            "--head",
-            f"{owner}:{branch_name}",
-            "--state",
-            "open",
-            "--json",
-            "url",
+            "api",
+            f"repos/{AWESOME_REPO}/pulls?head={owner}:{branch_name}&state=open",
             "--jq",
-            ".[0].url // empty",
+            ".[0].html_url // empty",
         ],
         check=False,
     )
@@ -502,6 +503,41 @@ def find_existing_pr_url(branch_name: str) -> str | None:
         return None
     url = result.stdout.strip()
     return url or None
+
+
+def create_pull_request(*, base_branch: str, branch_name: str, title: str, body: str) -> str:
+    payload = json.dumps(
+        {
+            "title": title,
+            "head": branch_name,
+            "base": base_branch,
+            "body": body,
+        }
+    )
+    try:
+        result = run_command(
+            [
+                "gh",
+                "api",
+                "--method",
+                "POST",
+                f"repos/{AWESOME_REPO}/pulls",
+                "--input",
+                "-",
+                "--jq",
+                ".html_url",
+            ],
+            input_text=payload,
+        )
+    except SyncError as exc:
+        details = str(exc)
+        if "Resource not accessible by integration" in details or "HTTP 403" in details:
+            raise SyncError(PR_PERMISSION_HINT) from None
+        raise
+    url = result.stdout.strip()
+    if not url:
+        raise SyncError("GitHub API created a pull request but returned no html_url.")
+    return url
 
 
 def commit_and_open_pr(repo_dir: Path, *, label: str, branch_name: str, base_branch: str) -> str:
@@ -515,31 +551,17 @@ def commit_and_open_pr(repo_dir: Path, *, label: str, branch_name: str, base_bra
     if existing_url:
         return existing_url
 
-    pr_title = commit_message
     pr_body = (
         f"Adds new EEG foundation models (`paper_type=new_model`) from EEG-FM Digest ({label}).\n\n"
         "Source: `docs/digest/*/papers.json`.\n"
         "Site: https://iroblesrazzaq.github.io/EEG-FM-Digest/"
     )
-    result = run_command(
-        [
-            "gh",
-            "pr",
-            "create",
-            "--repo",
-            AWESOME_REPO,
-            "--base",
-            base_branch,
-            "--head",
-            branch_name,
-            "--title",
-            pr_title,
-            "--body",
-            pr_body,
-        ],
-        cwd=repo_dir,
+    return create_pull_request(
+        base_branch=base_branch,
+        branch_name=branch_name,
+        title=commit_message,
+        body=pr_body,
     )
-    return result.stdout.strip()
 
 
 def _new_papers_against_readme(papers: list[PaperEntry], readme_text: str) -> list[PaperEntry]:
