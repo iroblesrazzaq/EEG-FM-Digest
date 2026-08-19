@@ -89,6 +89,12 @@ def _backend_rows(papers: list[dict], summary_map: dict[str, dict | None]) -> li
     return rows
 
 
+def test_pages_workflow_uploads_docs_not_repo_root():
+    workflow = (REPO_ROOT / ".github/workflows/static.yml").read_text(encoding="utf-8")
+    assert "path: 'docs'" in workflow
+    assert "path: '.'" not in workflow
+
+
 def test_daily_workflow_resolves_github_app_client_id_before_token_action():
     workflow = (REPO_ROOT / ".github/workflows/daily-digest.yml").read_text(encoding="utf-8")
 
