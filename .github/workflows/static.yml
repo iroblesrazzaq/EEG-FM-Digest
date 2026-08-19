@@ -36,8 +36,10 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          # Site lives in docs/. Uploading the repo root made
+          # https://iroblesrazzaq.github.io/EEG-FM-Digest/ 404 while
+          # /docs/ served the real homepage.
+          path: 'docs'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
