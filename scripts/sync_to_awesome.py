@@ -45,7 +45,7 @@ class PaperEntry:
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Add new EEG foundation models from the digest to awesome-eeg-fm and open a PR."
+        description="Add new EEG foundation models from the digest to awesome-eeg-fm."
     )
     parser.add_argument(
         "--month",
@@ -453,7 +453,7 @@ def prepare_month_branch(repo_dir: Path, *, default_branch: str, branch_name: st
     """Check out ``branch_name``, reusing ``origin/branch_name`` when it exists.
 
     Fresh month: branch from updated default. Rerun: continue from the remote
-    monthly branch so pushes remain fast-forward and open PRs stay updateable.
+    branch so pushes remain fast-forward.
     """
     run_command(["git", "fetch", "origin"], cwd=repo_dir)
     run_command(["git", "checkout", default_branch], cwd=repo_dir)
@@ -480,88 +480,15 @@ def prepare_month_branch(repo_dir: Path, *, default_branch: str, branch_name: st
     run_command(["git", "checkout", "-b", branch_name], cwd=repo_dir)
 
 
-PR_PERMISSION_HINT = (
-    "Cannot open a pull request on awesome-eeg-fm. Grant the EEG-FM Daily Digest "
-    "GitHub App Pull requests: Read and write on that repository, then accept the "
-    "new permissions on the installation."
-)
-
-
-def find_existing_pr_url(branch_name: str) -> str | None:
-    owner = AWESOME_REPO.split("/", 1)[0]
-    result = run_command(
-        [
-            "gh",
-            "api",
-            f"repos/{AWESOME_REPO}/pulls?head={owner}:{branch_name}&state=open",
-            "--jq",
-            ".[0].html_url // empty",
-        ],
-        check=False,
-    )
-    if result.returncode != 0:
-        return None
-    url = result.stdout.strip()
-    return url or None
-
-
-def create_pull_request(*, base_branch: str, branch_name: str, title: str, body: str) -> str:
-    payload = json.dumps(
-        {
-            "title": title,
-            "head": branch_name,
-            "base": base_branch,
-            "body": body,
-        }
-    )
-    try:
-        result = run_command(
-            [
-                "gh",
-                "api",
-                "--method",
-                "POST",
-                f"repos/{AWESOME_REPO}/pulls",
-                "--input",
-                "-",
-                "--jq",
-                ".html_url",
-            ],
-            input_text=payload,
-        )
-    except SyncError as exc:
-        details = str(exc)
-        if "Resource not accessible by integration" in details or "HTTP 403" in details:
-            raise SyncError(PR_PERMISSION_HINT) from None
-        raise
-    url = result.stdout.strip()
-    if not url:
-        raise SyncError("GitHub API created a pull request but returned no html_url.")
-    return url
-
-
-def commit_and_open_pr(repo_dir: Path, *, label: str, branch_name: str, base_branch: str) -> str:
+def commit_and_push(repo_dir: Path, *, label: str, branch_name: str) -> str:
+    """Commit README changes and push them to ``branch_name`` (usually main)."""
     configure_git_identity(repo_dir)
     commit_message = f"Add EEG foundation models from digest ({label})"
     run_command(["git", "add", "README.md"], cwd=repo_dir)
     run_command(["git", "commit", "-m", commit_message], cwd=repo_dir)
-    run_command(["git", "push", "--set-upstream", "origin", branch_name], cwd=repo_dir)
-
-    existing_url = find_existing_pr_url(branch_name)
-    if existing_url:
-        return existing_url
-
-    pr_body = (
-        f"Adds new EEG foundation models (`paper_type=new_model`) from EEG-FM Digest ({label}).\n\n"
-        "Source: `docs/digest/*/papers.json`.\n"
-        "Site: https://iroblesrazzaq.github.io/EEG-FM-Digest/"
-    )
-    return create_pull_request(
-        base_branch=base_branch,
-        branch_name=branch_name,
-        title=commit_message,
-        body=pr_body,
-    )
+    run_command(["git", "push", "origin", f"HEAD:{branch_name}"], cwd=repo_dir)
+    sha = run_command(["git", "rev-parse", "HEAD"], cwd=repo_dir).stdout.strip()
+    return f"https://github.com/{AWESOME_REPO}/commit/{sha}"
 
 
 def _new_papers_against_readme(papers: list[PaperEntry], readme_text: str) -> list[PaperEntry]:
@@ -582,13 +509,10 @@ def main(argv: list[str] | None = None) -> int:
 
         if args.all_months:
             label = "all months"
-            branch_name = "digest-sync"
         elif args.months and len(months) == 1:
             label = months[0]
-            branch_name = f"digest-{months[0]}"
         else:
             label = ", ".join(months)
-            branch_name = "digest-sync"
 
         if args.dry_run:
             readme_text = fetch_remote_readme()
@@ -610,7 +534,7 @@ def main(argv: list[str] | None = None) -> int:
         prepare_month_branch(
             repo_dir,
             default_branch=base_branch,
-            branch_name=branch_name,
+            branch_name=base_branch,
         )
 
         readme_path = repo_dir / "README.md"
@@ -624,13 +548,12 @@ def main(argv: list[str] | None = None) -> int:
             return 0
 
         readme_path.write_text(insert_fm_entries(readme_text, new_papers), encoding="utf-8")
-        pr_url = commit_and_open_pr(
+        commit_url = commit_and_push(
             repo_dir,
             label=label,
-            branch_name=branch_name,
-            base_branch=base_branch,
+            branch_name=base_branch,
         )
-        print(f"Opened PR: {pr_url}")
+        print(f"Updated {AWESOME_REPO}: {commit_url}")
         return 0
     except SyncError as exc:
         print(f"error: {exc}", file=sys.stderr)
