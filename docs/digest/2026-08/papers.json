@@ -1042,12 +1042,94 @@
           "Evaluates the transferability of these foundation models across multiple clinical EEG datasets"
         ]
       }
+    },
+    {
+      "arxiv_id": "2608.27719v1",
+      "arxiv_id_base": "2608.27719",
+      "authors": [
+        "Maggie Lin",
+        "Chung-Lin Hou",
+        "Tzyy-Ping Jung"
+      ],
+      "categories": [
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2608.27719v1",
+        "pdf": "https://arxiv.org/pdf/2608.27719v1"
+      },
+      "published_date": "2026-08-27",
+      "summary": {
+        "arxiv_id_base": "2608.27719",
+        "categories": [
+          "cs.LG",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 34861, \"error\": null, \"pages\": 7, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8015;max_tokens=8000;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-08-27",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Leveraging a Foundation Model for the EEG-Based Diagnosis of Alzheimer's Disease",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Leveraging a Foundation Model for the EEG-Based Diagnosis of Alzheimer's Disease",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly utilizes LaBraM, a foundation model pretrained on 2,500 hours of EEG data.",
+          "Focuses on leveraging pretrained high-dimensional latent embeddings for downstream diagnostic tasks.",
+          "Fits the EEG-FM ecosystem criteria by evaluating the application and effectiveness of a foundation model for a specific clinical domain."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 10,
-    "candidates": 24,
-    "summarized": 10
+    "accepted": 11,
+    "candidates": 29,
+    "summarized": 11
   },
   "top_picks": [
     "2608.24727",

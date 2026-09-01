@@ -23,15 +23,16 @@
     {
       "paper_ids": [
         "2608.01898",
-        "2608.13072"
+        "2608.13072",
+        "2608.27719"
       ],
       "title": "other"
     }
   ],
   "stats": {
-    "accepted": 10,
-    "candidates": 24,
-    "summarized": 10
+    "accepted": 11,
+    "candidates": 29,
+    "summarized": 11
   },
   "top_picks": [
     "2608.24727",
