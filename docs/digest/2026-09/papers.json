@@ -1,0 +1,128 @@
+{
+  "featured_paper_id": null,
+  "month": "2026-09",
+  "papers": [
+    {
+      "arxiv_id": "2609.00653v1",
+      "arxiv_id_base": "2609.00653",
+      "authors": [
+        "Yunzhen Zhang",
+        "Ruoxi Piao",
+        "Hasan Onur Keles",
+        "Mustafa Misir"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2609.00653v1",
+        "pdf": "https://arxiv.org/pdf/2609.00653v1"
+      },
+      "published_date": "2026-09-01",
+      "summary": {
+        "arxiv_id_base": "2609.00653",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 64.0,
+          "datasets": [
+            "ADFTD",
+            "BCIC-2a",
+            "MIMUL-11",
+            "SEED-V",
+            "SEED-VII",
+            "THINGS-EEG-2",
+            "Workload"
+          ],
+          "eeg_hours": null,
+          "subjects": 204.0
+        },
+        "detailed_summary": "The paper proposes EEG-AS, a framework that treats EEG foundation model deployment as an instance-level algorithm selection problem to overcome the limitations of using a single best solver. It utilizes an anchor model and latent embeddings to reconstruct the prediction behaviors (tokens) of other models in a portfolio without executing them. Evaluation across seven public EEG benchmarks shows that EEG-AS significantly improves selection accuracy and narrows the gap between the single best solver and the theoretical oracle upper bound.",
+        "evaluation": {
+          "benchmarks": [
+            "ADFTD",
+            "BCIC-2a",
+            "MIMUL-11",
+            "SEED-V",
+            "SEED-VII",
+            "THINGS-EEG-2",
+            "Workload"
+          ],
+          "headline_results": [
+            "Average accuracy increased from 53.7% (SBS) to 66.9% (EEG-AS).",
+            "Closed 44% of the gap between SBS and the Oracle (VBS)."
+          ],
+          "tasks": [
+            "EEG-based classification"
+          ]
+        },
+        "key_points": [
+          "Proposed EEG-AS to bridge the gap between the Single Best Solver (SBS) and the Virtual Best Solver (VBS).",
+          "Uses a conditional token predictor to reconstruct the behaviors of multiple FMs from a single anchor model's output.",
+          "Demonstrated performance gains across 7 diverse EEG benchmarks, improving average accuracy from 53.7% to 66.9%."
+        ],
+        "limitations": [
+          "Dependence on the quality of the anchor model for behavior reconstruction.",
+          "Computational overhead of the selection framework compared to a single model."
+        ],
+        "method": {
+          "architecture": "Conditional Token Predictor and Token-based Model Selector using cross-attention.",
+          "finetuning": "Joint optimization of the predictor and selector on benchmark tasks.",
+          "objective": "Joint loss combining pairwise logistic ranking loss for selection and MSE for token reconstruction.",
+          "pretraining": "Pretrained on privileged information (prediction tokens from the full portfolio)."
+        },
+        "notes": "{\"chars\": 38966, \"error\": null, \"pages\": 8, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7953",
+        "one_liner": "An instance-level algorithm selection framework that adaptively chooses the best EEG foundation model for each sample by reconstructing model behaviors from a single anchor model.",
+        "open_source": {
+          "code_url": null,
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-09-01",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "EEG-AS: Instance-Level Foundation Model Selection for EEG Foundation Models via Behavior Reconstruction",
+        "unique_contribution": "Introduces a behavior reconstruction mechanism using privileged information to select the optimal EEG foundation model per instance without requiring full inference of the entire portfolio.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EEG-AS: Instance-Level Foundation Model Selection for EEG Foundation Models via Behavior Reconstruction",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets the selection and adaptive deployment of multiple EEG foundation models.",
+          "Focuses on an instance-level algorithm selection framework specifically for EEG-FMs.",
+          "Utilizes latent EEG embeddings from foundation models to characterize neural activity."
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 1,
+    "candidates": 4,
+    "summarized": 1
+  },
+  "top_picks": [
+    "2609.00653"
+  ]
+}
