@@ -115,14 +115,190 @@
           "Utilizes latent EEG embeddings from foundation models to characterize neural activity."
         ]
       }
+    },
+    {
+      "arxiv_id": "2609.06849v1",
+      "arxiv_id_base": "2609.06849",
+      "authors": [
+        "Rahul Thapa",
+        "Christopher Sun",
+        "William Theodor Lehn-Schioler",
+        "Sophia Claire Kivelson",
+        "Umaer Hanif",
+        "Hyatt Moore",
+        "Harrison G. Zhang",
+        "Hafsa Ahmed",
+        "Marcus Dige",
+        "Niels R. Lorenzen",
+        "Elisabeth Roxane M. Heremans",
+        "Adrien Specht",
+        "Ulysse Gimenez",
+        "Robin Guillard",
+        "Andreas Brink-Kjaer",
+        "James Zou",
+        "Emmanuel Mignot"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2609.06849v1",
+        "pdf": "https://arxiv.org/pdf/2609.06849v1"
+      },
+      "published_date": "2026-09-06",
+      "summary": {
+        "arxiv_id_base": "2609.06849",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 265640, \"error\": null, \"pages\": 63, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8041;max_tokens=8000;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-09-06",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Learning transferable human physiology from two million hours of sleep with SleepFM-2",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Learning transferable human physiology from two million hours of sleep with SleepFM-2",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies SleepFM-2 as a 'sleep foundation model' pretrained on a massive dataset of 235,865 PSG recordings.",
+          "Demonstrates broad transferability of the frozen encoder to various EEG modalities, including wakeful, headband, and in-ear EEG.",
+          "Focuses on creating a transferable representation of human physiology across diverse clinical tasks, sensors, and phenotypes."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2609.06960v1",
+      "arxiv_id_base": "2609.06960",
+      "authors": [
+        "Ying Chen",
+        "Tiou Wang",
+        "Zhifeng Yue"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2609.06960v1",
+        "pdf": "https://arxiv.org/pdf/2609.06960v1"
+      },
+      "published_date": "2026-09-07",
+      "summary": {
+        "arxiv_id_base": "2609.06960",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 42310, \"error\": null, \"pages\": 9, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8001;max_tokens=8000;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-09-07",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "iBrain: A Unified Foundation Model Reading the Brain from Surface to Spikes",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "iBrain: A Unified Foundation Model Reading the Brain from Surface to Spikes",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly introduces iBrain as a 'unified foundation model' for iEEG and spiking activity.",
+          "Pretrained on a large-scale dataset of over 7,000 hours of neural recordings.",
+          "Demonstrates transferability and data efficiency across diverse recording settings and downstream tasks."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 1,
-    "candidates": 4,
-    "summarized": 1
+    "accepted": 3,
+    "candidates": 10,
+    "summarized": 3
   },
   "top_picks": [
-    "2609.00653"
+    "2609.00653",
+    "2609.06960",
+    "2609.06849"
   ]
 }
