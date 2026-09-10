@@ -209,6 +209,109 @@
       }
     },
     {
+      "arxiv_id": "2608.16931v1",
+      "arxiv_id_base": "2608.16931",
+      "authors": [
+        "Linhua Cong",
+        "Dingkun Liu",
+        "Dongrui Wu"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2608.16931v1",
+        "pdf": "https://arxiv.org/pdf/2608.16931v1"
+      },
+      "published_date": "2026-08-05",
+      "summary": {
+        "arxiv_id_base": "2608.16931",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "BNCI2014001",
+            "SEED",
+            "CHB-MIT"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper introduces SW-ProxyCE, a framework designed to exploit the shared representation space of public EEG foundation models to attack private downstream models. By utilizing a small labeled reference set and a public encoder, the method constructs shrinkage-whitened class prototypes to derive a proxy cross-entropy objective. This allows the generation of adversarial examples without requiring any queries to the victim model or the training of a surrogate classifier. Evaluation across multiple EEG tasks and encoders demonstrates that SW-ProxyCE effectively transfers to both linear-probing and full-fine-tuning downstream models.",
+        "evaluation": {
+          "benchmarks": [
+            "BNCI2014001",
+            "SEED",
+            "CHB-MIT"
+          ],
+          "headline_results": [
+            "SW-ProxyCE outperforms task-agnostic representation-shift attacks in transferability to private downstream models."
+          ],
+          "tasks": [
+            "Motor Imagery",
+            "Emotion Recognition",
+            "Seizure Detection"
+          ]
+        },
+        "key_points": [
+          "Method for adversarial attack: SW-ProxyCE enables zero-query transfer attacks from public EEG foundation encoders to private downstream models.",
+          "Uses shrinkage-whitened class prototypes to derive a proxy classification objective from limited labeled reference data."
+        ],
+        "limitations": [
+          "Requires a small labeled reference set of the target task.",
+          "Effectiveness depends on the availability of a public encoder that shares representation space with the victim."
+        ],
+        "method": {
+          "architecture": "Public EEG foundation encoders (e.g., MIRepNet)",
+          "finetuning": "Targets downstream models adapted via Linear Probing or Full Fine-Tuning",
+          "objective": "Shrinkage-Whitened Proxy Cross-Entropy (SW-ProxyCE)",
+          "pretraining": "Utilizes pre-trained public EEG foundation models"
+        },
+        "notes": "{\"chars\": 88203, \"error\": null, \"pages\": 23, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8095;max_tokens=8000",
+        "one_liner": "A zero-query adversarial attack framework that leverages public EEG foundation encoders to target private downstream models using shrinkage-whitened class prototypes.",
+        "open_source": {
+          "code_url": "https://github.com/ccclh/SW-ProxyCE",
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-08-05",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "topology-agnostic"
+          ]
+        },
+        "title": "SW-ProxyCE: Zero-Query Adversarial Transfer from Public EEG Encoders to Private Downstream Models",
+        "unique_contribution": "Introduces a zero-query adversarial transfer framework using shrinkage-whitened proxy cross-entropy to exploit public EEG encoders as attack surfaces for private models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "SW-ProxyCE: Zero-Query Adversarial Transfer from Public EEG Encoders to Private Downstream Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly investigates security risks and adversarial transfer attacks specifically within the context of EEG foundation model deployment.",
+          "Evaluates the vulnerability of three general-purpose EEG foundation encoders and one paradigm-specific pre-trained encoder.",
+          "Analyzes the transferability of adversarial examples to downstream models derived from EEG-FMs via linear-probing and full-fine-tuning."
+        ]
+      }
+    },
+    {
       "arxiv_id": "2608.07033v1",
       "arxiv_id_base": "2608.07033",
       "authors": [
@@ -607,18 +710,432 @@
           "Fits the ecosystem criteria for evaluation and interpretability of EEG-FMs."
         ]
       }
+    },
+    {
+      "arxiv_id": "2608.24377v1",
+      "arxiv_id_base": "2608.24377",
+      "authors": [
+        "Yinghao Wang",
+        "Shujian Yu",
+        "Duc Han Le",
+        "Zhikai Yu",
+        "Changming Wang",
+        "Van-Tam Nguyen"
+      ],
+      "categories": [
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2608.24377v1",
+        "pdf": "https://arxiv.org/pdf/2608.24377v1"
+      },
+      "published_date": "2026-08-25",
+      "summary": {
+        "arxiv_id_base": "2608.24377",
+        "categories": [
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "TUH",
+            "In-house clinical cohorts"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes tPoE-EIB, a downstream adaptation head for frozen EEG foundation models that enforces an 'evidence-only' prediction constraint. Unlike standard heads that use unrestricted hidden states, tPoE-EIB routes predictions through gated temporal and channel summaries fused via a tempered product-of-experts posterior. Evaluation across six diagnosis tasks using CodeBrain and CBraMod backbones shows that the method maintains competitive accuracy while significantly improving auditability and faithfulness compared to post-hoc explainers.",
+        "evaluation": {
+          "benchmarks": [
+            "TUH",
+            "In-house clinical datasets"
+          ],
+          "headline_results": [
+            "Maintained competitive Balanced Accuracy (BAcc) compared to unrestricted heads.",
+            "Significantly improved faithfulness in audits (insertion-deletion, gate-causality) over post-hoc explainers."
+          ],
+          "tasks": [
+            "event-type classification",
+            "abnormality detection",
+            "seizure detection",
+            "cognitive-decline staging",
+            "depression screening",
+            "cerebrovascular-disease classification"
+          ]
+        },
+        "key_points": [
+          "Method for auditable EEG diagnosis: proposes tPoE-EIB, a bottleneck head that restricts classifiers to predict only from gated temporal and channel evidence.",
+          "Novel fusion mechanism: uses a tempered product-of-experts posterior to integrate Gaussian experts, mitigating overconfidence from correlated evidence axes.",
+          "Extensive validation: demonstrates competitive balanced accuracy and superior faithfulness across six clinical tasks using CodeBrain and CBraMod backbones."
+        ],
+        "limitations": [
+          "Dependence on the quality of the frozen foundation model's latent representations.",
+          "Potential trade-off between strict auditability and maximum possible predictive accuracy."
+        ],
+        "method": {
+          "architecture": "tPoE-EIB (tempered Product-of-Experts Evidence-Information Bottleneck) head attached to frozen EEG foundation models.",
+          "finetuning": "Training of the tPoE-EIB head for specific downstream diagnosis tasks.",
+          "objective": "Minimize classification loss while constraining information flow via a KL-divergence based information bottleneck.",
+          "pretraining": "Uses frozen pre-trained backbones (CodeBrain, CBraMod)."
+        },
+        "notes": "{\"chars\": 83660, \"error\": null, \"pages\": 32, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8097;max_tokens=8000",
+        "one_liner": "A tempered product-of-experts information bottleneck head that ensures EEG diagnosis is based solely on explicit, rate-limited temporal and channel evidence.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-08-25",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Predicting Only from Selected Evidence: A Tempered Product-of-Experts Bottleneck for Auditable EEG Diagnosis",
+        "unique_contribution": "Introduces an evidence-only prediction constraint using a tempered product-of-experts bottleneck to make the decision path of EEG foundation model adaptation explicit and auditable.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Predicting Only from Selected Evidence: A Tempered Product-of-Experts Bottleneck for Auditable EEG Diagnosis",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets the adaptation of pretrained EEG foundation-model backbones.",
+          "Proposes a specialized head (tPoE-EIB) for fine-tuning/adapting frozen EEG-FMs for auditable diagnosis.",
+          "Evaluates the method across six diverse EEG diagnosis settings using foundation-model backbones."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2608.24597v1",
+      "arxiv_id_base": "2608.24597",
+      "authors": [
+        "Yulong Dou",
+        "Han Wu",
+        "Guo Chen",
+        "Fangmao Ju",
+        "Zhiming Cui",
+        "Dinggang Shen"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2608.24597v1",
+        "pdf": "https://arxiv.org/pdf/2608.24597v1"
+      },
+      "published_date": "2026-08-25",
+      "summary": {
+        "arxiv_id_base": "2608.24597",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "TUEG"
+          ],
+          "eeg_hours": 11000.0,
+          "subjects": 14987.0
+        },
+        "detailed_summary": "INCEPT (INvariance-oriented Contextual EEG Pre-Training) addresses the limitations of reconstruction-centered pre-training in EEG foundation models, which often capture irrelevant noise. It employs a dual-objective strategy: masked contextual learning to capture local temporal, spectral, and cross-channel dependencies, and invariance learning to ensure stability across correlated observations. To handle varying electrode montages, it uses spherical-harmonics-based electrode embeddings. The model was pre-trained on the TUEG corpus and evaluated across 10 datasets covering signal-level, brain-state, and brain-health tasks, demonstrating superior performance in both linear probing and full fine-tuning scenarios.",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "TUAR",
+            "FACED",
+            "SEED-V",
+            "PhysioNet-MI",
+            "ISRUC-S1",
+            "MentalArithmetic",
+            "Mumtaz2016",
+            "ADFTD",
+            "Siena"
+          ],
+          "headline_results": [
+            "Ranked 1st among recent EFMs on 26/30 linear-probing metrics",
+            "Ranked 1st among recent EFMs on 24/30 fine-tuning metrics"
+          ],
+          "tasks": [
+            "Signal-level analysis",
+            "Brain-state recognition",
+            "Brain-health assessment"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: INCEPT uses invariance-oriented pre-training to filter nuisance variability.",
+          "Utilizes spherical-harmonics-based electrode embeddings to achieve flexibility across different EEG montages.",
+          "Outperforms existing EFMs on 26/30 linear-probing and 24/30 fine-tuning metrics across 10 diverse datasets."
+        ],
+        "limitations": [
+          "Dependence on the quality and diversity of the TUEG corpus for generalizability",
+          "Computational cost associated with large-scale pre-training on 11,000 hours of data"
+        ],
+        "method": {
+          "architecture": "Transformer-based with spherical-harmonics-based electrode embeddings",
+          "finetuning": "Evaluated via linear probing (frozen backbone) and full fine-tuning",
+          "objective": "Combined masked contextual learning and invariance learning",
+          "pretraining": "Pre-trained on TUEG corpus using masked and invariance objectives"
+        },
+        "notes": "{\"chars\": 191499, \"error\": null, \"pages\": 46, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8040;max_tokens=8000",
+        "one_liner": "Introduces INCEPT, an invariance-oriented EEG foundation model that separates stable neural structures from nuisance variability for broad-spectrum analysis.",
+        "open_source": {
+          "code_url": null,
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-08-25",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Taming foundation model with invariance-oriented pre-training for broad-spectrum EEG analysis across signal-level, brain-state, and brain-health tasks",
+        "unique_contribution": "Shifts the pre-training paradigm from reconstruction-centered to invariance-oriented learning and introduces spherical-harmonics-based embeddings for montage-adaptive EEG analysis.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Taming foundation model with invariance-oriented pre-training for broad-spectrum EEG analysis across signal-level, brain-state, and brain-health tasks",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly presents INCEPT as an invariance-oriented EEG foundation model",
+          "Pretrained on a large-scale dataset of 11,000 hours of unlabelled clinical EEG for reusable representations",
+          "Evaluated on a broad-spectrum benchmark of ten datasets across signal-level, brain-state, and brain-health tasks",
+          "Directly compares performance against other recent EEG foundation models"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2608.24727v1",
+      "arxiv_id_base": "2608.24727",
+      "authors": [
+        "Meghal Dani",
+        "Stefanie Liebe"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2608.24727v1",
+        "pdf": "https://arxiv.org/pdf/2608.24727v1"
+      },
+      "published_date": "2026-08-25",
+      "summary": {
+        "arxiv_id_base": "2608.24727",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 16.0,
+          "datasets": [
+            "TUAB",
+            "TUEV",
+            "CHB-MIT"
+          ],
+          "eeg_hours": null,
+          "subjects": 24.0
+        },
+        "detailed_summary": "The paper investigates parameter-efficient self-supervised (SSL) adaptation of pretrained EEG-FMs (BIOT and CBraMod) to bridge distribution shifts in clinical settings. By updating only the final encoder layer using the original SSL objective on unlabeled target data, the authors demonstrate significant gains over linear probing across three clinical datasets. Results show that peak performance is achieved with only 20-50% of available unlabeled data under a fixed compute budget and is driven by total window diversity rather than patient count.",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "TUEV",
+            "CHB-MIT"
+          ],
+          "headline_results": [
+            "Up to 20x AUCPR improvement on rare events compared to linear probing",
+            "Peak performance reached with 20-50% of unlabeled data"
+          ],
+          "tasks": [
+            "Abnormality detection",
+            "Event classification",
+            "Seizure detection"
+          ]
+        },
+        "key_points": [
+          "Method for EEG-FM adaptation: uses parameter-efficient self-supervised learning to align pretrained models to target clinical domains by updating only the final encoder layer.",
+          "Strong evidence of efficiency: achieves peak performance using 20-50% of unlabeled data and shows that total window count is more critical than patient diversity.",
+          "Significant performance gains: improves AUCPR by up to 20x on rare-event seizure detection compared to frozen linear probing."
+        ],
+        "limitations": [
+          "Evaluation is limited to a specific set of clinical datasets",
+          "Computational budget constraints were simulated and may vary across hardware"
+        ],
+        "method": {
+          "architecture": "BIOT and CBraMod",
+          "finetuning": "Parameter-efficient update of the final encoder layer followed by linear probing",
+          "objective": "Self-supervised adaptation (Contrastive and Masked Reconstruction)",
+          "pretraining": "Pretrained on large-scale EEG datasets"
+        },
+        "notes": "{\"chars\": 28449, \"error\": null, \"pages\": 10, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7970",
+        "one_liner": "Proposes a parameter-efficient self-supervised adaptation strategy for EEG foundation models that achieves high performance by updating only the final encoder layer.",
+        "open_source": {
+          "code_url": "https://github.com/c3n-group/efficient-eeg-adapt",
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-08-25",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Parameter-Efficient Self-Supervised Adaptation for EEG-FM under Fixed Computational Budgets",
+        "unique_contribution": "Demonstrates that updating only the final layer of an EEG-FM via self-supervised adaptation significantly improves clinical task performance while requiring only a fraction of available unlabeled data.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Parameter-Efficient Self-Supervised Adaptation for EEG-FM under Fixed Computational Budgets",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets the adaptation and deployment of EEG foundation models (EEG-FM)",
+          "Focuses on parameter-efficient self-supervised adaptation of existing EEG-FMs like BIOT and CBraMod",
+          "Evaluates the transferability of these foundation models across multiple clinical EEG datasets"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2608.27719v1",
+      "arxiv_id_base": "2608.27719",
+      "authors": [
+        "Maggie Lin",
+        "Chung-Lin Hou",
+        "Tzyy-Ping Jung"
+      ],
+      "categories": [
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2608.27719v1",
+        "pdf": "https://arxiv.org/pdf/2608.27719v1"
+      },
+      "published_date": "2026-08-27",
+      "summary": {
+        "arxiv_id_base": "2608.27719",
+        "categories": [
+          "cs.LG",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "evaluation": {
+          "benchmarks": [],
+          "headline_results": [],
+          "tasks": []
+        },
+        "key_points": [
+          "unknown",
+          "unknown",
+          "unknown"
+        ],
+        "limitations": [
+          "unknown",
+          "summary_json_error"
+        ],
+        "method": {
+          "architecture": null,
+          "finetuning": null,
+          "objective": null,
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 34861, \"error\": null, \"pages\": 7, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8015;max_tokens=8000;summary_json_error",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "other",
+        "published_date": "2026-08-27",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Leveraging a Foundation Model for the EEG-Based Diagnosis of Alzheimer's Disease",
+        "unique_contribution": "unknown",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Leveraging a Foundation Model for the EEG-Based Diagnosis of Alzheimer's Disease",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly utilizes LaBraM, a foundation model pretrained on 2,500 hours of EEG data.",
+          "Focuses on leveraging pretrained high-dimensional latent embeddings for downstream diagnostic tasks.",
+          "Fits the EEG-FM ecosystem criteria by evaluating the application and effectiveness of a foundation model for a specific clinical domain."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 6,
-    "candidates": 16,
-    "summarized": 6
+    "accepted": 11,
+    "candidates": 29,
+    "summarized": 11
   },
   "top_picks": [
+    "2608.24727",
+    "2608.24597",
     "2608.13676",
     "2608.11656",
-    "2608.07033",
-    "2608.02070",
-    "2608.13072"
+    "2608.07033"
   ]
 }
