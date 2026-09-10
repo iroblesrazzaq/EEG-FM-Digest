@@ -2,8 +2,11 @@ from __future__ import annotations
 
 from eegfm_digest.arch_graph import (
     collapse_repeated_layers,
+    diagram_from_hf,
+    graph_for_model,
     graph_from_tensors,
     looks_like_reve,
+    merge_reve_config,
     reve_graph,
     short_model_label,
 )
@@ -96,7 +99,103 @@ def test_reve_diagram_matches_raschka_gallery_structure():
     assert ffn["activation"] == "GELU"
     assert ffn["hidden_dim"] == 1362
     assert "GeGLU" in ffn["title"]
+    assert ffn.get("gated") is True
     assert diagram["annotations"]["embed_dim"] == 512
+    left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
+    assert left["pe"] == "Fourier PE"
+
+
+def _llama_cfg() -> dict:
+    return {
+        "model_type": "llama",
+        "architectures": ["LlamaForCausalLM"],
+        "hidden_size": 4096,
+        "num_hidden_layers": 32,
+        "num_attention_heads": 32,
+        "num_key_value_heads": 8,
+        "intermediate_size": 14336,
+        "hidden_act": "silu",
+        "vocab_size": 128256,
+        "max_position_embeddings": 8192,
+        "rope_theta": 500000.0,
+        "num_params": 8_000_000_000,
+    }
+
+
+def test_diagram_from_hf_llama_gqa_swiglu_rope():
+    diagram = diagram_from_hf(_llama_cfg(), label="Llama")
+    attn = next(step for step in diagram["repeat"]["steps"] if step["kind"] == "attention")
+    assert attn["label"] == "Masked grouped-query attention"
+    assert diagram["repeat"]["steps"][0]["label"].startswith("RMSNorm")
+    ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
+    assert ffn["activation"] == "SiLU"
+    assert ffn["gated"] is True
+    assert ffn["hidden_dim"] == 14336
+    assert "SwiGLU" in ffn["title"]
+    assert diagram["annotations"]["vocab_size"] == 128256
+    assert diagram["annotations"]["embed_dim"] == 4096
+    left_labels = [item["label"] for item in diagram["annotations"]["left"]]
+    assert "RoPE" in left_labels
+    assert any("8,192" in label for label in left_labels)
+    assert diagram["below"][0]["label"] == "Sample input"
+    assert diagram["stem"][0]["label"] == "Token embedding layer"
+    head_labels = [item["label"] for item in diagram["head"]]
+    assert "Final RMSNorm" in head_labels
+    assert "Linear output layer" in head_labels
+
+
+def test_diagram_from_hf_gpt2_ungated_gelu_layernorm():
+    cfg = {
+        "model_type": "gpt2",
+        "architectures": ["GPT2LMHeadModel"],
+        "n_embd": 768,
+        "n_layer": 12,
+        "n_head": 12,
+        "n_inner": 3072,
+        "hidden_act": "gelu",
+        "vocab_size": 50257,
+        "n_positions": 1024,
+    }
+    names = ["wte.weight", "wpe.weight", "h.0.mlp.c_fc.weight", "lm_head.weight"]
+    diagram = diagram_from_hf(cfg, names, label="GPT-2")
+    attn = next(step for step in diagram["repeat"]["steps"] if step["kind"] == "attention")
+    assert attn["label"] == "Masked multi-head attention"
+    assert diagram["repeat"]["steps"][0]["label"].startswith("LayerNorm")
+    ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
+    assert ffn["activation"] == "GELU"
+    assert ffn["gated"] is False
+    assert ffn["hidden_dim"] == 3072
+    assert "GLU" not in ffn["title"]
+    left_labels = [item["label"] for item in diagram["annotations"]["left"]]
+    assert "Absolute PE" in left_labels
+    assert "RoPE" not in left_labels
+    assert not any("grouped-query" in step["label"] for step in diagram["repeat"]["steps"])
+
+
+def test_reve_published_defaults_go_through_compiler():
+    diagram = diagram_from_hf(merge_reve_config(None), label="REVE")
+    assert diagram["repeat"]["count"] == 22
+    assert diagram["title"] == "REVE"
+    ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
+    assert ffn["hidden_dim"] == 1362
+    assert "GeGLU" in ffn["title"]
+
+
+def test_graph_for_model_llama_attaches_diagram_without_reve():
+    cfg = _llama_cfg()
+    graph = graph_for_model(
+        cfg=cfg,
+        tensor_names=["model.embed_tokens.weight", "lm_head.weight"],
+        repo_id="meta-llama/Llama-3-8B",
+        arxiv_id="2401.00001",
+        label="Llama",
+    )
+    assert not looks_like_reve("meta-llama/Llama-3-8B", "2401.00001", cfg)
+    assert "diagram" in graph
+    assert graph["diagram"]["title"] == "Llama"
+    assert graph["diagram"]["callouts"][0]["hidden_dim"] == 14336
+    ids = [node["id"] for node in graph["nodes"]]
+    assert "eeg" not in ids
 
 
 def test_looks_like_reve_from_arxiv_and_repo():

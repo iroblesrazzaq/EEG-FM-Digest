@@ -515,6 +515,125 @@
     );
   }
 
+  function ffnIsGated(spec) {
+    if (!spec) {
+      return true;
+    }
+    if (spec.gated === false) {
+      return false;
+    }
+    if (spec.gated === true) {
+      return true;
+    }
+    return /glu/i.test(String(spec.title || ""));
+  }
+
+  function drawHiddenDim(group, spec, cx, y, h, colors) {
+    if (!spec.hidden_dim) {
+      return;
+    }
+    const lines = ["Hidden layer", `dimension of ${commas(spec.hidden_dim)}`];
+    lines.forEach((line, index) => {
+      group.appendChild(
+        svgEl(
+          "text",
+          {
+            x: cx,
+            y: y + h + 34 + index * 15,
+            "text-anchor": "middle",
+            fill: colors.accent,
+            "font-size": 12,
+            "font-weight": 700,
+            "font-family": FONT,
+          },
+          line,
+        ),
+      );
+    });
+  }
+
+  function drawUngatedFfn(parent, spec, x, y, colors, focused) {
+    const w = CALLOUT_W;
+    const h = 118;
+    const group = svgEl("g", { class: "arch-callout-ffn" });
+    if (spec.title) {
+      group.appendChild(
+        svgEl(
+          "text",
+          {
+            x,
+            y: y - 8,
+            fill: colors.accentDeep,
+            "font-size": 12,
+            "font-weight": 700,
+            "font-family": FONT,
+          },
+          spec.title,
+        ),
+      );
+    }
+    group.appendChild(
+      svgEl("rect", {
+        x,
+        y,
+        width: w,
+        height: h,
+        rx: 16,
+        ry: 16,
+        fill: colors.surface,
+        stroke: focused ? colors.accent : colors.callout,
+        "stroke-width": focused ? 1.7 : 1.2,
+        "stroke-dasharray": "5 3.5",
+      }),
+    );
+    const pillW = 108;
+    const pillH = 20;
+    const cx = x + w / 2;
+    const top = { x: cx - pillW / 2, y: y + 14, w: pillW, h: pillH, cx, cy: y + 14 + pillH / 2, label: "Linear layer" };
+    const bot = { x: cx - pillW / 2, y: y + 84, w: pillW, h: pillH, cx, cy: y + 84 + pillH / 2, label: "Linear layer" };
+    const act = {
+      x: cx - 48,
+      y: y + 48,
+      w: 96,
+      h: 22,
+      cx,
+      cy: y + 59,
+      label: `${spec.activation || "GELU"} activation`,
+    };
+    drawPill(group, top, colors, { fontSize: 10, rx: 7, maxChars: 18 });
+    drawPill(group, bot, colors, { fontSize: 10, rx: 7, maxChars: 18 });
+    group.appendChild(
+      svgEl("ellipse", {
+        cx: act.cx,
+        cy: act.cy,
+        rx: act.w / 2,
+        ry: act.h / 2,
+        fill: colors.surface,
+        stroke: colors.ink,
+        "stroke-width": 1.1,
+      }),
+    );
+    group.appendChild(
+      svgEl(
+        "text",
+        {
+          x: act.cx,
+          y: act.cy + 3.5,
+          "text-anchor": "middle",
+          fill: colors.ink,
+          "font-size": 8.5,
+          "font-family": FONT,
+        },
+        act.label,
+      ),
+    );
+    arrowUp(group, cx, top.y + top.h, act.cy - act.h / 2, colors);
+    arrowUp(group, cx, act.cy + act.h / 2, bot.y, colors);
+    drawHiddenDim(group, spec, cx, y, h, colors);
+    parent.appendChild(group);
+    return { x, y, w, h: h + (spec.hidden_dim ? 56 : 0), cx };
+  }
+
   function drawGatedFfn(parent, spec, x, y, colors, focused) {
     const w = CALLOUT_W;
     const h = 148;
@@ -650,28 +769,16 @@
         "stroke-width": 1.05,
       }),
     );
-    if (spec.hidden_dim) {
-      const lines = ["Hidden layer", `dimension of ${commas(spec.hidden_dim)}`];
-      lines.forEach((line, index) => {
-        group.appendChild(
-          svgEl(
-            "text",
-            {
-              x: cx,
-              y: y + h + 34 + index * 15,
-              "text-anchor": "middle",
-              fill: colors.accent,
-              "font-size": 12,
-              "font-weight": 700,
-              "font-family": FONT,
-            },
-            line,
-          ),
-        );
-      });
-    }
+    drawHiddenDim(group, spec, cx, y, h, colors);
     parent.appendChild(group);
     return { x, y, w, h: h + (spec.hidden_dim ? 56 : 0), cx };
+  }
+
+  function drawFfnCallout(parent, spec, x, y, colors, focused) {
+    if (ffnIsGated(spec)) {
+      return drawGatedFfn(parent, spec, x, y, colors, focused);
+    }
+    return drawUngatedFfn(parent, spec, x, y, colors, focused);
   }
 
   function draw(host, graph) {
@@ -861,7 +968,7 @@
     if (ffnSpec) {
       const anchor = byId[ffnSpec.anchor] || stepPlaced.find((box) => box.kind === "ffn");
       const ffnY = Math.max(chassisTop - 2, (anchor ? anchor.y : blockTop) - 28);
-      ffnBox = drawGatedFfn(svg, ffnSpec, CALLOUT_X, ffnY, colors, focused === (anchor && anchor.id));
+      ffnBox = drawFfnCallout(svg, ffnSpec, CALLOUT_X, ffnY, colors, focused === (anchor && anchor.id));
       if (anchor) {
         leader(svg, anchor.x + anchor.w, anchor.cy, CALLOUT_X - 2, ffnY + 24, colors);
       }
@@ -917,6 +1024,32 @@
       });
       leader(svg, textX + 6, anchor.cy, anchor.x - 2, anchor.cy, colors);
     });
+
+    if (annotations.vocab_size) {
+      const anchor =
+        [...headPlaced].reverse().find((box) => box.kind === "linear") ||
+        headPlaced[headPlaced.length - 1];
+      const vx = VIEW_W - 16;
+      const vy = 32;
+      svg.appendChild(
+        svgEl(
+          "text",
+          {
+            x: vx,
+            y: vy,
+            "text-anchor": "end",
+            fill: colors.ink,
+            "font-size": 12,
+            "font-weight": 600,
+            "font-family": FONT,
+          },
+          `Vocabulary size of ${commas(annotations.vocab_size)}`,
+        ),
+      );
+      if (anchor) {
+        leader(svg, anchor.x + anchor.w, anchor.y + 6, vx - 8, vy + 2, colors);
+      }
+    }
 
     if (annotations.embed_dim) {
       const anchor = stemPlaced[0] || stepPlaced[0];

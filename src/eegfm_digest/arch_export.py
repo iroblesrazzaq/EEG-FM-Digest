@@ -209,7 +209,13 @@ def build_export_payload(
     source: str,
     weights_url: str | None = None,
 ) -> dict[str, Any]:
-    graph = graph_for_model(cfg=cfg, tensor_names=tensor_names, repo_id=repo_id, arxiv_id=arxiv_id)
+    graph = graph_for_model(
+        cfg=cfg,
+        tensor_names=tensor_names,
+        repo_id=repo_id,
+        arxiv_id=arxiv_id,
+        label=short_model_label(title, repo_id),
+    )
     fact_sheet = fact_sheet_for_graph(cfg)
     graph_path = f"{GRAPH_REL_PREFIX}/{arxiv_id}.json"
     payload: dict[str, Any] = {
@@ -382,6 +388,8 @@ def export_architecture(
     refresh_shells: bool = False,
 ) -> dict[str, Any]:
     repo_id = parse_hf_repo_id(repo) or repo
+    if fallback_repo == DEFAULT_FALLBACK_REPO and not looks_like_reve(repo_id, arxiv_id, None):
+        fallback_repo = None
     token = token if token is not None else hf_token()
     papers_path = Path(docs_dir) / "digest" / month / "papers.json"
     resolved_title = title or title_from_papers(papers_path, arxiv_id) or arxiv_id
@@ -423,17 +431,159 @@ def export_architecture(
     return payload
 
 
+def paper_hf_repo(row: dict[str, Any]) -> str | None:
+    if not isinstance(row, dict):
+        return None
+    architecture = row.get("architecture")
+    if isinstance(architecture, dict):
+        parsed = parse_hf_repo_id(str(architecture.get("hf_repo") or ""))
+        if parsed:
+            return parsed
+    for blob in (row.get("summary"), row):
+        if not isinstance(blob, dict):
+            continue
+        open_source = blob.get("open_source")
+        if isinstance(open_source, dict):
+            parsed = parse_hf_repo_id(str(open_source.get("weights_url") or ""))
+            if parsed:
+                return parsed
+    return None
+
+
+def paper_title(row: dict[str, Any]) -> str:
+    title = str(row.get("title") or "").strip()
+    summary = row.get("summary")
+    if isinstance(summary, dict):
+        title = str(summary.get("title") or title).strip() or title
+    return title
+
+
+def iter_digest_hf_papers(docs_dir: Path) -> list[dict[str, str]]:
+    """Papers whose weights_url or architecture.hf_repo is an owner/name Hub repo."""
+    digest = Path(docs_dir) / "digest"
+    if not digest.is_dir():
+        return []
+    found: list[dict[str, str]] = []
+    for month_dir in sorted(path for path in digest.iterdir() if path.is_dir()):
+        if not month_dir.name[:4].isdigit():
+            continue
+        papers_path = month_dir / "papers.json"
+        if not papers_path.exists():
+            continue
+        try:
+            payload = json.loads(papers_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            continue
+        papers = payload.get("papers") if isinstance(payload, dict) else payload
+        if not isinstance(papers, list):
+            continue
+        for row in papers:
+            if not isinstance(row, dict):
+                continue
+            arxiv_id = str(row.get("arxiv_id_base") or "").strip()
+            repo = paper_hf_repo(row)
+            if not arxiv_id or not repo:
+                continue
+            found.append(
+                {
+                    "month": month_dir.name,
+                    "arxiv_id": arxiv_id,
+                    "repo": repo,
+                    "title": paper_title(row) or arxiv_id,
+                }
+            )
+    return found
+
+
+def export_all_digest(
+    docs_dir: Path,
+    *,
+    token: str | None = None,
+    client: httpx.Client | None = None,
+    refresh_shells: bool = False,
+    exporter: Any = None,
+) -> dict[str, Any]:
+    """Export gallery graphs for every digest paper with a public owner/name Hub repo.
+
+    Not hooked from daily CI. Skips org pages, gated repos, and missing configs.
+    """
+    docs_dir = Path(docs_dir)
+    exported: list[dict[str, Any]] = []
+    skipped: list[dict[str, Any]] = []
+    run_one = exporter or export_architecture
+    for item in iter_digest_hf_papers(docs_dir):
+        fallback = (
+            DEFAULT_FALLBACK_REPO if looks_like_reve(item["repo"], item["arxiv_id"], None) else None
+        )
+        try:
+            payload = run_one(
+                arxiv_id=item["arxiv_id"],
+                repo=item["repo"],
+                month=item["month"],
+                docs_dir=docs_dir,
+                title=item.get("title"),
+                fallback_repo=fallback,
+                token=token,
+                client=client,
+                patch_papers=True,
+                refresh_shells=False,
+            )
+        except Exception as exc:  # noqa: BLE001 — batch continues on gated/missing
+            skipped.append(
+                {
+                    "arxiv_id": item["arxiv_id"],
+                    "month": item["month"],
+                    "repo": item["repo"],
+                    "reason": f"{type(exc).__name__}:{exc}",
+                }
+            )
+            continue
+        exported.append(
+            {
+                "arxiv_id": item["arxiv_id"],
+                "month": item["month"],
+                "hf_repo": payload.get("hf_repo"),
+                "graph_path": payload.get("graph_path"),
+                "source": payload.get("source"),
+            }
+        )
+    if refresh_shells:
+        refresh_html_shells(docs_dir)
+    return {"exported": exported, "skipped": skipped}
+
+
+def _print_skip_table(skipped: list[dict[str, Any]]) -> None:
+    if not skipped:
+        print("skipped: (none)", file=sys.stderr)
+        return
+    print("skipped:", file=sys.stderr)
+    print(f"{'arxiv':<16} {'month':<8} {'repo':<36} reason", file=sys.stderr)
+    for row in skipped:
+        print(
+            f"{row.get('arxiv_id', ''):<16} {row.get('month', ''):<8} "
+            f"{row.get('repo', ''):<36} {row.get('reason', '')}",
+            file=sys.stderr,
+        )
+
+
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Export a local architecture graph into docs/ (no weight download).")
-    parser.add_argument("--arxiv", required=True, help="arXiv id base, e.g. 2510.21585")
-    parser.add_argument("--repo", required=True, help="Hugging Face owner/name or model URL")
-    parser.add_argument("--month", required=True, help="Digest month YYYY-MM")
+    parser = argparse.ArgumentParser(
+        description="Export architecture gallery graphs into docs/ (config + safetensors names, not daily CI)."
+    )
+    parser.add_argument(
+        "--all-digest",
+        action="store_true",
+        help="Scan docs/digest/*/papers.json and export every public owner/name Hub repo",
+    )
+    parser.add_argument("--arxiv", default=None, help="arXiv id base")
+    parser.add_argument("--repo", default=None, help="Hugging Face owner/name")
+    parser.add_argument("--month", default=None, help="Digest month YYYY-MM")
     parser.add_argument("--title", default=None, help="Override paper title")
     parser.add_argument("--docs-dir", default="docs", help="Site docs directory")
     parser.add_argument(
         "--fallback-repo",
         default=DEFAULT_FALLBACK_REPO,
-        help="Public Hub repo to try when --repo is gated",
+        help="Public Hub repo to try when --repo is gated (ignored for non-REVE unless overridden)",
     )
     parser.add_argument("--no-patch-papers", action="store_true", help="Do not edit digest papers.json")
     parser.add_argument(
@@ -445,12 +595,23 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    docs_dir = Path(args.docs_dir)
+    if args.all_digest:
+        if args.arxiv or args.repo or args.month:
+            parser.error("--all-digest cannot be combined with --arxiv, --repo, or --month")
+        result = export_all_digest(docs_dir, refresh_shells=args.refresh_shells)
+        _print_skip_table(result.get("skipped") or [])
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 0
+    if not args.arxiv or not args.repo or not args.month:
+        parser.error("--arxiv, --repo, and --month are required unless --all-digest")
     payload = export_architecture(
         arxiv_id=args.arxiv,
         repo=args.repo,
         month=args.month,
-        docs_dir=Path(args.docs_dir),
+        docs_dir=docs_dir,
         title=args.title,
         fallback_repo=args.fallback_repo or None,
         patch_papers=not args.no_patch_papers,
