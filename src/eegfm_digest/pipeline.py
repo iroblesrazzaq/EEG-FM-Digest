@@ -185,6 +185,8 @@ def _persist_summary_row(
     meta["summary_attempt"] = attempt
     if architecture is not None:
         meta["architecture"] = architecture
+    else:
+        meta.pop("architecture", None)
     db.upsert_summary(month, summary, meta=meta)
     return meta
 
@@ -226,7 +228,7 @@ def _summarize_one_paper(
                 force=force,
             )
             attempt = _existing_attempt(cached_meta, cached_data)
-            if architecture is not None and architecture != _existing_architecture(cached_meta):
+            if architecture != _existing_architecture(cached_meta):
                 _persist_summary_row(
                     db,
                     month=month,
@@ -388,10 +390,40 @@ def _summarize_one_paper(
         )
 
 
+def _digest_summaries(summaries: list[dict]) -> list[dict]:
+    """Summaries that may appear in digest aggregates (not JSON placeholders)."""
+    return [
+        summary
+        for summary in summaries
+        if isinstance(summary, dict) and not summary_is_json_error(summary)
+    ]
+
+
+def _merge_attempt_into_existing_meta(
+    db: DigestDB,
+    *,
+    month: str,
+    arxiv_id_base: str,
+    attempt: dict | None,
+) -> None:
+    if not attempt:
+        return
+    record = db.get_summary_with_meta(arxiv_id_base)
+    if record is None or not isinstance(record.get("data"), dict):
+        return
+    meta = dict(record["meta"]) if isinstance(record.get("meta"), dict) else {}
+    meta["summary_attempt"] = attempt
+    db.upsert_summary(month, record["data"], meta=meta)
+
+
 def _load_existing_backend_maps(
     month_out: Path,
 ) -> tuple[dict[str, dict], dict[str, dict], dict[str, dict]]:
-    """Preserve PDF/attempt/architecture already written to backend_rows.jsonl."""
+    """Load PDF/attempt/architecture already written to backend_rows.jsonl.
+
+    Rerender rebuilds architecture from SQLite meta (plus this-run overrides)
+    so a stale backend_rows entry cannot resurrect a dropped fact sheet.
+    """
     path = month_out / "backend_rows.jsonl"
     pdf_map: dict[str, dict] = {}
     attempt_map: dict[str, dict] = {}
@@ -451,12 +483,14 @@ def _rerender_month_from_db(
     ]
     triage_map = {t["arxiv_id_base"]: t for t in triage_rows}
     records = db.list_summaries_with_meta_for_month(month)
-    summaries = sorted(
-        [record["data"] for record in records],
+    stored_summaries = sorted(
+        [record["data"] for record in records if isinstance(record.get("data"), dict)],
         key=lambda x: (x.get("published_date", ""), x.get("arxiv_id_base", "")),
     )
-    summary_map = {s["arxiv_id_base"]: s for s in summaries}
-    pdf_map, attempt_map, architecture_map = _load_existing_backend_maps(month_out)
+    summary_map = {s["arxiv_id_base"]: s for s in stored_summaries}
+    digest_summaries = _digest_summaries(stored_summaries)
+    pdf_map, attempt_map, _ = _load_existing_backend_maps(month_out)
+    architecture_map: dict[str, dict] = {}
     for record in records:
         data = record.get("data") if isinstance(record.get("data"), dict) else {}
         meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
@@ -480,7 +514,7 @@ def _rerender_month_from_db(
         if aid not in pdf_map:
             pdf_map[aid] = empty_pdf_state()
 
-    write_jsonl(month_out / "papers.jsonl", summaries)
+    write_jsonl(month_out / "papers.jsonl", digest_summaries)
     backend_rows = build_backend_rows(
         candidates,
         triage_map,
@@ -501,14 +535,14 @@ def _rerender_month_from_db(
             featured_paper = None
 
     digest = build_digest(
-        month, candidates, triage_rows, summaries, featured_paper=featured_paper
+        month, candidates, triage_rows, digest_summaries, featured_paper=featured_paper
     )
     write_json(month_out / "digest.json", digest)
     metadata_map = {c["arxiv_id_base"]: c for c in candidates}
     write_month_site(
         cfg.docs_dir,
         month,
-        summaries,
+        digest_summaries,
         metadata_map,
         digest,
         backend_rows=backend_rows,
@@ -610,6 +644,15 @@ def resummarize_stragglers(
                     failed += 1
                     failed_ids.append(arxiv_id_base)
                     log_summary_attempt(arxiv_id_base, outcome.summary_attempt)
+                    if outcome.summary is None:
+                        _merge_attempt_into_existing_meta(
+                            db,
+                            month=month,
+                            arxiv_id_base=arxiv_id_base,
+                            attempt=outcome.summary_attempt,
+                        )
+                    months_touched.add(month)
+                    pdf_by_month.setdefault(month, {})[arxiv_id_base] = outcome.pdf_state
                 else:
                     succeeded += 1
                     upgraded = summary_used_fulltext(outcome.summary) and not summary_used_fulltext(

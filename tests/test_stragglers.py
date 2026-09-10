@@ -563,3 +563,139 @@ def test_resummarize_pdf_error_records_ok_abstract(monkeypatch, tmp_path):
     assert record["data"]["used_fulltext"] is False
     assert record["meta"]["summary_attempt"]["category"] == "ok_abstract"
     db.close()
+
+
+def test_rerender_excludes_placeholders_from_digest_counts(tmp_path):
+    cfg = _cfg(tmp_path)
+    month = "2025-01"
+    good = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Good")
+    bad = _candidate("2501.00002", "2025-01-03T00:00:00Z", "Placeholder")
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    _seed_accept_without_summary(db, good, month)
+    _seed_accept_without_summary(db, bad, month)
+    db.upsert_summary(month, _summary_payload(good))
+    db.upsert_summary(month, _json_placeholder(bad))
+    db.close()
+
+    month_out = cfg.output_dir / month
+    month_out.mkdir(parents=True)
+    cfg.docs_dir.mkdir(parents=True, exist_ok=True)
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    _rerender_month_from_db(cfg, db, month)
+    db.close()
+
+    digest = json.loads((month_out / "digest.json").read_text(encoding="utf-8"))
+    assert digest["stats"]["summarized"] == 1
+    assert digest["stats"]["accepted"] == 2
+    paper_rows = [
+        json.loads(line)
+        for line in (month_out / "papers.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert [row["arxiv_id_base"] for row in paper_rows] == ["2501.00001"]
+    backend = [
+        json.loads(line)
+        for line in (month_out / "backend_rows.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    by_id = {row["arxiv_id_base"]: row for row in backend}
+    assert by_id["2501.00002"]["paper_summary"]["notes"].endswith("summary_json_error")
+    site = json.loads((cfg.docs_dir / "digest" / month / "papers.json").read_text(encoding="utf-8"))
+    failed = [row for row in site["papers"] if row["arxiv_id_base"] == "2501.00002"][0]
+    assert failed["summary"] is None
+    assert failed["summary_failed_reason"] == "llm_invalid_json"
+
+
+def test_rerender_drops_stale_architecture_without_sqlite_meta(tmp_path):
+    cfg = _cfg(tmp_path)
+    month = "2025-01"
+    paper = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    _seed_accept_without_summary(db, paper, month)
+    db.upsert_summary(month, _summary_payload(paper), meta={"cache_version": "x"})
+    db.close()
+
+    month_out = cfg.output_dir / month
+    month_out.mkdir(parents=True)
+    stale = {
+        "status": "ok",
+        "hf_repo": "org/old",
+        "hfviewer_url": "https://hfviewer.com/org/old",
+        "fact_sheet": {"hidden_size": 1},
+        "skip_reason": None,
+    }
+    (month_out / "backend_rows.jsonl").write_text(
+        json.dumps({"arxiv_id_base": "2501.00001", "architecture": stale, "pdf": {}}) + "\n",
+        encoding="utf-8",
+    )
+    cfg.docs_dir.mkdir(parents=True, exist_ok=True)
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    _rerender_month_from_db(cfg, db, month)
+    db.close()
+
+    rows = [
+        json.loads(line)
+        for line in (month_out / "backend_rows.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert "architecture" not in rows[0]
+    site = json.loads((cfg.docs_dir / "digest" / month / "papers.json").read_text(encoding="utf-8"))
+    assert "architecture" not in site["papers"][0]
+
+
+def test_failed_resummarize_persists_attempt(monkeypatch, tmp_path):
+    cfg = _cfg(tmp_path)
+    paper = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    _seed_accept_without_summary(db, paper, "2025-01")
+    db.upsert_summary("2025-01", _json_placeholder(paper), meta={"cache_version": "old"})
+    db.close()
+
+    _patch_summary_stack(monkeypatch)
+
+    def boom(*_a, **_k):
+        raise RuntimeError("summary exploded")
+
+    monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", boom)
+    stats = resummarize_stragglers(cfg, no_site=False)
+    assert stats.failed == 1
+    assert stats.affected_months == ("2025-01",)
+
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    record = db.get_summary_with_meta("2501.00001")
+    assert record["meta"]["summary_attempt"]["category"] == "llm_other"
+    db.close()
+    rows = [
+        json.loads(line)
+        for line in (cfg.output_dir / "2025-01" / "backend_rows.jsonl").read_text().splitlines()
+        if line.strip()
+    ]
+    assert rows[0]["summary_attempt"]["category"] == "llm_other"
+
+
+def test_failed_resummarize_without_prior_summary_rerenders_attempt(monkeypatch, tmp_path):
+    cfg = _cfg(tmp_path)
+    paper = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    _seed_accept_without_summary(db, paper, "2025-01")
+    db.close()
+
+    _patch_summary_stack(monkeypatch)
+
+    def boom(*_a, **_k):
+        raise RuntimeError("summary exploded")
+
+    monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", boom)
+    stats = resummarize_stragglers(cfg, no_site=False)
+    assert stats.failed == 1
+    assert stats.affected_months == ("2025-01",)
+
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    assert db.get_summary("2501.00001") is None
+    db.close()
+    rows = [
+        json.loads(line)
+        for line in (cfg.output_dir / "2025-01" / "backend_rows.jsonl").read_text().splitlines()
+        if line.strip()
+    ]
+    assert rows[0]["summary_attempt"]["category"] == "llm_other"
