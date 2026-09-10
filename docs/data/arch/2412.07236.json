@@ -3,7 +3,23 @@
   "diagram": {
     "annotations": {
       "embed_dim": 200,
-      "left": []
+      "left": [
+        {
+          "anchor": "patch",
+          "id": "pe",
+          "label": "Asymmetric PE"
+        },
+        {
+          "anchor": "enc.attn_s",
+          "id": "cost-s",
+          "label": "O(N²T)"
+        },
+        {
+          "anchor": "enc.attn_t",
+          "id": "cost-t",
+          "label": "O(NT²)"
+        }
+      ]
     },
     "below": [
       {
@@ -41,7 +57,9 @@
       "gated": false,
       "has_patch": true
     },
-    "notes": {},
+    "notes": {
+      "attn": "criss_cross"
+    },
     "param_label": "4.9M",
     "repeat": {
       "count": 12,
@@ -53,9 +71,14 @@
           "label": "LayerNorm 1"
         },
         {
-          "id": "enc.attn",
+          "id": "enc.attn_s",
           "kind": "attention",
-          "label": "Multi-head attention"
+          "label": "Spatial attention"
+        },
+        {
+          "id": "enc.attn_t",
+          "kind": "attention",
+          "label": "Temporal attention"
         },
         {
           "id": "enc.n2",

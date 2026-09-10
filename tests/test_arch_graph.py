@@ -273,8 +273,11 @@ def test_diagram_from_hf_labram_tensors_infer_heads_pe_and_mlp_width():
     tensors = {
         "patch_embed.weight": {"shape": [200, 1, 200]},
         "position_embedding.weight": {"shape": [256, 200]},
+        "cls_token": {"shape": [1, 1, 200]},
+        "temporal_embedding": {"shape": [1, 16, 200]},
         "blocks.0.attn.qkv.weight": {"shape": [600, 200]},
         "blocks.0.attn.q_norm.weight": {"shape": [20]},
+        "blocks.0.attn.k_norm.weight": {"shape": [20]},
         "blocks.0.mlp.0.weight": {"shape": [800, 200]},
         "blocks.1.mlp.0.weight": {"shape": [800, 200]},
     }
@@ -285,9 +288,13 @@ def test_diagram_from_hf_labram_tensors_infer_heads_pe_and_mlp_width():
     assert ffn["gated"] is False
     assert ffn["activation"] == "GELU"
     assert ffn["hidden_dim"] == 800
+    assert [item["label"] for item in diagram["stem"]] == ["Patch embedding layer", "VQ-VAE codebook"]
     left = [item["label"] for item in diagram["annotations"]["left"]]
     assert "Absolute PE" in left
+    assert "Frozen codebook" in left
+    assert "QK-Norm" in left
     assert diagram["annotations"]["embed_dim"] == 200
+    assert diagram["notes"]["tokenizer"] == "vqvae"
 
 
 def test_diagram_from_hf_cbramod_prefers_ffn_width_over_spatial_attn():
@@ -304,3 +311,25 @@ def test_diagram_from_hf_cbramod_prefers_ffn_width_over_spatial_attn():
     assert ffn["hidden_dim"] == 800
     assert ffn["gated"] is False
     assert diagram["repeat"]["count"] == 2
+
+
+def test_diagram_from_hf_cbramod_criss_cross_attention():
+    cfg = {"n_chans": 22, "n_times": 1000}
+    tensors = {
+        "patch_embedding.positional_encoding.0.weight": {"shape": [200, 1, 19, 7]},
+        "encoder.layers.0.self_attn_s.in_proj_weight": {"shape": [300, 100]},
+        "encoder.layers.0.self_attn_t.in_proj_weight": {"shape": [300, 100]},
+        "encoder.layers.0.linear1.weight": {"shape": [800, 200]},
+        "encoder.layers.1.self_attn_s.in_proj_weight": {"shape": [300, 100]},
+        "encoder.layers.1.self_attn_t.in_proj_weight": {"shape": [300, 100]},
+        "encoder.layers.1.linear1.weight": {"shape": [800, 200]},
+    }
+    diagram = diagram_from_hf(cfg, tensors=tensors, label="CBraMod")
+    attn_labels = [step["label"] for step in diagram["repeat"]["steps"] if step["kind"] == "attention"]
+    assert attn_labels == ["Spatial attention", "Temporal attention"]
+    left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
+    assert left["cost-s"] == "O(N²T)"
+    assert left["cost-t"] == "O(NT²)"
+    assert left["pe"] == "Asymmetric PE"
+    assert diagram["notes"]["attn"] == "criss_cross"
+    assert "Multi-head attention" not in [step["label"] for step in diagram["repeat"]["steps"]]

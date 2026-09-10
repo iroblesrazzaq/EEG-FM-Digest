@@ -402,6 +402,29 @@ def _attention_label(*, heads: int, kv_heads: int | None, causal: bool) -> str:
     return core[:1].upper() + core[1:]
 
 
+def _is_criss_cross(blob: str) -> bool:
+    spatial = any(token in blob for token in ("self_attn_s", "spatial_attn", ".attn_s."))
+    temporal = any(token in blob for token in ("self_attn_t", "temporal_attn", ".attn_t."))
+    return spatial and temporal
+
+
+def _uses_vq_codebook(label: str | None, blob: str) -> bool:
+    text = f"{label or ''} {blob}".lower()
+    if any(token in text for token in ("codebook", "quantize", "vqvae", "vq_vae", "neural_tokenizer")):
+        return True
+    if "labram" in text:
+        return True
+    return "cls_token" in blob and "temporal_embedding" in blob
+
+
+def _uses_qk_norm(blob: str) -> bool:
+    return "q_norm" in blob and "k_norm" in blob
+
+
+def _uses_acpe(blob: str) -> bool:
+    return "positional_encoding" in blob and "patch_embedding" in blob
+
+
 def _context_note(length: int) -> str:
     if length >= 10_000 and length % 1000 == 0:
         return f"Supported context length\nof {length // 1000}k tokens"
@@ -511,17 +534,41 @@ def diagram_from_hf(
         below_label = "Sample input"
         stem_label = "Token embedding layer"
 
-    steps = [
-        {"id": f"{prefix}.n1", "label": f"{norm_label} 1", "kind": "norm"},
-        {
-            "id": attn_id,
-            "label": _attention_label(heads=heads or 1, kv_heads=kv_heads, causal=causal),
-            "kind": "attention",
-        },
-        {"id": f"{prefix}.n2", "label": f"{norm_label} 2", "kind": "norm"},
-        {"id": mlp_id, "label": "Feed forward", "kind": "ffn"},
-        {"id": f"{prefix}.add", "label": "+", "kind": "add"},
-    ]
+    criss_cross = _is_criss_cross(blob)
+    vq_codebook = _uses_vq_codebook(title, blob)
+    qk_norm = _uses_qk_norm(blob)
+    acpe = _uses_acpe(blob)
+    attn_s_id = f"{prefix}.attn_s"
+    attn_t_id = f"{prefix}.attn_t"
+    if criss_cross:
+        attn_id = attn_s_id
+
+    steps = [{"id": f"{prefix}.n1", "label": f"{norm_label} 1", "kind": "norm"}]
+    if criss_cross:
+        steps.extend(
+            [
+                {"id": attn_s_id, "label": "Spatial attention", "kind": "attention"},
+                {"id": attn_t_id, "label": "Temporal attention", "kind": "attention"},
+            ]
+        )
+    else:
+        steps.append(
+            {
+                "id": attn_id,
+                "label": _attention_label(heads=heads or 1, kv_heads=kv_heads, causal=causal),
+                "kind": "attention",
+            }
+        )
+    steps.extend(
+        [
+            {"id": f"{prefix}.n2", "label": f"{norm_label} 2", "kind": "norm"},
+            {"id": mlp_id, "label": "Feed forward", "kind": "ffn"},
+            {"id": f"{prefix}.add", "label": "+", "kind": "add"},
+        ]
+    )
+    stem = [{"id": stem_id, "label": stem_label, "kind": "embed"}]
+    if vq_codebook:
+        stem.append({"id": "vq", "label": "VQ-VAE codebook", "kind": "embed"})
     head: list[dict[str, Any]] = []
     if has_pool:
         head.append({"id": "pool", "label": "Pooling", "kind": "pool"})
@@ -558,8 +605,17 @@ def diagram_from_hf(
         left.append({"id": "pe", "label": f"{rope_dim}D RoPE", "anchor": attn_id})
     elif _uses_rope(cfg, blob):
         left.append({"id": "pe", "label": "RoPE", "anchor": attn_id})
+    elif acpe:
+        left.append({"id": "pe", "label": "Asymmetric PE", "anchor": stem_id})
     elif has_wpe:
         left.append({"id": "pe", "label": "Absolute PE", "anchor": stem_id})
+    if qk_norm:
+        left.append({"id": "qk-norm", "label": "QK-Norm", "anchor": attn_id})
+    if criss_cross:
+        left.append({"id": "cost-s", "label": "O(N²T)", "anchor": attn_s_id})
+        left.append({"id": "cost-t", "label": "O(NT²)", "anchor": attn_t_id})
+    if vq_codebook:
+        left.append({"id": "vq-meta", "label": "Frozen codebook", "anchor": "vq"})
     if patch_size:
         overlap_bit = f",\noverlap {patch_overlap}" if patch_overlap is not None else ""
         left.append(
@@ -583,12 +639,16 @@ def diagram_from_hf(
         notes["freqs"] = freqs
     if head_dim:
         notes["head_dim"] = head_dim
+    if criss_cross:
+        notes["attn"] = "criss_cross"
+    if vq_codebook:
+        notes["tokenizer"] = "vqvae"
 
     return {
         "title": title,
         "param_label": _format_param_label(params),
         "below": [{"id": below_id, "label": below_label, "kind": "input"}],
-        "stem": [{"id": stem_id, "label": stem_label, "kind": "embed"}],
+        "stem": stem,
         "repeat": {"id": prefix, "count": depth, "steps": steps},
         "head": head,
         "callouts": callouts,
