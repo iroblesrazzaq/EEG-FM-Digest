@@ -38,8 +38,16 @@
         "kind": "ffn",
         "layers": 2,
         "title": "FeedForward (GELU · 2 layers)"
+      },
+      {
+        "anchor": "enc.attn",
+        "detail": "Head dim 64",
+        "id": "attn-heads",
+        "kind": "heads",
+        "label": "4 heads"
       }
     ],
+    "family": "Channel-query transformer",
     "head": [
       {
         "id": "pool",
@@ -58,7 +66,10 @@
       "gated": false,
       "has_patch": true
     },
-    "notes": {},
+    "notes": {
+      "family": "Channel-query transformer",
+      "head_dim": 64
+    },
     "param_label": null,
     "repeat": {
       "count": 8,

@@ -2,6 +2,7 @@
   "models": [
     {
       "arxiv_id_base": "2405.18765",
+      "family": "VQ-tokenized transformer",
       "graph_path": "data/arch/2405.18765.json",
       "hf_repo": "braindecode/labram-pretrained",
       "label": "LaBraM",
@@ -10,14 +11,16 @@
     },
     {
       "arxiv_id_base": "2410.19779",
+      "family": "Autoregressive transformer",
       "graph_path": "data/arch/2410.19779.json",
       "hf_repo": "braindecode/eegpt-pretrained",
-      "label": "EEGPT",
+      "label": "BrainGPT",
       "month": "2024-10",
       "title": "BrainGPT: Unleashing the Potential of EEG Generalist Foundation Model by Autoregressive Pre-training"
     },
     {
       "arxiv_id_base": "2412.07236",
+      "family": "Criss-cross transformer",
       "graph_path": "data/arch/2412.07236.json",
       "hf_repo": "braindecode/cbramod-pretrained",
       "label": "CBraMod",
@@ -26,6 +29,7 @@
     },
     {
       "arxiv_id_base": "2502.06438",
+      "family": "Bidirectional Mamba",
       "graph_path": "data/arch/2502.06438.json",
       "hf_repo": "PulpBio/FEMBA",
       "label": "FEMBA",
@@ -34,6 +38,7 @@
     },
     {
       "arxiv_id_base": "2505.18185",
+      "family": "Sensor-encoder transformer",
       "graph_path": "data/arch/2505.18185.json",
       "hf_repo": "OpenTSLab/BrainOmni",
       "label": "BrainOmni",
@@ -42,6 +47,7 @@
     },
     {
       "arxiv_id_base": "2510.21585",
+      "family": "Fourier-PE transformer",
       "graph_path": "data/arch/2510.21585.json",
       "hf_repo": "brain-bzh/reve-base",
       "label": "REVE",
@@ -50,6 +56,7 @@
     },
     {
       "arxiv_id_base": "2510.22257",
+      "family": "Channel-query transformer",
       "graph_path": "data/arch/2510.22257.json",
       "hf_repo": "PulpBio/LUNA",
       "label": "LUNA",
@@ -58,6 +65,7 @@
     },
     {
       "arxiv_id_base": "2607.27308",
+      "family": "Denoising transformer",
       "graph_path": "data/arch/2607.27308.json",
       "hf_repo": "Zyphra/ZUNA1.1",
       "label": "ZUNA1.1",

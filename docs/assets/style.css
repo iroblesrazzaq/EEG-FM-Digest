@@ -885,6 +885,13 @@ button:disabled {
   margin-bottom: 4px;
 }
 
+.model-arch-card .arch-family {
+  margin: 0 0 8px;
+  color: var(--accent-deep);
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
 .empty-state {
   padding: 14px;
   border: 1px dashed var(--line-strong);

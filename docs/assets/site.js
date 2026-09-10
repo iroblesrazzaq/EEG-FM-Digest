@@ -1006,6 +1006,7 @@ function renderModelArchCard(entry) {
   const graphPath = String(entry.graph_path || "").trim();
   const monthHref = month ? `${monthHrefForView(month, "models")}#${esc(arxivId)}` : "";
   const meta = [monthDisplayLabel(month), repo].filter(Boolean).join(" · ");
+  const family = String(entry.family || "").trim();
   const graphHtml = graphPath
     ? `<div class="arch-graph-host" data-arch-src="${esc(resolveSiteJsonPath(graphPath, "models"))}" data-arch-id="${esc(repo)}"></div>`
     : "";
@@ -1013,6 +1014,7 @@ function renderModelArchCard(entry) {
     <article class="model-arch-card paper-card" id="arch-${esc(arxivId)}">
       <p class="hero-kicker">${esc(label || "Architecture")}</p>
       <h2>${esc(title)}</h2>
+      ${family ? `<p class="arch-family">${esc(family)}</p>` : ""}
       <p class="small">${esc(meta)}</p>
       ${monthHref ? `<p class="small"><a href="${monthHref}">View in ${esc(monthDisplayLabel(month))} digest</a></p>` : ""}
       ${graphHtml}

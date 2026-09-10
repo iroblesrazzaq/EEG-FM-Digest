@@ -47,6 +47,7 @@
         "label": "8 heads"
       }
     ],
+    "family": "Denoising transformer",
     "head": [
       {
         "id": "pool",
@@ -66,6 +67,7 @@
       "has_patch": false
     },
     "notes": {
+      "family": "Denoising transformer",
       "head_dim": 64
     },
     "param_label": "382M",

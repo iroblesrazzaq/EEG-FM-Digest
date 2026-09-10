@@ -52,6 +52,7 @@
         "label": "10 heads"
       }
     ],
+    "family": "VQ-tokenized transformer",
     "head": [
       {
         "id": "pool",
@@ -71,6 +72,7 @@
       "has_patch": true
     },
     "notes": {
+      "family": "VQ-tokenized transformer",
       "head_dim": 20,
       "tokenizer": "vqvae"
     },

@@ -65,7 +65,7 @@ _GATED_TYPES = _RMS_TYPES
 
 GALLERY_LABELS = {
     "2405.18765": "LaBraM",
-    "2410.19779": "EEGPT",
+    "2410.19779": "BrainGPT",
     "2412.07236": "CBraMod",
     "2502.06438": "FEMBA",
     "2505.18185": "BrainOmni",
@@ -73,6 +73,7 @@ GALLERY_LABELS = {
     "2510.22257": "LUNA",
     "2607.27308": "ZUNA1.1",
 }
+CAUSAL_ARXIV_IDS = frozenset({"2410.19779"})
 
 
 def looks_like_reve(
@@ -252,7 +253,9 @@ def _is_backbone_tensor(name: str) -> bool:
     if any(token in prefix for token in ("cross_attn", "query", "decoder_head", "classifier")):
         return False
     head = prefix.split(".")[-1]
-    return head in {"encoder", "model", "transformer", "backbone", "decoder"}
+    if head in {"encoder", "model", "transformer", "backbone", "decoder"}:
+        return True
+    return head.endswith("encoder") or head.endswith("decoder")
 
 
 def _depth_from_names(tensor_names: list[str] | None) -> int | None:
@@ -331,6 +334,8 @@ def _attn_from_tensors(
         if not isinstance(shape, list) or not shape:
             continue
         key = name.lower()
+        if not _is_backbone_tensor(name):
+            continue
         if "q_norm" in key or "k_norm" in key:
             head_dim = int(shape[-1])
         if key.endswith(("wq.weight", "q_proj.weight")):
@@ -373,14 +378,28 @@ def _is_eeg_like(cfg: dict[str, Any], label: str | None) -> bool:
             "brainomni",
             "csbrain",
             "eegpt",
+            "braingpt",
             "femba",
         )
     )
 
 
-def _is_causal(cfg: dict[str, Any], blob: str, eeg_like: bool) -> bool:
-    if eeg_like:
-        return False
+def _is_causal(
+    cfg: dict[str, Any],
+    blob: str,
+    eeg_like: bool,
+    *,
+    label: str | None = None,
+    title: str | None = None,
+    arxiv_id: str | None = None,
+) -> bool:
+    if str(arxiv_id or "").strip() in CAUSAL_ARXIV_IDS:
+        return True
+    text = f"{label or ''} {title or ''}".lower()
+    if any(token in text for token in ("autoregressive", "next-token", "next_token", "braingpt")):
+        return True
+    if cfg.get("is_causal") is True:
+        return True
     architectures = cfg.get("architectures")
     if isinstance(architectures, list) and any(
         "causallm" in str(item).lower() or "lmhead" in str(item).lower() for item in architectures
@@ -388,6 +407,8 @@ def _is_causal(cfg: dict[str, Any], blob: str, eeg_like: bool) -> bool:
         return True
     if "lm_head" in blob:
         return True
+    if eeg_like:
+        return False
     return _model_type(cfg) in _ROPE_TYPES | {"gpt2", "gpt_neox", "phi", "opt"}
 
 
@@ -462,6 +483,38 @@ def _attention_label(*, heads: int, kv_heads: int | None, causal: bool) -> str:
     return core[:1].upper() + core[1:]
 
 
+def _family_label(
+    *,
+    mamba: bool,
+    bidirectional_mamba: bool,
+    criss_cross: bool,
+    causal: bool,
+    vq: bool,
+    channel_unify: bool,
+    sensor: bool,
+    freqs: bool,
+    title: str,
+) -> str:
+    if mamba:
+        return "Bidirectional Mamba" if bidirectional_mamba else "Mamba state-space model"
+    if criss_cross:
+        return "Criss-cross transformer"
+    if causal:
+        return "Autoregressive transformer"
+    if sensor:
+        return "Sensor-encoder transformer"
+    if vq:
+        return "VQ-tokenized transformer"
+    if channel_unify:
+        return "Channel-query transformer"
+    if freqs:
+        return "Fourier-PE transformer"
+    low = title.lower()
+    if "denois" in low or "super-resolution" in low or "zuna" in low:
+        return "Denoising transformer"
+    return "Bidirectional transformer"
+
+
 def _is_mamba(blob: str) -> bool:
     return "mamba" in blob
 
@@ -521,15 +574,20 @@ def diagram_from_hf(
     tensors: dict[str, dict[str, Any]] | None = None,
     label: str | None = None,
     num_params: int | None = None,
+    arxiv_id: str | None = None,
+    title: str | None = None,
 ) -> dict[str, Any]:
     """Compile a Raschka-gallery diagram from transformers-style config + tensor names."""
     cfg = _flatten_hf_cfg(cfg)
     if tensor_names is None and isinstance(tensors, dict):
         tensor_names = list(tensors.keys())
     blob = _name_blob(tensor_names)
-    title = (label or _first_str(cfg.get("model_type")) or "Model").strip() or "Model"
-    eeg_like = _is_eeg_like(cfg, title)
-    causal = _is_causal(cfg, blob, eeg_like)
+    display = (label or _first_str(cfg.get("model_type")) or "Model").strip() or "Model"
+    paper_title = (title or "").strip()
+    eeg_like = _is_eeg_like(cfg, f"{display} {paper_title}")
+    causal = _is_causal(
+        cfg, blob, eeg_like, label=display, title=paper_title, arxiv_id=arxiv_id
+    )
     gated = _is_gated_ffn(cfg, blob)
     rms = _uses_rms(cfg, blob)
     embed = (
@@ -563,6 +621,8 @@ def diagram_from_hf(
         head_dim = inferred_head_dim
     if heads == 0:
         heads = inferred_heads or 0
+    if heads == 0 and q_out and head_dim is None and q_out % 64 == 0:
+        head_dim = 64
     if heads == 0 and q_out and head_dim:
         heads = max(1, q_out // head_dim)
     if heads == 0 and embed and head_dim:
@@ -587,7 +647,9 @@ def diagram_from_hf(
     activation = _gallery_activation(cfg, gated, blob)
     hidden = _ffn_width(cfg, embed, tensors)
     norm_label = "RMSNorm" if rms else "LayerNorm"
-    has_pool = eeg_like or any(token in blob for token in ("pooler", ".pool.", "pooling", "avg_pool", "mean_pool"))
+    has_pool = (not causal) and (
+        eeg_like or any(token in blob for token in ("pooler", ".pool.", "pooling", "avg_pool", "mean_pool"))
+    )
     has_patch = bool(patch_size) or "patch_embed" in blob or "patch_embedding" in blob
     has_wpe = "wpe" in blob or "wpe.weight" in blob or "position_embedding" in blob
 
@@ -605,7 +667,7 @@ def diagram_from_hf(
     has_ffn = (not mamba) or any(
         token in blob for token in ("mlp.", ".linear1.", ".fc1.", "feed_forward", "w1.weight")
     )
-    vq_codebook = _uses_vq_codebook(title, blob, cfg)
+    vq_codebook = _uses_vq_codebook(display, blob, cfg)
     qk_norm = _uses_qk_norm(blob)
     acpe = _uses_acpe(blob)
     channel_unify = eeg_like and (
@@ -613,11 +675,12 @@ def diagram_from_hf(
         or "channel_emb" in blob
         or ("cross_attn" in blob and "channel" in blob)
     )
+    electrode_wise = "chan_embed" in blob or "chans_id" in blob
+    bidirectional_mamba = mamba and ("mamba_fwd" in blob and "mamba_rev" in blob)
+    sensor = bool(_first_int(cfg.get("n_neuro")))
     steps = [{"id": f"{prefix}.n1", "label": f"{norm_label} 1", "kind": "norm"}]
     if mamba:
-        attn_label = (
-            "Bidirectional Mamba" if ("mamba_fwd" in blob and "mamba_rev" in blob) else "Mamba"
-        )
+        attn_label = "Bidirectional Mamba" if bidirectional_mamba else "Mamba"
     elif criss_cross:
         attn_label = "Criss-cross attention"
     else:
@@ -634,12 +697,17 @@ def diagram_from_hf(
     stem = [{"id": stem_id, "label": stem_label, "kind": "embed"}]
     if vq_codebook:
         stem.append({"id": "vq", "label": "VQ-VAE codebook", "kind": "embed"})
+    if electrode_wise:
+        stem.append({"id": "chan", "label": "Electrode embedding", "kind": "embed"})
     head: list[dict[str, Any]] = []
-    if has_pool:
-        head.append({"id": "pool", "label": "Pooling", "kind": "pool"})
-    elif not eeg_like:
-        head.append({"id": "final_norm", "label": f"Final {norm_label}", "kind": "norm"})
-    head.append({"id": "out", "label": "Linear output layer", "kind": "linear"})
+    if causal and eeg_like:
+        head.append({"id": "out", "label": "Next-token head", "kind": "linear"})
+    else:
+        if has_pool:
+            head.append({"id": "pool", "label": "Pooling", "kind": "pool"})
+        elif not eeg_like:
+            head.append({"id": "final_norm", "label": f"Final {norm_label}", "kind": "norm"})
+        head.append({"id": "out", "label": "Linear output layer", "kind": "linear"})
 
     callouts: list[dict[str, Any]] = []
     if has_ffn:
@@ -681,6 +749,8 @@ def diagram_from_hf(
         left.append({"id": "qk-norm", "label": "QK-Norm", "anchor": attn_id})
     if criss_cross:
         left.append({"id": "cost-st", "label": "O(N²T) ∥ O(NT²)", "anchor": attn_id})
+    if causal:
+        left.append({"id": "causal-mask", "label": "Causal mask\nnext-token", "anchor": attn_id})
     if has_ffn:
         if gated:
             glu = "GeGLU" if activation == "GELU" else "SwiGLU"
@@ -689,6 +759,8 @@ def diagram_from_hf(
             left.append({"id": "ffn-kind", "label": f"{activation}\n2-layer MLP", "anchor": mlp_id})
     if vq_codebook:
         left.append({"id": "vq-meta", "label": "Frozen codebook", "anchor": "vq"})
+    if electrode_wise:
+        left.append({"id": "chan-meta", "label": "Electrode-wise", "anchor": "chan"})
     if channel_unify:
         stem.append({"id": "unify", "label": "Channel unifier", "kind": "embed"})
         left.append({"id": "unify-meta", "label": "Learned queries", "anchor": "unify"})
@@ -721,9 +793,24 @@ def diagram_from_hf(
         notes["backbone"] = "mamba"
     if vq_codebook:
         notes["tokenizer"] = "vqvae"
+    if causal:
+        notes["objective"] = "autoregressive"
+    family = _family_label(
+        mamba=mamba,
+        bidirectional_mamba=bidirectional_mamba,
+        criss_cross=criss_cross,
+        causal=causal,
+        vq=vq_codebook,
+        channel_unify=channel_unify,
+        sensor=sensor,
+        freqs=bool(freqs),
+        title=f"{display} {paper_title}",
+    )
+    notes["family"] = family
 
     return {
-        "title": title,
+        "title": display,
+        "family": family,
         "param_label": _format_param_label(params),
         "below": [{"id": below_id, "label": below_label, "kind": "input"}],
         "stem": stem,
@@ -863,6 +950,7 @@ def graph_for_model(
     repo_id: str | None = None,
     arxiv_id: str | None = None,
     label: str | None = None,
+    title: str | None = None,
 ) -> dict[str, Any]:
     if looks_like_reve(repo_id, arxiv_id, cfg):
         return reve_graph(cfg)
@@ -889,8 +977,10 @@ def graph_for_model(
         cfg,
         tensor_names,
         tensors=tensors,
-        label=label or short_model_label(None, repo_id, arxiv_id),
+        label=label or short_model_label(title, repo_id, arxiv_id),
         num_params=params,
+        arxiv_id=arxiv_id,
+        title=title,
     )
     return graph
 

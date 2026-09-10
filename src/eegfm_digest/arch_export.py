@@ -286,6 +286,7 @@ def build_export_payload(
         repo_id=repo_id,
         arxiv_id=arxiv_id,
         label=label,
+        title=title,
     )
     fact_sheet = fact_sheet_for_graph(cfg)
     graph_path = f"{GRAPH_REL_PREFIX}/{arxiv_id}.json"
@@ -319,10 +320,12 @@ def architecture_site_payload(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def catalog_entry(payload: dict[str, Any]) -> dict[str, Any]:
+    diagram = payload.get("diagram") if isinstance(payload.get("diagram"), dict) else {}
     return {
         "arxiv_id_base": payload["arxiv_id_base"],
         "title": payload["title"],
         "label": payload.get("label") or short_model_label(payload.get("title"), payload.get("hf_repo")),
+        "family": diagram.get("family"),
         "month": payload["month"],
         "hf_repo": payload["hf_repo"],
         "graph_path": payload["graph_path"],

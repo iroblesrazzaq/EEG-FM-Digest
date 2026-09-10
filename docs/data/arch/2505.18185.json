@@ -42,6 +42,7 @@
         "label": "16 heads"
       }
     ],
+    "family": "Sensor-encoder transformer",
     "head": [
       {
         "id": "pool",
@@ -61,6 +62,7 @@
       "has_patch": false
     },
     "notes": {
+      "family": "Sensor-encoder transformer",
       "head_dim": 32,
       "tokenizer": "vqvae"
     },

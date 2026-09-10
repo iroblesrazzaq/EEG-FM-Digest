@@ -64,7 +64,7 @@ PROJECT_REPO_URL = "https://github.com/iroblesrazzaq/EEG-FM-Digest"
 PERSONAL_WEBSITE_URL = "https://iroblesrazzaq.github.io/"
 LINKEDIN_URL = "https://www.linkedin.com/in/ismaelroblesrazzaq"
 EMAIL_ADDRESS = "ismaelroblesrazzaq@gmail.com"
-ASSET_VERSION = "20260910-8"
+ASSET_VERSION = "20260910-9"
 SITE_TAB_TITLE_BASE = "EEG-FM Digest"
 MODELS_TAB_LABEL = "Model Gallery"
 

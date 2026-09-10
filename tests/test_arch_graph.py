@@ -103,6 +103,7 @@ def test_reve_diagram_matches_raschka_gallery_structure():
     assert diagram["annotations"]["embed_dim"] == 512
     left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
     assert left["pe"] == "Fourier PE"
+    assert diagram["family"] == "Fourier-PE transformer"
 
 
 def _llama_cfg() -> dict:
@@ -126,6 +127,7 @@ def test_diagram_from_hf_llama_gqa_swiglu_rope():
     diagram = diagram_from_hf(_llama_cfg(), label="Llama")
     attn = next(step for step in diagram["repeat"]["steps"] if step["kind"] == "attention")
     assert attn["label"] == "Masked grouped-query attention"
+    assert diagram["family"] == "Autoregressive transformer"
     assert diagram["repeat"]["steps"][0]["label"].startswith("RMSNorm")
     ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
     assert ffn["activation"] == "SiLU"
@@ -222,6 +224,7 @@ def test_diagram_from_hf_zuna_nested_config():
     heads = next(item for item in diagram["callouts"] if item["kind"] == "heads")
     assert heads["label"] == "16 heads"
     assert diagram["below"][0]["label"] == "Sample EEG"
+    assert diagram["family"] == "Denoising transformer"
 
 
 def test_looks_like_reve_from_arxiv_and_repo():
@@ -241,6 +244,53 @@ def test_short_model_label_uses_title_head():
         "braindecode/labram-pretrained",
         "2405.18765",
     ) == "LaBraM"
+    assert (
+        short_model_label(
+            "BrainGPT: Unleashing the Potential of EEG Generalist Foundation Model by Autoregressive Pre-training",
+            "braindecode/eegpt-pretrained",
+            "2410.19779",
+        )
+        == "BrainGPT"
+    )
+
+
+def test_diagram_from_hf_braingpt_is_autoregressive_with_electrode_stem():
+    cfg = {"n_chans": 62, "n_times": 1024, "input_window_seconds": 4}
+    tensors = {
+        "chans_id": {"shape": [1, 62]},
+        "target_encoder.patch_embed.proj.weight": {"shape": [512, 1, 1, 64]},
+        "target_encoder.chan_embed.weight": {"shape": [62, 512]},
+        "target_encoder.blocks.0.attn.qkv.weight": {"shape": [1536, 512]},
+        "target_encoder.blocks.0.mlp.fc1.weight": {"shape": [2048, 512]},
+        "target_encoder.blocks.1.mlp.fc1.weight": {"shape": [2048, 512]},
+        "target_encoder.blocks.7.mlp.fc1.weight": {"shape": [2048, 512]},
+        "target_encoder.summary_token": {"shape": [1, 4, 512]},
+    }
+    diagram = diagram_from_hf(
+        cfg,
+        tensors=tensors,
+        label="BrainGPT",
+        arxiv_id="2410.19779",
+        title="BrainGPT: Unleashing the Potential of EEG Generalist Foundation Model by Autoregressive Pre-training",
+    )
+    assert diagram["title"] == "BrainGPT"
+    assert diagram["family"] == "Autoregressive transformer"
+    assert diagram["repeat"]["count"] == 8
+    assert diagram["annotations"]["embed_dim"] == 512
+    attn = next(step for step in diagram["repeat"]["steps"] if step["kind"] == "attention")
+    assert attn["label"] == "Masked multi-head attention"
+    assert [item["label"] for item in diagram["stem"]] == [
+        "Patch embedding layer",
+        "Electrode embedding",
+    ]
+    assert [item["label"] for item in diagram["head"]] == ["Next-token head"]
+    left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
+    assert left["causal-mask"] == "Causal mask\nnext-token"
+    assert left["chan-meta"] == "Electrode-wise"
+    assert diagram["meta"]["causal"] is True
+    assert diagram["notes"]["objective"] == "autoregressive"
+    heads = next(item for item in diagram["callouts"] if item["kind"] == "heads")
+    assert heads["label"] == "8 heads"
 
 
 def test_diagram_from_hf_zuna_tensors_infer_swiglu_and_q_out_heads():
@@ -302,6 +352,7 @@ def test_diagram_from_hf_labram_tensors_infer_heads_pe_and_mlp_width():
     assert "QK-Norm" in left
     assert diagram["annotations"]["embed_dim"] == 200
     assert diagram["notes"]["tokenizer"] == "vqvae"
+    assert diagram["family"] == "VQ-tokenized transformer"
 
 
 def test_diagram_from_hf_cbramod_prefers_ffn_width_over_spatial_attn():
@@ -345,6 +396,7 @@ def test_diagram_from_hf_cbramod_criss_cross_attention():
     assert ffn["gated"] is False
     assert ffn["layers"] == 2
     assert "2 layers" in ffn["title"]
+    assert diagram["family"] == "Criss-cross transformer"
 
 
 def test_diagram_from_hf_luna_channel_unifier_and_rope():
@@ -372,6 +424,7 @@ def test_diagram_from_hf_luna_channel_unifier_and_rope():
     left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
     assert left["pe"] == "RoPE"
     assert left["unify-meta"] == "Learned queries"
+    assert diagram["family"] == "Channel-query transformer"
     ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
     assert ffn["hidden_dim"] == 1024
     assert ffn["gated"] is False
@@ -400,6 +453,7 @@ def test_diagram_from_hf_brainomni_lm_aliases_and_codebook():
     assert diagram["notes"]["tokenizer"] == "vqvae"
     left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
     assert left["vq-meta"] == "Frozen codebook"
+    assert diagram["family"] == "Sensor-encoder transformer"
     ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
     assert ffn["gated"] is False
     assert "2 layers" in ffn["title"]
@@ -420,4 +474,5 @@ def test_diagram_from_hf_femba_bidirectional_mamba():
     assert diagram["repeat"]["steps"][1]["label"] == "Bidirectional Mamba"
     assert diagram["annotations"]["embed_dim"] == 385
     assert diagram["notes"]["backbone"] == "mamba"
+    assert diagram["family"] == "Bidirectional Mamba"
     assert not any(item["kind"] == "ffn" for item in diagram["callouts"])
