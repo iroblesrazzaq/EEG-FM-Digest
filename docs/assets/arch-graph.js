@@ -632,7 +632,7 @@
     arrowUp(group, cx, act.cy - act.h / 2, top.y + top.h, colors);
     drawHiddenDim(group, spec, cx, y, h, colors);
     parent.appendChild(group);
-    return { x, y, w, h: h + (spec.hidden_dim ? 56 : 0), cx };
+    return { x, y, w, h: h + (spec.hidden_dim ? 56 : 0), rectH: h, cx };
   }
 
   function drawGatedFfn(parent, spec, x, y, colors, focused) {
@@ -745,7 +745,7 @@
     );
     drawHiddenDim(group, spec, x + w / 2, y, h, colors);
     parent.appendChild(group);
-    return { x, y, w, h: h + (spec.hidden_dim ? 56 : 0), cx: colX };
+    return { x, y, w, h: h + (spec.hidden_dim ? 56 : 0), rectH: h, cx: colX };
   }
 
   function drawFfnCallout(parent, spec, x, y, colors, focused) {
@@ -948,7 +948,10 @@
     if (headsSpec) {
       const anchor = byId[headsSpec.anchor] || stepPlaced.find((box) => box.kind === "attention");
       const hx = CALLOUT_X;
-      const hy = ffnBox ? ffnBox.y + ffnBox.h + 14 : (anchor ? anchor.cy + 4 : blockTop + 80);
+      const preferred = anchor ? anchor.cy + 4 : blockTop + 80;
+      const dashedBottom = ffnBox ? ffnBox.y + (ffnBox.rectH != null ? ffnBox.rectH : ffnBox.h) : null;
+      const hy =
+        dashedBottom != null && preferred < dashedBottom + 8 ? dashedBottom + 16 : preferred;
       svg.appendChild(
         svgEl(
           "text",
