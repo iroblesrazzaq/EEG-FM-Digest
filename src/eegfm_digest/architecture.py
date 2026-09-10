@@ -149,6 +149,17 @@ def fact_sheet_from_config(cfg: dict[str, Any]) -> dict[str, Any]:
             cfg.get("seq_length"),
         ),
         "vocab_size": _first_int(cfg.get("vocab_size")),
+        "hidden_act": _first_str(
+            cfg.get("hidden_act"),
+            cfg.get("hidden_activation"),
+            cfg.get("activation"),
+        ),
+        "intermediate_size": _first_int(
+            cfg.get("intermediate_size"),
+            cfg.get("ffn_dim"),
+            cfg.get("ffn_hidden_size"),
+            cfg.get("n_inner"),
+        ),
         "num_params": _first_int(
             cfg.get("num_params"),
             cfg.get("n_params"),

@@ -565,7 +565,9 @@
         "fact_sheet": {
           "architectures": "Reve",
           "context_length": null,
+          "hidden_act": null,
           "hidden_size": 512,
+          "intermediate_size": null,
           "model_type": "reve",
           "num_attention_heads": 8,
           "num_key_value_heads": null,

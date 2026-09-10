@@ -41,6 +41,8 @@ def test_fact_sheet_from_config_reads_common_keys():
             "num_key_value_heads": 2,
             "max_position_embeddings": 2048,
             "vocab_size": 32000,
+            "hidden_act": "silu",
+            "intermediate_size": 14336,
         }
     )
     assert sheet["model_type"] == "llama"
@@ -51,6 +53,8 @@ def test_fact_sheet_from_config_reads_common_keys():
     assert sheet["num_key_value_heads"] == 2
     assert sheet["context_length"] == 2048
     assert sheet["vocab_size"] == 32000
+    assert sheet["hidden_act"] == "silu"
+    assert sheet["intermediate_size"] == 14336
 
 
 def _new_model_summary(*, weights_url: str | None, paper_type: str = "new_model") -> dict:
@@ -285,6 +289,9 @@ def test_site_js_renders_architecture_controls():
     assert "ArchGraph" in arch_js
     assert "curlyBrace" in arch_js
     assert "FeedForward" in arch_js or "drawGatedFfn" in arch_js
+    assert "function ffnIsGated" in arch_js
+    assert "function drawUngatedFfn" in arch_js
+    assert "Vocabulary size of" in arch_js
     style = Path("docs/assets/style.css").read_text(encoding="utf-8")
     assert ".arch-graph-host" in style
     assert ".arch-fact-sheet" in style

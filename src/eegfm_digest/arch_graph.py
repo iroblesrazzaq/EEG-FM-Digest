@@ -36,6 +36,33 @@ _LAYER_RE = re.compile(
     r"^(?:(?P<prefix>.+)\.)?(?:layers|layer|blocks|block)\.(?P<idx>\d+)\.(?P<rest>.+)$"
 )
 
+_RMS_TYPES = frozenset(
+    {
+        "llama",
+        "mistral",
+        "mixtral",
+        "qwen2",
+        "qwen2_moe",
+        "qwen3",
+        "qwen",
+        "gemma",
+        "gemma2",
+        "gemma3",
+        "phi3",
+        "olmo",
+        "olmo2",
+        "reve",
+        "stablelm",
+        "cohere",
+        "deepseek",
+        "deepseek_v2",
+        "deepseek_v3",
+        "grok",
+    }
+)
+_ROPE_TYPES = _RMS_TYPES | {"gpt_neox", "phi"}
+_GATED_TYPES = _RMS_TYPES
+
 
 def looks_like_reve(
     repo_id: str | None = None,
@@ -177,77 +204,274 @@ def _mlp_hidden_dim(embed: int, mlp_ratio: Any) -> int:
         ratio = float(mlp_ratio)
     except (TypeError, ValueError):
         ratio = 2.66
-    return max(1, int(round(embed * ratio)))
+    return max(1, round(embed * ratio))
 
 
-def reve_diagram(
+def _name_blob(tensor_names: list[str] | None) -> str:
+    return " ".join(tensor_names or []).lower()
+
+
+def _model_type(cfg: dict[str, Any]) -> str:
+    return str(cfg.get("model_type") or "").strip().lower()
+
+
+def _is_eeg_like(cfg: dict[str, Any], label: str | None) -> bool:
+    if _model_type(cfg) == "reve":
+        return True
+    if looks_like_reve(cfg=cfg):
+        return True
+    if _first_int(cfg.get("patch_size")):
+        return True
+    return "eeg" in str(label or "").lower()
+
+
+def _is_causal(cfg: dict[str, Any], blob: str, eeg_like: bool) -> bool:
+    if eeg_like:
+        return False
+    architectures = cfg.get("architectures")
+    if isinstance(architectures, list) and any(
+        "causallm" in str(item).lower() or "lmhead" in str(item).lower() for item in architectures
+    ):
+        return True
+    if "lm_head" in blob:
+        return True
+    return _model_type(cfg) in _ROPE_TYPES | {"gpt2", "gpt_neox", "phi", "opt"}
+
+
+def _uses_rms(cfg: dict[str, Any], blob: str) -> bool:
+    if _model_type(cfg) in _RMS_TYPES:
+        return True
+    if "rmsnorm" in blob or "rms_norm" in blob or "rms" in blob:
+        return True
+    return bool(cfg.get("rms_norm_eps"))
+
+
+def _uses_rope(cfg: dict[str, Any], blob: str) -> bool:
+    if cfg.get("rope_theta") is not None or cfg.get("rope_scaling") is not None:
+        return True
+    if _model_type(cfg) in _ROPE_TYPES:
+        return True
+    return "rotary" in blob
+
+
+def _is_gated_ffn(cfg: dict[str, Any], blob: str) -> bool:
+    if bool(cfg.get("use_geglu")) or bool(cfg.get("use_swiglu")):
+        return True
+    if any(token in blob for token in ("gate_proj", "up_proj", ".w1.", ".w3.", "geglu")):
+        return True
+    if _model_type(cfg) in _GATED_TYPES:
+        return True
+    act = str(_first_str(cfg.get("hidden_act"), cfg.get("hidden_activation"), cfg.get("activation")) or "").lower()
+    return "geglu" in act or "swiglu" in act
+
+
+def _gallery_activation(cfg: dict[str, Any], gated: bool) -> str:
+    raw = str(_first_str(cfg.get("hidden_act"), cfg.get("hidden_activation"), cfg.get("activation")) or "").lower()
+    if bool(cfg.get("use_geglu")) or "geglu" in raw or "gelu" in raw:
+        return "GELU"
+    if bool(cfg.get("use_swiglu")) or "swiglu" in raw or "silu" in raw or "swish" in raw:
+        return "SiLU"
+    if "relu" in raw:
+        return "ReLU"
+    if gated and _model_type(cfg) in _GATED_TYPES:
+        return "SiLU"
+    return "GELU"
+
+
+def _ffn_title(cfg: dict[str, Any], gated: bool, activation: str) -> str:
+    if bool(cfg.get("use_geglu")) or (gated and activation == "GELU"):
+        return "FeedForward (GeGLU) module"
+    if bool(cfg.get("use_swiglu")) or (gated and activation == "SiLU"):
+        return "FeedForward (SwiGLU) module"
+    return "FeedForward module"
+
+
+def _attention_label(*, heads: int, kv_heads: int | None, causal: bool) -> str:
+    kv = kv_heads if kv_heads is not None else heads
+    if kv <= 0:
+        kv = heads
+    if kv == 1 and heads > 1:
+        core = "multi-query attention"
+    elif kv < heads:
+        core = "grouped-query attention"
+    else:
+        core = "multi-head attention"
+    if causal:
+        return "Masked " + core
+    return core[:1].upper() + core[1:]
+
+
+def _context_note(length: int) -> str:
+    if length >= 10_000 and length % 1000 == 0:
+        return f"Supported context length\nof {length // 1000}k tokens"
+    return f"Supported context length\nof {length:,} tokens"
+
+
+def _ffn_width(cfg: dict[str, Any], embed: int) -> int | None:
+    direct = _first_int(
+        cfg.get("intermediate_size"),
+        cfg.get("ffn_dim"),
+        cfg.get("ffn_hidden_size"),
+        cfg.get("n_inner"),
+    )
+    if direct:
+        return direct
+    if cfg.get("mlp_dim_ratio") is not None and embed:
+        return _mlp_hidden_dim(embed, cfg.get("mlp_dim_ratio"))
+    return None
+
+
+def diagram_from_hf(
+    cfg: dict[str, Any] | None,
+    tensor_names: list[str] | None = None,
     *,
-    embed: int,
-    depth: int,
-    heads: int,
-    head_dim: int,
-    mlp_ratio: Any,
-    use_geglu: bool,
-    freqs: int,
-    patch_size: int,
-    patch_overlap: int,
-    num_params: int | None,
+    label: str | None = None,
+    num_params: int | None = None,
 ) -> dict[str, Any]:
-    """Sebastian Raschka gallery layout: bottom-up chassis, ×N block, side callouts."""
-    hidden = _mlp_hidden_dim(embed, mlp_ratio)
-    activation = "GELU" if use_geglu else "GELU"
-    ffn_title = "FeedForward (GeGLU) module" if use_geglu else "FeedForward module"
-    param_label = _format_param_label(num_params)
+    """Compile a Raschka-gallery diagram from transformers-style config + tensor names."""
+    cfg = cfg if isinstance(cfg, dict) else {}
+    blob = _name_blob(tensor_names)
+    title = (label or _first_str(cfg.get("model_type")) or "Model").strip() or "Model"
+    eeg_like = _is_eeg_like(cfg, title)
+    causal = _is_causal(cfg, blob, eeg_like)
+    gated = _is_gated_ffn(cfg, blob)
+    rms = _uses_rms(cfg, blob)
+    embed = (
+        _first_int(cfg.get("hidden_size"), cfg.get("n_embd"), cfg.get("d_model"), cfg.get("n_embed"), cfg.get("embed_dim"))
+        or 0
+    )
+    depth = (
+        _first_int(
+            cfg.get("num_hidden_layers"),
+            cfg.get("n_layer"),
+            cfg.get("n_layers"),
+            cfg.get("num_layers"),
+            cfg.get("depth"),
+        )
+        or 1
+    )
+    heads = _first_int(cfg.get("num_attention_heads"), cfg.get("n_head"), cfg.get("n_heads"), cfg.get("heads")) or 0
+    kv_heads = _first_int(cfg.get("num_key_value_heads"), cfg.get("num_kv_heads"))
+    head_dim = _first_int(cfg.get("head_dim"))
+    if head_dim is None and embed and heads:
+        head_dim = max(1, embed // heads)
+    freqs = _first_int(cfg.get("freqs"))
+    patch_size = _first_int(cfg.get("patch_size"))
+    patch_overlap = _first_int(cfg.get("patch_overlap"))
+    vocab = _first_int(cfg.get("vocab_size"))
+    context = _first_int(
+        cfg.get("max_position_embeddings"),
+        cfg.get("n_positions"),
+        cfg.get("max_seq_len"),
+        cfg.get("max_sequence_length"),
+        cfg.get("seq_length"),
+    )
+    params = _first_int(num_params, cfg.get("num_params"), cfg.get("n_params"))
+    activation = _gallery_activation(cfg, gated)
+    hidden = _ffn_width(cfg, embed)
+    norm_label = "RMSNorm" if rms else "LayerNorm"
+    has_pool = eeg_like or any(token in blob for token in ("pooler", ".pool.", "pooling", "avg_pool", "mean_pool"))
+    has_patch = bool(patch_size) or "patch_embed" in blob or "patch_embedding" in blob
+    has_wpe = "wpe" in blob or "wpe.weight" in blob
+
+    if eeg_like:
+        below_id, stem_id, prefix, attn_id, mlp_id = "eeg", "patch", "enc", "enc.attn", "enc.mlp"
+        below_label = "Sample EEG"
+        stem_label = "Patch embedding layer"
+    else:
+        below_id, stem_id, prefix, attn_id, mlp_id = "input", "embed", "block", "block.attn", "block.mlp"
+        below_label = "Sample input"
+        stem_label = "Token embedding layer"
+
+    steps = [
+        {"id": f"{prefix}.n1", "label": f"{norm_label} 1", "kind": "norm"},
+        {
+            "id": attn_id,
+            "label": _attention_label(heads=heads or 1, kv_heads=kv_heads, causal=causal),
+            "kind": "attention",
+        },
+        {"id": f"{prefix}.n2", "label": f"{norm_label} 2", "kind": "norm"},
+        {"id": mlp_id, "label": "Feed forward", "kind": "ffn"},
+        {"id": f"{prefix}.add", "label": "+", "kind": "add"},
+    ]
+    head: list[dict[str, Any]] = []
+    if has_pool:
+        head.append({"id": "pool", "label": "Pooling", "kind": "pool"})
+    elif not eeg_like:
+        head.append({"id": "final_norm", "label": f"Final {norm_label}", "kind": "norm"})
+    head.append({"id": "out", "label": "Linear output layer", "kind": "linear"})
+
+    callouts: list[dict[str, Any]] = [
+        {
+            "id": "ffn-mod",
+            "kind": "ffn",
+            "anchor": mlp_id,
+            "title": _ffn_title(cfg, gated, activation),
+            "activation": activation,
+            "hidden_dim": hidden,
+            "gated": gated,
+        }
+    ]
+    if heads:
+        heads_callout: dict[str, Any] = {
+            "id": "attn-heads",
+            "kind": "heads",
+            "anchor": attn_id,
+            "label": f"{heads} heads",
+        }
+        if head_dim:
+            heads_callout["detail"] = f"Head dim {head_dim}"
+        callouts.append(heads_callout)
+
+    left: list[dict[str, Any]] = []
+    if freqs:
+        left.append({"id": "pe", "label": "Fourier PE", "anchor": attn_id})
+    elif _uses_rope(cfg, blob):
+        left.append({"id": "pe", "label": "RoPE", "anchor": attn_id})
+    elif has_wpe:
+        left.append({"id": "pe", "label": "Absolute PE", "anchor": stem_id})
+    if patch_size:
+        overlap_bit = f",\noverlap {patch_overlap}" if patch_overlap is not None else ""
+        left.append(
+            {
+                "id": "patch-meta",
+                "label": f"Patch size {patch_size}{overlap_bit}",
+                "anchor": stem_id,
+            }
+        )
+    if context and not eeg_like:
+        left.append({"id": "context", "label": _context_note(context), "anchor": stem_id})
+
+    annotations: dict[str, Any] = {"left": left}
+    if embed:
+        annotations["embed_dim"] = embed
+    if vocab:
+        annotations["vocab_size"] = vocab
+
+    notes: dict[str, Any] = {}
+    if freqs:
+        notes["freqs"] = freqs
+    if head_dim:
+        notes["head_dim"] = head_dim
+
     return {
-        "title": "REVE",
-        "param_label": param_label,
-        "below": [{"id": "eeg", "label": "Sample EEG", "kind": "input"}],
-        "stem": [{"id": "patch", "label": "Patch embedding layer", "kind": "embed"}],
-        "repeat": {
-            "id": "enc",
-            "count": depth,
-            "steps": [
-                {"id": "enc.n1", "label": "RMSNorm 1", "kind": "norm"},
-                {"id": "enc.attn", "label": "Multi-head attention", "kind": "attention"},
-                {"id": "enc.n2", "label": "RMSNorm 2", "kind": "norm"},
-                {"id": "enc.mlp", "label": "Feed forward", "kind": "ffn"},
-                {"id": "enc.add", "label": "+", "kind": "add"},
-            ],
-        },
-        "head": [
-            {"id": "pool", "label": "Pooling", "kind": "pool"},
-            {"id": "out", "label": "Linear output layer", "kind": "linear"},
-        ],
-        "callouts": [
-            {
-                "id": "ffn-mod",
-                "kind": "ffn",
-                "anchor": "enc.mlp",
-                "title": ffn_title,
-                "activation": activation,
-                "hidden_dim": hidden,
-            },
-            {
-                "id": "attn-heads",
-                "kind": "heads",
-                "anchor": "enc.attn",
-                "label": f"{heads} heads",
-                "detail": f"Head dim {head_dim}",
-            },
-        ],
-        "annotations": {
-            "embed_dim": embed,
-            "left": [
-                {"id": "pe", "label": "Fourier PE", "anchor": "enc.attn"},
-                {
-                    "id": "patch-meta",
-                    "label": f"Patch size {patch_size},\noverlap {patch_overlap}",
-                    "anchor": "patch",
-                },
-            ],
-        },
-        "notes": {"freqs": freqs, "head_dim": head_dim},
+        "title": title,
+        "param_label": _format_param_label(params),
+        "below": [{"id": below_id, "label": below_label, "kind": "input"}],
+        "stem": [{"id": stem_id, "label": stem_label, "kind": "embed"}],
+        "repeat": {"id": prefix, "count": depth, "steps": steps},
+        "head": head,
+        "callouts": callouts,
+        "annotations": annotations,
+        "notes": notes,
+        "meta": {"eeg_like": eeg_like, "causal": causal, "gated": gated, "has_patch": has_patch},
     }
+
+
+def reve_diagram(cfg: dict[str, Any] | None = None) -> dict[str, Any]:
+    """REVE gallery diagram via the shared HF compiler."""
+    merged = merge_reve_config(cfg)
+    return diagram_from_hf(merged, label="REVE", num_params=_first_int(merged.get("num_params")))
 
 
 def graph_from_tensors(
@@ -309,7 +533,6 @@ def reve_graph(cfg: dict[str, Any] | None = None) -> dict[str, Any]:
     patch_size = _first_int(merged.get("patch_size")) or 200
     patch_overlap = _first_int(merged.get("patch_overlap")) or 20
     mlp_label = "GeGLU MLP" if use_geglu else "MLP"
-    num_params = _first_int(merged.get("num_params"))
 
     nodes: list[dict[str, Any]] = [
         {
@@ -360,18 +583,7 @@ def reve_graph(cfg: dict[str, Any] | None = None) -> dict[str, Any]:
         {"from": "enc", "to": "pool"},
         {"from": "pool", "to": "out", "shape": f"(B, {embed})"},
     ]
-    diagram = reve_diagram(
-        embed=embed,
-        depth=depth,
-        heads=heads,
-        head_dim=head_dim,
-        mlp_ratio=mlp_ratio,
-        use_geglu=use_geglu,
-        freqs=freqs,
-        patch_size=patch_size,
-        patch_overlap=patch_overlap,
-        num_params=num_params,
-    )
+    diagram = reve_diagram(merged)
     return {"nodes": nodes, "edges": edges, "diagram": diagram}
 
 
@@ -381,11 +593,13 @@ def graph_for_model(
     tensor_names: list[str] | None = None,
     repo_id: str | None = None,
     arxiv_id: str | None = None,
+    label: str | None = None,
 ) -> dict[str, Any]:
     if looks_like_reve(repo_id, arxiv_id, cfg):
         return reve_graph(cfg)
     hidden = None
     num_layers = None
+    params = None
     if isinstance(cfg, dict):
         hidden = _first_int(cfg.get("hidden_size"), cfg.get("n_embd"), cfg.get("d_model"), cfg.get("embed_dim"))
         num_layers = _first_int(
@@ -395,9 +609,15 @@ def graph_for_model(
             cfg.get("num_layers"),
             cfg.get("depth"),
         )
-    if tensor_names:
-        return graph_from_tensors(tensor_names, hidden_size=hidden, num_layers=num_layers)
-    return graph_from_tensors([], hidden_size=hidden, num_layers=num_layers)
+        params = _first_int(cfg.get("num_params"), cfg.get("n_params"))
+    graph = graph_from_tensors(tensor_names or [], hidden_size=hidden, num_layers=num_layers)
+    graph["diagram"] = diagram_from_hf(
+        cfg,
+        tensor_names,
+        label=label or short_model_label(None, repo_id),
+        num_params=params,
+    )
+    return graph
 
 
 def fact_sheet_for_graph(cfg: dict[str, Any] | None) -> dict[str, Any]:
