@@ -1,0 +1,12 @@
+{
+  "models": [
+    {
+      "arxiv_id_base": "2510.21585",
+      "graph_path": "data/arch/2510.21585.json",
+      "hf_repo": "brain-bzh/reve-base",
+      "label": "REVE",
+      "month": "2025-10",
+      "title": "REVE: A Foundation Model for EEG -- Adapting to Any Setup with Large-Scale Pretraining on 25,000 Subjects"
+    }
+  ]
+}

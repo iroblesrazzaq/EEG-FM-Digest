@@ -29,6 +29,7 @@ dev = [
 eegfm-digest = "eegfm_digest.run:main"
 eegfm-batch = "eegfm_digest.batch:main"
 eegfm-triage-eval = "eegfm_digest.eval_triage:main"
+eegfm-arch-export = "eegfm_digest.arch_export:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

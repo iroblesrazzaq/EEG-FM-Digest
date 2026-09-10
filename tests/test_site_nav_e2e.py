@@ -65,6 +65,7 @@ def test_home_page_renders(browser, real_docs_site):
         nav_texts = nav_links.all_text_contents()
         assert "Monthly Digest" in nav_texts
         assert "Search" in nav_texts
+        assert "Models" in nav_texts
         assert "About" in nav_texts
         assert "GitHub Repo" in nav_texts
 
@@ -80,3 +81,51 @@ def test_home_page_renders(browser, real_docs_site):
         assert month_cards.count() >= 1, "expected month cards inside the open year"
     finally:
         context.close()
+
+
+def test_models_tab_renders_reve_diagram(browser, real_docs_site):
+    graph = real_docs_site["root"] / "data" / "arch" / "2510.21585.json"
+    if not graph.is_file():
+        pytest.skip("REVE architecture graph is not committed yet")
+    context = browser.new_context()
+    try:
+        page = context.new_page()
+        page.goto(f"{real_docs_site['base_url']}/models/index.html")
+        assert "Models" in page.title()
+        nav_texts = page.locator("nav.site-nav a.site-nav-link").all_text_contents()
+        assert "Models" in nav_texts
+        page.wait_for_selector(".arch-graph-svg", timeout=8000)
+        assert page.locator(".model-arch-card").count() >= 1
+        svg = page.locator(".arch-graph-svg").first
+        assert "Transformer encoder" in (svg.text_content() or "")
+        toggle = page.locator("[data-arch-toggle]").first
+        toggle.click()
+        page.wait_for_function(
+            "() => (document.querySelector('.arch-graph-svg')?.textContent || '').includes('RMSNorm')",
+            timeout=5000,
+        )
+        assert "GeGLU" in (svg.text_content() or "")
+        assert page.locator("a[href*='hfviewer']").count() == 0
+    finally:
+        context.close()
+
+
+def test_october_reve_card_mounts_local_graph(browser, real_docs_site):
+    graph = real_docs_site["root"] / "data" / "arch" / "2510.21585.json"
+    if not graph.is_file():
+        pytest.skip("REVE architecture graph is not committed yet")
+    context = browser.new_context()
+    try:
+        page = context.new_page()
+        page.goto(f"{real_docs_site['base_url']}/digest/2025-10/index.html")
+        page.wait_for_selector('[id="2510.21585"]', timeout=8000)
+        card = page.locator('[id="2510.21585"]')
+        assert card.locator(".arch-graph-host").count() == 1
+        page.wait_for_selector('[id="2510.21585"] .arch-graph-svg', timeout=8000)
+        assert card.locator("a[href*='hfviewer']").count() == 0
+        text = card.text_content() or ""
+        assert "View architecture" not in text
+        assert "Transformer encoder" in text
+    finally:
+        context.close()
+

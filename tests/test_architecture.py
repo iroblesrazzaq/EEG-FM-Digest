@@ -277,10 +277,15 @@ def test_pipeline_architecture_http_error_still_green(monkeypatch, tmp_path: Pat
 def test_site_js_renders_architecture_controls():
     site_js = Path("docs/assets/site.js").read_text(encoding="utf-8")
     assert "function renderArchitectureFactSheet(architecture)" in site_js
-    assert "View architecture" in site_js
-    assert "arch-fact-sheet" in site_js
+    assert "function renderArchitectureGraphHost(architecture, view)" in site_js
+    assert "arch-graph-host" in site_js
+    assert "View architecture" not in site_js
+    assert "hfviewer" not in site_js
+    arch_js = Path("docs/assets/arch-graph.js").read_text(encoding="utf-8")
+    assert "ArchGraph" in arch_js
     style = Path("docs/assets/style.css").read_text(encoding="utf-8")
-    assert ".resource-btn-arch" in style
+    assert ".arch-graph-host" in style
+    assert ".arch-fact-sheet" in style
 
 
 def test_batch_cache_hit_keeps_sqlite_architecture(monkeypatch, tmp_path: Path):

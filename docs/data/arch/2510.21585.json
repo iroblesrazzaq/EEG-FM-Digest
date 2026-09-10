@@ -1,0 +1,124 @@
+{
+  "arxiv_id_base": "2510.21585",
+  "edges": [
+    {
+      "from": "eeg",
+      "shape": "(B, C, T)",
+      "to": "patch"
+    },
+    {
+      "from": "patch",
+      "to": "pe"
+    },
+    {
+      "from": "pe",
+      "shape": "(B, N, 512)",
+      "to": "enc"
+    },
+    {
+      "from": "enc",
+      "to": "pool"
+    },
+    {
+      "from": "pool",
+      "shape": "(B, 512)",
+      "to": "out"
+    }
+  ],
+  "fact_sheet": {
+    "architectures": "Reve",
+    "context_length": null,
+    "hidden_size": 512,
+    "model_type": "reve",
+    "num_attention_heads": 8,
+    "num_key_value_heads": null,
+    "num_layers": 22,
+    "num_params": 69189632,
+    "vocab_size": null
+  },
+  "graph_path": "data/arch/2510.21585.json",
+  "hf_repo": "brain-bzh/reve-base",
+  "label": "REVE",
+  "month": "2025-10",
+  "nodes": [
+    {
+      "detail": "multichannel time series",
+      "id": "eeg",
+      "kind": "input",
+      "label": "EEG",
+      "shape": [
+        null,
+        "C",
+        "T"
+      ]
+    },
+    {
+      "detail": "size 200, overlap 20",
+      "id": "patch",
+      "kind": "stem",
+      "label": "Temporal patches"
+    },
+    {
+      "detail": "freqs = 4",
+      "id": "pe",
+      "kind": "posenc",
+      "label": "4D Fourier PE"
+    },
+    {
+      "children": [
+        {
+          "id": "enc.n1",
+          "kind": "norm",
+          "label": "RMSNorm"
+        },
+        {
+          "id": "enc.attn",
+          "kind": "attn",
+          "label": "MHA 8×64"
+        },
+        {
+          "id": "enc.res1",
+          "kind": "residual",
+          "label": "Residual add"
+        },
+        {
+          "id": "enc.n2",
+          "kind": "norm",
+          "label": "RMSNorm"
+        },
+        {
+          "detail": "ratio 2.66",
+          "id": "enc.mlp",
+          "kind": "mlp",
+          "label": "GeGLU MLP"
+        },
+        {
+          "id": "enc.res2",
+          "kind": "residual",
+          "label": "Residual add"
+        }
+      ],
+      "id": "enc",
+      "kind": "repeat",
+      "label": "Transformer encoder",
+      "repeat": 22
+    },
+    {
+      "id": "pool",
+      "kind": "pool",
+      "label": "Pooling"
+    },
+    {
+      "id": "out",
+      "kind": "output",
+      "label": "Embedding",
+      "shape": [
+        null,
+        512
+      ]
+    }
+  ],
+  "source": "hub_metadata+published_defaults",
+  "title": "REVE: A Foundation Model for EEG -- Adapting to Any Setup with Large-Scale Pretraining on 25,000 Subjects",
+  "weights_url": "https://huggingface.co/reve-model/reve"
+}
