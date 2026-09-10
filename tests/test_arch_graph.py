@@ -198,6 +198,30 @@ def test_graph_for_model_llama_attaches_diagram_without_reve():
     assert "eeg" not in ids
 
 
+def test_diagram_from_hf_zuna_nested_config():
+    cfg = {
+        "model": {
+            "dim": 1024,
+            "n_layers": 16,
+            "head_dim": 64,
+            "rope_dim": 4,
+            "rope_theta": 10000.0,
+            "max_chans": 512,
+        },
+        "num_params": 382_106_752,
+    }
+    diagram = diagram_from_hf(cfg, label="ZUNA")
+    assert diagram["repeat"]["count"] == 16
+    assert diagram["annotations"]["embed_dim"] == 1024
+    attn = next(step for step in diagram["repeat"]["steps"] if step["kind"] == "attention")
+    assert attn["label"] == "Multi-head attention"
+    left = [item["label"] for item in diagram["annotations"]["left"]]
+    assert "4D RoPE" in left
+    heads = next(item for item in diagram["callouts"] if item["kind"] == "heads")
+    assert heads["label"] == "16 heads"
+    assert diagram["below"][0]["label"] == "Sample EEG"
+
+
 def test_looks_like_reve_from_arxiv_and_repo():
     assert looks_like_reve("brain-bzh/reve-base", "2510.21585", None)
     assert looks_like_reve("reve-model/reve", None, None)
@@ -210,3 +234,73 @@ def test_short_model_label_uses_title_head():
         "REVE: A Foundation Model for EEG -- Adapting to Any Setup",
         "brain-bzh/reve-base",
     ) == "REVE"
+
+
+def test_diagram_from_hf_zuna_tensors_infer_swiglu_and_q_out_heads():
+    cfg = {
+        "model": {
+            "dim": 1024,
+            "n_layers": 16,
+            "head_dim": 64,
+            "rope_dim": 4,
+            "rope_theta": 10000.0,
+            "max_chans": 512,
+        },
+        "num_params": 382_106_752,
+    }
+    tensors = {
+        "model.decoder.layers.0.attention.wq.weight": {"shape": [512, 1024]},
+        "model.decoder.layers.0.attention_norm.weight": {"shape": [1024]},
+        "model.decoder.layers.0.feed_forward.w1.weight": {"shape": [2816, 1024]},
+        "model.decoder.layers.0.feed_forward.w2.weight": {"shape": [1024, 2816]},
+        "model.decoder.layers.0.feed_forward.w3.weight": {"shape": [2816, 1024]},
+        "model.decoder.layers.1.feed_forward.w1.weight": {"shape": [2816, 1024]},
+    }
+    diagram = diagram_from_hf(cfg, tensors=tensors, label="ZUNA")
+    heads = next(item for item in diagram["callouts"] if item["kind"] == "heads")
+    assert heads["label"] == "8 heads"
+    ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
+    assert ffn["activation"] == "SiLU"
+    assert ffn["gated"] is True
+    assert ffn["hidden_dim"] == 2816
+    assert "SwiGLU" in ffn["title"]
+    assert diagram["repeat"]["steps"][0]["label"].startswith("RMSNorm")
+    assert diagram["annotations"]["embed_dim"] == 1024
+
+
+def test_diagram_from_hf_labram_tensors_infer_heads_pe_and_mlp_width():
+    cfg = {"n_chans": 19, "n_times": 800, "patch_size": 200}
+    tensors = {
+        "patch_embed.weight": {"shape": [200, 1, 200]},
+        "position_embedding.weight": {"shape": [256, 200]},
+        "blocks.0.attn.qkv.weight": {"shape": [600, 200]},
+        "blocks.0.attn.q_norm.weight": {"shape": [20]},
+        "blocks.0.mlp.0.weight": {"shape": [800, 200]},
+        "blocks.1.mlp.0.weight": {"shape": [800, 200]},
+    }
+    diagram = diagram_from_hf(cfg, tensors=tensors, label="LaBraM")
+    heads = next(item for item in diagram["callouts"] if item["kind"] == "heads")
+    assert heads["label"] == "10 heads"
+    ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
+    assert ffn["gated"] is False
+    assert ffn["activation"] == "GELU"
+    assert ffn["hidden_dim"] == 800
+    left = [item["label"] for item in diagram["annotations"]["left"]]
+    assert "Absolute PE" in left
+    assert diagram["annotations"]["embed_dim"] == 200
+
+
+def test_diagram_from_hf_cbramod_prefers_ffn_width_over_spatial_attn():
+    cfg = {"n_chans": 22, "n_times": 1000}
+    tensors = {
+        "patch_embedding.weight": {"shape": [100, 22, 16]},
+        "encoder.layers.0.self_attn_s.in_proj_weight": {"shape": [300, 100]},
+        "encoder.layers.0.linear1.weight": {"shape": [800, 200]},
+        "encoder.layers.1.linear1.weight": {"shape": [800, 200]},
+    }
+    diagram = diagram_from_hf(cfg, tensors=tensors, label="CBraMod")
+    assert diagram["annotations"]["embed_dim"] == 200
+    ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
+    assert ffn["hidden_dim"] == 800
+    assert ffn["gated"] is False
+    assert diagram["repeat"]["count"] == 2

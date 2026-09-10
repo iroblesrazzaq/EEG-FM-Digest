@@ -123,6 +123,7 @@ def fact_sheet_from_config(cfg: dict[str, Any]) -> dict[str, Any]:
             cfg.get("d_model"),
             cfg.get("n_embed"),
             cfg.get("embed_dim"),
+            cfg.get("dim"),
         ),
         "num_layers": _first_int(
             cfg.get("num_hidden_layers"),

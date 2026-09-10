@@ -207,6 +207,98 @@ def _mlp_hidden_dim(embed: int, mlp_ratio: Any) -> int:
     return max(1, round(embed * ratio))
 
 
+def _flatten_hf_cfg(cfg: dict[str, Any] | None) -> dict[str, Any]:
+    """Promote nested ``model`` / ``encoder`` blocks used by EEG Hub configs."""
+    if not isinstance(cfg, dict):
+        return {}
+    out = dict(cfg)
+    for key in ("model", "encoder", "backbone", "transformer", "text_config"):
+        nested = cfg.get(key)
+        if isinstance(nested, dict):
+            for nested_key, value in nested.items():
+                out.setdefault(nested_key, value)
+    if out.get("mlp_ratio") is not None and out.get("mlp_dim_ratio") is None:
+        out["mlp_dim_ratio"] = out.get("mlp_ratio")
+    if out.get("dim") is not None and out.get("hidden_size") is None:
+        out["hidden_size"] = out.get("dim")
+    return out
+
+
+def _depth_from_names(tensor_names: list[str] | None) -> int | None:
+    indices: set[int] = set()
+    for name in tensor_names or []:
+        match = _LAYER_RE.match(name)
+        if match:
+            indices.add(int(match.group("idx")))
+    if len(indices) >= 2:
+        return max(indices) - min(indices) + 1
+    return None
+
+
+def _embed_from_tensors(tensors: dict[str, dict[str, Any]] | None) -> int | None:
+    if not isinstance(tensors, dict):
+        return None
+    patch = None
+    ffn_in = None
+    attn = None
+    for name, info in tensors.items():
+        if not isinstance(info, dict):
+            continue
+        shape = info.get("shape")
+        if not isinstance(shape, list) or len(shape) < 2:
+            continue
+        dims = [int(dim) for dim in shape if isinstance(dim, int) and dim > 1]
+        if len(dims) < 2:
+            continue
+        key = name.lower()
+        if any(token in key for token in ("patch_embed", "patch_embedding", "embed_tokens", "wte")):
+            patch = max(patch or 0, min(dims))
+        if any(token in key for token in ("mlp.0.weight", "linear1.weight", "fc1.weight", "w1.weight")):
+            ffn_in = min(dims)
+        if "qkv.weight" in key or key.endswith(("wq.weight", "q_proj.weight")):
+            attn = min(dims)
+    return ffn_in or patch or attn
+
+
+def _hidden_from_tensors(tensors: dict[str, dict[str, Any]] | None) -> int | None:
+    if not isinstance(tensors, dict):
+        return None
+    for name, info in tensors.items():
+        key = name.lower()
+        shape = info.get("shape") if isinstance(info, dict) else None
+        if not isinstance(shape, list) or not shape:
+            continue
+        if any(token in key for token in ("mlp.0.weight", "linear1.weight", "fc1.weight", "w1.weight")):
+            return int(shape[0])
+    return None
+
+
+def _attn_from_tensors(
+    tensors: dict[str, dict[str, Any]] | None,
+) -> tuple[int | None, int | None, int | None]:
+    if not isinstance(tensors, dict):
+        return None, None, None
+    head_dim = None
+    q_out = None
+    for name, info in tensors.items():
+        if not isinstance(info, dict):
+            continue
+        shape = info.get("shape")
+        if not isinstance(shape, list) or not shape:
+            continue
+        key = name.lower()
+        if "q_norm" in key or "k_norm" in key:
+            head_dim = int(shape[-1])
+        if key.endswith(("wq.weight", "q_proj.weight")):
+            q_out = int(shape[0])
+        elif "qkv.weight" in key:
+            q_out = int(shape[0]) // 3
+    heads = None
+    if q_out and head_dim:
+        heads = max(1, q_out // head_dim)
+    return heads, head_dim, q_out
+
+
 def _name_blob(tensor_names: list[str] | None) -> str:
     return " ".join(tensor_names or []).lower()
 
@@ -222,7 +314,10 @@ def _is_eeg_like(cfg: dict[str, Any], label: str | None) -> bool:
         return True
     if _first_int(cfg.get("patch_size")):
         return True
-    return "eeg" in str(label or "").lower()
+    if _first_int(cfg.get("max_chans"), cfg.get("n_chans")):
+        return True
+    blob = f"{label or ''} {_model_type(cfg)} {cfg.get('tok_idx_type') or ''}".lower()
+    return any(token in blob for token in ("eeg", "zuna", "labram", "cbramod", "braindecode"))
 
 
 def _is_causal(cfg: dict[str, Any], blob: str, eeg_like: bool) -> bool:
@@ -243,11 +338,15 @@ def _uses_rms(cfg: dict[str, Any], blob: str) -> bool:
         return True
     if "rmsnorm" in blob or "rms_norm" in blob or "rms" in blob:
         return True
+    if "attention_norm" in blob and any(
+        token in blob for token in (".w1.", "feed_forward.w1", "w3.weight")
+    ):
+        return True
     return bool(cfg.get("rms_norm_eps"))
 
 
 def _uses_rope(cfg: dict[str, Any], blob: str) -> bool:
-    if cfg.get("rope_theta") is not None or cfg.get("rope_scaling") is not None:
+    if cfg.get("rope_theta") is not None or cfg.get("rope_scaling") is not None or cfg.get("rope_dim"):
         return True
     if _model_type(cfg) in _ROPE_TYPES:
         return True
@@ -265,7 +364,7 @@ def _is_gated_ffn(cfg: dict[str, Any], blob: str) -> bool:
     return "geglu" in act or "swiglu" in act
 
 
-def _gallery_activation(cfg: dict[str, Any], gated: bool) -> str:
+def _gallery_activation(cfg: dict[str, Any], gated: bool, blob: str = "") -> str:
     raw = str(_first_str(cfg.get("hidden_act"), cfg.get("hidden_activation"), cfg.get("activation")) or "").lower()
     if bool(cfg.get("use_geglu")) or "geglu" in raw or "gelu" in raw:
         return "GELU"
@@ -273,6 +372,8 @@ def _gallery_activation(cfg: dict[str, Any], gated: bool) -> str:
         return "SiLU"
     if "relu" in raw:
         return "ReLU"
+    if gated and any(token in blob for token in (".w1.", "w3.weight", "feed_forward.w1")):
+        return "SiLU"
     if gated and _model_type(cfg) in _GATED_TYPES:
         return "SiLU"
     return "GELU"
@@ -307,7 +408,7 @@ def _context_note(length: int) -> str:
     return f"Supported context length\nof {length:,} tokens"
 
 
-def _ffn_width(cfg: dict[str, Any], embed: int) -> int | None:
+def _ffn_width(cfg: dict[str, Any], embed: int, tensors: dict[str, dict[str, Any]] | None = None) -> int | None:
     direct = _first_int(
         cfg.get("intermediate_size"),
         cfg.get("ffn_dim"),
@@ -316,6 +417,9 @@ def _ffn_width(cfg: dict[str, Any], embed: int) -> int | None:
     )
     if direct:
         return direct
+    from_tensors = _hidden_from_tensors(tensors)
+    if from_tensors:
+        return from_tensors
     if cfg.get("mlp_dim_ratio") is not None and embed:
         return _mlp_hidden_dim(embed, cfg.get("mlp_dim_ratio"))
     return None
@@ -325,11 +429,14 @@ def diagram_from_hf(
     cfg: dict[str, Any] | None,
     tensor_names: list[str] | None = None,
     *,
+    tensors: dict[str, dict[str, Any]] | None = None,
     label: str | None = None,
     num_params: int | None = None,
 ) -> dict[str, Any]:
     """Compile a Raschka-gallery diagram from transformers-style config + tensor names."""
-    cfg = cfg if isinstance(cfg, dict) else {}
+    cfg = _flatten_hf_cfg(cfg)
+    if tensor_names is None and isinstance(tensors, dict):
+        tensor_names = list(tensors.keys())
     blob = _name_blob(tensor_names)
     title = (label or _first_str(cfg.get("model_type")) or "Model").strip() or "Model"
     eeg_like = _is_eeg_like(cfg, title)
@@ -337,7 +444,15 @@ def diagram_from_hf(
     gated = _is_gated_ffn(cfg, blob)
     rms = _uses_rms(cfg, blob)
     embed = (
-        _first_int(cfg.get("hidden_size"), cfg.get("n_embd"), cfg.get("d_model"), cfg.get("n_embed"), cfg.get("embed_dim"))
+        _first_int(
+            cfg.get("hidden_size"),
+            cfg.get("n_embd"),
+            cfg.get("d_model"),
+            cfg.get("n_embed"),
+            cfg.get("embed_dim"),
+            cfg.get("dim"),
+        )
+        or _embed_from_tensors(tensors)
         or 0
     )
     depth = (
@@ -348,14 +463,25 @@ def diagram_from_hf(
             cfg.get("num_layers"),
             cfg.get("depth"),
         )
+        or _depth_from_names(tensor_names)
         or 1
     )
     heads = _first_int(cfg.get("num_attention_heads"), cfg.get("n_head"), cfg.get("n_heads"), cfg.get("heads")) or 0
     kv_heads = _first_int(cfg.get("num_key_value_heads"), cfg.get("num_kv_heads"))
     head_dim = _first_int(cfg.get("head_dim"))
+    inferred_heads, inferred_head_dim, q_out = _attn_from_tensors(tensors)
+    if head_dim is None:
+        head_dim = inferred_head_dim
+    if heads == 0:
+        heads = inferred_heads or 0
+    if heads == 0 and q_out and head_dim:
+        heads = max(1, q_out // head_dim)
+    if heads == 0 and embed and head_dim:
+        heads = max(1, embed // head_dim)
     if head_dim is None and embed and heads:
         head_dim = max(1, embed // heads)
     freqs = _first_int(cfg.get("freqs"))
+    rope_dim = _first_int(cfg.get("rope_dim"))
     patch_size = _first_int(cfg.get("patch_size"))
     patch_overlap = _first_int(cfg.get("patch_overlap"))
     vocab = _first_int(cfg.get("vocab_size"))
@@ -365,14 +491,16 @@ def diagram_from_hf(
         cfg.get("max_seq_len"),
         cfg.get("max_sequence_length"),
         cfg.get("seq_length"),
+        cfg.get("max_seqlen"),
+        cfg.get("n_times"),
     )
     params = _first_int(num_params, cfg.get("num_params"), cfg.get("n_params"))
-    activation = _gallery_activation(cfg, gated)
-    hidden = _ffn_width(cfg, embed)
+    activation = _gallery_activation(cfg, gated, blob)
+    hidden = _ffn_width(cfg, embed, tensors)
     norm_label = "RMSNorm" if rms else "LayerNorm"
     has_pool = eeg_like or any(token in blob for token in ("pooler", ".pool.", "pooling", "avg_pool", "mean_pool"))
     has_patch = bool(patch_size) or "patch_embed" in blob or "patch_embedding" in blob
-    has_wpe = "wpe" in blob or "wpe.weight" in blob
+    has_wpe = "wpe" in blob or "wpe.weight" in blob or "position_embedding" in blob
 
     if eeg_like:
         below_id, stem_id, prefix, attn_id, mlp_id = "eeg", "patch", "enc", "enc.attn", "enc.mlp"
@@ -426,6 +554,8 @@ def diagram_from_hf(
     left: list[dict[str, Any]] = []
     if freqs:
         left.append({"id": "pe", "label": "Fourier PE", "anchor": attn_id})
+    elif rope_dim and rope_dim >= 4:
+        left.append({"id": "pe", "label": f"{rope_dim}D RoPE", "anchor": attn_id})
     elif _uses_rope(cfg, blob):
         left.append({"id": "pe", "label": "RoPE", "anchor": attn_id})
     elif has_wpe:
@@ -591,29 +721,36 @@ def graph_for_model(
     *,
     cfg: dict[str, Any] | None,
     tensor_names: list[str] | None = None,
+    tensors: dict[str, dict[str, Any]] | None = None,
     repo_id: str | None = None,
     arxiv_id: str | None = None,
     label: str | None = None,
 ) -> dict[str, Any]:
     if looks_like_reve(repo_id, arxiv_id, cfg):
         return reve_graph(cfg)
-    hidden = None
-    num_layers = None
-    params = None
-    if isinstance(cfg, dict):
-        hidden = _first_int(cfg.get("hidden_size"), cfg.get("n_embd"), cfg.get("d_model"), cfg.get("embed_dim"))
-        num_layers = _first_int(
-            cfg.get("num_hidden_layers"),
-            cfg.get("n_layer"),
-            cfg.get("n_layers"),
-            cfg.get("num_layers"),
-            cfg.get("depth"),
-        )
-        params = _first_int(cfg.get("num_params"), cfg.get("n_params"))
+    if tensor_names is None and isinstance(tensors, dict):
+        tensor_names = list(tensors.keys())
+    flat = _flatten_hf_cfg(cfg)
+    hidden = _first_int(
+        flat.get("hidden_size"),
+        flat.get("n_embd"),
+        flat.get("d_model"),
+        flat.get("embed_dim"),
+        flat.get("dim"),
+    ) or _embed_from_tensors(tensors)
+    num_layers = _first_int(
+        flat.get("num_hidden_layers"),
+        flat.get("n_layer"),
+        flat.get("n_layers"),
+        flat.get("num_layers"),
+        flat.get("depth"),
+    ) or _depth_from_names(tensor_names)
+    params = _first_int(flat.get("num_params"), flat.get("n_params"))
     graph = graph_from_tensors(tensor_names or [], hidden_size=hidden, num_layers=num_layers)
     graph["diagram"] = diagram_from_hf(
         cfg,
         tensor_names,
+        tensors=tensors,
         label=label or short_model_label(None, repo_id),
         num_params=params,
     )
@@ -621,11 +758,11 @@ def graph_for_model(
 
 
 def fact_sheet_for_graph(cfg: dict[str, Any] | None) -> dict[str, Any]:
-    sheet = fact_sheet_from_config(cfg or {})
+    sheet = fact_sheet_from_config(_flatten_hf_cfg(cfg))
     if sheet.get("hidden_size") is None and isinstance(cfg, dict):
-        sheet["hidden_size"] = _first_int(cfg.get("embed_dim"))
+        sheet["hidden_size"] = _first_int(cfg.get("embed_dim"), cfg.get("dim"))
     if sheet.get("num_layers") is None and isinstance(cfg, dict):
-        sheet["num_layers"] = _first_int(cfg.get("depth"))
+        sheet["num_layers"] = _first_int(cfg.get("depth"), cfg.get("n_layers"))
     if sheet.get("num_attention_heads") is None and isinstance(cfg, dict):
         sheet["num_attention_heads"] = _first_int(cfg.get("heads"))
     if sheet.get("architectures") is None and isinstance(cfg, dict):

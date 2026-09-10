@@ -206,12 +206,14 @@ def build_export_payload(
     repo_id: str,
     cfg: dict[str, Any] | None,
     tensor_names: list[str] | None,
+    tensors: dict[str, dict[str, Any]] | None = None,
     source: str,
     weights_url: str | None = None,
 ) -> dict[str, Any]:
     graph = graph_for_model(
         cfg=cfg,
         tensor_names=tensor_names,
+        tensors=tensors,
         repo_id=repo_id,
         arxiv_id=arxiv_id,
         label=short_model_label(title, repo_id),
@@ -419,6 +421,7 @@ def export_architecture(
         repo_id=used_repo,
         cfg=cfg,
         tensor_names=tensor_names,
+        tensors=tensors,
         source=source,
         weights_url=weights_url,
     )
