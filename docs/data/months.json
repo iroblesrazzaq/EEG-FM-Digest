@@ -212,7 +212,7 @@
       "json_path": "digest/2025-10/papers.json",
       "month": "2025-10",
       "month_label": "October 2025",
-      "month_rev": "d38881fe02648187",
+      "month_rev": "1d369556b1e27251",
       "stats": {
         "accepted": 8,
         "candidates": 26,
@@ -307,7 +307,7 @@
       "json_path": "digest/2025-05/papers.json",
       "month": "2025-05",
       "month_label": "May 2025",
-      "month_rev": "d366dabc3f0117e2",
+      "month_rev": "757f63a4c9eb55ac",
       "stats": {
         "accepted": 6,
         "candidates": 17,
@@ -364,7 +364,7 @@
       "json_path": "digest/2025-02/papers.json",
       "month": "2025-02",
       "month_label": "February 2025",
-      "month_rev": "a88627800c041c2a",
+      "month_rev": "a214cfff48ba496a",
       "stats": {
         "accepted": 8,
         "candidates": 20,
@@ -440,7 +440,7 @@
       "json_path": "digest/2024-10/papers.json",
       "month": "2024-10",
       "month_label": "October 2024",
-      "month_rev": "41bb6047e298911d",
+      "month_rev": "37a697c22d8a1707",
       "stats": {
         "accepted": 2,
         "candidates": 17,

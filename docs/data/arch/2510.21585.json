@@ -10,6 +10,11 @@
           "label": "Fourier PE"
         },
         {
+          "anchor": "enc.mlp",
+          "id": "ffn-kind",
+          "label": "GeGLU\n1 layer"
+        },
+        {
           "anchor": "patch",
           "id": "patch-meta",
           "label": "Patch size 200,\noverlap 20"
@@ -31,6 +36,7 @@
         "hidden_dim": 1362,
         "id": "ffn-mod",
         "kind": "ffn",
+        "layers": 1,
         "title": "FeedForward (GeGLU) module"
       },
       {
@@ -226,5 +232,5 @@
   ],
   "source": "hub_metadata+published_defaults",
   "title": "REVE: A Foundation Model for EEG -- Adapting to Any Setup with Large-Scale Pretraining on 25,000 Subjects",
-  "weights_url": "https://huggingface.co/reve-model/reve"
+  "weights_url": "https://huggingface.co/brain-bzh/reve-base"
 }

@@ -8,6 +8,16 @@
           "anchor": "enc.attn",
           "id": "pe",
           "label": "4D RoPE"
+        },
+        {
+          "anchor": "enc.attn",
+          "id": "qk-norm",
+          "label": "QK-Norm"
+        },
+        {
+          "anchor": "enc.mlp",
+          "id": "ffn-kind",
+          "label": "SwiGLU\n1 layer"
         }
       ]
     },
@@ -26,6 +36,7 @@
         "hidden_dim": 2816,
         "id": "ffn-mod",
         "kind": "ffn",
+        "layers": 1,
         "title": "FeedForward (SwiGLU) module"
       },
       {

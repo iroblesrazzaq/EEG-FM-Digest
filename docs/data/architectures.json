@@ -6,7 +6,15 @@
       "hf_repo": "braindecode/labram-pretrained",
       "label": "LaBraM",
       "month": "2024-05",
-      "title": "LaBraM: Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI"
+      "title": "Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI"
+    },
+    {
+      "arxiv_id_base": "2410.19779",
+      "graph_path": "data/arch/2410.19779.json",
+      "hf_repo": "braindecode/eegpt-pretrained",
+      "label": "EEGPT",
+      "month": "2024-10",
+      "title": "BrainGPT: Unleashing the Potential of EEG Generalist Foundation Model by Autoregressive Pre-training"
     },
     {
       "arxiv_id_base": "2412.07236",
@@ -17,12 +25,36 @@
       "title": "CBraMod: A Criss-Cross Brain Foundation Model for EEG Decoding"
     },
     {
+      "arxiv_id_base": "2502.06438",
+      "graph_path": "data/arch/2502.06438.json",
+      "hf_repo": "PulpBio/FEMBA",
+      "label": "FEMBA",
+      "month": "2025-02",
+      "title": "FEMBA: Efficient and Scalable EEG Analysis with a Bidirectional Mamba Foundation Model"
+    },
+    {
+      "arxiv_id_base": "2505.18185",
+      "graph_path": "data/arch/2505.18185.json",
+      "hf_repo": "OpenTSLab/BrainOmni",
+      "label": "BrainOmni",
+      "month": "2025-05",
+      "title": "BrainOmni: A Brain Foundation Model for Unified EEG and MEG Signals"
+    },
+    {
       "arxiv_id_base": "2510.21585",
       "graph_path": "data/arch/2510.21585.json",
       "hf_repo": "brain-bzh/reve-base",
       "label": "REVE",
       "month": "2025-10",
       "title": "REVE: A Foundation Model for EEG -- Adapting to Any Setup with Large-Scale Pretraining on 25,000 Subjects"
+    },
+    {
+      "arxiv_id_base": "2510.22257",
+      "graph_path": "data/arch/2510.22257.json",
+      "hf_repo": "PulpBio/LUNA",
+      "label": "LUNA",
+      "month": "2025-10",
+      "title": "LUNA: Efficient and Topology-Agnostic Foundation Model for EEG Signal Analysis"
     },
     {
       "arxiv_id_base": "2607.27308",

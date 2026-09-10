@@ -3,14 +3,15 @@
     '"Avenir Next", "Segoe UI", "Helvetica Neue", Helvetica, sans-serif';
   const VIEW_W = 820;
   const CHASSIS_X = 168;
-  const CHASSIS_W = 268;
+  const CHASSIS_W = 292;
   const PILL_W = 176;
   const PILL_H = 24;
   const ATTN_H = 28;
   const ADD_R = 9.5;
   const INNER_GAP = 16;
   const STACK_GAP = 18;
-  const BLOCK_PAD_X = 30;
+  const BLOCK_PAD_LEFT = 56;
+  const BLOCK_PAD_RIGHT = 28;
   const BLOCK_PAD_Y = 18;
   const CHASSIS_PAD_Y = 26;
   const CALLOUT_X = 500;
@@ -105,6 +106,12 @@
       return "Patch embedding layer";
     }
     if (kind === "attn" || kind === "attention") {
+      if (/mamba/i.test(label)) {
+        return /bidirectional/i.test(label) ? "Bidirectional Mamba" : "Mamba";
+      }
+      if (/criss-cross|criss_cross/i.test(label)) {
+        return "Criss-cross attention";
+      }
       if (/spatial/i.test(label) || /attn_s/i.test(label)) {
         return "Spatial attention";
       }
@@ -175,7 +182,7 @@
     if (/swiglu/i.test(blob)) {
       return "FeedForward (SwiGLU) module";
     }
-    return "FeedForward module";
+    return "FeedForward (GELU · 2 layers)";
   }
 
   function numberNorms(steps) {
@@ -264,6 +271,8 @@
         title: ffnTitleFrom(mlpChild),
         activation: activationFrom(mlpChild),
         hidden_dim: hiddenFrom(mlpChild, sheet),
+        gated: /glu/i.test(String(ffnTitleFrom(mlpChild))),
+        layers: /glu/i.test(String(ffnTitleFrom(mlpChild))) ? 1 : 2,
       });
     }
     const heads = parseHeads(attnChild, sheet);
@@ -320,7 +329,7 @@
       return { w: ADD_R * 2, h: ADD_R * 2 };
     }
     if (step.kind === "attention") {
-      return { w: PILL_W, h: ATTN_H };
+      return { w: PILL_W + 8, h: ATTN_H };
     }
     return { w: PILL_W, h: PILL_H };
   }
@@ -504,24 +513,28 @@
     if (box.kind === "add") {
       drawAdd(group, box, colors);
     } else {
-      drawPill(group, box, colors, { dark: box.kind === "attention", maxChars: box.kind === "attention" ? 22 : 28 });
+      drawPill(group, box, colors, { dark: box.kind === "attention", maxChars: box.kind === "attention" ? 24 : 28 });
     }
     parent.appendChild(group);
     return group;
   }
 
-  function curlyBrace(parent, x, y1, y2, colors) {
+  function curlyBrace(parent, xRight, y1, y2, colors) {
     const mid = (y1 + y2) / 2;
-    const depth = 9;
-    const cusp = 7;
+    const span = Math.max(24, y2 - y1);
+    const hook = Math.min(16, Math.max(10, span * 0.07));
+    const spine = 13;
+    const cusp = 11;
+    const xSpine = xRight - spine;
+    const xCusp = xSpine - cusp;
     const path = [
-      `M ${x} ${y1}`,
-      `C ${x - depth * 0.4} ${y1}, ${x - depth} ${y1 + 6}, ${x - depth} ${y1 + 16}`,
-      `L ${x - depth} ${mid - 11}`,
-      `C ${x - depth} ${mid - 3}, ${x - depth - cusp} ${mid}, ${x - depth - cusp - 2} ${mid}`,
-      `C ${x - depth - cusp} ${mid}, ${x - depth} ${mid + 3}, ${x - depth} ${mid + 11}`,
-      `L ${x - depth} ${y2 - 16}`,
-      `C ${x - depth} ${y2 - 6}, ${x - depth * 0.4} ${y2}, ${x} ${y2}`,
+      `M ${xRight} ${y1}`,
+      `C ${xRight - 2} ${y1}, ${xSpine} ${y1 + 1}, ${xSpine} ${y1 + hook}`,
+      `L ${xSpine} ${mid - hook}`,
+      `C ${xSpine} ${mid - 3}, ${xCusp + 5} ${mid}, ${xCusp} ${mid}`,
+      `C ${xCusp + 5} ${mid}, ${xSpine} ${mid + 3}, ${xSpine} ${mid + hook}`,
+      `L ${xSpine} ${y2 - hook}`,
+      `C ${xSpine} ${y2 - 1}, ${xRight - 2} ${y2}, ${xRight} ${y2}`,
     ].join(" ");
     parent.appendChild(
       svgEl("path", {
@@ -530,7 +543,7 @@
         d: path,
         fill: "none",
         stroke: colors.ink,
-        "stroke-width": 1.2,
+        "stroke-width": 1.35,
         "stroke-linecap": "round",
         "stroke-linejoin": "round",
       }),
@@ -842,8 +855,8 @@
 
     const blockBottom = innerBottom - (stem.length ? stemH + STACK_GAP : 0);
     const blockTop = blockBottom - (steps.length ? blockH : 0);
-    const blockX = CHASSIS_X + BLOCK_PAD_X;
-    const blockW = CHASSIS_W - BLOCK_PAD_X * 2;
+    const blockX = CHASSIS_X + BLOCK_PAD_LEFT;
+    const blockW = CHASSIS_W - BLOCK_PAD_LEFT - BLOCK_PAD_RIGHT;
     const headBottom = (steps.length ? blockTop : innerBottom - (stem.length ? stemH + STACK_GAP : 0)) - (head.length ? STACK_GAP : 0);
     const headPlaced = placeUp(head, headBottom, cx, INNER_GAP, stepSize);
 
@@ -873,21 +886,22 @@
     });
 
     if (steps.length) {
-      const braceX = blockX - 2;
-      const braceTop = blockTop + 8;
-      const braceBot = blockBottom - 8;
-      curlyBrace(svg, braceX, braceTop, braceBot, colors);
+      const braceRight = blockX - 6;
+      const braceTop = blockTop + 6;
+      const braceBot = blockBottom - 6;
+      curlyBrace(svg, braceRight, braceTop, braceBot, colors);
       svg.appendChild(
         svgEl(
           "text",
           {
-            x: braceX - 12,
+            x: braceRight - 38,
             y: (braceTop + braceBot) / 2 + 4,
             "text-anchor": "end",
             fill: colors.ink,
             "font-size": 13,
             "font-weight": 600,
             "font-family": FONT,
+            "data-arch-repeat-label": "true",
           },
           `${Number(repeat.count) || 1} ×`,
         ),
@@ -989,7 +1003,10 @@
         note.id === "pe" ||
         note.id === "qk-norm" ||
         note.id === "vq-meta" ||
-        /^(fourier|rope|qk-|frozen|asymmetric)/i.test(String(note.label || ""));
+        note.id === "cost-st" ||
+        note.id === "ffn-kind" ||
+        note.id === "unify-meta" ||
+        /^(fourier|rope|qk-|frozen|asymmetric|geglu|swiglu|gelu|learned)/i.test(String(note.label || ""));
       const lines = wrapLines(note.label, isShort ? 16 : 18);
       const textX = isShort ? CHASSIS_X - 14 : CHASSIS_X - 72;
       const textY = anchor.cy - ((lines.length - 1) * 7);

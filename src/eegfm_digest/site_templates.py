@@ -64,8 +64,9 @@ PROJECT_REPO_URL = "https://github.com/iroblesrazzaq/EEG-FM-Digest"
 PERSONAL_WEBSITE_URL = "https://iroblesrazzaq.github.io/"
 LINKEDIN_URL = "https://www.linkedin.com/in/ismaelroblesrazzaq"
 EMAIL_ADDRESS = "ismaelroblesrazzaq@gmail.com"
-ASSET_VERSION = "20260910-7"
+ASSET_VERSION = "20260910-8"
 SITE_TAB_TITLE_BASE = "EEG-FM Digest"
+MODELS_TAB_LABEL = "Model Gallery"
 
 ICON_SVGS = {
     "github": (
@@ -200,7 +201,7 @@ def nav_html(
     tabs = [
         ("home", "Monthly Digest", home_href),
         ("explore", "Search", explore_href),
-        ("models", "Models", models_href),
+        ("models", MODELS_TAB_LABEL, models_href),
         ("process", "About", process_href),
     ]
     links = "".join(
@@ -376,13 +377,13 @@ def render_explore_page(months: list[str]) -> str:
 def render_models_page() -> str:
     nav = relative_nav("models", 1)
     return f"""<!doctype html>
-<html><head><meta charset='utf-8'><title>{html.escape(tab_title("Models"))}</title>
+<html><head><meta charset='utf-8'><title>{html.escape(tab_title(MODELS_TAB_LABEL))}</title>
 {stylesheet_tag(1)}</head><body>
 {nav}
 <main id='digest-app' class='container' data-view='models' data-arch-catalog='../data/architectures.json'>
 <section class='hero-banner'>
   <p class='hero-kicker'>Open weights</p>
-  <h1>Models</h1>
+  <h1>{html.escape(MODELS_TAB_LABEL)}</h1>
   <p class='sub'>Architecture diagrams for EEG foundation models in this digest.</p>
 </section>
 <section id='results'></section>

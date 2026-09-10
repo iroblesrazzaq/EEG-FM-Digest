@@ -65,7 +65,7 @@ def test_home_page_renders(browser, real_docs_site):
         nav_texts = nav_links.all_text_contents()
         assert "Monthly Digest" in nav_texts
         assert "Search" in nav_texts
-        assert "Models" in nav_texts
+        assert "Model Gallery" in nav_texts
         assert "About" in nav_texts
         assert "GitHub Repo" in nav_texts
 
@@ -91,11 +91,11 @@ def test_models_tab_renders_reve_diagram(browser, real_docs_site):
     try:
         page = context.new_page()
         page.goto(f"{real_docs_site['base_url']}/models/index.html")
-        assert "Models" in page.title()
+        assert "Model Gallery" in page.title()
         nav_texts = page.locator("nav.site-nav a.site-nav-link").all_text_contents()
-        assert "Models" in nav_texts
+        assert "Model Gallery" in nav_texts
         page.wait_for_selector('[id="arch-2510.21585"] .arch-graph-svg', timeout=8000)
-        assert page.locator(".model-arch-card").count() >= 4
+        assert page.locator(".model-arch-card").count() >= 7
         card = page.locator('[id="arch-2510.21585"]')
         svg = card.locator(".arch-graph-svg")
         text = svg.text_content() or ""
@@ -135,17 +135,29 @@ def test_models_tab_renders_reve_diagram(browser, real_docs_site):
         toggle.click()
         assert "GELU" in (svg.text_content() or "")
         assert page.locator("a[href*='hfviewer']").count() == 0
-        for arxiv_id in ("2405.18765", "2412.07236", "2607.27308"):
+        for arxiv_id in ("2405.18765", "2410.19779", "2412.07236", "2502.06438", "2505.18185", "2510.22257", "2607.27308"):
             assert page.locator(f'[id="arch-{arxiv_id}"] .arch-graph-svg').count() == 1
         labram = page.locator('[id="arch-2405.18765"] .arch-graph-svg').text_content() or ""
         assert "VQ-VAE codebook" in labram
         assert "Frozen codebook" in labram
         assert "QK-Norm" in labram
         cbramod = page.locator('[id="arch-2412.07236"] .arch-graph-svg').text_content() or ""
-        assert "Spatial attention" in cbramod
-        assert "Temporal attention" in cbramod
+        assert "Criss-cross attention" in cbramod
+        assert "Spatial attention" not in cbramod
+        assert "Temporal attention" not in cbramod
         assert "O(N²T)" in cbramod
         assert "O(NT²)" in cbramod
+        assert "2-layer MLP" in cbramod
+        luna = page.locator('[id="arch-2510.22257"] .arch-graph-svg').text_content() or ""
+        assert "Channel unifier" in luna
+        assert "Learned queries" in luna
+        brainomni = page.locator('[id="arch-2505.18185"] .arch-graph-svg').text_content() or ""
+        assert "Sensor encoder" in brainomni
+        assert "VQ-VAE codebook" in brainomni
+        femba = page.locator('[id="arch-2502.06438"] .arch-graph-svg').text_content() or ""
+        assert "Bidirectional Mamba" in femba
+        eegpt = page.locator('[id="arch-2410.19779"] .arch-graph-svg').text_content() or ""
+        assert "Multi-head attention" in eegpt
     finally:
         context.close()
 

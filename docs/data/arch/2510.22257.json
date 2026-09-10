@@ -1,18 +1,13 @@
 {
-  "arxiv_id_base": "2405.18765",
+  "arxiv_id_base": "2510.22257",
   "diagram": {
     "annotations": {
-      "embed_dim": 200,
+      "embed_dim": 256,
       "left": [
         {
-          "anchor": "patch",
-          "id": "pe",
-          "label": "Absolute PE"
-        },
-        {
           "anchor": "enc.attn",
-          "id": "qk-norm",
-          "label": "QK-Norm"
+          "id": "pe",
+          "label": "RoPE"
         },
         {
           "anchor": "enc.mlp",
@@ -20,9 +15,9 @@
           "label": "GELU\n2-layer MLP"
         },
         {
-          "anchor": "vq",
-          "id": "vq-meta",
-          "label": "Frozen codebook"
+          "anchor": "unify",
+          "id": "unify-meta",
+          "label": "Learned queries"
         }
       ]
     },
@@ -38,18 +33,11 @@
         "activation": "GELU",
         "anchor": "enc.mlp",
         "gated": false,
-        "hidden_dim": 800,
+        "hidden_dim": 1024,
         "id": "ffn-mod",
         "kind": "ffn",
         "layers": 2,
         "title": "FeedForward (GELU · 2 layers)"
-      },
-      {
-        "anchor": "enc.attn",
-        "detail": "Head dim 20",
-        "id": "attn-heads",
-        "kind": "heads",
-        "label": "10 heads"
       }
     ],
     "head": [
@@ -70,13 +58,10 @@
       "gated": false,
       "has_patch": true
     },
-    "notes": {
-      "head_dim": 20,
-      "tokenizer": "vqvae"
-    },
-    "param_label": "5.8M",
+    "notes": {},
+    "param_label": null,
     "repeat": {
-      "count": 12,
+      "count": 8,
       "id": "enc",
       "steps": [
         {
@@ -113,12 +98,12 @@
         "label": "Patch embedding layer"
       },
       {
-        "id": "vq",
+        "id": "unify",
         "kind": "embed",
-        "label": "VQ-VAE codebook"
+        "label": "Channel unifier"
       }
     ],
-    "title": "LaBraM"
+    "title": "LUNA"
   },
   "edges": [
     {
@@ -131,27 +116,31 @@
     },
     {
       "from": "encoder",
-      "shape": "(B, 200)",
+      "to": "cross_attn.query_self_attn"
+    },
+    {
+      "from": "cross_attn.query_self_attn",
+      "shape": "(B, 256)",
       "to": "output"
     }
   ],
   "fact_sheet": {
-    "architectures": null,
+    "architectures": "LUNA",
     "context_length": null,
     "hidden_act": null,
     "hidden_size": null,
     "intermediate_size": null,
-    "model_type": null,
+    "model_type": "luna",
     "num_attention_heads": null,
     "num_key_value_heads": null,
     "num_layers": null,
-    "num_params": 5819936,
+    "num_params": null,
     "vocab_size": null
   },
-  "graph_path": "data/arch/2405.18765.json",
-  "hf_repo": "braindecode/labram-pretrained",
-  "label": "LaBraM",
-  "month": "2024-05",
+  "graph_path": "data/arch/2510.22257.json",
+  "hf_repo": "PulpBio/LUNA",
+  "label": "LUNA",
+  "month": "2025-10",
   "nodes": [
     {
       "id": "input",
@@ -169,16 +158,6 @@
           "id": "encoder.attn",
           "kind": "attn",
           "label": "Attn"
-        },
-        {
-          "id": "encoder.gamma_1",
-          "kind": "module",
-          "label": "Gamma 1"
-        },
-        {
-          "id": "encoder.gamma_2",
-          "kind": "module",
-          "label": "Gamma 2"
         },
         {
           "id": "encoder.mlp",
@@ -199,7 +178,40 @@
       "id": "encoder",
       "kind": "repeat",
       "label": "Encoder",
-      "repeat": 12
+      "repeat": 8
+    },
+    {
+      "children": [
+        {
+          "id": "cross_attn.query_self_attn.linear1",
+          "kind": "module",
+          "label": "Linear1"
+        },
+        {
+          "id": "cross_attn.query_self_attn.linear2",
+          "kind": "module",
+          "label": "Linear2"
+        },
+        {
+          "id": "cross_attn.query_self_attn.norm1",
+          "kind": "norm",
+          "label": "Norm1"
+        },
+        {
+          "id": "cross_attn.query_self_attn.norm2",
+          "kind": "norm",
+          "label": "Norm2"
+        },
+        {
+          "id": "cross_attn.query_self_attn.self_attn",
+          "kind": "attn",
+          "label": "Self attn"
+        }
+      ],
+      "id": "cross_attn.query_self_attn",
+      "kind": "repeat",
+      "label": "Cross attn query",
+      "repeat": 8
     },
     {
       "id": "output",
@@ -207,11 +219,11 @@
       "label": "Output",
       "shape": [
         null,
-        200
+        256
       ]
     }
   ],
   "source": "hf_config+safetensors_header",
-  "title": "Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI",
-  "weights_url": "https://huggingface.co/braindecode/labram-pretrained"
+  "title": "LUNA: Efficient and Topology-Agnostic Foundation Model for EEG Signal Analysis",
+  "weights_url": "https://huggingface.co/PulpBio/LUNA"
 }

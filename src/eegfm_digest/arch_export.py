@@ -28,6 +28,13 @@ from .site import refresh_html_shells, update_home
 
 DEFAULT_FALLBACK_REPO = "brain-bzh/reve-base"
 GRAPH_REL_PREFIX = "data/arch"
+# Digest papers whose Hub owner/name is known even when papers.json has no weights_url.
+KNOWN_DIGEST_HF_REPOS = {
+    "2510.22257": "PulpBio/LUNA",
+    "2505.18185": "OpenTSLab/BrainOmni",
+    "2410.19779": "braindecode/eegpt-pretrained",
+    "2502.06438": "PulpBio/FEMBA",
+}
 
 
 def hf_token() -> str | None:
@@ -70,8 +77,10 @@ def fetch_hf_config_optional(
     client: httpx.Client,
     token: str | None = None,
     timeout: float = 20.0,
+    path: str = "config.json",
 ) -> dict[str, Any] | None:
-    url = f"https://huggingface.co/{repo_id}/resolve/main/config.json"
+    rel = str(path or "config.json").lstrip("/")
+    url = f"https://huggingface.co/{repo_id}/resolve/main/{rel}"
     try:
         response = client.get(url, headers=hub_headers(token), timeout=timeout)
         if response.status_code in {401, 403, 404}:
@@ -81,6 +90,59 @@ def fetch_hf_config_optional(
         return payload if isinstance(payload, dict) else None
     except Exception:  # noqa: BLE001 — local export should fall back
         return None
+
+
+def _config_rank(name: str) -> tuple[int, int, str]:
+    low = name.lower()
+    depth = name.count("/")
+    if name == "config.json":
+        return (0, 0, name)
+    if "tokenizer" in low:
+        return (8, depth, name)
+    if "classifier" in low:
+        return (9, depth, name)
+    if name.startswith("base/") or "/base/" in name:
+        return (1, depth, name)
+    if name.endswith("config.json"):
+        return (2, depth, name)
+    if name.endswith("model_cfg.json"):
+        return (3, depth, name)
+    return (5, depth, name)
+
+
+def config_filenames(info: dict[str, Any] | None) -> list[str]:
+    names = ["config.json"]
+    if isinstance(info, dict):
+        siblings = info.get("siblings")
+        if isinstance(siblings, list):
+            for item in siblings:
+                if not isinstance(item, dict):
+                    continue
+                name = str(item.get("rfilename") or "").strip()
+                if name.endswith(("config.json", "model_cfg.json")):
+                    names.append(name)
+    ranked = sorted(dict.fromkeys(names), key=_config_rank)
+    return ranked
+
+
+def _safetensors_rank(name: str) -> tuple[int, int, int, str]:
+    low = name.lower()
+    base = name.split("/")[-1]
+    sharded = 1 if "-of-" in base else 0
+    depth = name.count("/")
+    if "base" in low:
+        size = 0
+    elif "tiny" in low:
+        size = 1
+    elif "small" in low:
+        size = 2
+    elif "large" in low:
+        size = 3
+    elif "huge" in low or "xl" in low:
+        size = 4
+    else:
+        size = 0
+    return (sharded, depth, size, name)
 
 
 def safetensors_filenames(info: dict[str, Any] | None) -> list[str]:
@@ -96,8 +158,8 @@ def safetensors_filenames(info: dict[str, Any] | None) -> list[str]:
         name = str(item.get("rfilename") or "").strip()
         if name.endswith(".safetensors") and not name.endswith(".index.json"):
             names.append(name)
-    unsharded = [name for name in names if "-of-" not in name.split("/")[-1]]
-    return unsharded or names
+    names.sort(key=_safetensors_rank)
+    return names
 
 
 def hub_param_count(info: dict[str, Any] | None) -> int | None:
@@ -119,7 +181,7 @@ def _try_safetensors_header(
     token: str | None,
 ) -> dict[str, dict[str, Any]] | None:
     candidates = filenames or ["model.safetensors"]
-    for name in candidates[:3]:
+    for name in candidates[:6]:
         url = f"https://huggingface.co/{repo_id}/resolve/main/{name}"
         try:
             return fetch_safetensors_header(url, client=client, token=token)
@@ -151,7 +213,13 @@ def resolve_export_sources(
         info = fetch_hub_model_info(candidate, client=client, token=token)
         if info is not None:
             saw_hub_metadata = True
-        candidate_cfg = fetch_hf_config_optional(candidate, client=client, token=token)
+        candidate_cfg = None
+        for cfg_path in config_filenames(info):
+            candidate_cfg = fetch_hf_config_optional(
+                candidate, client=client, token=token, path=cfg_path
+            )
+            if candidate_cfg is not None:
+                break
         filenames = safetensors_filenames(info)
         candidate_tensors = _try_safetensors_header(
             candidate, filenames, client=client, token=token
@@ -210,20 +278,21 @@ def build_export_payload(
     source: str,
     weights_url: str | None = None,
 ) -> dict[str, Any]:
+    label = short_model_label(title, repo_id, arxiv_id)
     graph = graph_for_model(
         cfg=cfg,
         tensor_names=tensor_names,
         tensors=tensors,
         repo_id=repo_id,
         arxiv_id=arxiv_id,
-        label=short_model_label(title, repo_id),
+        label=label,
     )
     fact_sheet = fact_sheet_for_graph(cfg)
     graph_path = f"{GRAPH_REL_PREFIX}/{arxiv_id}.json"
     payload: dict[str, Any] = {
         "arxiv_id_base": arxiv_id,
         "title": title,
-        "label": short_model_label(title, repo_id),
+        "label": label,
         "month": month,
         "hf_repo": repo_id,
         "weights_url": weights_url,
@@ -450,6 +519,10 @@ def paper_hf_repo(row: dict[str, Any]) -> str | None:
             parsed = parse_hf_repo_id(str(open_source.get("weights_url") or ""))
             if parsed:
                 return parsed
+    arxiv_id = str(row.get("arxiv_id_base") or "").strip()
+    known = KNOWN_DIGEST_HF_REPOS.get(arxiv_id)
+    if known:
+        return parse_hf_repo_id(known) or known
     return None
 
 
@@ -592,7 +665,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--refresh-shells",
         action="store_true",
-        help="Rewrite all month HTML shells plus home/explore/models nav",
+        help="Rewrite all month HTML shells plus home/explore/Model Gallery nav",
     )
     return parser
 

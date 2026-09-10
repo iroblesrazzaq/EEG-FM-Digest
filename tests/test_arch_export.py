@@ -8,8 +8,10 @@ import pytest
 from eegfm_digest.arch_export import (
     architecture_site_payload,
     build_export_payload,
+    config_filenames,
     export_all_digest,
     iter_digest_hf_papers,
+    safetensors_filenames,
     write_export_artifacts,
 )
 from eegfm_digest.arch_graph import merge_reve_config
@@ -95,10 +97,12 @@ def test_write_export_artifacts_does_not_write_when_paper_missing(tmp_path: Path
 
 def test_models_nav_and_month_shell_include_arch_graph_script():
     month_html = render_month_page("2025-10", [], {}, {})
-    assert ">Models</a>" in month_html
+    assert ">Model Gallery</a>" in month_html
     assert "arch-graph.js" in month_html
     assert "models/index.html" in month_html
     models_html = render_models_page()
+    assert "<h1>Model Gallery</h1>" in models_html
+    assert "<title>EEG-FM Digest | Model Gallery</title>" in models_html
     assert "data-view='models'" in models_html
     assert "arch-graph.js" in models_html
     assert 'class=\'site-nav-link active\'' in models_html or 'class="site-nav-link active"' in models_html
@@ -122,7 +126,7 @@ def test_update_home_writes_models_page(tmp_path: Path):
     )
     update_home(docs_dir)
     html = (docs_dir / "models" / "index.html").read_text(encoding="utf-8")
-    assert "Models" in html
+    assert "Model Gallery" in html
     home = (docs_dir / "index.html").read_text(encoding="utf-8")
     assert "models/index.html" in home
 
@@ -256,3 +260,53 @@ def test_all_digest_rejects_single_export_flags():
 
     with pytest.raises(SystemExit):
         main(["--all-digest", "--arxiv", "2510.21585", "--repo", "a/b", "--month", "2025-10"])
+
+
+def test_iter_digest_hf_papers_uses_known_hub_map(tmp_path: Path):
+    docs_dir = tmp_path / "docs"
+    month_dir = docs_dir / "digest" / "2025-10"
+    month_dir.mkdir(parents=True)
+    papers = {
+        "month": "2025-10",
+        "papers": [
+            {
+                "arxiv_id_base": "2510.22257",
+                "title": "LUNA: Efficient and Topology-Agnostic Foundation Model for EEG Signal Analysis",
+                "summary": {"open_source": {"weights_url": None}},
+            }
+        ],
+    }
+    (month_dir / "papers.json").write_text(json.dumps(papers), encoding="utf-8")
+    found = iter_digest_hf_papers(docs_dir)
+    assert found == [
+        {
+            "month": "2025-10",
+            "arxiv_id": "2510.22257",
+            "repo": "PulpBio/LUNA",
+            "title": "LUNA: Efficient and Topology-Agnostic Foundation Model for EEG Signal Analysis",
+        }
+    ]
+
+
+def test_config_and_safetensors_prefer_base_over_huge():
+    info = {
+        "siblings": [
+            {"rfilename": "TUAB/FEMBA_tiny.safetensors"},
+            {"rfilename": "TUAB/FEMBA_base.safetensors"},
+            {"rfilename": "LUNA_huge.safetensors"},
+            {"rfilename": "LUNA_base.safetensors"},
+            {"rfilename": "classifier/config.json"},
+            {"rfilename": "base/model_cfg.json"},
+            {"rfilename": "config.json"},
+            {"rfilename": "braintokenizer/model_cfg.json"},
+        ]
+    }
+    assert config_filenames(info)[0] == "config.json"
+    assert "base/model_cfg.json" in config_filenames(info)
+    assert config_filenames(info).index("base/model_cfg.json") < config_filenames(info).index(
+        "braintokenizer/model_cfg.json"
+    )
+    names = safetensors_filenames(info)
+    assert names[0] == "LUNA_base.safetensors"
+    assert names[1] == "LUNA_huge.safetensors"
+    assert names.index("TUAB/FEMBA_base.safetensors") < names.index("TUAB/FEMBA_tiny.safetensors")
