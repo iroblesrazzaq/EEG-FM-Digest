@@ -137,6 +137,15 @@ def test_models_tab_renders_reve_diagram(browser, real_docs_site):
         assert page.locator("a[href*='hfviewer']").count() == 0
         for arxiv_id in ("2405.18765", "2412.07236", "2607.27308"):
             assert page.locator(f'[id="arch-{arxiv_id}"] .arch-graph-svg').count() == 1
+        labram = page.locator('[id="arch-2405.18765"] .arch-graph-svg').text_content() or ""
+        assert "VQ-VAE codebook" in labram
+        assert "Frozen codebook" in labram
+        assert "QK-Norm" in labram
+        cbramod = page.locator('[id="arch-2412.07236"] .arch-graph-svg').text_content() or ""
+        assert "Spatial attention" in cbramod
+        assert "Temporal attention" in cbramod
+        assert "O(N²T)" in cbramod
+        assert "O(NT²)" in cbramod
     finally:
         context.close()
 

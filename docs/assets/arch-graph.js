@@ -105,6 +105,12 @@
       return "Patch embedding layer";
     }
     if (kind === "attn" || kind === "attention") {
+      if (/spatial/i.test(label) || /attn_s/i.test(label)) {
+        return "Spatial attention";
+      }
+      if (/temporal/i.test(label) || /attn_t/i.test(label)) {
+        return "Temporal attention";
+      }
       if (/grouped|gqa/i.test(label)) {
         return "Masked grouped-query attention";
       }
@@ -112,6 +118,9 @@
         return "Multi-head attention";
       }
       return label || "Multi-head attention";
+    }
+    if ((kind === "stem" || kind === "embed") && /vq|codebook/i.test(label)) {
+      return "VQ-VAE codebook";
     }
     if (kind === "mlp" || kind === "ffn") {
       return "Feed forward";
@@ -976,7 +985,11 @@
       if (!anchor) {
         return;
       }
-      const isShort = note.id === "pe" || /^(fourier|rope)/i.test(String(note.label || ""));
+      const isShort =
+        note.id === "pe" ||
+        note.id === "qk-norm" ||
+        note.id === "vq-meta" ||
+        /^(fourier|rope|qk-|frozen|asymmetric)/i.test(String(note.label || ""));
       const lines = wrapLines(note.label, isShort ? 16 : 18);
       const textX = isShort ? CHASSIS_X - 14 : CHASSIS_X - 72;
       const textY = anchor.cy - ((lines.length - 1) * 7);

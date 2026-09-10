@@ -8,6 +8,16 @@
           "anchor": "patch",
           "id": "pe",
           "label": "Absolute PE"
+        },
+        {
+          "anchor": "enc.attn",
+          "id": "qk-norm",
+          "label": "QK-Norm"
+        },
+        {
+          "anchor": "vq",
+          "id": "vq-meta",
+          "label": "Frozen codebook"
         }
       ]
     },
@@ -55,7 +65,8 @@
       "has_patch": true
     },
     "notes": {
-      "head_dim": 20
+      "head_dim": 20,
+      "tokenizer": "vqvae"
     },
     "param_label": "5.8M",
     "repeat": {
@@ -94,6 +105,11 @@
         "id": "patch",
         "kind": "embed",
         "label": "Patch embedding layer"
+      },
+      {
+        "id": "vq",
+        "kind": "embed",
+        "label": "VQ-VAE codebook"
       }
     ],
     "title": "LaBraM"
