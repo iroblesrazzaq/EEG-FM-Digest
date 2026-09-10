@@ -97,14 +97,14 @@ def test_models_tab_renders_reve_diagram(browser, real_docs_site):
         page.wait_for_selector(".arch-graph-svg", timeout=8000)
         assert page.locator(".model-arch-card").count() >= 1
         svg = page.locator(".arch-graph-svg").first
-        assert "Transformer encoder" in svg.inner_text()
+        assert "Transformer encoder" in (svg.text_content() or "")
         toggle = page.locator("[data-arch-toggle]").first
         toggle.click()
         page.wait_for_function(
-            "() => document.body.innerText.includes('RMSNorm')",
+            "() => (document.querySelector('.arch-graph-svg')?.textContent || '').includes('RMSNorm')",
             timeout=5000,
         )
-        assert "GeGLU" in svg.inner_text()
+        assert "GeGLU" in (svg.text_content() or "")
         assert page.locator("a[href*='hfviewer']").count() == 0
     finally:
         context.close()
@@ -118,13 +118,14 @@ def test_october_reve_card_mounts_local_graph(browser, real_docs_site):
     try:
         page = context.new_page()
         page.goto(f"{real_docs_site['base_url']}/digest/2025-10/index.html")
-        page.wait_for_selector("#2510.21585", timeout=8000)
-        card = page.locator("#2510.21585")
+        page.wait_for_selector('[id="2510.21585"]', timeout=8000)
+        card = page.locator('[id="2510.21585"]')
         assert card.locator(".arch-graph-host").count() == 1
-        page.wait_for_selector("#2510.21585 .arch-graph-svg", timeout=8000)
+        page.wait_for_selector('[id="2510.21585"] .arch-graph-svg', timeout=8000)
         assert card.locator("a[href*='hfviewer']").count() == 0
-        assert "View architecture" not in card.inner_text()
-        assert "Transformer encoder" in card.inner_text()
+        text = card.text_content() or ""
+        assert "View architecture" not in text
+        assert "Transformer encoder" in text
     finally:
         context.close()
 
