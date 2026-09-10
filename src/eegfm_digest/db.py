@@ -42,6 +42,12 @@ class DigestDB:
               stats_json TEXT NOT NULL,
               updated_at TEXT DEFAULT CURRENT_TIMESTAMP
             );
+            CREATE TABLE IF NOT EXISTS summary_attempts (
+              arxiv_id_base TEXT PRIMARY KEY,
+              month TEXT NOT NULL,
+              attempt_json TEXT NOT NULL,
+              updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+            );
             """
         )
         self._ensure_column("triage", "triage_meta_json", "TEXT")
@@ -143,6 +149,56 @@ class DigestDB:
     def delete_summary(self, arxiv_id_base: str) -> None:
         self.conn.execute("DELETE FROM summaries WHERE arxiv_id_base=?", (arxiv_id_base,))
         self.conn.commit()
+
+    def upsert_summary_attempt(self, month: str, arxiv_id_base: str, attempt: dict[str, Any]) -> None:
+        aid = str(arxiv_id_base or "").strip()
+        if not aid or not isinstance(attempt, dict):
+            return
+        self.conn.execute(
+            """
+            INSERT INTO summary_attempts(arxiv_id_base, month, attempt_json)
+            VALUES (?, ?, ?)
+            ON CONFLICT(arxiv_id_base) DO UPDATE SET
+              month=excluded.month,
+              attempt_json=excluded.attempt_json,
+              updated_at=CURRENT_TIMESTAMP
+            """,
+            (aid, month, json.dumps(attempt, ensure_ascii=False, sort_keys=True)),
+        )
+        self.conn.commit()
+
+    def get_summary_attempt(self, arxiv_id_base: str) -> dict[str, Any] | None:
+        row = self.conn.execute(
+            "SELECT attempt_json FROM summary_attempts WHERE arxiv_id_base=?",
+            (arxiv_id_base,),
+        ).fetchone()
+        if not row:
+            return None
+        try:
+            payload = json.loads(row["attempt_json"])
+        except json.JSONDecodeError:
+            return None
+        return payload if isinstance(payload, dict) else None
+
+    def list_summary_attempts_for_month(self, month: str) -> dict[str, dict[str, Any]]:
+        rows = self.conn.execute(
+            """
+            SELECT arxiv_id_base, attempt_json
+            FROM summary_attempts
+            WHERE month=?
+            ORDER BY arxiv_id_base
+            """,
+            (month,),
+        ).fetchall()
+        out: dict[str, dict[str, Any]] = {}
+        for row in rows:
+            try:
+                payload = json.loads(row["attempt_json"])
+            except json.JSONDecodeError:
+                continue
+            if isinstance(payload, dict):
+                out[str(row["arxiv_id_base"])] = payload
+        return out
 
     def get_paper(self, arxiv_id_base: str) -> dict[str, Any] | None:
         row = self.conn.execute(

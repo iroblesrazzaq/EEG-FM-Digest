@@ -323,3 +323,9 @@ def test_pipeline_hard_summary_exception_is_llm_other(monkeypatch, tmp_path: Pat
         if line.strip()
     ]
     assert rows[0]["summary_attempt"]["category"] == "llm_other"
+    from eegfm_digest.db import DigestDB
+
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    assert db.get_summary("2501.00001") is None
+    assert db.get_summary_attempt("2501.00001")["category"] == "llm_other"
+    db.close()

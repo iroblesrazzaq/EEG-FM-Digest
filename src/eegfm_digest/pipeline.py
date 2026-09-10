@@ -188,6 +188,7 @@ def _persist_summary_row(
     else:
         meta.pop("architecture", None)
     db.upsert_summary(month, summary, meta=meta)
+    db.upsert_summary_attempt(month, str(paper.get("arxiv_id_base", "")), attempt)
     return meta
 
 
@@ -272,6 +273,7 @@ def _summarize_one_paper(
                 file=sys.stderr,
             )
             log_summary_attempt(arxiv_id_base, attempt)
+            _persist_attempt(db, month=month, arxiv_id_base=arxiv_id_base, attempt=attempt)
             return OnePaperSummaryOutcome(
                 arxiv_id_base=arxiv_id_base,
                 summary=None,
@@ -376,6 +378,7 @@ def _summarize_one_paper(
             exc=exc,
         )
         log_summary_attempt(arxiv_id_base, attempt)
+        _persist_attempt(db, month=month, arxiv_id_base=arxiv_id_base, attempt=attempt)
         print(
             f"[pipeline] WARNING: summary failed for {arxiv_id_base}: "
             f"{type(exc).__name__}: {exc}; skipping (will retry next run)",
@@ -399,15 +402,17 @@ def _digest_summaries(summaries: list[dict]) -> list[dict]:
     ]
 
 
-def _merge_attempt_into_existing_meta(
+def _persist_attempt(
     db: DigestDB,
     *,
     month: str,
     arxiv_id_base: str,
     attempt: dict | None,
 ) -> None:
+    """Store a summary_attempt even when no summary row exists yet."""
     if not attempt:
         return
+    db.upsert_summary_attempt(month, arxiv_id_base, attempt)
     record = db.get_summary_with_meta(arxiv_id_base)
     if record is None or not isinstance(record.get("data"), dict):
         return
@@ -490,6 +495,7 @@ def _rerender_month_from_db(
     summary_map = {s["arxiv_id_base"]: s for s in stored_summaries}
     digest_summaries = _digest_summaries(stored_summaries)
     pdf_map, attempt_map, _ = _load_existing_backend_maps(month_out)
+    attempt_map.update(db.list_summary_attempts_for_month(month))
     architecture_map: dict[str, dict] = {}
     for record in records:
         data = record.get("data") if isinstance(record.get("data"), dict) else {}
@@ -645,7 +651,7 @@ def resummarize_stragglers(
                     failed_ids.append(arxiv_id_base)
                     log_summary_attempt(arxiv_id_base, outcome.summary_attempt)
                     if outcome.summary is None:
-                        _merge_attempt_into_existing_meta(
+                        _persist_attempt(
                             db,
                             month=month,
                             arxiv_id_base=arxiv_id_base,

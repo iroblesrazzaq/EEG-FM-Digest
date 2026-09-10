@@ -692,6 +692,8 @@ def test_failed_resummarize_without_prior_summary_rerenders_attempt(monkeypatch,
 
     db = DigestDB(cfg.data_dir / "digest.sqlite")
     assert db.get_summary("2501.00001") is None
+    assert db.get_summary_attempt("2501.00001")["category"] == "llm_other"
+    assert db.get_accepted_without_summary() == [("2025-01", "2501.00001")]
     db.close()
     rows = [
         json.loads(line)
@@ -699,3 +701,31 @@ def test_failed_resummarize_without_prior_summary_rerenders_attempt(monkeypatch,
         if line.strip()
     ]
     assert rows[0]["summary_attempt"]["category"] == "llm_other"
+
+
+def test_rerender_keeps_failed_attempt_without_summary_or_backend_rows(tmp_path):
+    cfg = _cfg(tmp_path)
+    month = "2025-01"
+    paper = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    _seed_accept_without_summary(db, paper, month)
+    db.upsert_summary_attempt(month, "2501.00001", {"category": "llm_other", "error": "RuntimeError"})
+    db.close()
+
+    month_out = cfg.output_dir / month
+    month_out.mkdir(parents=True)
+    cfg.docs_dir.mkdir(parents=True, exist_ok=True)
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    _rerender_month_from_db(cfg, db, month)
+    db.close()
+
+    rows = [
+        json.loads(line)
+        for line in (month_out / "backend_rows.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert rows[0]["summary_attempt"]["category"] == "llm_other"
+    site = json.loads((cfg.docs_dir / "digest" / month / "papers.json").read_text(encoding="utf-8"))
+    failed = site["papers"][0]
+    assert failed["summary"] is None
+    assert str(failed["summary_failed_reason"]).startswith("llm_other")

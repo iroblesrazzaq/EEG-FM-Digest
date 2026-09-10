@@ -353,7 +353,30 @@ def _run_summary_phase_for_month(
     summaries = sorted(summary_map.values(), key=lambda x: (x["published_date"], x["arxiv_id_base"]))
     write_jsonl(month_out / "papers.jsonl", summaries)
 
-    backend_rows = build_backend_rows(candidates, triage_map, summary_map, pdf_map)
+    attempt_map: dict[str, dict[str, Any]] = {}
+    for row in existing_backend:
+        aid = str(row.get("arxiv_id_base", "")).strip()
+        attempt = row.get("summary_attempt")
+        if aid and isinstance(attempt, dict) and aid not in summary_map:
+            attempt_map[aid] = attempt
+    for aid, attempt in db.list_summary_attempts_for_month(month).items():
+        if aid not in summary_map:
+            attempt_map[aid] = attempt
+    for record in db.list_summaries_with_meta_for_month(month):
+        data = record.get("data") if isinstance(record.get("data"), dict) else {}
+        meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+        aid = str(data.get("arxiv_id_base", "")).strip()
+        attempt = meta.get("summary_attempt")
+        if aid and isinstance(attempt, dict):
+            attempt_map[aid] = attempt
+
+    backend_rows = build_backend_rows(
+        candidates,
+        triage_map,
+        summary_map,
+        pdf_map,
+        attempt_map=attempt_map,
+    )
     write_jsonl(month_out / "backend_rows.jsonl", backend_rows)
 
     digest = build_digest(month, candidates, triage_rows, summaries, featured_paper=featured_paper)
