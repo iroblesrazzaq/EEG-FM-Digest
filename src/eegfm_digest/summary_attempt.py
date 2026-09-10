@@ -29,9 +29,7 @@ def summary_is_json_error(summary: dict[str, Any] | None) -> bool:
     if JSON_ERROR_MARKER in notes:
         return True
     limitations = summary.get("limitations")
-    if isinstance(limitations, list) and JSON_ERROR_MARKER in limitations:
-        return True
-    return False
+    return isinstance(limitations, list) and JSON_ERROR_MARKER in limitations
 
 
 def summary_attempt_category(value: Any) -> str:

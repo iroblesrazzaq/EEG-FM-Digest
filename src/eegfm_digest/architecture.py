@@ -6,7 +6,8 @@ weight files, and callers must treat failures as skips.
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 from urllib.parse import urlparse
 
 import httpx
@@ -175,7 +176,7 @@ def fetch_hf_config(
         response.raise_for_status()
         payload = response.json()
         if not isinstance(payload, dict):
-            raise ValueError("invalid_config")
+            raise TypeError("invalid_config")
         return payload
     finally:
         if close_client:
@@ -249,5 +250,5 @@ def architecture_from_summary(
         return _skip_payload(reason="gated", hf_repo=repo_id)
     except FileNotFoundError:
         return _skip_payload(reason="missing_config", hf_repo=repo_id)
-    except Exception:
+    except Exception:  # noqa: BLE001 — enrichment must never fail the digest
         return _skip_payload(reason="fetch_failed", hf_repo=repo_id)

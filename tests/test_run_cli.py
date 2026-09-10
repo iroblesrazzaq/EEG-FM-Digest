@@ -144,7 +144,7 @@ def test_resummarize_flag_invokes_stragglers(monkeypatch, capsys):
         )(),
     )
 
-    def fake_resummarize(cfg, **kwargs):  # noqa: ANN001
+    def fake_resummarize(cfg, **kwargs):
         captured["kwargs"] = kwargs
         return type(
             "Stats",

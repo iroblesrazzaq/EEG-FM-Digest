@@ -15,7 +15,7 @@ from .config import Config
 from .db import DigestDB
 from .llm import LLMCallConfig, LLMRateLimitError, build_llm_call, load_api_key, provider_base_url
 from .llm_logging import log_stage_failure, log_summary_attempt
-from .pdf import download_pdf, extract_text
+from .pdf import download_pdf, extract_text  # noqa: F401
 from .render import build_digest, write_json, write_jsonl
 from .row_views import empty_pdf_state, normalize_triage_row
 from .selection import select_papers_for_summary

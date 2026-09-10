@@ -9,8 +9,8 @@ from pathlib import Path
 from dateutil.relativedelta import relativedelta
 
 from .config import load_config
-from .pipeline import run_month, run_window, resummarize_stragglers
 from .llm_logging import log_daily_failure_summary
+from .pipeline import resummarize_stragglers, run_month, run_window
 from .run_log import RunLog, compute_since, format_utc, load_run_log, save_run_log
 
 RUN_LOG_FILENAME = "last_successful_run.json"

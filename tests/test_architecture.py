@@ -186,7 +186,7 @@ def _stub_pipeline(monkeypatch, candidate: dict, summary: dict) -> None:
     monkeypatch.setattr("eegfm_digest.pipeline.load_api_key", lambda *_a, **_k: "test-key")
 
     class DummyLMCall:
-        def close(self):  # noqa: ANN201
+        def close(self):
             return None
 
     monkeypatch.setattr("eegfm_digest.pipeline.build_llm_call", lambda *_a, **_k: DummyLMCall())
@@ -200,12 +200,12 @@ def _stub_pipeline(monkeypatch, candidate: dict, summary: dict) -> None:
         },
     )
 
-    def fake_download_pdf(_url, out_path, _rate):  # noqa: ANN001
+    def fake_download_pdf(_url, out_path, _rate):
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_bytes(b"%PDF-1.4")
         return out_path
 
-    def fake_extract_text(_pdf_path, text_path):  # noqa: ANN001
+    def fake_extract_text(_pdf_path, text_path):
         text_path.parent.mkdir(parents=True, exist_ok=True)
         text_path.write_text("Abstract\nEEG\n\nMethods\nM", encoding="utf-8")
         return {"tool": "pypdf", "pages": 1, "chars": 20, "error": None}
