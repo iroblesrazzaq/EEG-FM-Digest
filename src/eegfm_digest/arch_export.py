@@ -96,7 +96,8 @@ def safetensors_filenames(info: dict[str, Any] | None) -> list[str]:
         name = str(item.get("rfilename") or "").strip()
         if name.endswith(".safetensors") and not name.endswith(".index.json"):
             names.append(name)
-    return names
+    unsharded = [name for name in names if "-of-" not in name.split("/")[-1]]
+    return unsharded or names
 
 
 def hub_param_count(info: dict[str, Any] | None) -> int | None:
@@ -326,6 +327,22 @@ def write_export_artifacts(
     refresh_shells: bool = False,
 ) -> Path:
     docs_dir = Path(docs_dir)
+    papers_path = docs_dir / "digest" / str(payload["month"]) / "papers.json"
+    if patch_papers:
+        # Validate the digest row before writing graph/catalog so a bad
+        # --month/--arxiv cannot leave orphan artifacts.
+        if not papers_path.exists():
+            raise FileNotFoundError(f"papers.json not found: {papers_path}")
+        existing = json.loads(papers_path.read_text(encoding="utf-8"))
+        papers = existing.get("papers") if isinstance(existing, dict) else existing
+        if not isinstance(papers, list):
+            raise TypeError("papers.json has no papers list")
+        arxiv_id = str(payload["arxiv_id_base"])
+        if not any(
+            isinstance(row, dict) and str(row.get("arxiv_id_base") or "").strip() == arxiv_id
+            for row in papers
+        ):
+            raise KeyError(f"{arxiv_id} not found in {papers_path}")
     graph_rel = str(payload["graph_path"])
     graph_path = docs_dir / graph_rel
     graph_path.parent.mkdir(parents=True, exist_ok=True)
@@ -335,9 +352,8 @@ def write_export_artifacts(
     )
     upsert_catalog(docs_dir / "data" / "architectures.json", catalog_entry(payload))
     if patch_papers:
-        month = payload["month"]
         patch_paper_architecture(
-            docs_dir / "digest" / month / "papers.json",
+            papers_path,
             payload["arxiv_id_base"],
             architecture_site_payload(payload),
         )

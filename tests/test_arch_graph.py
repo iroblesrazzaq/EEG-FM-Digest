@@ -41,6 +41,12 @@ def test_collapse_repeated_layers_uses_times_n():
     assert not any("encoder.layers." in name for name in leftover)
 
 
+def test_graph_from_tensors_prefers_config_layer_count():
+    graph = graph_from_tensors(_reve_like_names(8), hidden_size=512, num_layers=32)
+    encoder = next(node for node in graph["nodes"] if node["id"] == "encoder")
+    assert encoder["repeat"] == 32
+
+
 def test_graph_from_tensors_collapses_encoder_stack():
     graph = graph_from_tensors(_reve_like_names(8), hidden_size=512)
     ids = [node["id"] for node in graph["nodes"]]

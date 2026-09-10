@@ -269,10 +269,14 @@
     return connector;
   }
 
+  const graphCache = new Map();
+  const expandedBySrc = new Map();
+
   function draw(host, graph) {
     const colors = palette();
-    const expanded = host._archExpanded instanceof Set ? host._archExpanded : new Set();
-    host._archExpanded = expanded;
+    const src = host.getAttribute("data-arch-src") || "";
+    const expanded = expandedBySrc.get(src) instanceof Set ? expandedBySrc.get(src) : new Set();
+    expandedBySrc.set(src, expanded);
     const laid = layout(graph, expanded);
     const width = Math.max(320, Math.min(host.clientWidth || 420, 560));
     const boxWidth = Math.min(360, width - 48);
@@ -316,8 +320,6 @@
       });
     });
   }
-
-  const graphCache = new Map();
 
   function mount(host) {
     if (!host || host._archBound) {

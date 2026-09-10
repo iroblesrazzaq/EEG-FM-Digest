@@ -158,9 +158,13 @@ def graph_from_tensors(
     tensor_names: list[str],
     *,
     hidden_size: int | None = None,
+    num_layers: int | None = None,
 ) -> dict[str, Any]:
     """Generic input → collapsed encoder → head graph from tensor names."""
     collapsed = collapse_repeated_layers(tensor_names)
+    if num_layers:
+        for node in collapsed["repeats"]:
+            node["repeat"] = num_layers
     nodes: list[dict[str, Any]] = [
         {"id": "input", "label": "Input", "kind": "input"},
     ]
@@ -272,11 +276,19 @@ def graph_for_model(
     if looks_like_reve(repo_id, arxiv_id, cfg):
         return reve_graph(cfg)
     hidden = None
+    num_layers = None
     if isinstance(cfg, dict):
         hidden = _first_int(cfg.get("hidden_size"), cfg.get("n_embd"), cfg.get("d_model"), cfg.get("embed_dim"))
+        num_layers = _first_int(
+            cfg.get("num_hidden_layers"),
+            cfg.get("n_layer"),
+            cfg.get("n_layers"),
+            cfg.get("num_layers"),
+            cfg.get("depth"),
+        )
     if tensor_names:
-        return graph_from_tensors(tensor_names, hidden_size=hidden)
-    return graph_from_tensors([], hidden_size=hidden)
+        return graph_from_tensors(tensor_names, hidden_size=hidden, num_layers=num_layers)
+    return graph_from_tensors([], hidden_size=hidden, num_layers=num_layers)
 
 
 def fact_sheet_for_graph(cfg: dict[str, Any] | None) -> dict[str, Any]:

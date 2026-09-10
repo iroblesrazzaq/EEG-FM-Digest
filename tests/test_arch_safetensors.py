@@ -63,10 +63,26 @@ def test_fetch_safetensors_header_uses_range(monkeypatch):
 
 
 def test_fetch_safetensors_header_aborts_when_range_ignored():
-    huge = b"x" * (2_000_000 + 200)
+    def handler(_request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            content=b"x" * 32,
+            headers={"Content-Length": "80000000"},
+        )
+
+    transport = httpx.MockTransport(handler)
+    with httpx.Client(transport=transport) as client, pytest.raises(RangeIgnoredError):
+        fetch_safetensors_header(
+            "https://huggingface.co/org/m/resolve/main/model.safetensors",
+            client=client,
+        )
+
+
+def test_fetch_safetensors_header_caps_body_without_content_length():
+    blob = encode_header({"emb.weight": [2, 2]}) + (b"w" * 5000)
 
     def handler(_request: httpx.Request) -> httpx.Response:
-        return httpx.Response(200, content=huge, headers={"Content-Length": str(len(huge))})
+        return httpx.Response(200, content=blob)
 
     transport = httpx.MockTransport(handler)
     with httpx.Client(transport=transport) as client, pytest.raises(RangeIgnoredError):

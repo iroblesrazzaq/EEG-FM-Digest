@@ -2,8 +2,8 @@
 
 A safetensors file starts with an 8-byte little-endian header length, then a
 JSON object mapping tensor names to dtype/shape/offsets. Callers must Range-GET
-only those prefix bytes. If a server ignores Range and returns a large body,
-we abort rather than buffering the blob.
+only those prefix bytes. Responses are streamed and capped so an ignored Range
+cannot buffer a checkpoint.
 """
 
 from __future__ import annotations
@@ -17,9 +17,8 @@ from .architecture import HF_USER_AGENT
 
 HEADER_LEN_BYTES = 8
 MAX_HEADER_SIZE = 2_000_000
-# First probe is 8 bytes. If Range is ignored, refuse anything larger than the
-# header budget plus a small slack so we never hold a checkpoint in memory.
-MAX_RANGE_BODY = MAX_HEADER_SIZE + HEADER_LEN_BYTES + 64
+# Slack past the requested prefix. Anything larger is treated as an ignored Range.
+RANGE_SLACK_BYTES = 64
 
 
 class SafetensorsHeaderError(ValueError):
@@ -71,12 +70,32 @@ def _auth_headers(token: str | None) -> dict[str, str]:
     return headers
 
 
-def _reject_if_range_ignored(response: httpx.Response, expected_max: int) -> None:
-    content_len = response.headers.get("Content-Length")
-    if content_len and content_len.isdigit() and int(content_len) > expected_max:
-        raise RangeIgnoredError("range_ignored")
-    if len(response.content) > expected_max:
-        raise RangeIgnoredError("range_ignored")
+def _stream_capped(
+    client: httpx.Client,
+    url: str,
+    *,
+    headers: dict[str, str],
+    timeout: float,
+    max_bytes: int,
+) -> bytes:
+    """GET with streaming; abort without buffering if the body exceeds ``max_bytes``."""
+    with client.stream("GET", url, headers=headers, timeout=timeout) as response:
+        if response.status_code in {401, 403}:
+            raise PermissionError(f"gated:{response.status_code}")
+        if response.status_code == 404:
+            raise FileNotFoundError("missing_safetensors")
+        response.raise_for_status()
+        content_len = response.headers.get("Content-Length")
+        if content_len and content_len.isdigit() and int(content_len) > max_bytes:
+            raise RangeIgnoredError("range_ignored")
+        buf = bytearray()
+        for chunk in response.iter_bytes():
+            if not chunk:
+                continue
+            if len(buf) + len(chunk) > max_bytes:
+                raise RangeIgnoredError("range_ignored")
+            buf.extend(chunk)
+        return bytes(buf)
 
 
 def fetch_safetensors_header(
@@ -94,32 +113,32 @@ def fetch_safetensors_header(
         close_client = True
     try:
         length_headers = {**headers, "Range": "bytes=0-7"}
-        probe = client.get(url, headers=length_headers, timeout=timeout)
-        if probe.status_code in {401, 403}:
-            raise PermissionError(f"gated:{probe.status_code}")
-        if probe.status_code == 404:
-            raise FileNotFoundError("missing_safetensors")
-        probe.raise_for_status()
-        _reject_if_range_ignored(probe, MAX_RANGE_BODY)
-        if len(probe.content) >= HEADER_LEN_BYTES + 2:
-            # Server ignored Range but the body still fits the header budget.
-            return parse_safetensors_header(probe.content)
-
-        if len(probe.content) < HEADER_LEN_BYTES:
+        probe = _stream_capped(
+            client,
+            url,
+            headers=length_headers,
+            timeout=timeout,
+            max_bytes=HEADER_LEN_BYTES + RANGE_SLACK_BYTES,
+        )
+        if len(probe) < HEADER_LEN_BYTES:
             raise SafetensorsHeaderError("truncated_header_len")
-        header_len = int.from_bytes(probe.content[:HEADER_LEN_BYTES], "little", signed=False)
+        header_len = int.from_bytes(probe[:HEADER_LEN_BYTES], "little", signed=False)
         if header_len <= 0 or header_len > MAX_HEADER_SIZE:
             raise SafetensorsHeaderError("header_too_large")
+        if len(probe) >= HEADER_LEN_BYTES + header_len:
+            return parse_safetensors_header(probe)
         json_headers = {
             **headers,
             "Range": f"bytes={HEADER_LEN_BYTES}-{HEADER_LEN_BYTES + header_len - 1}",
         }
-        body = client.get(url, headers=json_headers, timeout=timeout)
-        if body.status_code in {401, 403}:
-            raise PermissionError(f"gated:{body.status_code}")
-        body.raise_for_status()
-        _reject_if_range_ignored(body, header_len + 64)
-        prefix = probe.content[:HEADER_LEN_BYTES] + body.content[:header_len]
+        body = _stream_capped(
+            client,
+            url,
+            headers=json_headers,
+            timeout=timeout,
+            max_bytes=header_len + RANGE_SLACK_BYTES,
+        )
+        prefix = probe[:HEADER_LEN_BYTES] + body[:header_len]
         return parse_safetensors_header(prefix)
     finally:
         if close_client:

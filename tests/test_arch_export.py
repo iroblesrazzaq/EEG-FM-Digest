@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from eegfm_digest.arch_export import (
     architecture_site_payload,
     build_export_payload,
@@ -76,6 +78,15 @@ def test_write_export_artifacts_patches_papers_and_catalog(tmp_path: Path):
     models_html = (docs_dir / "models" / "index.html").read_text(encoding="utf-8")
     assert "data-view='models'" in models_html
     assert "data/architectures.json" in models_html
+
+
+def test_write_export_artifacts_does_not_write_when_paper_missing(tmp_path: Path):
+    docs_dir = tmp_path / "docs"
+    payload = _reve_payload()
+    with pytest.raises(FileNotFoundError):
+        write_export_artifacts(docs_dir, payload, patch_papers=True, refresh_shells=False)
+    assert not (docs_dir / "data" / "arch" / "2510.21585.json").exists()
+    assert not (docs_dir / "data" / "architectures.json").exists()
 
 
 def test_models_nav_and_month_shell_include_arch_graph_script():
