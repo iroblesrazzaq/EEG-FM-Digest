@@ -119,7 +119,12 @@
         return "Temporal attention";
       }
       if (/grouped|gqa/i.test(label)) {
-        return "Masked grouped-query attention";
+        return /masked|causal/i.test(label)
+          ? "Masked grouped-query attention"
+          : "Grouped-query attention";
+      }
+      if (/masked|causal/i.test(label)) {
+        return "Masked multi-head attention";
       }
       if (/mha|multi-head|attention/i.test(label)) {
         return "Multi-head attention";
@@ -289,6 +294,7 @@
     const embed = Number(sheet.hidden_size);
     return {
       title,
+      family: "",
       param_label: null,
       below,
       stem,
@@ -309,6 +315,7 @@
       const diagram = graph.diagram;
       return {
         title: diagram.title || graph.label || "Model",
+        family: diagram.family || "",
         param_label: diagram.param_label || null,
         below: asArray(diagram.below),
         stem: asArray(diagram.stem),
@@ -428,6 +435,9 @@
     const options = opts || {};
     const dark = Boolean(options.dark);
     const rx = options.rx != null ? options.rx : 8;
+    const fill = options.fill || (dark ? colors.attention : colors.surface);
+    const stroke = options.stroke || (dark ? colors.attention : colors.ink);
+    const textFill = options.textFill || (dark ? colors.surface : colors.ink);
     const shape = svgEl("rect", {
       class: "arch-pill-shape",
       x: box.x,
@@ -436,10 +446,13 @@
       height: box.h,
       rx,
       ry: rx,
-      fill: dark ? colors.attention : colors.surface,
-      stroke: dark ? colors.attention : colors.ink,
+      fill,
+      stroke,
       "stroke-width": dark ? 1 : 1.15,
     });
+    if (options.dash) {
+      shape.setAttribute("stroke-dasharray", options.dash);
+    }
     parent.appendChild(shape);
     const lines = wrapLines(box.label, options.maxChars || (dark ? 16 : 22));
     const fontSize = options.fontSize || (dark ? 11 : 11);
@@ -454,7 +467,7 @@
             x: box.cx,
             y: startY + index * lineH,
             "text-anchor": "middle",
-            fill: dark ? colors.surface : colors.ink,
+            fill: textFill,
             "font-size": fontSize,
             "font-weight": dark ? 600 : 500,
             "font-family": FONT,
@@ -505,6 +518,23 @@
     );
   }
 
+  function mixerKind(box) {
+    const label = String((box && box.label) || "");
+    if (/mamba/i.test(label)) {
+      return "mamba";
+    }
+    if (/criss-cross/i.test(label)) {
+      return "criss";
+    }
+    if (/masked|causal/i.test(label)) {
+      return "causal";
+    }
+    if (box && box.kind === "attention") {
+      return "mha";
+    }
+    return "";
+  }
+
   function drawBox(parent, box, colors) {
     const group = svgEl("g", { class: `arch-step arch-step-${box.kind || "module"}` });
     if (box.id) {
@@ -513,7 +543,24 @@
     if (box.kind === "add") {
       drawAdd(group, box, colors);
     } else {
-      drawPill(group, box, colors, { dark: box.kind === "attention", maxChars: box.kind === "attention" ? 24 : 28 });
+      const mixer = mixerKind(box);
+      const isAttn = box.kind === "attention";
+      const opts = {
+        dark: isAttn && mixer !== "mamba",
+        maxChars: isAttn ? 22 : 28,
+      };
+      if (mixer === "mamba") {
+        opts.fill = colors.accentDeep;
+        opts.textFill = colors.surface;
+        opts.rx = 12;
+      }
+      if (mixer === "causal") {
+        opts.dash = "3.5 2.6";
+      }
+      drawPill(group, box, colors, opts);
+      if (mixer) {
+        group.setAttribute("data-arch-mixer", mixer);
+      }
     }
     parent.appendChild(group);
     return group;
@@ -801,7 +848,8 @@
       (head.length ? STACK_GAP + headH : 0);
     const chassisH = Math.max(220, chassisInner + CHASSIS_PAD_Y * 2);
     const belowH = below.length ? PILL_H : 0;
-    const titleH = 52;
+    const family = String(diagram.family || "").trim();
+    const titleH = family ? 66 : 52;
     const footerH = annotations.embed_dim ? 36 : 18;
     const viewH = titleH + chassisH + (below.length ? 28 + belowH : 12) + footerH;
 
@@ -831,7 +879,7 @@
         "text",
         {
           x: CHASSIS_X,
-          y: 34,
+          y: family ? 26 : 34,
           fill: colors.accent,
           "font-size": 24,
           "font-weight": 700,
@@ -840,6 +888,23 @@
         titleText,
       ),
     );
+    if (family) {
+      svg.appendChild(
+        svgEl(
+          "text",
+          {
+            x: CHASSIS_X,
+            y: 48,
+            fill: colors.accentDeep,
+            "font-size": 13,
+            "font-weight": 650,
+            "font-family": FONT,
+            "data-arch-family": family,
+          },
+          family,
+        ),
+      );
+    }
 
     svg.appendChild(
       svgEl("rect", {
@@ -1006,7 +1071,9 @@
         note.id === "cost-st" ||
         note.id === "ffn-kind" ||
         note.id === "unify-meta" ||
-        /^(fourier|rope|qk-|frozen|asymmetric|geglu|swiglu|gelu|learned)/i.test(String(note.label || ""));
+        note.id === "causal-mask" ||
+        note.id === "chan-meta" ||
+        /^(fourier|rope|qk-|frozen|asymmetric|geglu|swiglu|gelu|learned|causal|electrode)/i.test(String(note.label || ""));
       const lines = wrapLines(note.label, isShort ? 16 : 18);
       const textX = isShort ? CHASSIS_X - 14 : CHASSIS_X - 72;
       const textY = anchor.cy - ((lines.length - 1) * 7);

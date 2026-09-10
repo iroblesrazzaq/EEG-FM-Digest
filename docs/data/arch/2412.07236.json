@@ -40,6 +40,7 @@
         "title": "FeedForward (GELU · 2 layers)"
       }
     ],
+    "family": "Criss-cross transformer",
     "head": [
       {
         "id": "pool",
@@ -59,7 +60,8 @@
       "has_patch": true
     },
     "notes": {
-      "attn": "criss_cross"
+      "attn": "criss_cross",
+      "family": "Criss-cross transformer"
     },
     "param_label": "4.9M",
     "repeat": {

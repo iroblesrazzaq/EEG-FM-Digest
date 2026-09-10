@@ -157,7 +157,17 @@ def test_models_tab_renders_reve_diagram(browser, real_docs_site):
         femba = page.locator('[id="arch-2502.06438"] .arch-graph-svg').text_content() or ""
         assert "Bidirectional Mamba" in femba
         eegpt = page.locator('[id="arch-2410.19779"] .arch-graph-svg').text_content() or ""
-        assert "Multi-head attention" in eegpt
+        assert "BrainGPT" in eegpt
+        assert "Autoregressive transformer" in eegpt
+        assert "Masked multi-head attention" in eegpt
+        assert "Next-token head" in eegpt
+        assert "Electrode embedding" in eegpt
+        families = page.locator(".arch-family").all_text_contents()
+        assert len(families) >= 7
+        assert len(set(families)) >= 6
+        assert "Autoregressive transformer" in families
+        assert "Bidirectional Mamba" in families
+        assert "Criss-cross transformer" in families
     finally:
         context.close()
 

@@ -2,12 +2,22 @@
   "arxiv_id_base": "2410.19779",
   "diagram": {
     "annotations": {
-      "embed_dim": 64,
+      "embed_dim": 512,
       "left": [
+        {
+          "anchor": "enc.attn",
+          "id": "causal-mask",
+          "label": "Causal mask\nnext-token"
+        },
         {
           "anchor": "enc.mlp",
           "id": "ffn-kind",
           "label": "GELU\n2-layer MLP"
+        },
+        {
+          "anchor": "chan",
+          "id": "chan-meta",
+          "label": "Electrode-wise"
         }
       ]
     },
@@ -23,35 +33,42 @@
         "activation": "GELU",
         "anchor": "enc.mlp",
         "gated": false,
-        "hidden_dim": null,
+        "hidden_dim": 2048,
         "id": "ffn-mod",
         "kind": "ffn",
         "layers": 2,
         "title": "FeedForward (GELU · 2 layers)"
+      },
+      {
+        "anchor": "enc.attn",
+        "detail": "Head dim 64",
+        "id": "attn-heads",
+        "kind": "heads",
+        "label": "8 heads"
       }
     ],
+    "family": "Autoregressive transformer",
     "head": [
-      {
-        "id": "pool",
-        "kind": "pool",
-        "label": "Pooling"
-      },
       {
         "id": "out",
         "kind": "linear",
-        "label": "Linear output layer"
+        "label": "Next-token head"
       }
     ],
     "meta": {
-      "causal": false,
+      "causal": true,
       "eeg_like": true,
       "gated": false,
       "has_patch": true
     },
-    "notes": {},
+    "notes": {
+      "family": "Autoregressive transformer",
+      "head_dim": 64,
+      "objective": "autoregressive"
+    },
     "param_label": "25M",
     "repeat": {
-      "count": 1,
+      "count": 8,
       "id": "enc",
       "steps": [
         {
@@ -62,7 +79,7 @@
         {
           "id": "enc.attn",
           "kind": "attention",
-          "label": "Multi-head attention"
+          "label": "Masked multi-head attention"
         },
         {
           "id": "enc.n2",
@@ -86,9 +103,14 @@
         "id": "patch",
         "kind": "embed",
         "label": "Patch embedding layer"
+      },
+      {
+        "id": "chan",
+        "kind": "embed",
+        "label": "Electrode embedding"
       }
     ],
-    "title": "EEGPT"
+    "title": "BrainGPT"
   },
   "edges": [
     {
@@ -101,7 +123,7 @@
     },
     {
       "from": "target_encoder",
-      "shape": "(B, 64)",
+      "shape": "(B, 512)",
       "to": "output"
     }
   ],
@@ -120,7 +142,7 @@
   },
   "graph_path": "data/arch/2410.19779.json",
   "hf_repo": "braindecode/eegpt-pretrained",
-  "label": "EEGPT",
+  "label": "BrainGPT",
   "month": "2024-10",
   "nodes": [
     {
@@ -167,7 +189,7 @@
       "label": "Output",
       "shape": [
         null,
-        64
+        512
       ]
     }
   ],
