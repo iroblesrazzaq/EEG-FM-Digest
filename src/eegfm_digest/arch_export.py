@@ -212,7 +212,7 @@ def build_export_payload(
     graph = graph_for_model(cfg=cfg, tensor_names=tensor_names, repo_id=repo_id, arxiv_id=arxiv_id)
     fact_sheet = fact_sheet_for_graph(cfg)
     graph_path = f"{GRAPH_REL_PREFIX}/{arxiv_id}.json"
-    return {
+    payload: dict[str, Any] = {
         "arxiv_id_base": arxiv_id,
         "title": title,
         "label": short_model_label(title, repo_id),
@@ -225,6 +225,10 @@ def build_export_payload(
         "nodes": graph["nodes"],
         "edges": graph["edges"],
     }
+    diagram = graph.get("diagram")
+    if isinstance(diagram, dict):
+        payload["diagram"] = diagram
+    return payload
 
 
 def architecture_site_payload(payload: dict[str, Any]) -> dict[str, Any]:

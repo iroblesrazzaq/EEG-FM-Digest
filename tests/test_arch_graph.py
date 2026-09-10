@@ -74,6 +74,31 @@ def test_reve_graph_overview_and_expandable_encoder():
     assert "(B, 512)" in shapes
 
 
+def test_reve_diagram_matches_raschka_gallery_structure():
+    graph = reve_graph(None)
+    diagram = graph["diagram"]
+    assert diagram["title"] == "REVE"
+    assert diagram["param_label"] == "69M"
+    assert [item["id"] for item in diagram["below"]] == ["eeg"]
+    assert [item["id"] for item in diagram["stem"]] == ["patch"]
+    assert diagram["repeat"]["count"] == 22
+    assert [step["kind"] for step in diagram["repeat"]["steps"]] == [
+        "norm",
+        "attention",
+        "norm",
+        "ffn",
+        "add",
+    ]
+    assert [item["label"] for item in diagram["head"]] == ["Pooling", "Linear output layer"]
+    kinds = {item["kind"] for item in diagram["callouts"]}
+    assert kinds == {"ffn", "heads"}
+    ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
+    assert ffn["activation"] == "GELU"
+    assert ffn["hidden_dim"] == 1362
+    assert "GeGLU" in ffn["title"]
+    assert diagram["annotations"]["embed_dim"] == 512
+
+
 def test_looks_like_reve_from_arxiv_and_repo():
     assert looks_like_reve("brain-bzh/reve-base", "2510.21585", None)
     assert looks_like_reve("reve-model/reve", None, None)
