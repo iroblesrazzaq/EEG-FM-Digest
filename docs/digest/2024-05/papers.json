@@ -208,6 +208,25 @@
       }
     },
     {
+      "architecture": {
+        "fact_sheet": {
+          "architectures": null,
+          "context_length": null,
+          "hidden_act": null,
+          "hidden_size": null,
+          "intermediate_size": null,
+          "model_type": null,
+          "num_attention_heads": null,
+          "num_key_value_heads": null,
+          "num_layers": null,
+          "num_params": 5819936,
+          "vocab_size": null
+        },
+        "graph_path": "data/arch/2405.18765.json",
+        "hf_repo": "braindecode/labram-pretrained",
+        "skip_reason": null,
+        "status": "ok"
+      },
       "arxiv_id": "2405.18765v1",
       "arxiv_id_base": "2405.18765",
       "authors": [

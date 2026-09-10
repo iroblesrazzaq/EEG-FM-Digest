@@ -3,6 +3,25 @@
   "month": "2024-12",
   "papers": [
     {
+      "architecture": {
+        "fact_sheet": {
+          "architectures": null,
+          "context_length": null,
+          "hidden_act": null,
+          "hidden_size": null,
+          "intermediate_size": null,
+          "model_type": null,
+          "num_attention_heads": null,
+          "num_key_value_heads": null,
+          "num_layers": null,
+          "num_params": 4924000,
+          "vocab_size": null
+        },
+        "graph_path": "data/arch/2412.07236.json",
+        "hf_repo": "braindecode/cbramod-pretrained",
+        "skip_reason": null,
+        "status": "ok"
+      },
       "arxiv_id": "2412.07236v6",
       "arxiv_id_base": "2412.07236",
       "authors": [

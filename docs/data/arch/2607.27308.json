@@ -1,0 +1,257 @@
+{
+  "arxiv_id_base": "2607.27308",
+  "diagram": {
+    "annotations": {
+      "embed_dim": 1024,
+      "left": [
+        {
+          "anchor": "enc.attn",
+          "id": "pe",
+          "label": "4D RoPE"
+        }
+      ]
+    },
+    "below": [
+      {
+        "id": "eeg",
+        "kind": "input",
+        "label": "Sample EEG"
+      }
+    ],
+    "callouts": [
+      {
+        "activation": "SiLU",
+        "anchor": "enc.mlp",
+        "gated": true,
+        "hidden_dim": 2816,
+        "id": "ffn-mod",
+        "kind": "ffn",
+        "title": "FeedForward (SwiGLU) module"
+      },
+      {
+        "anchor": "enc.attn",
+        "detail": "Head dim 64",
+        "id": "attn-heads",
+        "kind": "heads",
+        "label": "8 heads"
+      }
+    ],
+    "head": [
+      {
+        "id": "pool",
+        "kind": "pool",
+        "label": "Pooling"
+      },
+      {
+        "id": "out",
+        "kind": "linear",
+        "label": "Linear output layer"
+      }
+    ],
+    "meta": {
+      "causal": false,
+      "eeg_like": true,
+      "gated": true,
+      "has_patch": false
+    },
+    "notes": {
+      "head_dim": 64
+    },
+    "param_label": "382M",
+    "repeat": {
+      "count": 16,
+      "id": "enc",
+      "steps": [
+        {
+          "id": "enc.n1",
+          "kind": "norm",
+          "label": "RMSNorm 1"
+        },
+        {
+          "id": "enc.attn",
+          "kind": "attention",
+          "label": "Multi-head attention"
+        },
+        {
+          "id": "enc.n2",
+          "kind": "norm",
+          "label": "RMSNorm 2"
+        },
+        {
+          "id": "enc.mlp",
+          "kind": "ffn",
+          "label": "Feed forward"
+        },
+        {
+          "id": "enc.add",
+          "kind": "add",
+          "label": "+"
+        }
+      ]
+    },
+    "stem": [
+      {
+        "id": "patch",
+        "kind": "embed",
+        "label": "Patch embedding layer"
+      }
+    ],
+    "title": "ZUNA1.1"
+  },
+  "edges": [
+    {
+      "from": "input",
+      "to": "stem"
+    },
+    {
+      "from": "stem",
+      "to": "model.decoder"
+    },
+    {
+      "from": "model.decoder",
+      "to": "model.encoder"
+    },
+    {
+      "from": "model.encoder",
+      "shape": "(B, 1024)",
+      "to": "output"
+    }
+  ],
+  "fact_sheet": {
+    "architectures": null,
+    "context_length": null,
+    "hidden_act": null,
+    "hidden_size": 1024,
+    "intermediate_size": null,
+    "model_type": null,
+    "num_attention_heads": null,
+    "num_key_value_heads": null,
+    "num_layers": 16,
+    "num_params": 382106752,
+    "vocab_size": null
+  },
+  "graph_path": "data/arch/2607.27308.json",
+  "hf_repo": "Zyphra/ZUNA1.1",
+  "label": "ZUNA1.1",
+  "month": "2026-07",
+  "nodes": [
+    {
+      "id": "input",
+      "kind": "input",
+      "label": "Input"
+    },
+    {
+      "id": "stem",
+      "kind": "stem",
+      "label": "Stem / embeddings"
+    },
+    {
+      "children": [
+        {
+          "id": "model.decoder.attention",
+          "kind": "attn",
+          "label": "Attention"
+        },
+        {
+          "id": "model.decoder.attention_norm",
+          "kind": "attn",
+          "label": "Attention norm"
+        },
+        {
+          "id": "model.decoder.attention_norm_post",
+          "kind": "attn",
+          "label": "Attention norm post"
+        },
+        {
+          "id": "model.decoder.cross_attention",
+          "kind": "attn",
+          "label": "Cross attention"
+        },
+        {
+          "id": "model.decoder.cross_attention_norm_post",
+          "kind": "attn",
+          "label": "Cross attention norm"
+        },
+        {
+          "id": "model.decoder.cross_attention_x_norm",
+          "kind": "attn",
+          "label": "Cross attention x"
+        },
+        {
+          "id": "model.decoder.cross_attention_y_norm",
+          "kind": "attn",
+          "label": "Cross attention y"
+        },
+        {
+          "id": "model.decoder.feed_forward",
+          "kind": "mlp",
+          "label": "Feed forward"
+        },
+        {
+          "id": "model.decoder.ffn_norm",
+          "kind": "mlp",
+          "label": "Ffn norm"
+        },
+        {
+          "id": "model.decoder.ffn_norm_post",
+          "kind": "mlp",
+          "label": "Ffn norm post"
+        }
+      ],
+      "id": "model.decoder",
+      "kind": "repeat",
+      "label": "Model decoder",
+      "repeat": 16
+    },
+    {
+      "children": [
+        {
+          "id": "model.encoder.attention",
+          "kind": "attn",
+          "label": "Attention"
+        },
+        {
+          "id": "model.encoder.attention_norm",
+          "kind": "attn",
+          "label": "Attention norm"
+        },
+        {
+          "id": "model.encoder.attention_norm_post",
+          "kind": "attn",
+          "label": "Attention norm post"
+        },
+        {
+          "id": "model.encoder.feed_forward",
+          "kind": "mlp",
+          "label": "Feed forward"
+        },
+        {
+          "id": "model.encoder.ffn_norm",
+          "kind": "mlp",
+          "label": "Ffn norm"
+        },
+        {
+          "id": "model.encoder.ffn_norm_post",
+          "kind": "mlp",
+          "label": "Ffn norm post"
+        }
+      ],
+      "id": "model.encoder",
+      "kind": "repeat",
+      "label": "Model encoder",
+      "repeat": 16
+    },
+    {
+      "id": "output",
+      "kind": "output",
+      "label": "Output",
+      "shape": [
+        null,
+        1024
+      ]
+    }
+  ],
+  "source": "hf_config+safetensors_header",
+  "title": "ZUNA1.1: A more flexible EEG foundation model for Denoising and Super-resolution",
+  "weights_url": "https://huggingface.co/Zyphra/ZUNA1.1"
+}

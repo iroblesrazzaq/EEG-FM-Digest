@@ -41,7 +41,7 @@
       "json_path": "digest/2026-07/papers.json",
       "month": "2026-07",
       "month_label": "July 2026",
-      "month_rev": "df4c96a352be7ed1",
+      "month_rev": "5d57bd72a203babc",
       "stats": {
         "accepted": 15,
         "candidates": 33,
@@ -212,7 +212,7 @@
       "json_path": "digest/2025-10/papers.json",
       "month": "2025-10",
       "month_label": "October 2025",
-      "month_rev": "8550d1be038ddce2",
+      "month_rev": "d38881fe02648187",
       "stats": {
         "accepted": 8,
         "candidates": 26,
@@ -402,7 +402,7 @@
       "json_path": "digest/2024-12/papers.json",
       "month": "2024-12",
       "month_label": "December 2024",
-      "month_rev": "0adfa67db3974005",
+      "month_rev": "854708a40c0e9169",
       "stats": {
         "accepted": 3,
         "candidates": 18,
@@ -525,7 +525,7 @@
       "json_path": "digest/2024-05/papers.json",
       "month": "2024-05",
       "month_label": "May 2024",
-      "month_rev": "2adf81205f2dd5a9",
+      "month_rev": "0e88ed87678e9a6b",
       "stats": {
         "accepted": 3,
         "candidates": 7,
