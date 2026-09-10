@@ -468,7 +468,7 @@ def _ffn_title(cfg: dict[str, Any], gated: bool, activation: str) -> str:
     return "FeedForward (2-layer MLP)"
 
 
-def _attention_label(*, heads: int, kv_heads: int | None, causal: bool) -> str:
+def _attention_label(*, heads: int, kv_heads: int | None, causal: bool, eeg_like: bool = False) -> str:
     kv = kv_heads if kv_heads is not None else heads
     if kv <= 0:
         kv = heads
@@ -478,6 +478,8 @@ def _attention_label(*, heads: int, kv_heads: int | None, causal: bool) -> str:
         core = "grouped-query attention"
     else:
         core = "multi-head attention"
+    if causal and eeg_like and core == "multi-head attention":
+        return "Causal attention"
     if causal:
         return "Masked " + core
     return core[:1].upper() + core[1:]
@@ -684,7 +686,9 @@ def diagram_from_hf(
     elif criss_cross:
         attn_label = "Criss-cross attention"
     else:
-        attn_label = _attention_label(heads=heads or 1, kv_heads=kv_heads, causal=causal)
+        attn_label = _attention_label(
+            heads=heads or 1, kv_heads=kv_heads, causal=causal, eeg_like=eeg_like
+        )
     steps.append({"id": attn_id, "label": attn_label, "kind": "attention"})
     if has_ffn:
         steps.extend(

@@ -159,9 +159,10 @@ def test_models_tab_renders_reve_diagram(browser, real_docs_site):
         eegpt = page.locator('[id="arch-2410.19779"] .arch-graph-svg').text_content() or ""
         assert "BrainGPT" in eegpt
         assert "Autoregressive transformer" in eegpt
-        assert "Masked multi-head attention" in eegpt
+        assert "Causal attention" in eegpt
         assert "Next-token head" in eegpt
         assert "Electrode embedding" in eegpt
+        assert "Causal mask" in eegpt
         families = page.locator(".arch-family").all_text_contents()
         assert len(families) >= 7
         assert len(set(families)) >= 6

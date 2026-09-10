@@ -278,7 +278,7 @@ def test_diagram_from_hf_braingpt_is_autoregressive_with_electrode_stem():
     assert diagram["repeat"]["count"] == 8
     assert diagram["annotations"]["embed_dim"] == 512
     attn = next(step for step in diagram["repeat"]["steps"] if step["kind"] == "attention")
-    assert attn["label"] == "Masked multi-head attention"
+    assert attn["label"] == "Causal attention"
     assert [item["label"] for item in diagram["stem"]] == [
         "Patch embedding layer",
         "Electrode embedding",
