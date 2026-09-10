@@ -7,14 +7,15 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
+from .architecture import architecture_from_summary
 from .arxiv import fetch_month_candidates, fetch_window_candidates
 from .backend_rows import build_backend_rows
 from .cache_meta import build_stage_metadata, is_cache_current
 from .config import Config
 from .db import DigestDB
 from .llm import LLMCallConfig, LLMRateLimitError, build_llm_call, load_api_key, provider_base_url
-from .llm_logging import log_stage_failure
-from .pdf import download_pdf, extract_text
+from .llm_logging import log_stage_failure, log_summary_attempt
+from .pdf import download_pdf, extract_text  # noqa: F401
 from .render import build_digest, write_json, write_jsonl
 from .row_views import empty_pdf_state, normalize_triage_row
 from .selection import select_papers_for_summary
@@ -25,6 +26,11 @@ from .summarize_stage import (
     prepare_pdf_and_text,
     summary_inputs_from_pdf_result,
     summary_used_fulltext,
+)
+from .summary_attempt import (
+    classify_summary_attempt,
+    summary_attempt_category,
+    summary_is_json_error,
 )
 from .triage import triage_paper, triage_paper_with_meta
 
@@ -46,6 +52,7 @@ class MonthRunStats:
     summary_failures: int = 0
     failed_triage_ids: tuple[str, ...] = ()
     failed_summary_ids: tuple[str, ...] = ()
+    failed_summary_categories: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -86,6 +93,12 @@ class WindowRunStats:
             aid for month in self.per_month for aid in month.failed_summary_ids
         ) + self.failed_straggler_ids
 
+    @property
+    def failed_summary_categories(self) -> tuple[str, ...]:
+        return tuple(
+            cat for month in self.per_month for cat in month.failed_summary_categories
+        )
+
 
 @dataclass(frozen=True)
 class StragglerStats:
@@ -103,6 +116,8 @@ class OnePaperSummaryOutcome:
     pdf_state: dict[str, object | None]
     failed: bool
     repair_used: bool = False
+    summary_attempt: dict | None = None
+    architecture: dict | None = None
 
 
 def _read(path: Path) -> str:
@@ -125,6 +140,58 @@ def _run_summary_call_with_meta(*args, **kwargs) -> tuple[dict[str, object], dic
     return summarize_paper_with_meta(*args, **kwargs)
 
 
+def _cached_meta(cached_summary: dict | None) -> dict | None:
+    if not isinstance(cached_summary, dict):
+        return None
+    meta = cached_summary.get("meta")
+    return meta if isinstance(meta, dict) else None
+
+
+def _existing_architecture(cached_meta: dict | None) -> dict | None:
+    if not isinstance(cached_meta, dict):
+        return None
+    architecture = cached_meta.get("architecture")
+    return architecture if isinstance(architecture, dict) else None
+
+
+def _existing_attempt(cached_meta: dict | None, summary: dict | None) -> dict:
+    if isinstance(cached_meta, dict):
+        attempt = cached_meta.get("summary_attempt")
+        if isinstance(attempt, dict) and summary_attempt_category(attempt):
+            return attempt
+    return classify_summary_attempt(summary=summary)
+
+
+def _persist_summary_row(
+    db: DigestDB,
+    *,
+    month: str,
+    paper: dict,
+    summary: dict,
+    summary_ctx,
+    repair_used: bool,
+    attempt: dict,
+    architecture: dict | None,
+    cached_meta: dict | None = None,
+) -> dict:
+    if cached_meta:
+        meta = dict(cached_meta)
+    else:
+        meta = build_stage_metadata(
+            summary_ctx.descriptor,
+            repair_used=repair_used,
+            updated_at_source=str(paper.get("updated", "")).strip() or None,
+        )
+    meta["summary_attempt"] = attempt
+    if architecture is not None:
+        meta["architecture"] = architecture
+    else:
+        meta.pop("architecture", None)
+    db.upsert_summary(month, summary, meta=meta)
+    db.upsert_summary_attempt(month, str(paper.get("arxiv_id_base", "")), attempt)
+    return meta
+
+
 def _summarize_one_paper(
     *,
     paper: dict,
@@ -144,19 +211,43 @@ def _summarize_one_paper(
     pdf_state: dict[str, object | None] = empty_pdf_state()
     try:
         cached_summary = None if force else db.get_summary_with_meta(arxiv_id_base)
+        cached_meta = _cached_meta(cached_summary)
         cache_current = bool(
             cached_summary
-            and is_cache_current(
-                cached_summary.get("meta"), summary_ctx.descriptor["cache_version"]
-            )
+            and is_cache_current(cached_meta, summary_ctx.descriptor["cache_version"])
         )
         cached_data = cached_summary["data"] if cached_summary else None
-        if cache_current and summary_used_fulltext(cached_data):
+        cached_usable = (
+            cache_current
+            and summary_used_fulltext(cached_data)
+            and not summary_is_json_error(cached_data)
+        )
+        if cached_usable:
+            architecture = architecture_from_summary(
+                cached_data,
+                _existing_architecture(cached_meta),
+                force=force,
+            )
+            attempt = _existing_attempt(cached_meta, cached_data)
+            if architecture != _existing_architecture(cached_meta):
+                _persist_summary_row(
+                    db,
+                    month=month,
+                    paper=paper,
+                    summary=cached_data,
+                    summary_ctx=summary_ctx,
+                    repair_used=bool(cached_meta.get("repair_used")) if cached_meta else False,
+                    attempt=attempt,
+                    architecture=architecture,
+                    cached_meta=cached_meta,
+                )
             return OnePaperSummaryOutcome(
                 arxiv_id_base=arxiv_id_base,
                 summary=cached_data,
                 pdf_state=pdf_state,
                 failed=False,
+                summary_attempt=attempt,
+                architecture=architecture,
             )
 
         pdf_result = prepare_pdf_and_text(paper, month_out, cfg, no_pdf=no_pdf)
@@ -169,29 +260,46 @@ def _summarize_one_paper(
             tail_chars=cfg.text_tail_chars,
         )
         if summary_inputs is None:
+            attempt = classify_summary_attempt(
+                summary=None,
+                pdf_state=pdf_state,
+                failed=True,
+                notes=pdf_result.notes,
+                no_pdf=True,
+            )
             print(
                 f"[pipeline] WARNING: pdf skipped for {arxiv_id_base} (--no-pdf); "
                 "skipping (will retry next run)",
                 file=sys.stderr,
             )
+            log_summary_attempt(arxiv_id_base, attempt)
+            _persist_attempt(db, month=month, arxiv_id_base=arxiv_id_base, attempt=attempt)
             return OnePaperSummaryOutcome(
                 arxiv_id_base=arxiv_id_base,
                 summary=None,
                 pdf_state=pdf_state,
                 failed=True,
+                summary_attempt=attempt,
             )
         if not summary_inputs.used_fulltext:
-            if cache_current and cached_data is not None:
+            if (
+                cache_current
+                and cached_data is not None
+                and not summary_is_json_error(cached_data)
+            ):
                 print(
                     f"[pipeline] WARNING: pdf still unavailable for {arxiv_id_base}; "
                     "keeping abstract-only summary",
                     file=sys.stderr,
                 )
+                attempt = _existing_attempt(cached_meta, cached_data)
                 return OnePaperSummaryOutcome(
                     arxiv_id_base=arxiv_id_base,
                     summary=cached_data,
                     pdf_state=pdf_state,
                     failed=False,
+                    summary_attempt=attempt,
+                    architecture=_existing_architecture(cached_meta),
                 )
             print(
                 f"[pipeline] WARNING: pdf unavailable for {arxiv_id_base}; "
@@ -213,26 +321,55 @@ def _summarize_one_paper(
             max_input_tokens=cfg.summary_max_input_tokens,
         )
         repair_used = bool(summary_call_meta.get("repair_used", False))
-        db.upsert_summary(
-            month,
-            summary,
-            meta=build_stage_metadata(
-                summary_ctx.descriptor,
-                repair_used=repair_used,
-                updated_at_source=str(paper.get("updated", "")).strip() or None,
-            ),
+        json_error = bool(summary_call_meta.get("json_error", False)) or summary_is_json_error(
+            summary
+        )
+        attempt = classify_summary_attempt(
+            summary=summary,
+            pdf_state=pdf_state,
+            failed=json_error,
+            notes=summary_inputs.notes,
+            json_error=json_error,
+        )
+        architecture = None
+        if not json_error:
+            architecture = architecture_from_summary(
+                summary,
+                _existing_architecture(cached_meta),
+                force=force,
+            )
+        _persist_summary_row(
+            db,
+            month=month,
+            paper=paper,
+            summary=summary,
+            summary_ctx=summary_ctx,
+            repair_used=repair_used,
+            attempt=attempt,
+            architecture=architecture,
         )
         _maybe_sleep_after_summary_call(cfg)
+        if json_error:
+            log_summary_attempt(arxiv_id_base, attempt)
         return OnePaperSummaryOutcome(
             arxiv_id_base=arxiv_id_base,
             summary=summary,
             pdf_state=pdf_state,
-            failed=False,
+            failed=json_error,
             repair_used=repair_used,
+            summary_attempt=attempt,
+            architecture=architecture,
         )
     except Exception as exc:
         if isinstance(exc, LLMRateLimitError):
             raise
+        attempt = classify_summary_attempt(
+            summary=None,
+            pdf_state=pdf_state,
+            failed=True,
+            exc=exc,
+            no_pdf=no_pdf,
+        )
         log_stage_failure(
             "pipeline.summary",
             arxiv_id_base=arxiv_id_base,
@@ -240,6 +377,8 @@ def _summarize_one_paper(
             model=summary_llm_config.model,
             exc=exc,
         )
+        log_summary_attempt(arxiv_id_base, attempt)
+        _persist_attempt(db, month=month, arxiv_id_base=arxiv_id_base, attempt=attempt)
         print(
             f"[pipeline] WARNING: summary failed for {arxiv_id_base}: "
             f"{type(exc).__name__}: {exc}; skipping (will retry next run)",
@@ -250,19 +389,56 @@ def _summarize_one_paper(
             summary=None,
             pdf_state=pdf_state,
             failed=True,
+            summary_attempt=attempt,
         )
 
 
-def _load_existing_pdf_map(month_out: Path) -> dict[str, dict]:
-    """Preserve PDF extract metadata already written to backend_rows.jsonl."""
+def _digest_summaries(summaries: list[dict]) -> list[dict]:
+    """Summaries that may appear in digest aggregates (not JSON placeholders)."""
+    return [
+        summary
+        for summary in summaries
+        if isinstance(summary, dict) and not summary_is_json_error(summary)
+    ]
+
+
+def _persist_attempt(
+    db: DigestDB,
+    *,
+    month: str,
+    arxiv_id_base: str,
+    attempt: dict | None,
+) -> None:
+    """Store a summary_attempt even when no summary row exists yet."""
+    if not attempt:
+        return
+    db.upsert_summary_attempt(month, arxiv_id_base, attempt)
+    record = db.get_summary_with_meta(arxiv_id_base)
+    if record is None or not isinstance(record.get("data"), dict):
+        return
+    meta = dict(record["meta"]) if isinstance(record.get("meta"), dict) else {}
+    meta["summary_attempt"] = attempt
+    db.upsert_summary(month, record["data"], meta=meta)
+
+
+def _load_existing_backend_maps(
+    month_out: Path,
+) -> tuple[dict[str, dict], dict[str, dict], dict[str, dict]]:
+    """Load PDF/attempt/architecture already written to backend_rows.jsonl.
+
+    Rerender rebuilds architecture from SQLite meta (plus this-run overrides)
+    so a stale backend_rows entry cannot resurrect a dropped fact sheet.
+    """
     path = month_out / "backend_rows.jsonl"
+    pdf_map: dict[str, dict] = {}
+    attempt_map: dict[str, dict] = {}
+    architecture_map: dict[str, dict] = {}
     if not path.exists():
-        return {}
-    out: dict[str, dict] = {}
+        return pdf_map, attempt_map, architecture_map
     try:
         lines = path.read_text(encoding="utf-8").splitlines()
     except OSError:
-        return {}
+        return pdf_map, attempt_map, architecture_map
     for line in lines:
         stripped = line.strip()
         if not stripped:
@@ -274,10 +450,23 @@ def _load_existing_pdf_map(month_out: Path) -> dict[str, dict]:
         if not isinstance(row, dict):
             continue
         aid = str(row.get("arxiv_id_base", "")).strip()
+        if not aid:
+            continue
         pdf = row.get("pdf")
-        if aid and isinstance(pdf, dict):
-            out[aid] = pdf
-    return out
+        if isinstance(pdf, dict):
+            pdf_map[aid] = pdf
+        attempt = row.get("summary_attempt")
+        if isinstance(attempt, dict):
+            attempt_map[aid] = attempt
+        architecture = row.get("architecture")
+        if isinstance(architecture, dict):
+            architecture_map[aid] = architecture
+    return pdf_map, attempt_map, architecture_map
+
+
+def _load_existing_pdf_map(month_out: Path) -> dict[str, dict]:
+    pdf_map, _, _ = _load_existing_backend_maps(month_out)
+    return pdf_map
 
 
 def _rerender_month_from_db(
@@ -286,6 +475,8 @@ def _rerender_month_from_db(
     month: str,
     *,
     pdf_overrides: dict[str, dict] | None = None,
+    attempt_overrides: dict[str, dict] | None = None,
+    architecture_overrides: dict[str, dict] | None = None,
 ) -> None:
     """Rebuild month outputs/site from SQLite after a straggler summary succeeds."""
     month_out = cfg.output_dir / month
@@ -296,21 +487,48 @@ def _rerender_month_from_db(
         normalize_triage_row(str(t.get("arxiv_id_base", "")), t) for t in triage_raw
     ]
     triage_map = {t["arxiv_id_base"]: t for t in triage_rows}
-    summaries = sorted(
-        db.list_summaries_for_month(month),
+    records = db.list_summaries_with_meta_for_month(month)
+    stored_summaries = sorted(
+        [record["data"] for record in records if isinstance(record.get("data"), dict)],
         key=lambda x: (x.get("published_date", ""), x.get("arxiv_id_base", "")),
     )
-    summary_map = {s["arxiv_id_base"]: s for s in summaries}
-    pdf_map = _load_existing_pdf_map(month_out)
+    summary_map = {s["arxiv_id_base"]: s for s in stored_summaries}
+    digest_summaries = _digest_summaries(stored_summaries)
+    pdf_map, attempt_map, _ = _load_existing_backend_maps(month_out)
+    attempt_map.update(db.list_summary_attempts_for_month(month))
+    architecture_map: dict[str, dict] = {}
+    for record in records:
+        data = record.get("data") if isinstance(record.get("data"), dict) else {}
+        meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+        aid = str(data.get("arxiv_id_base", "")).strip()
+        if not aid:
+            continue
+        attempt = meta.get("summary_attempt")
+        if isinstance(attempt, dict):
+            attempt_map[aid] = attempt
+        architecture = meta.get("architecture")
+        if isinstance(architecture, dict):
+            architecture_map[aid] = architecture
     if pdf_overrides:
         pdf_map.update(pdf_overrides)
+    if attempt_overrides:
+        attempt_map.update(attempt_overrides)
+    if architecture_overrides:
+        architecture_map.update(architecture_overrides)
     for candidate in candidates:
         aid = candidate["arxiv_id_base"]
         if aid not in pdf_map:
             pdf_map[aid] = empty_pdf_state()
 
-    write_jsonl(month_out / "papers.jsonl", summaries)
-    backend_rows = build_backend_rows(candidates, triage_map, summary_map, pdf_map)
+    write_jsonl(month_out / "papers.jsonl", digest_summaries)
+    backend_rows = build_backend_rows(
+        candidates,
+        triage_map,
+        summary_map,
+        pdf_map,
+        attempt_map=attempt_map,
+        architecture_map=architecture_map,
+    )
     write_jsonl(month_out / "backend_rows.jsonl", backend_rows)
 
     featured_paper = None
@@ -323,14 +541,14 @@ def _rerender_month_from_db(
             featured_paper = None
 
     digest = build_digest(
-        month, candidates, triage_rows, summaries, featured_paper=featured_paper
+        month, candidates, triage_rows, digest_summaries, featured_paper=featured_paper
     )
     write_json(month_out / "digest.json", digest)
     metadata_map = {c["arxiv_id_base"]: c for c in candidates}
     write_month_site(
         cfg.docs_dir,
         month,
-        summaries,
+        digest_summaries,
         metadata_map,
         digest,
         backend_rows=backend_rows,
@@ -344,22 +562,27 @@ def resummarize_stragglers(
     no_pdf: bool = False,
     no_site: bool = False,
     skip_ids: set[str] | None = None,
+    only_ids: set[str] | None = None,
+    force: bool = False,
 ) -> StragglerStats:
-    """Re-attempt summarization for accept'd papers that have no summary row.
+    """Re-attempt summarization for accept'd papers that still need a real summary.
 
     Opens the DB first; if there are no stragglers, returns without building an
     LLM client. On success, re-renders affected months (unless ``no_site``).
 
     ``skip_ids`` excludes papers that already failed summary earlier in the same
     ``run_window`` so we do not double-process them before the next daily run.
+    ``only_ids`` limits the sweep to those arXiv ids. ``force`` retries even
+    papers that already have a full-text summary.
     """
     db = DigestDB(cfg.data_dir / "digest.sqlite")
     try:
         skip = skip_ids or set()
+        source = db.list_accepted() if force else db.get_accepted_without_summary()
         stragglers = [
             (month, aid)
-            for month, aid in db.get_accepted_without_summary()
-            if aid not in skip
+            for month, aid in source
+            if aid not in skip and (only_ids is None or aid in only_ids)
         ]
         if not stragglers:
             return StragglerStats()
@@ -382,6 +605,8 @@ def resummarize_stragglers(
             failed_ids: list[str] = []
             months_touched: set[str] = set()
             pdf_by_month: dict[str, dict[str, dict]] = {}
+            attempt_by_month: dict[str, dict[str, dict]] = {}
+            architecture_by_month: dict[str, dict[str, dict]] = {}
 
             for month, arxiv_id_base in stragglers:
                 paper = db.get_paper(arxiv_id_base)
@@ -399,6 +624,7 @@ def resummarize_stragglers(
                 month_out = cfg.output_dir / month
                 month_out.mkdir(parents=True, exist_ok=True)
                 prior_summary = db.get_summary(arxiv_id_base)
+                paper_force = force or summary_is_json_error(prior_summary)
                 outcome = _summarize_one_paper(
                     paper=paper,
                     triage=normalize_triage_row(arxiv_id_base, triage),
@@ -410,17 +636,36 @@ def resummarize_stragglers(
                     summary_ctx=summary_ctx,
                     summary_llm_config=summary_llm_config,
                     no_pdf=no_pdf,
-                    force=False,
+                    force=paper_force,
                 )
-                if outcome.failed or outcome.summary is None:
+                if outcome.summary_attempt:
+                    attempt_by_month.setdefault(month, {})[arxiv_id_base] = outcome.summary_attempt
+                if outcome.architecture:
+                    architecture_by_month.setdefault(month, {})[arxiv_id_base] = outcome.architecture
+                if (
+                    outcome.failed
+                    or outcome.summary is None
+                    or summary_is_json_error(outcome.summary)
+                ):
                     failed += 1
                     failed_ids.append(arxiv_id_base)
+                    log_summary_attempt(arxiv_id_base, outcome.summary_attempt)
+                    if outcome.summary is None:
+                        _persist_attempt(
+                            db,
+                            month=month,
+                            arxiv_id_base=arxiv_id_base,
+                            attempt=outcome.summary_attempt,
+                        )
+                    months_touched.add(month)
+                    pdf_by_month.setdefault(month, {})[arxiv_id_base] = outcome.pdf_state
                 else:
                     succeeded += 1
                     upgraded = summary_used_fulltext(outcome.summary) and not summary_used_fulltext(
                         prior_summary
                     )
-                    if prior_summary is None or upgraded:
+                    replaced_placeholder = summary_is_json_error(prior_summary)
+                    if prior_summary is None or upgraded or replaced_placeholder or force:
                         months_touched.add(month)
                         pdf_by_month.setdefault(month, {})[arxiv_id_base] = outcome.pdf_state
 
@@ -431,6 +676,8 @@ def resummarize_stragglers(
                         db,
                         month,
                         pdf_overrides=pdf_by_month.get(month),
+                        attempt_overrides=attempt_by_month.get(month),
+                        architecture_overrides=architecture_by_month.get(month),
                     )
                 update_home(cfg.docs_dir)
 
@@ -567,8 +814,11 @@ def run_month(
         summaries: list[dict] = []
         summary_map: dict[str, dict] = {}
         pdf_map: dict[str, dict[str, object | None]] = {}
+        attempt_map: dict[str, dict] = {}
+        architecture_map: dict[str, dict] = {}
         summary_failure_count = 0
         failed_summary_ids: list[str] = []
+        failed_summary_categories: list[str] = []
         for paper in accepted:
             arxiv_id_base = paper["arxiv_id_base"]
             outcome = _summarize_one_paper(
@@ -585,17 +835,36 @@ def run_month(
                 force=force,
             )
             pdf_map[arxiv_id_base] = outcome.pdf_state
-            if outcome.failed or outcome.summary is None:
+            if outcome.summary_attempt:
+                attempt_map[arxiv_id_base] = outcome.summary_attempt
+            if outcome.architecture:
+                architecture_map[arxiv_id_base] = outcome.architecture
+            if outcome.summary is not None:
+                summary_map[arxiv_id_base] = outcome.summary
+            if (
+                outcome.failed
+                or outcome.summary is None
+                or summary_is_json_error(outcome.summary)
+            ):
                 summary_failure_count += 1
                 failed_summary_ids.append(arxiv_id_base)
+                failed_summary_categories.append(
+                    summary_attempt_category(outcome.summary_attempt) or "llm_other"
+                )
             else:
                 summaries.append(outcome.summary)
-                summary_map[arxiv_id_base] = outcome.summary
 
         summaries = sorted(summaries, key=lambda x: (x["published_date"], x["arxiv_id_base"]))
         write_jsonl(month_out / "papers.jsonl", summaries)
 
-        backend_rows = build_backend_rows(candidates, triage_map, summary_map, pdf_map)
+        backend_rows = build_backend_rows(
+            candidates,
+            triage_map,
+            summary_map,
+            pdf_map,
+            attempt_map=attempt_map,
+            architecture_map=architecture_map,
+        )
         write_jsonl(month_out / "backend_rows.jsonl", backend_rows)
 
         digest = build_digest(month, candidates, triage_rows, summaries, featured_paper=feature_paper)
@@ -621,6 +890,7 @@ def run_month(
             summary_failures=summary_failure_count,
             failed_triage_ids=tuple(failed_triage_ids),
             failed_summary_ids=tuple(failed_summary_ids),
+            failed_summary_categories=tuple(failed_summary_categories),
         )
     finally:
         triage_llm.close()

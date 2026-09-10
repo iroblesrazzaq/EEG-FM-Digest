@@ -42,6 +42,12 @@ class DigestDB:
               stats_json TEXT NOT NULL,
               updated_at TEXT DEFAULT CURRENT_TIMESTAMP
             );
+            CREATE TABLE IF NOT EXISTS summary_attempts (
+              arxiv_id_base TEXT PRIMARY KEY,
+              month TEXT NOT NULL,
+              attempt_json TEXT NOT NULL,
+              updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+            );
             """
         )
         self._ensure_column("triage", "triage_meta_json", "TEXT")
@@ -144,6 +150,56 @@ class DigestDB:
         self.conn.execute("DELETE FROM summaries WHERE arxiv_id_base=?", (arxiv_id_base,))
         self.conn.commit()
 
+    def upsert_summary_attempt(self, month: str, arxiv_id_base: str, attempt: dict[str, Any]) -> None:
+        aid = str(arxiv_id_base or "").strip()
+        if not aid or not isinstance(attempt, dict):
+            return
+        self.conn.execute(
+            """
+            INSERT INTO summary_attempts(arxiv_id_base, month, attempt_json)
+            VALUES (?, ?, ?)
+            ON CONFLICT(arxiv_id_base) DO UPDATE SET
+              month=excluded.month,
+              attempt_json=excluded.attempt_json,
+              updated_at=CURRENT_TIMESTAMP
+            """,
+            (aid, month, json.dumps(attempt, ensure_ascii=False, sort_keys=True)),
+        )
+        self.conn.commit()
+
+    def get_summary_attempt(self, arxiv_id_base: str) -> dict[str, Any] | None:
+        row = self.conn.execute(
+            "SELECT attempt_json FROM summary_attempts WHERE arxiv_id_base=?",
+            (arxiv_id_base,),
+        ).fetchone()
+        if not row:
+            return None
+        try:
+            payload = json.loads(row["attempt_json"])
+        except json.JSONDecodeError:
+            return None
+        return payload if isinstance(payload, dict) else None
+
+    def list_summary_attempts_for_month(self, month: str) -> dict[str, dict[str, Any]]:
+        rows = self.conn.execute(
+            """
+            SELECT arxiv_id_base, attempt_json
+            FROM summary_attempts
+            WHERE month=?
+            ORDER BY arxiv_id_base
+            """,
+            (month,),
+        ).fetchall()
+        out: dict[str, dict[str, Any]] = {}
+        for row in rows:
+            try:
+                payload = json.loads(row["attempt_json"])
+            except json.JSONDecodeError:
+                continue
+            if isinstance(payload, dict):
+                out[str(row["arxiv_id_base"])] = payload
+        return out
+
     def get_paper(self, arxiv_id_base: str) -> dict[str, Any] | None:
         row = self.conn.execute(
             "SELECT metadata_json FROM papers WHERE arxiv_id_base=?",
@@ -174,23 +230,27 @@ class DigestDB:
         ).fetchall()
         return [json.loads(row["summary_json"]) for row in rows]
 
-    def get_accepted_without_summary(self) -> list[tuple[str, str]]:
-        """Return ``(month, arxiv_id_base)`` for accepts that need a full-text summary.
-
-        Includes accepts with no summary row, and accepts whose stored summary is
-        abstract-only (``used_fulltext`` is not true) so a later PDF success can
-        upgrade them.
-        """
+    def list_summaries_with_meta_for_month(self, month: str) -> list[dict[str, Any]]:
         rows = self.conn.execute(
             """
-            SELECT t.month, t.arxiv_id_base, t.triage_json, s.summary_json
-            FROM triage t
-            LEFT JOIN summaries s ON s.arxiv_id_base = t.arxiv_id_base
-            WHERE s.arxiv_id_base IS NULL
-               OR IFNULL(json_extract(s.summary_json, '$.used_fulltext'), 0) != 1
-            ORDER BY t.month, t.arxiv_id_base
-            """
+            SELECT summary_json, summary_meta_json
+            FROM summaries
+            WHERE month=?
+            ORDER BY arxiv_id_base
+            """,
+            (month,),
         ).fetchall()
+        out: list[dict[str, Any]] = []
+        for row in rows:
+            out.append(
+                {
+                    "data": json.loads(row["summary_json"]),
+                    "meta": json.loads(row["summary_meta_json"]) if row["summary_meta_json"] else None,
+                }
+            )
+        return out
+
+    def _accepted_rows(self, rows: list[sqlite3.Row]) -> list[tuple[str, str]]:
         out: list[tuple[str, str]] = []
         for row in rows:
             try:
@@ -203,6 +263,38 @@ class DigestDB:
                 continue
             out.append((str(row["month"]), str(row["arxiv_id_base"])))
         return out
+
+    def list_accepted(self) -> list[tuple[str, str]]:
+        """Return ``(month, arxiv_id_base)`` for every current accept."""
+        rows = self.conn.execute(
+            """
+            SELECT t.month, t.arxiv_id_base, t.triage_json
+            FROM triage t
+            ORDER BY t.month, t.arxiv_id_base
+            """
+        ).fetchall()
+        return self._accepted_rows(rows)
+
+    def get_accepted_without_summary(self) -> list[tuple[str, str]]:
+        """Return ``(month, arxiv_id_base)`` for accepts that need a full-text summary.
+
+        Includes accepts with no summary row, accepts whose stored summary is
+        abstract-only (``used_fulltext`` is not true), and accepts whose stored
+        summary is the JSON-repair placeholder so a later run can replace it.
+        """
+        rows = self.conn.execute(
+            """
+            SELECT t.month, t.arxiv_id_base, t.triage_json, s.summary_json
+            FROM triage t
+            LEFT JOIN summaries s ON s.arxiv_id_base = t.arxiv_id_base
+            WHERE s.arxiv_id_base IS NULL
+               OR IFNULL(json_extract(s.summary_json, '$.used_fulltext'), 0) != 1
+               OR instr(IFNULL(json_extract(s.summary_json, '$.notes'), ''), 'summary_json_error') > 0
+               OR json_extract(s.summary_meta_json, '$.summary_attempt.category') = 'llm_invalid_json'
+            ORDER BY t.month, t.arxiv_id_base
+            """
+        ).fetchall()
+        return self._accepted_rows(rows)
 
     def upsert_run(self, month: str, stats: dict[str, Any]) -> None:
         self.conn.execute(

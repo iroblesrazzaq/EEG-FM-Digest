@@ -128,3 +128,57 @@ def test_resolve_window_cli_until_overrides_now(tmp_path: Path):
         cli_until=override_until,
     )
     assert until == override_until
+
+
+def test_resummarize_flag_invokes_stragglers(monkeypatch, capsys):
+    captured: dict[str, object] = {}
+
+    monkeypatch.setattr(
+        "eegfm_digest.run.load_config",
+        lambda: type(
+            "Cfg",
+            (),
+            {
+                "data_dir": Path("/tmp"),
+            },
+        )(),
+    )
+
+    def fake_resummarize(cfg, **kwargs):
+        captured["kwargs"] = kwargs
+        return type(
+            "Stats",
+            (),
+            {
+                "attempted": 1,
+                "succeeded": 1,
+                "failed": 0,
+                "affected_months": ("2025-01",),
+                "failed_ids": (),
+            },
+        )()
+
+    monkeypatch.setattr("eegfm_digest.run.resummarize_stragglers", fake_resummarize)
+    monkeypatch.setattr("sys.argv", ["run.py", "--resummarize", "--ids", "2501.00001, 2501.00002"])
+    with pytest.raises(SystemExit) as excinfo:
+        main()
+    assert excinfo.value.code == 0
+    assert captured["kwargs"]["only_ids"] == {"2501.00001", "2501.00002"}
+    assert captured["kwargs"]["force"] is False
+    assert "[resummarize] attempted=1" in capsys.readouterr().out
+
+
+def test_resummarize_exclusive_with_month(monkeypatch, capsys):
+    monkeypatch.setattr("sys.argv", ["run.py", "--resummarize", "--month", "2025-01"])
+    with pytest.raises(SystemExit) as excinfo:
+        main()
+    assert excinfo.value.code == 2
+    assert "--resummarize and --month" in capsys.readouterr().err
+
+
+def test_ids_requires_resummarize(monkeypatch, capsys):
+    monkeypatch.setattr("sys.argv", ["run.py", "--ids", "2501.00001"])
+    with pytest.raises(SystemExit) as excinfo:
+        main()
+    assert excinfo.value.code == 2
+    assert "--ids requires --resummarize" in capsys.readouterr().err

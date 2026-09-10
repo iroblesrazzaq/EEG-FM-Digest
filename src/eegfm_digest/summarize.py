@@ -318,5 +318,5 @@ def summarize_paper_with_meta(
                     "used_fulltext": used_fulltext,
                     "notes": f"{merged_notes};summary_json_error",
                 },
-                {"repair_used": True},
+                {"repair_used": True, "json_error": True},
             )

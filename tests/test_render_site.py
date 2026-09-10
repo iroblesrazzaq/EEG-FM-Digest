@@ -149,6 +149,120 @@ def test_write_month_site_payload_includes_summary_failures(tmp_path):
     assert failed["summary_failed_reason"] == "download_or_extract_failed:ClientError"
 
 
+def test_write_month_site_degrades_json_placeholder(tmp_path):
+    docs_dir = tmp_path / "docs"
+    month = "2025-01"
+    placeholder = {
+        "arxiv_id_base": "2501.00004",
+        "title": "JSON Failed",
+        "published_date": "2025-01-04",
+        "categories": ["cs.LG"],
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "x;summary_json_error",
+        "limitations": ["unknown", "summary_json_error"],
+        "used_fulltext": True,
+        "open_source": {"code_url": None, "weights_url": None, "license": None},
+        "tags": {"paper_type": [], "backbone": [], "objective": [], "tokenization": [], "topology": []},
+    }
+    backend_rows = [
+        {
+            "arxiv_id": "2501.00004v1",
+            "arxiv_id_base": "2501.00004",
+            "title": "JSON Failed",
+            "published": "2025-01-04T00:00:00Z",
+            "authors": ["Dana"],
+            "categories": ["cs.LG"],
+            "links": {"abs": "https://arxiv.org/abs/2501.00004"},
+            "triage": {"decision": "accept", "confidence": 0.8, "reasons": ["fit"]},
+            "paper_summary": placeholder,
+            "summary_attempt": {"category": "llm_invalid_json", "error": None},
+            "pdf": {"downloaded": True, "pdf_path": "a", "text_path": "b", "extract_meta": {"tool": "pypdf"}},
+        }
+    ]
+    write_month_site(
+        docs_dir=docs_dir,
+        month=month,
+        summaries=[placeholder],
+        metadata={"2501.00004": {"authors": ["Dana"], "links": {"abs": "https://arxiv.org/abs/2501.00004"}}},
+        digest={
+            "month": month,
+            "stats": {"candidates": 1, "accepted": 1, "summarized": 0},
+            "featured_paper": None,
+            "top_picks": [],
+            "sections": [],
+        },
+        backend_rows=backend_rows,
+    )
+    payload = json.loads((docs_dir / "digest" / month / "papers.json").read_text(encoding="utf-8"))
+    paper = payload["papers"][0]
+    assert paper["summary"] is None
+    assert paper["summary_failed_reason"] == "llm_invalid_json"
+
+
+def test_write_month_site_includes_architecture_payload(tmp_path):
+    docs_dir = tmp_path / "docs"
+    month = "2025-01"
+    summary = {
+        "arxiv_id_base": "2501.00001",
+        "title": "New Model",
+        "published_date": "2025-01-01",
+        "categories": ["cs.LG"],
+        "key_points": ["p1", "p2"],
+        "unique_contribution": "u",
+        "detailed_summary": "d" * 90,
+        "one_liner": "l",
+        "paper_type": "new_model",
+        "data_scale": {"datasets": [], "subjects": None, "eeg_hours": None, "channels": None},
+        "method": {"architecture": None, "objective": None, "pretraining": None, "finetuning": None},
+        "evaluation": {"tasks": [], "benchmarks": [], "headline_results": []},
+        "open_source": {"code_url": None, "weights_url": "https://huggingface.co/org/model", "license": None},
+        "tags": {"paper_type": ["new-model"], "backbone": [], "objective": [], "tokenization": [], "topology": []},
+        "limitations": ["l1", "l2"],
+        "used_fulltext": True,
+        "notes": "ok",
+    }
+    architecture = {
+        "status": "ok",
+        "hf_repo": "org/model",
+        "hfviewer_url": "https://hfviewer.com/org/model",
+        "fact_sheet": {"model_type": "llama", "hidden_size": 512, "num_layers": 12},
+        "skip_reason": None,
+    }
+    write_month_site(
+        docs_dir=docs_dir,
+        month=month,
+        summaries=[summary],
+        metadata={"2501.00001": {"authors": ["Alice"], "links": {"abs": "https://arxiv.org/abs/2501.00001"}}},
+        digest={
+            "month": month,
+            "stats": {"candidates": 1, "accepted": 1, "summarized": 1},
+            "featured_paper": None,
+            "top_picks": [],
+            "sections": [],
+        },
+        backend_rows=[
+            {
+                "arxiv_id": "2501.00001v1",
+                "arxiv_id_base": "2501.00001",
+                "title": "New Model",
+                "published": "2025-01-01T00:00:00Z",
+                "authors": ["Alice"],
+                "categories": ["cs.LG"],
+                "links": {"abs": "https://arxiv.org/abs/2501.00001"},
+                "triage": {"decision": "accept", "confidence": 0.9, "reasons": ["fit"]},
+                "paper_summary": summary,
+                "architecture": architecture,
+                "pdf": {"downloaded": True, "pdf_path": "a", "text_path": "b", "extract_meta": {"tool": "cached"}},
+            }
+        ],
+    )
+    payload = json.loads((docs_dir / "digest" / month / "papers.json").read_text(encoding="utf-8"))
+    paper = payload["papers"][0]
+    assert paper["architecture"]["hf_repo"] == "org/model"
+    assert paper["architecture"]["hfviewer_url"] == "https://hfviewer.com/org/model"
+    assert paper["architecture"]["fact_sheet"]["hidden_size"] == 512
+
+
 def test_update_home_writes_month_manifest(tmp_path):
     docs_dir = tmp_path / "docs"
     month_a = docs_dir / "digest" / "2025-01"

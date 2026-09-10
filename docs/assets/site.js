@@ -481,6 +481,21 @@ function normalizePaper(raw, month) {
         : { decision: "accept", confidence: 0, reasons: [] },
     summary,
     summary_failed_reason: String(raw.summary_failed_reason || "").trim(),
+    architecture: normalizeArchitecture(raw.architecture),
+  };
+}
+
+function normalizeArchitecture(raw) {
+  if (!raw || typeof raw !== "object") {
+    return null;
+  }
+  const factSheet = raw.fact_sheet && typeof raw.fact_sheet === "object" ? raw.fact_sheet : null;
+  return {
+    status: String(raw.status || "").trim(),
+    hf_repo: String(raw.hf_repo || "").trim(),
+    hfviewer_url: String(raw.hfviewer_url || "").trim(),
+    skip_reason: String(raw.skip_reason || "").trim(),
+    fact_sheet: factSheet,
   };
 }
 
@@ -864,7 +879,13 @@ function renderPaperCard(paper, view, isFeatured) {
   if (weightsUrl) {
     links.push(`<a class="resource-btn resource-btn-weights" href="${esc(weightsUrl)}">Model Weights</a>`);
   }
+  const architecture = paper.architecture;
+  const hfviewerUrl = architecture && architecture.hfviewer_url ? String(architecture.hfviewer_url).trim() : "";
+  if (hfviewerUrl) {
+    links.push(`<a class="resource-btn resource-btn-arch" href="${esc(hfviewerUrl)}" rel="noopener noreferrer" target="_blank">View architecture</a>`);
+  }
   const linksHtml = links.length ? `<div class="resource-links">${links.join("")}</div>` : "";
+  const factSheetHtml = renderArchitectureFactSheet(architecture);
 
   return `
     <article class="${cardClass}" id="${esc(paper.arxiv_id_base)}">
@@ -876,9 +897,40 @@ function renderPaperCard(paper, view, isFeatured) {
       ${uniqueHtml}
       ${detailHtml}
       ${tagsHtml}
+      ${factSheetHtml}
       ${linksHtml}
     </article>
   `;
+}
+
+function renderArchitectureFactSheet(architecture) {
+  if (!architecture || architecture.status !== "ok" || !architecture.fact_sheet) {
+    return "";
+  }
+  const sheet = architecture.fact_sheet;
+  const fields = [
+    ["model_type", "Model"],
+    ["architectures", "Architecture"],
+    ["hidden_size", "Hidden size"],
+    ["num_layers", "Layers"],
+    ["num_attention_heads", "Heads"],
+    ["num_key_value_heads", "KV heads"],
+    ["context_length", "Context"],
+    ["vocab_size", "Vocab"],
+    ["num_params", "Params"],
+  ];
+  const rows = [];
+  for (const [key, label] of fields) {
+    const value = sheet[key];
+    if (value === null || value === undefined || String(value).trim() === "") {
+      continue;
+    }
+    rows.push(`<div><dt>${esc(label)}</dt><dd>${esc(String(value))}</dd></div>`);
+  }
+  if (!rows.length) {
+    return "";
+  }
+  return `<div class="arch-fact-sheet"><h4>Architecture</h4><dl>${rows.join("")}</dl></div>`;
 }
 
 function buildResultsCsv(papers) {

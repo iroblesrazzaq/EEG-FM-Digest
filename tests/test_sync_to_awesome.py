@@ -299,13 +299,13 @@ def test_prepare_month_branch_reuses_remote_monthly_branch(tmp_path, monkeypatch
     assert ["git", "checkout", "-b", "digest-2025-01"] not in calls
 
 
-def test_prepare_month_branch_creates_fresh_branch_when_remote_missing(tmp_path, monkeypatch):
+def test_prepare_month_branch_creates_fresh_branch_from_default_tip(tmp_path, monkeypatch):
     module = _load_sync_module()
     calls: list[list[str]] = []
 
     def fake_run(args, *, cwd=None, check=True):  # noqa: ANN001
         calls.append(list(args))
-        # Remote and local branch absent.
+        # Remote monthly branch absent.
         if "rev-parse" in args:
             return type("R", (), {"returncode": 1, "stdout": "", "stderr": ""})()
         return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
@@ -317,8 +317,27 @@ def test_prepare_month_branch_creates_fresh_branch_when_remote_missing(tmp_path,
         branch_name="digest-2025-01",
     )
 
-    assert ["git", "checkout", "-b", "digest-2025-01"] in calls
-    assert ["git", "checkout", "-B", "digest-2025-01", "origin/digest-2025-01"] not in calls
+    assert ["git", "checkout", "-B", "digest-2025-01", "origin/main"] in calls
+    assert ["git", "checkout", "-b", "digest-2025-01"] not in calls
+
+
+def test_prepare_month_branch_hard_syncs_default_branch_to_origin(tmp_path, monkeypatch):
+    module = _load_sync_module()
+    calls: list[list[str]] = []
+
+    def fake_run(args, *, cwd=None, check=True, redact=False):  # noqa: ANN001
+        calls.append(list(args))
+        return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+
+    monkeypatch.setattr(module, "run_command", fake_run)
+    module.prepare_month_branch(
+        tmp_path,
+        default_branch="main",
+        branch_name="main",
+    )
+
+    assert ["git", "checkout", "-B", "main", "origin/main"] in calls
+    assert not any("pull" in args for args in calls)
 
 
 def test_commit_and_push_configures_identity_before_commit(tmp_path, monkeypatch):
@@ -346,3 +365,178 @@ def test_commit_and_push_configures_identity_before_commit(tmp_path, monkeypatch
     assert url == f"https://github.com/{module.AWESOME_REPO}/commit/abc123"
     assert not any(args[:3] == ["gh", "pr", "create"] for args in calls)
     assert not any(args[:4] == ["gh", "api", "--method", "POST"] for args in calls)
+
+
+def test_commit_and_push_rolls_back_and_signals_non_fast_forward(tmp_path, monkeypatch):
+    module = _load_sync_module()
+    calls: list[list[str]] = []
+
+    def fake_run(args, *, cwd=None, check=True, redact=False, input_text=None):  # noqa: ANN001
+        calls.append(list(args))
+        if args[:2] == ["git", "push"]:
+            raise module.SyncError(
+                "Command failed: git push origin HEAD:main\n"
+                "! [rejected]        HEAD -> main (non-fast-forward)"
+            )
+        return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+
+    monkeypatch.setattr(module, "run_command", fake_run)
+    with pytest.raises(module.PushRejectedError):
+        module.commit_and_push(tmp_path, label="2026-08", branch_name="main")
+
+    reset_calls = [args for args in calls if args[:2] == ["git", "reset"]]
+    assert reset_calls == [["git", "reset", "--hard", "HEAD~1"]]
+
+
+def test_main_retries_push_after_refreshing_from_origin(tmp_path, monkeypatch):
+    module = _load_sync_module()
+    month = "2026-08"
+    month_dir = tmp_path / "docs" / "digest" / month
+    month_dir.mkdir(parents=True)
+    payload = {
+        "papers": [
+            _paper(arxiv_id="2608.00001", title="Fresh FM", paper_type="new_model"),
+        ]
+    }
+    (month_dir / "papers.json").write_text(json.dumps(payload), encoding="utf-8")
+
+    readme_template = """# Awesome EEG Foundation Models
+
+## EEG Foundation Models
+
+### 2026
+
+{entries}
+---
+"""
+
+    class FakeRepo:
+        def __init__(self) -> None:
+            self.readme = readme_template.format(entries="")
+            self.push_attempts = 0
+            self.checkouts: list[str] = []
+
+    repo = FakeRepo()
+
+    def fake_run(args, *, cwd=None, check=True, redact=False, input_text=None):  # noqa: ANN001
+        joined = " ".join(args)
+        if joined.startswith("gh auth status"):
+            return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+        if joined.startswith("git status --short"):
+            return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+        if "symbolic-ref" in joined:
+            result = type("R", (), {"returncode": 1, "stdout": "", "stderr": ""})()
+            result.returncode = 1
+            return result
+        if "branch --show-current" in joined:
+            return type("R", (), {"returncode": 0, "stdout": "main\n", "stderr": ""})()
+        if joined.startswith("git rev-parse --verify refs/remotes/origin/main"):
+            return type("R", (), {"returncode": 0, "stdout": "abc\n", "stderr": ""})()
+        if "checkout -B main origin/main" in joined:
+            repo.checkouts.append(joined)
+            # Hard reset to origin tip: working-tree README loses local edits.
+            repo.readme = readme_template.format(entries="")
+            return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+        if joined.startswith("git push"):
+            repo.push_attempts += 1
+            if repo.push_attempts < 2:
+                raise module.SyncError(
+                    "Command failed: git push origin HEAD:main\n"
+                    "! [rejected]        HEAD -> main (non-fast-forward)"
+                )
+            return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+        if joined.startswith("git rev-parse HEAD"):
+            return type("R", (), {"returncode": 0, "stdout": "def456\n", "stderr": ""})()
+        if joined.startswith("git add README.md"):
+            repo.readme = (Path(cwd) / "README.md").read_text(encoding="utf-8")
+            return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+        return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+
+    real_read = Path.read_text
+    real_write = Path.write_text
+
+    def fake_read(self, *a, **kw):
+        if self.name == "README.md":
+            return repo.readme
+        return real_read(self, *a, **kw)
+
+    def fake_write(self, data, *a, **kw):
+        if self.name == "README.md":
+            repo.readme = data
+            return None
+        return real_write(self, data, *a, **kw)
+
+    monkeypatch.setenv("GH_TOKEN", "token")
+    monkeypatch.setattr(module, "run_command", fake_run)
+    monkeypatch.setattr(module, "ensure_repo_checkout", lambda: tmp_path)
+    monkeypatch.setattr(Path, "read_text", fake_read)
+    monkeypatch.setattr(Path, "write_text", fake_write)
+
+    exit_code = module.main(["--month", month, "--docs-dir", str(tmp_path / "docs")])
+
+    assert exit_code == 0
+    assert repo.push_attempts == 2
+    assert len(repo.checkouts) >= 2
+    assert "2608.00001" in repo.readme
+
+
+def test_main_gives_up_after_max_push_attempts(tmp_path, monkeypatch, capsys):
+    module = _load_sync_module()
+    month = "2026-08"
+    month_dir = tmp_path / "docs" / "digest" / month
+    month_dir.mkdir(parents=True)
+    payload = {
+        "papers": [
+            _paper(arxiv_id="2608.00001", title="Fresh FM", paper_type="new_model"),
+        ]
+    }
+    (month_dir / "papers.json").write_text(json.dumps(payload), encoding="utf-8")
+
+    readme_text = """# Awesome EEG Foundation Models
+
+## EEG Foundation Models
+
+### 2026
+"""
+
+    push_calls = 0
+
+    def fake_run(args, *, cwd=None, check=True, redact=False, input_text=None):  # noqa: ANN001
+        nonlocal push_calls
+        joined = " ".join(args)
+        if joined.startswith("git push"):
+            push_calls += 1
+            raise module.SyncError(
+                "Command failed: git push origin HEAD:main\n"
+                "! [rejected]        HEAD -> main (non-fast-forward)"
+            )
+        if "symbolic-ref" in joined:
+            result = type("R", (), {"returncode": 1, "stdout": "", "stderr": ""})()
+            result.returncode = 1
+            return result
+        if "branch --show-current" in joined:
+            return type("R", (), {"returncode": 0, "stdout": "main\n", "stderr": ""})()
+        if joined.startswith("git rev-parse --verify refs/remotes/origin/main"):
+            return type("R", (), {"returncode": 0, "stdout": "abc\n", "stderr": ""})()
+        if joined.startswith("gh auth status") or joined.startswith("git status --short"):
+            return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+        return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+
+    real_read = Path.read_text
+
+    def fake_read(self, *a, **kw):
+        if self.name == "README.md":
+            return readme_text
+        return real_read(self, *a, **kw)
+
+    monkeypatch.setenv("GH_TOKEN", "token")
+    monkeypatch.setattr(module, "run_command", fake_run)
+    monkeypatch.setattr(module, "ensure_repo_checkout", lambda: tmp_path)
+    monkeypatch.setattr(Path, "read_text", fake_read)
+
+    exit_code = module.main(["--month", month, "--docs-dir", str(tmp_path / "docs")])
+
+    assert exit_code == 1
+    assert push_calls == module.PUSH_MAX_ATTEMPTS
+    captured = capsys.readouterr()
+    assert "non-fast-forward" in captured.err

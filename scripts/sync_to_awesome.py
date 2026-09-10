@@ -23,10 +23,15 @@ NEW_MODEL_TYPE = "new_model"
 FM_SECTION_HEADER = "## EEG Foundation Models"
 YEAR_SPLIT_RE = re.compile(r"(?=^### )", re.MULTILINE)
 MONTH_RE = re.compile(r"^\d{4}-\d{2}$")
+PUSH_MAX_ATTEMPTS = 3
 
 
 class SyncError(RuntimeError):
     """Raised when the sync flow cannot continue safely."""
+
+
+class PushRejectedError(SyncError):
+    """Raised when a push is rejected as non-fast-forward and can be retried."""
 
 
 @dataclass(frozen=True)
@@ -453,42 +458,48 @@ def prepare_month_branch(repo_dir: Path, *, default_branch: str, branch_name: st
     """Check out ``branch_name``, reusing ``origin/branch_name`` when it exists.
 
     Fresh month: branch from updated default. Rerun: continue from the remote
-    branch so pushes remain fast-forward.
+    branch so pushes remain fast-forward. When the target is the default
+    branch itself (direct-to-main sync), hard-sync the local checkout to the
+    remote tip so a retry after a rejected push starts clean.
     """
     run_command(["git", "fetch", "origin"], cwd=repo_dir)
-    run_command(["git", "checkout", default_branch], cwd=repo_dir)
-    run_command(
-        ["git", "pull", "--ff-only", "origin", default_branch],
-        cwd=repo_dir,
-        check=False,
-    )
-
-    if remote_branch_exists(repo_dir, branch_name):
+    if remote_branch_exists(repo_dir, branch_name) or branch_name == default_branch:
         run_command(
             ["git", "checkout", "-B", branch_name, f"origin/{branch_name}"],
             cwd=repo_dir,
         )
         return
 
-    local = run_command(
-        ["git", "rev-parse", "--verify", f"refs/heads/{branch_name}"],
+    run_command(
+        ["git", "checkout", "-B", branch_name, f"origin/{default_branch}"],
         cwd=repo_dir,
-        check=False,
     )
-    if local.returncode == 0:
-        run_command(["git", "branch", "-D", branch_name], cwd=repo_dir)
-    run_command(["git", "checkout", "-b", branch_name], cwd=repo_dir)
 
 
 def commit_and_push(repo_dir: Path, *, label: str, branch_name: str) -> str:
-    """Commit README changes and push them to ``branch_name`` (usually main)."""
+    """Commit README changes and push them to ``branch_name`` (usually main).
+
+    Raises :class:`PushRejectedError` when the push is rejected as
+    non-fast-forward so callers can refresh and retry.
+    """
     configure_git_identity(repo_dir)
     commit_message = f"Add EEG foundation models from digest ({label})"
     run_command(["git", "add", "README.md"], cwd=repo_dir)
     run_command(["git", "commit", "-m", commit_message], cwd=repo_dir)
-    run_command(["git", "push", "origin", f"HEAD:{branch_name}"], cwd=repo_dir)
+    try:
+        run_command(["git", "push", "origin", f"HEAD:{branch_name}"], cwd=repo_dir)
+    except SyncError as exc:
+        if not _is_non_fast_forward_rejection(exc):
+            raise
+        run_command(["git", "reset", "--hard", "HEAD~1"], cwd=repo_dir)
+        raise PushRejectedError(str(exc)) from exc
     sha = run_command(["git", "rev-parse", "HEAD"], cwd=repo_dir).stdout.strip()
     return f"https://github.com/{AWESOME_REPO}/commit/{sha}"
+
+
+def _is_non_fast_forward_rejection(exc: SyncError) -> bool:
+    message = str(exc)
+    return "[rejected]" in message or "non-fast-forward" in message
 
 
 def _new_papers_against_readme(papers: list[PaperEntry], readme_text: str) -> list[PaperEntry]:
@@ -537,22 +548,44 @@ def main(argv: list[str] | None = None) -> int:
             branch_name=base_branch,
         )
 
-        readme_path = repo_dir / "README.md"
-        readme_text = readme_path.read_text(encoding="utf-8")
-        new_papers = _new_papers_against_readme(papers, readme_text)
-        if not new_papers:
-            print(
-                f"No new papers to add for {label}; "
-                "all new_model arXiv IDs already appear in README.md."
-            )
-            return 0
+        for attempt in range(1, PUSH_MAX_ATTEMPTS + 1):
+            readme_path = repo_dir / "README.md"
+            readme_text = readme_path.read_text(encoding="utf-8")
+            new_papers = _new_papers_against_readme(papers, readme_text)
+            if not new_papers:
+                print(
+                    f"No new papers to add for {label}; "
+                    "all new_model arXiv IDs already appear in README.md."
+                )
+                return 0
 
-        readme_path.write_text(insert_fm_entries(readme_text, new_papers), encoding="utf-8")
-        commit_url = commit_and_push(
-            repo_dir,
-            label=label,
-            branch_name=base_branch,
-        )
+            readme_path.write_text(insert_fm_entries(readme_text, new_papers), encoding="utf-8")
+            try:
+                commit_url = commit_and_push(
+                    repo_dir,
+                    label=label,
+                    branch_name=base_branch,
+                )
+            except PushRejectedError:
+                if attempt == PUSH_MAX_ATTEMPTS:
+                    print(
+                        f"error: push to {AWESOME_REPO} {base_branch} kept being rejected "
+                        f"as non-fast-forward after {attempt} attempts",
+                        file=sys.stderr,
+                    )
+                    return 1
+                print(
+                    f"Push rejected as non-fast-forward (attempt {attempt}); "
+                    "refreshing from origin and retrying."
+                )
+                run_command(["git", "fetch", "origin"], cwd=repo_dir)
+                run_command(
+                    ["git", "checkout", "-B", base_branch, f"origin/{base_branch}"],
+                    cwd=repo_dir,
+                )
+                continue
+            break
+
         print(f"Updated {AWESOME_REPO}: {commit_url}")
         return 0
     except SyncError as exc:

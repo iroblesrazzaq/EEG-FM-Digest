@@ -10,6 +10,7 @@ from typing import Any
 
 from dotenv import load_dotenv
 
+from .architecture import architecture_from_summary
 from .arxiv import fetch_month_candidates
 from .backend_rows import build_backend_rows
 from .cache_meta import build_stage_metadata, is_cache_current
@@ -249,6 +250,37 @@ def _run_triage_phase_for_month(
     print(f"[triage] {month}: done candidates={len(candidates)} triage_rows={len(triage_rows)}")
 
 
+def _architecture_map_for_month(
+    db: DigestDB,
+    month: str,
+    existing_backend: list[dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
+    """SQLite summary meta is source of truth; backend_rows fill gaps only."""
+    architecture_map: dict[str, dict[str, Any]] = {}
+    for row in existing_backend:
+        aid = str(row.get("arxiv_id_base", "")).strip()
+        architecture = row.get("architecture")
+        if aid and isinstance(architecture, dict):
+            architecture_map[aid] = architecture
+    records = db.list_summaries_with_meta_for_month(month)
+    if not isinstance(records, list):
+        return architecture_map
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        data = record.get("data") if isinstance(record.get("data"), dict) else {}
+        meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+        aid = str(data.get("arxiv_id_base", "")).strip()
+        if not aid:
+            continue
+        architecture = meta.get("architecture")
+        if isinstance(architecture, dict):
+            architecture_map[aid] = architecture
+        else:
+            architecture_map.pop(aid, None)
+    return architecture_map
+
+
 def _run_summary_phase_for_month(
     cfg: Config,
     run_cfg: BatchRunConfig,
@@ -337,15 +369,20 @@ def _run_summary_phase_for_month(
             max_input_tokens=cfg.summary_max_input_tokens,
         )
         summary_map[aid] = summary
-        db.upsert_summary(
-            month,
-            summary,
-            meta=build_stage_metadata(
-                summary_ctx.descriptor,
-                repair_used=bool(summary_call_meta.get("repair_used", False)),
-                updated_at_source=str(paper.get("updated", "")).strip() or None,
-            ),
+        meta = build_stage_metadata(
+            summary_ctx.descriptor,
+            repair_used=bool(summary_call_meta.get("repair_used", False)),
+            updated_at_source=str(paper.get("updated", "")).strip() or None,
         )
+        cached_meta = cached_summary.get("meta") if isinstance(cached_summary, dict) else None
+        existing_arch = cached_meta.get("architecture") if isinstance(cached_meta, dict) else None
+        architecture = architecture_from_summary(
+            summary,
+            existing_arch if isinstance(existing_arch, dict) else None,
+        )
+        if architecture is not None:
+            meta["architecture"] = architecture
+        db.upsert_summary(month, summary, meta=meta)
         print(f"[summary] {month}: summarized {aid}")
         if run_cfg.summary_sleep_seconds > 0:
             time.sleep(run_cfg.summary_sleep_seconds)
@@ -353,7 +390,31 @@ def _run_summary_phase_for_month(
     summaries = sorted(summary_map.values(), key=lambda x: (x["published_date"], x["arxiv_id_base"]))
     write_jsonl(month_out / "papers.jsonl", summaries)
 
-    backend_rows = build_backend_rows(candidates, triage_map, summary_map, pdf_map)
+    attempt_map: dict[str, dict[str, Any]] = {}
+    for row in existing_backend:
+        aid = str(row.get("arxiv_id_base", "")).strip()
+        attempt = row.get("summary_attempt")
+        if aid and isinstance(attempt, dict) and aid not in summary_map:
+            attempt_map[aid] = attempt
+    for aid, attempt in db.list_summary_attempts_for_month(month).items():
+        if aid not in summary_map:
+            attempt_map[aid] = attempt
+    for record in db.list_summaries_with_meta_for_month(month):
+        data = record.get("data") if isinstance(record.get("data"), dict) else {}
+        meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+        aid = str(data.get("arxiv_id_base", "")).strip()
+        attempt = meta.get("summary_attempt")
+        if aid and isinstance(attempt, dict):
+            attempt_map[aid] = attempt
+
+    backend_rows = build_backend_rows(
+        candidates,
+        triage_map,
+        summary_map,
+        pdf_map,
+        attempt_map=attempt_map,
+        architecture_map=_architecture_map_for_month(db, month, existing_backend),
+    )
     write_jsonl(month_out / "backend_rows.jsonl", backend_rows)
 
     digest = build_digest(month, candidates, triage_rows, summaries, featured_paper=featured_paper)
