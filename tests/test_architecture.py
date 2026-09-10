@@ -281,3 +281,93 @@ def test_site_js_renders_architecture_controls():
     assert "arch-fact-sheet" in site_js
     style = Path("docs/assets/style.css").read_text(encoding="utf-8")
     assert ".resource-btn-arch" in style
+
+
+def test_batch_cache_hit_keeps_sqlite_architecture(monkeypatch, tmp_path: Path):
+    from dataclasses import replace
+
+    from eegfm_digest.batch import BatchRunConfig, _run_summary_phase_for_month
+    from eegfm_digest.db import DigestDB
+    from eegfm_digest.llm import LLMCallConfig
+
+    month = "2025-01"
+    candidate = _candidate("2501.00001")
+    summary = _summary(candidate, weights_url="https://huggingface.co/org/model")
+    architecture = {
+        "status": "ok",
+        "hf_repo": "org/model",
+        "hfviewer_url": "https://hfviewer.com/org/model",
+        "fact_sheet": {"hidden_size": 256, "model_type": "llama"},
+        "skip_reason": None,
+    }
+    month_out = tmp_path / "outputs" / month
+    month_out.mkdir(parents=True)
+    (month_out / "arxiv_raw.json").write_text(json.dumps([candidate]), encoding="utf-8")
+    (month_out / "triage.jsonl").write_text(
+        json.dumps(
+            {
+                "arxiv_id_base": "2501.00001",
+                "decision": "accept",
+                "confidence": 0.9,
+                "reasons": ["ok"],
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    cfg = replace(
+        Config(
+            llm_provider="google",
+            llm_model_triage="m",
+            llm_model_summary="m",
+        ),
+        output_dir=tmp_path / "outputs",
+        data_dir=tmp_path / "data",
+        docs_dir=tmp_path / "docs",
+    )
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    db.upsert_paper(month, candidate)
+    db.upsert_triage(
+        month,
+        {
+            "arxiv_id_base": "2501.00001",
+            "decision": "accept",
+            "confidence": 0.9,
+            "reasons": ["ok"],
+        },
+    )
+    db.upsert_summary(month, summary, meta={"cache_version": "x", "architecture": architecture})
+    db.close()
+
+    monkeypatch.setattr("eegfm_digest.batch.is_cache_current", lambda *_a, **_k: True)
+
+    class DummyLm:
+        def close(self) -> None:
+            return None
+
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    _run_summary_phase_for_month(
+        cfg,
+        BatchRunConfig(months=[month], months_from_outputs=False, no_site=True),
+        month,
+        db,
+        DummyLm(),
+        LLMCallConfig(
+            provider="google",
+            api_key="k",
+            model="m",
+            temperature=0.2,
+            max_output_tokens=100,
+            base_url=None,
+        ),
+    )
+    db.close()
+
+    rows = [
+        json.loads(line)
+        for line in (month_out / "backend_rows.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert rows[0]["architecture"]["hfviewer_url"] == "https://hfviewer.com/org/model"
+    assert rows[0]["architecture"]["fact_sheet"]["hidden_size"] == 256
