@@ -79,7 +79,7 @@
         {
           "id": "enc.attn",
           "kind": "attention",
-          "label": "Masked multi-head attention"
+          "label": "Causal attention"
         },
         {
           "id": "enc.n2",
