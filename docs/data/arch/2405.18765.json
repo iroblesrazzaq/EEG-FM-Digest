@@ -1,0 +1,195 @@
+{
+  "arxiv_id_base": "2405.18765",
+  "diagram": {
+    "annotations": {
+      "embed_dim": 200,
+      "left": [
+        {
+          "anchor": "patch",
+          "id": "pe",
+          "label": "Absolute PE"
+        }
+      ]
+    },
+    "below": [
+      {
+        "id": "eeg",
+        "kind": "input",
+        "label": "Sample EEG"
+      }
+    ],
+    "callouts": [
+      {
+        "activation": "GELU",
+        "anchor": "enc.mlp",
+        "gated": false,
+        "hidden_dim": 800,
+        "id": "ffn-mod",
+        "kind": "ffn",
+        "title": "FeedForward module"
+      },
+      {
+        "anchor": "enc.attn",
+        "detail": "Head dim 20",
+        "id": "attn-heads",
+        "kind": "heads",
+        "label": "10 heads"
+      }
+    ],
+    "head": [
+      {
+        "id": "pool",
+        "kind": "pool",
+        "label": "Pooling"
+      },
+      {
+        "id": "out",
+        "kind": "linear",
+        "label": "Linear output layer"
+      }
+    ],
+    "meta": {
+      "causal": false,
+      "eeg_like": true,
+      "gated": false,
+      "has_patch": true
+    },
+    "notes": {
+      "head_dim": 20
+    },
+    "param_label": "5.8M",
+    "repeat": {
+      "count": 12,
+      "id": "enc",
+      "steps": [
+        {
+          "id": "enc.n1",
+          "kind": "norm",
+          "label": "LayerNorm 1"
+        },
+        {
+          "id": "enc.attn",
+          "kind": "attention",
+          "label": "Multi-head attention"
+        },
+        {
+          "id": "enc.n2",
+          "kind": "norm",
+          "label": "LayerNorm 2"
+        },
+        {
+          "id": "enc.mlp",
+          "kind": "ffn",
+          "label": "Feed forward"
+        },
+        {
+          "id": "enc.add",
+          "kind": "add",
+          "label": "+"
+        }
+      ]
+    },
+    "stem": [
+      {
+        "id": "patch",
+        "kind": "embed",
+        "label": "Patch embedding layer"
+      }
+    ],
+    "title": "LaBraM"
+  },
+  "edges": [
+    {
+      "from": "input",
+      "to": "stem"
+    },
+    {
+      "from": "stem",
+      "to": "encoder"
+    },
+    {
+      "from": "encoder",
+      "shape": "(B, 200)",
+      "to": "output"
+    }
+  ],
+  "fact_sheet": {
+    "architectures": null,
+    "context_length": null,
+    "hidden_act": null,
+    "hidden_size": null,
+    "intermediate_size": null,
+    "model_type": null,
+    "num_attention_heads": null,
+    "num_key_value_heads": null,
+    "num_layers": null,
+    "num_params": 5819936,
+    "vocab_size": null
+  },
+  "graph_path": "data/arch/2405.18765.json",
+  "hf_repo": "braindecode/labram-pretrained",
+  "label": "LaBraM",
+  "month": "2024-05",
+  "nodes": [
+    {
+      "id": "input",
+      "kind": "input",
+      "label": "Input"
+    },
+    {
+      "id": "stem",
+      "kind": "stem",
+      "label": "Stem / embeddings"
+    },
+    {
+      "children": [
+        {
+          "id": "encoder.attn",
+          "kind": "attn",
+          "label": "Attn"
+        },
+        {
+          "id": "encoder.gamma_1",
+          "kind": "module",
+          "label": "Gamma 1"
+        },
+        {
+          "id": "encoder.gamma_2",
+          "kind": "module",
+          "label": "Gamma 2"
+        },
+        {
+          "id": "encoder.mlp",
+          "kind": "mlp",
+          "label": "Mlp"
+        },
+        {
+          "id": "encoder.norm1",
+          "kind": "norm",
+          "label": "Norm1"
+        },
+        {
+          "id": "encoder.norm2",
+          "kind": "norm",
+          "label": "Norm2"
+        }
+      ],
+      "id": "encoder",
+      "kind": "repeat",
+      "label": "Encoder",
+      "repeat": 12
+    },
+    {
+      "id": "output",
+      "kind": "output",
+      "label": "Output",
+      "shape": [
+        null,
+        200
+      ]
+    }
+  ],
+  "source": "hf_config+safetensors_header",
+  "title": "LaBraM: Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI",
+  "weights_url": "https://huggingface.co/braindecode/labram-pretrained"
+}

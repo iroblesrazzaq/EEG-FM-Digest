@@ -1,12 +1,36 @@
 {
   "models": [
     {
+      "arxiv_id_base": "2405.18765",
+      "graph_path": "data/arch/2405.18765.json",
+      "hf_repo": "braindecode/labram-pretrained",
+      "label": "LaBraM",
+      "month": "2024-05",
+      "title": "LaBraM: Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI"
+    },
+    {
+      "arxiv_id_base": "2412.07236",
+      "graph_path": "data/arch/2412.07236.json",
+      "hf_repo": "braindecode/cbramod-pretrained",
+      "label": "CBraMod",
+      "month": "2024-12",
+      "title": "CBraMod: A Criss-Cross Brain Foundation Model for EEG Decoding"
+    },
+    {
       "arxiv_id_base": "2510.21585",
       "graph_path": "data/arch/2510.21585.json",
       "hf_repo": "brain-bzh/reve-base",
       "label": "REVE",
       "month": "2025-10",
       "title": "REVE: A Foundation Model for EEG -- Adapting to Any Setup with Large-Scale Pretraining on 25,000 Subjects"
+    },
+    {
+      "arxiv_id_base": "2607.27308",
+      "graph_path": "data/arch/2607.27308.json",
+      "hf_repo": "Zyphra/ZUNA1.1",
+      "label": "ZUNA1.1",
+      "month": "2026-07",
+      "title": "ZUNA1.1: A more flexible EEG foundation model for Denoising and Super-resolution"
     }
   ]
 }
