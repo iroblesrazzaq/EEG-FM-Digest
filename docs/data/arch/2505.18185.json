@@ -1,19 +1,9 @@
 {
-  "arxiv_id_base": "2405.18765",
+  "arxiv_id_base": "2505.18185",
   "diagram": {
     "annotations": {
-      "embed_dim": 200,
+      "embed_dim": 512,
       "left": [
-        {
-          "anchor": "patch",
-          "id": "pe",
-          "label": "Absolute PE"
-        },
-        {
-          "anchor": "enc.attn",
-          "id": "qk-norm",
-          "label": "QK-Norm"
-        },
         {
           "anchor": "enc.mlp",
           "id": "ffn-kind",
@@ -38,7 +28,7 @@
         "activation": "GELU",
         "anchor": "enc.mlp",
         "gated": false,
-        "hidden_dim": 800,
+        "hidden_dim": null,
         "id": "ffn-mod",
         "kind": "ffn",
         "layers": 2,
@@ -46,10 +36,10 @@
       },
       {
         "anchor": "enc.attn",
-        "detail": "Head dim 20",
+        "detail": "Head dim 32",
         "id": "attn-heads",
         "kind": "heads",
-        "label": "10 heads"
+        "label": "16 heads"
       }
     ],
     "head": [
@@ -68,13 +58,13 @@
       "causal": false,
       "eeg_like": true,
       "gated": false,
-      "has_patch": true
+      "has_patch": false
     },
     "notes": {
-      "head_dim": 20,
+      "head_dim": 32,
       "tokenizer": "vqvae"
     },
-    "param_label": "5.8M",
+    "param_label": null,
     "repeat": {
       "count": 12,
       "id": "enc",
@@ -110,7 +100,7 @@
       {
         "id": "patch",
         "kind": "embed",
-        "label": "Patch embedding layer"
+        "label": "Sensor encoder"
       },
       {
         "id": "vq",
@@ -118,20 +108,12 @@
         "label": "VQ-VAE codebook"
       }
     ],
-    "title": "LaBraM"
+    "title": "BrainOmni"
   },
   "edges": [
     {
       "from": "input",
-      "to": "stem"
-    },
-    {
-      "from": "stem",
-      "to": "encoder"
-    },
-    {
-      "from": "encoder",
-      "shape": "(B, 200)",
+      "shape": "(B, 512)",
       "to": "output"
     }
   ],
@@ -139,19 +121,19 @@
     "architectures": null,
     "context_length": null,
     "hidden_act": null,
-    "hidden_size": null,
+    "hidden_size": 512,
     "intermediate_size": null,
     "model_type": null,
-    "num_attention_heads": null,
+    "num_attention_heads": 16,
     "num_key_value_heads": null,
-    "num_layers": null,
-    "num_params": 5819936,
+    "num_layers": 12,
+    "num_params": null,
     "vocab_size": null
   },
-  "graph_path": "data/arch/2405.18765.json",
-  "hf_repo": "braindecode/labram-pretrained",
-  "label": "LaBraM",
-  "month": "2024-05",
+  "graph_path": "data/arch/2505.18185.json",
+  "hf_repo": "OpenTSLab/BrainOmni",
+  "label": "BrainOmni",
+  "month": "2025-05",
   "nodes": [
     {
       "id": "input",
@@ -159,59 +141,16 @@
       "label": "Input"
     },
     {
-      "id": "stem",
-      "kind": "stem",
-      "label": "Stem / embeddings"
-    },
-    {
-      "children": [
-        {
-          "id": "encoder.attn",
-          "kind": "attn",
-          "label": "Attn"
-        },
-        {
-          "id": "encoder.gamma_1",
-          "kind": "module",
-          "label": "Gamma 1"
-        },
-        {
-          "id": "encoder.gamma_2",
-          "kind": "module",
-          "label": "Gamma 2"
-        },
-        {
-          "id": "encoder.mlp",
-          "kind": "mlp",
-          "label": "Mlp"
-        },
-        {
-          "id": "encoder.norm1",
-          "kind": "norm",
-          "label": "Norm1"
-        },
-        {
-          "id": "encoder.norm2",
-          "kind": "norm",
-          "label": "Norm2"
-        }
-      ],
-      "id": "encoder",
-      "kind": "repeat",
-      "label": "Encoder",
-      "repeat": 12
-    },
-    {
       "id": "output",
       "kind": "output",
       "label": "Output",
       "shape": [
         null,
-        200
+        512
       ]
     }
   ],
-  "source": "hf_config+safetensors_header",
-  "title": "Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI",
-  "weights_url": "https://huggingface.co/braindecode/labram-pretrained"
+  "source": "hf_config",
+  "title": "BrainOmni: A Brain Foundation Model for Unified EEG and MEG Signals",
+  "weights_url": "https://huggingface.co/OpenTSLab/BrainOmni"
 }

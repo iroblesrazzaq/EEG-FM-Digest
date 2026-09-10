@@ -1,28 +1,13 @@
 {
-  "arxiv_id_base": "2405.18765",
+  "arxiv_id_base": "2410.19779",
   "diagram": {
     "annotations": {
-      "embed_dim": 200,
+      "embed_dim": 64,
       "left": [
-        {
-          "anchor": "patch",
-          "id": "pe",
-          "label": "Absolute PE"
-        },
-        {
-          "anchor": "enc.attn",
-          "id": "qk-norm",
-          "label": "QK-Norm"
-        },
         {
           "anchor": "enc.mlp",
           "id": "ffn-kind",
           "label": "GELU\n2-layer MLP"
-        },
-        {
-          "anchor": "vq",
-          "id": "vq-meta",
-          "label": "Frozen codebook"
         }
       ]
     },
@@ -38,18 +23,11 @@
         "activation": "GELU",
         "anchor": "enc.mlp",
         "gated": false,
-        "hidden_dim": 800,
+        "hidden_dim": null,
         "id": "ffn-mod",
         "kind": "ffn",
         "layers": 2,
         "title": "FeedForward (GELU · 2 layers)"
-      },
-      {
-        "anchor": "enc.attn",
-        "detail": "Head dim 20",
-        "id": "attn-heads",
-        "kind": "heads",
-        "label": "10 heads"
       }
     ],
     "head": [
@@ -70,13 +48,10 @@
       "gated": false,
       "has_patch": true
     },
-    "notes": {
-      "head_dim": 20,
-      "tokenizer": "vqvae"
-    },
-    "param_label": "5.8M",
+    "notes": {},
+    "param_label": "25M",
     "repeat": {
-      "count": 12,
+      "count": 1,
       "id": "enc",
       "steps": [
         {
@@ -111,14 +86,9 @@
         "id": "patch",
         "kind": "embed",
         "label": "Patch embedding layer"
-      },
-      {
-        "id": "vq",
-        "kind": "embed",
-        "label": "VQ-VAE codebook"
       }
     ],
-    "title": "LaBraM"
+    "title": "EEGPT"
   },
   "edges": [
     {
@@ -127,11 +97,11 @@
     },
     {
       "from": "stem",
-      "to": "encoder"
+      "to": "target_encoder"
     },
     {
-      "from": "encoder",
-      "shape": "(B, 200)",
+      "from": "target_encoder",
+      "shape": "(B, 64)",
       "to": "output"
     }
   ],
@@ -145,13 +115,13 @@
     "num_attention_heads": null,
     "num_key_value_heads": null,
     "num_layers": null,
-    "num_params": 5819936,
+    "num_params": 25287230,
     "vocab_size": null
   },
-  "graph_path": "data/arch/2405.18765.json",
-  "hf_repo": "braindecode/labram-pretrained",
-  "label": "LaBraM",
-  "month": "2024-05",
+  "graph_path": "data/arch/2410.19779.json",
+  "hf_repo": "braindecode/eegpt-pretrained",
+  "label": "EEGPT",
+  "month": "2024-10",
   "nodes": [
     {
       "id": "input",
@@ -166,40 +136,30 @@
     {
       "children": [
         {
-          "id": "encoder.attn",
+          "id": "target_encoder.attn",
           "kind": "attn",
           "label": "Attn"
         },
         {
-          "id": "encoder.gamma_1",
-          "kind": "module",
-          "label": "Gamma 1"
-        },
-        {
-          "id": "encoder.gamma_2",
-          "kind": "module",
-          "label": "Gamma 2"
-        },
-        {
-          "id": "encoder.mlp",
+          "id": "target_encoder.mlp",
           "kind": "mlp",
           "label": "Mlp"
         },
         {
-          "id": "encoder.norm1",
+          "id": "target_encoder.norm1",
           "kind": "norm",
           "label": "Norm1"
         },
         {
-          "id": "encoder.norm2",
+          "id": "target_encoder.norm2",
           "kind": "norm",
           "label": "Norm2"
         }
       ],
-      "id": "encoder",
+      "id": "target_encoder",
       "kind": "repeat",
-      "label": "Encoder",
-      "repeat": 12
+      "label": "Target encoder",
+      "repeat": 8
     },
     {
       "id": "output",
@@ -207,11 +167,11 @@
       "label": "Output",
       "shape": [
         null,
-        200
+        64
       ]
     }
   ],
   "source": "hf_config+safetensors_header",
-  "title": "Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI",
-  "weights_url": "https://huggingface.co/braindecode/labram-pretrained"
+  "title": "BrainGPT: Unleashing the Potential of EEG Generalist Foundation Model by Autoregressive Pre-training",
+  "weights_url": "https://huggingface.co/braindecode/eegpt-pretrained"
 }

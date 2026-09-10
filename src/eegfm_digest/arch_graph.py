@@ -33,7 +33,7 @@ REVE_BASE_PUBLISHED: dict[str, Any] = {
 }
 
 _LAYER_RE = re.compile(
-    r"^(?:(?P<prefix>.+)\.)?(?:layers|layer|blocks|block)\.(?P<idx>\d+)\.(?P<rest>.+)$"
+    r"^(?:(?P<prefix>.+)\.)?(?:layers|layer|mamba_blocks|blocks|block)\.(?P<idx>\d+)\.(?P<rest>.+)$"
 )
 
 _RMS_TYPES = frozenset(
@@ -62,6 +62,17 @@ _RMS_TYPES = frozenset(
 )
 _ROPE_TYPES = _RMS_TYPES | {"gpt_neox", "phi"}
 _GATED_TYPES = _RMS_TYPES
+
+GALLERY_LABELS = {
+    "2405.18765": "LaBraM",
+    "2410.19779": "EEGPT",
+    "2412.07236": "CBraMod",
+    "2502.06438": "FEMBA",
+    "2505.18185": "BrainOmni",
+    "2510.21585": "REVE",
+    "2510.22257": "LUNA",
+    "2607.27308": "ZUNA1.1",
+}
 
 
 def looks_like_reve(
@@ -221,12 +232,34 @@ def _flatten_hf_cfg(cfg: dict[str, Any] | None) -> dict[str, Any]:
         out["mlp_dim_ratio"] = out.get("mlp_ratio")
     if out.get("dim") is not None and out.get("hidden_size") is None:
         out["hidden_size"] = out.get("dim")
+    if out.get("lm_dim") is not None:
+        out["hidden_size"] = out.get("lm_dim")
+    if out.get("lm_head") is not None:
+        out["num_attention_heads"] = out.get("lm_head")
+    if out.get("lm_depth") is not None:
+        out["num_hidden_layers"] = out.get("lm_depth")
     return out
+
+
+def _is_backbone_tensor(name: str) -> bool:
+    """True for the main repeated trunk, not nested query/decoder stacks."""
+    match = _LAYER_RE.match(name)
+    if not match:
+        return False
+    prefix = (match.group("prefix") or "").strip(".").lower()
+    if not prefix:
+        return True
+    if any(token in prefix for token in ("cross_attn", "query", "decoder_head", "classifier")):
+        return False
+    head = prefix.split(".")[-1]
+    return head in {"encoder", "model", "transformer", "backbone", "decoder"}
 
 
 def _depth_from_names(tensor_names: list[str] | None) -> int | None:
     indices: set[int] = set()
     for name in tensor_names or []:
+        if not _is_backbone_tensor(name):
+            continue
         match = _LAYER_RE.match(name)
         if match:
             indices.add(int(match.group("idx")))
@@ -251,13 +284,22 @@ def _embed_from_tensors(tensors: dict[str, dict[str, Any]] | None) -> int | None
         if len(dims) < 2:
             continue
         key = name.lower()
+        stacked = _is_backbone_tensor(name)
         if any(token in key for token in ("patch_embed", "patch_embedding", "embed_tokens", "wte")):
             patch = max(patch or 0, min(dims))
-        if any(token in key for token in ("mlp.0.weight", "linear1.weight", "fc1.weight", "w1.weight")):
+        if stacked and any(
+            token in key for token in ("mlp.0.weight", "linear1.weight", "mlp.fc1.weight", "w1.weight")
+        ):
             ffn_in = min(dims)
-        if "qkv.weight" in key or key.endswith(("wq.weight", "q_proj.weight")):
+        if stacked and (
+            "qkv.weight" in key
+            or "qkv_proj.weight" in key
+            or key.endswith(("wq.weight", "q_proj.weight"))
+        ):
             attn = min(dims)
-    return ffn_in or patch or attn
+        if stacked and "mamba" in key and key.endswith(("in_proj.weight", "out_proj.weight")):
+            attn = min(dims)
+    return ffn_in or attn or patch
 
 
 def _hidden_from_tensors(tensors: dict[str, dict[str, Any]] | None) -> int | None:
@@ -268,7 +310,9 @@ def _hidden_from_tensors(tensors: dict[str, dict[str, Any]] | None) -> int | Non
         shape = info.get("shape") if isinstance(info, dict) else None
         if not isinstance(shape, list) or not shape:
             continue
-        if any(token in key for token in ("mlp.0.weight", "linear1.weight", "fc1.weight", "w1.weight")):
+        if _is_backbone_tensor(name) and any(
+            token in key for token in ("mlp.0.weight", "linear1.weight", "mlp.fc1.weight", "w1.weight")
+        ):
             return int(shape[0])
     return None
 
@@ -291,7 +335,7 @@ def _attn_from_tensors(
             head_dim = int(shape[-1])
         if key.endswith(("wq.weight", "q_proj.weight")):
             q_out = int(shape[0])
-        elif "qkv.weight" in key:
+        elif "qkv.weight" in key or "qkv_proj.weight" in key:
             q_out = int(shape[0]) // 3
     heads = None
     if q_out and head_dim:
@@ -314,10 +358,24 @@ def _is_eeg_like(cfg: dict[str, Any], label: str | None) -> bool:
         return True
     if _first_int(cfg.get("patch_size")):
         return True
-    if _first_int(cfg.get("max_chans"), cfg.get("n_chans")):
+    if _first_int(cfg.get("max_chans"), cfg.get("n_chans"), cfg.get("n_neuro")):
         return True
     blob = f"{label or ''} {_model_type(cfg)} {cfg.get('tok_idx_type') or ''}".lower()
-    return any(token in blob for token in ("eeg", "zuna", "labram", "cbramod", "braindecode"))
+    return any(
+        token in blob
+        for token in (
+            "eeg",
+            "zuna",
+            "labram",
+            "cbramod",
+            "braindecode",
+            "luna",
+            "brainomni",
+            "csbrain",
+            "eegpt",
+            "femba",
+        )
+    )
 
 
 def _is_causal(cfg: dict[str, Any], blob: str, eeg_like: bool) -> bool:
@@ -384,7 +442,9 @@ def _ffn_title(cfg: dict[str, Any], gated: bool, activation: str) -> str:
         return "FeedForward (GeGLU) module"
     if bool(cfg.get("use_swiglu")) or (gated and activation == "SiLU"):
         return "FeedForward (SwiGLU) module"
-    return "FeedForward module"
+    if activation:
+        return f"FeedForward ({activation} · 2 layers)"
+    return "FeedForward (2-layer MLP)"
 
 
 def _attention_label(*, heads: int, kv_heads: int | None, causal: bool) -> str:
@@ -402,13 +462,19 @@ def _attention_label(*, heads: int, kv_heads: int | None, causal: bool) -> str:
     return core[:1].upper() + core[1:]
 
 
+def _is_mamba(blob: str) -> bool:
+    return "mamba" in blob
+
+
 def _is_criss_cross(blob: str) -> bool:
     spatial = any(token in blob for token in ("self_attn_s", "spatial_attn", ".attn_s."))
     temporal = any(token in blob for token in ("self_attn_t", "temporal_attn", ".attn_t."))
     return spatial and temporal
 
 
-def _uses_vq_codebook(label: str | None, blob: str) -> bool:
+def _uses_vq_codebook(label: str | None, blob: str, cfg: dict[str, Any] | None = None) -> bool:
+    if isinstance(cfg, dict) and _first_int(cfg.get("codebook_size"), cfg.get("num_quantizers")):
+        return True
     text = f"{label or ''} {blob}".lower()
     if any(token in text for token in ("codebook", "quantize", "vqvae", "vq_vae", "neural_tokenizer")):
         return True
@@ -528,44 +594,43 @@ def diagram_from_hf(
     if eeg_like:
         below_id, stem_id, prefix, attn_id, mlp_id = "eeg", "patch", "enc", "enc.attn", "enc.mlp"
         below_label = "Sample EEG"
-        stem_label = "Patch embedding layer"
+        stem_label = "Sensor encoder" if _first_int(cfg.get("n_neuro")) else "Patch embedding layer"
     else:
         below_id, stem_id, prefix, attn_id, mlp_id = "input", "embed", "block", "block.attn", "block.mlp"
         below_label = "Sample input"
         stem_label = "Token embedding layer"
 
     criss_cross = _is_criss_cross(blob)
-    vq_codebook = _uses_vq_codebook(title, blob)
+    mamba = _is_mamba(blob)
+    has_ffn = (not mamba) or any(
+        token in blob for token in ("mlp.", ".linear1.", ".fc1.", "feed_forward", "w1.weight")
+    )
+    vq_codebook = _uses_vq_codebook(title, blob, cfg)
     qk_norm = _uses_qk_norm(blob)
     acpe = _uses_acpe(blob)
-    attn_s_id = f"{prefix}.attn_s"
-    attn_t_id = f"{prefix}.attn_t"
-    if criss_cross:
-        attn_id = attn_s_id
-
+    channel_unify = eeg_like and (
+        "channel_location_embedder" in blob
+        or "channel_emb" in blob
+        or ("cross_attn" in blob and "channel" in blob)
+    )
     steps = [{"id": f"{prefix}.n1", "label": f"{norm_label} 1", "kind": "norm"}]
-    if criss_cross:
+    if mamba:
+        attn_label = (
+            "Bidirectional Mamba" if ("mamba_fwd" in blob and "mamba_rev" in blob) else "Mamba"
+        )
+    elif criss_cross:
+        attn_label = "Criss-cross attention"
+    else:
+        attn_label = _attention_label(heads=heads or 1, kv_heads=kv_heads, causal=causal)
+    steps.append({"id": attn_id, "label": attn_label, "kind": "attention"})
+    if has_ffn:
         steps.extend(
             [
-                {"id": attn_s_id, "label": "Spatial attention", "kind": "attention"},
-                {"id": attn_t_id, "label": "Temporal attention", "kind": "attention"},
+                {"id": f"{prefix}.n2", "label": f"{norm_label} 2", "kind": "norm"},
+                {"id": mlp_id, "label": "Feed forward", "kind": "ffn"},
             ]
         )
-    else:
-        steps.append(
-            {
-                "id": attn_id,
-                "label": _attention_label(heads=heads or 1, kv_heads=kv_heads, causal=causal),
-                "kind": "attention",
-            }
-        )
-    steps.extend(
-        [
-            {"id": f"{prefix}.n2", "label": f"{norm_label} 2", "kind": "norm"},
-            {"id": mlp_id, "label": "Feed forward", "kind": "ffn"},
-            {"id": f"{prefix}.add", "label": "+", "kind": "add"},
-        ]
-    )
+    steps.append({"id": f"{prefix}.add", "label": "+", "kind": "add"})
     stem = [{"id": stem_id, "label": stem_label, "kind": "embed"}]
     if vq_codebook:
         stem.append({"id": "vq", "label": "VQ-VAE codebook", "kind": "embed"})
@@ -576,18 +641,21 @@ def diagram_from_hf(
         head.append({"id": "final_norm", "label": f"Final {norm_label}", "kind": "norm"})
     head.append({"id": "out", "label": "Linear output layer", "kind": "linear"})
 
-    callouts: list[dict[str, Any]] = [
-        {
-            "id": "ffn-mod",
-            "kind": "ffn",
-            "anchor": mlp_id,
-            "title": _ffn_title(cfg, gated, activation),
-            "activation": activation,
-            "hidden_dim": hidden,
-            "gated": gated,
-        }
-    ]
-    if heads:
+    callouts: list[dict[str, Any]] = []
+    if has_ffn:
+        callouts.append(
+            {
+                "id": "ffn-mod",
+                "kind": "ffn",
+                "anchor": mlp_id,
+                "title": _ffn_title(cfg, gated, activation),
+                "activation": activation,
+                "hidden_dim": hidden,
+                "gated": gated,
+                "layers": 1 if gated else 2,
+            }
+        )
+    if heads and not mamba:
         heads_callout: dict[str, Any] = {
             "id": "attn-heads",
             "kind": "heads",
@@ -612,10 +680,18 @@ def diagram_from_hf(
     if qk_norm:
         left.append({"id": "qk-norm", "label": "QK-Norm", "anchor": attn_id})
     if criss_cross:
-        left.append({"id": "cost-s", "label": "O(N²T)", "anchor": attn_s_id})
-        left.append({"id": "cost-t", "label": "O(NT²)", "anchor": attn_t_id})
+        left.append({"id": "cost-st", "label": "O(N²T) ∥ O(NT²)", "anchor": attn_id})
+    if has_ffn:
+        if gated:
+            glu = "GeGLU" if activation == "GELU" else "SwiGLU"
+            left.append({"id": "ffn-kind", "label": f"{glu}\n1 layer", "anchor": mlp_id})
+        else:
+            left.append({"id": "ffn-kind", "label": f"{activation}\n2-layer MLP", "anchor": mlp_id})
     if vq_codebook:
         left.append({"id": "vq-meta", "label": "Frozen codebook", "anchor": "vq"})
+    if channel_unify:
+        stem.append({"id": "unify", "label": "Channel unifier", "kind": "embed"})
+        left.append({"id": "unify-meta", "label": "Learned queries", "anchor": "unify"})
     if patch_size:
         overlap_bit = f",\noverlap {patch_overlap}" if patch_overlap is not None else ""
         left.append(
@@ -641,6 +717,8 @@ def diagram_from_hf(
         notes["head_dim"] = head_dim
     if criss_cross:
         notes["attn"] = "criss_cross"
+    if mamba:
+        notes["backbone"] = "mamba"
     if vq_codebook:
         notes["tokenizer"] = "vqvae"
 
@@ -811,7 +889,7 @@ def graph_for_model(
         cfg,
         tensor_names,
         tensors=tensors,
-        label=label or short_model_label(None, repo_id),
+        label=label or short_model_label(None, repo_id, arxiv_id),
         num_params=params,
     )
     return graph
@@ -830,7 +908,10 @@ def fact_sheet_for_graph(cfg: dict[str, Any] | None) -> dict[str, Any]:
     return sheet
 
 
-def short_model_label(title: str | None, repo_id: str | None = None) -> str:
+def short_model_label(title: str | None, repo_id: str | None = None, arxiv_id: str | None = None) -> str:
+    known = GALLERY_LABELS.get(str(arxiv_id or "").strip())
+    if known:
+        return known
     text = str(title or "").strip()
     if text:
         head = text.split(":", 1)[0].split("—", 1)[0].split("--", 1)[0].strip()

@@ -1,25 +1,9 @@
 {
-  "arxiv_id_base": "2412.07236",
+  "arxiv_id_base": "2502.06438",
   "diagram": {
     "annotations": {
-      "embed_dim": 200,
-      "left": [
-        {
-          "anchor": "patch",
-          "id": "pe",
-          "label": "Asymmetric PE"
-        },
-        {
-          "anchor": "enc.attn",
-          "id": "cost-st",
-          "label": "O(N²T) ∥ O(NT²)"
-        },
-        {
-          "anchor": "enc.mlp",
-          "id": "ffn-kind",
-          "label": "GELU\n2-layer MLP"
-        }
-      ]
+      "embed_dim": 385,
+      "left": []
     },
     "below": [
       {
@@ -28,18 +12,7 @@
         "label": "Sample EEG"
       }
     ],
-    "callouts": [
-      {
-        "activation": "GELU",
-        "anchor": "enc.mlp",
-        "gated": false,
-        "hidden_dim": 800,
-        "id": "ffn-mod",
-        "kind": "ffn",
-        "layers": 2,
-        "title": "FeedForward (GELU · 2 layers)"
-      }
-    ],
+    "callouts": [],
     "head": [
       {
         "id": "pool",
@@ -59,9 +32,9 @@
       "has_patch": true
     },
     "notes": {
-      "attn": "criss_cross"
+      "backbone": "mamba"
     },
-    "param_label": "4.9M",
+    "param_label": null,
     "repeat": {
       "count": 12,
       "id": "enc",
@@ -74,17 +47,7 @@
         {
           "id": "enc.attn",
           "kind": "attention",
-          "label": "Criss-cross attention"
-        },
-        {
-          "id": "enc.n2",
-          "kind": "norm",
-          "label": "LayerNorm 2"
-        },
-        {
-          "id": "enc.mlp",
-          "kind": "ffn",
-          "label": "Feed forward"
+          "label": "Bidirectional Mamba"
         },
         {
           "id": "enc.add",
@@ -100,7 +63,7 @@
         "label": "Patch embedding layer"
       }
     ],
-    "title": "CBraMod"
+    "title": "FEMBA"
   },
   "edges": [
     {
@@ -113,27 +76,27 @@
     },
     {
       "from": "encoder",
-      "shape": "(B, 200)",
+      "shape": "(B, 385)",
       "to": "output"
     }
   ],
   "fact_sheet": {
-    "architectures": null,
+    "architectures": "FEMBA",
     "context_length": null,
     "hidden_act": null,
     "hidden_size": null,
     "intermediate_size": null,
-    "model_type": null,
+    "model_type": "femba",
     "num_attention_heads": null,
     "num_key_value_heads": null,
     "num_layers": null,
-    "num_params": 4924000,
+    "num_params": null,
     "vocab_size": null
   },
-  "graph_path": "data/arch/2412.07236.json",
-  "hf_repo": "braindecode/cbramod-pretrained",
-  "label": "CBraMod",
-  "month": "2024-12",
+  "graph_path": "data/arch/2502.06438.json",
+  "hf_repo": "PulpBio/FEMBA",
+  "label": "FEMBA",
+  "month": "2025-02",
   "nodes": [
     {
       "id": "input",
@@ -148,34 +111,14 @@
     {
       "children": [
         {
-          "id": "encoder.linear1",
+          "id": "encoder.mamba_fwd",
           "kind": "module",
-          "label": "Linear1"
+          "label": "Mamba fwd"
         },
         {
-          "id": "encoder.linear2",
+          "id": "encoder.mamba_rev",
           "kind": "module",
-          "label": "Linear2"
-        },
-        {
-          "id": "encoder.norm1",
-          "kind": "norm",
-          "label": "Norm1"
-        },
-        {
-          "id": "encoder.norm2",
-          "kind": "norm",
-          "label": "Norm2"
-        },
-        {
-          "id": "encoder.self_attn_s",
-          "kind": "attn",
-          "label": "Self attn s"
-        },
-        {
-          "id": "encoder.self_attn_t",
-          "kind": "attn",
-          "label": "Self attn t"
+          "label": "Mamba rev"
         }
       ],
       "id": "encoder",
@@ -189,11 +132,11 @@
       "label": "Output",
       "shape": [
         null,
-        200
+        385
       ]
     }
   ],
   "source": "hf_config+safetensors_header",
-  "title": "CBraMod: A Criss-Cross Brain Foundation Model for EEG Decoding",
-  "weights_url": "https://huggingface.co/braindecode/cbramod-pretrained"
+  "title": "FEMBA: Efficient and Scalable EEG Analysis with a Bidirectional Mamba Foundation Model",
+  "weights_url": "https://huggingface.co/PulpBio/FEMBA"
 }

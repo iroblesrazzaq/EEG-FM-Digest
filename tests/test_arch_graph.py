@@ -165,7 +165,9 @@ def test_diagram_from_hf_gpt2_ungated_gelu_layernorm():
     assert ffn["activation"] == "GELU"
     assert ffn["gated"] is False
     assert ffn["hidden_dim"] == 3072
-    assert "GLU" not in ffn["title"]
+    assert "GeGLU" not in ffn["title"]
+    assert "SwiGLU" not in ffn["title"]
+    assert "2 layers" in ffn["title"]
     left_labels = [item["label"] for item in diagram["annotations"]["left"]]
     assert "Absolute PE" in left_labels
     assert "RoPE" not in left_labels
@@ -234,6 +236,11 @@ def test_short_model_label_uses_title_head():
         "REVE: A Foundation Model for EEG -- Adapting to Any Setup",
         "brain-bzh/reve-base",
     ) == "REVE"
+    assert short_model_label(
+        "Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI",
+        "braindecode/labram-pretrained",
+        "2405.18765",
+    ) == "LaBraM"
 
 
 def test_diagram_from_hf_zuna_tensors_infer_swiglu_and_q_out_heads():
@@ -326,10 +333,91 @@ def test_diagram_from_hf_cbramod_criss_cross_attention():
     }
     diagram = diagram_from_hf(cfg, tensors=tensors, label="CBraMod")
     attn_labels = [step["label"] for step in diagram["repeat"]["steps"] if step["kind"] == "attention"]
-    assert attn_labels == ["Spatial attention", "Temporal attention"]
+    assert attn_labels == ["Criss-cross attention"]
     left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
-    assert left["cost-s"] == "O(N²T)"
-    assert left["cost-t"] == "O(NT²)"
+    assert left["cost-st"] == "O(N²T) ∥ O(NT²)"
     assert left["pe"] == "Asymmetric PE"
+    assert left["ffn-kind"] == "GELU\n2-layer MLP"
     assert diagram["notes"]["attn"] == "criss_cross"
-    assert "Multi-head attention" not in [step["label"] for step in diagram["repeat"]["steps"]]
+    assert "Spatial attention" not in [step["label"] for step in diagram["repeat"]["steps"]]
+    assert "Temporal attention" not in [step["label"] for step in diagram["repeat"]["steps"]]
+    ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
+    assert ffn["gated"] is False
+    assert ffn["layers"] == 2
+    assert "2 layers" in ffn["title"]
+
+
+def test_diagram_from_hf_luna_channel_unifier_and_rope():
+    cfg = {"model_type": "luna"}
+    tensors = {
+        "patch_embed.proj_in.0.weight": {"shape": [16, 1, 1, 19]},
+        "channel_emb": {"shape": [1, 64]},
+        "channel_location_embedder.weight": {"shape": [64, 3]},
+        "cross_attn.0.q_proj.weight": {"shape": [256, 64]},
+        "freq_embed.frequency_to_embed.fc1.weight": {"shape": [168, 42]},
+        "cross_attn.query_self_attn.layers.0.linear1.weight": {"shape": [256, 64]},
+        "blocks.0.attn.qkv_proj.weight": {"shape": [768, 256]},
+        "blocks.0.attn.rotary_emb.freqs": {"shape": [16]},
+        "blocks.0.mlp.fc1.weight": {"shape": [1024, 256]},
+        "blocks.1.mlp.fc1.weight": {"shape": [1024, 256]},
+        "blocks.7.mlp.fc1.weight": {"shape": [1024, 256]},
+    }
+    diagram = diagram_from_hf(cfg, tensors=tensors, label="LUNA")
+    assert diagram["repeat"]["count"] == 8
+    assert diagram["annotations"]["embed_dim"] == 256
+    assert [item["label"] for item in diagram["stem"]] == [
+        "Patch embedding layer",
+        "Channel unifier",
+    ]
+    left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
+    assert left["pe"] == "RoPE"
+    assert left["unify-meta"] == "Learned queries"
+    ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
+    assert ffn["hidden_dim"] == 1024
+    assert ffn["gated"] is False
+
+
+def test_diagram_from_hf_brainomni_lm_aliases_and_codebook():
+    cfg = {
+        "n_neuro": 16,
+        "n_dim": 256,
+        "n_head": 4,
+        "codebook_size": 512,
+        "num_quantizers": 4,
+        "lm_dim": 512,
+        "lm_head": 16,
+        "lm_depth": 12,
+    }
+    diagram = diagram_from_hf(cfg, label="BrainOmni")
+    assert diagram["repeat"]["count"] == 12
+    assert diagram["annotations"]["embed_dim"] == 512
+    heads = next(item for item in diagram["callouts"] if item["kind"] == "heads")
+    assert heads["label"] == "16 heads"
+    assert [item["label"] for item in diagram["stem"]] == [
+        "Sensor encoder",
+        "VQ-VAE codebook",
+    ]
+    assert diagram["notes"]["tokenizer"] == "vqvae"
+    left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
+    assert left["vq-meta"] == "Frozen codebook"
+    ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
+    assert ffn["gated"] is False
+    assert "2 layers" in ffn["title"]
+
+
+def test_diagram_from_hf_femba_bidirectional_mamba():
+    cfg = {"model_type": "femba"}
+    tensors = {
+        "patch_embed.proj.weight": {"shape": [385, 1, 1, 16]},
+        "mamba_blocks.0.mamba_fwd.in_proj.weight": {"shape": [3080, 385]},
+        "mamba_blocks.0.mamba_rev.out_proj.weight": {"shape": [385, 1540]},
+        "mamba_blocks.1.mamba_fwd.in_proj.weight": {"shape": [3080, 385]},
+        "mamba_blocks.9.mamba_fwd.in_proj.weight": {"shape": [3080, 385]},
+    }
+    diagram = diagram_from_hf(cfg, tensors=tensors, label="FEMBA")
+    assert diagram["repeat"]["count"] == 10
+    assert [step["kind"] for step in diagram["repeat"]["steps"]] == ["norm", "attention", "add"]
+    assert diagram["repeat"]["steps"][1]["label"] == "Bidirectional Mamba"
+    assert diagram["annotations"]["embed_dim"] == 385
+    assert diagram["notes"]["backbone"] == "mamba"
+    assert not any(item["kind"] == "ffn" for item in diagram["callouts"])
