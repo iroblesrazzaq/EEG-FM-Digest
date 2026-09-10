@@ -97,14 +97,15 @@ def test_models_tab_renders_reve_diagram(browser, real_docs_site):
         page.wait_for_selector(".arch-graph-svg", timeout=8000)
         assert page.locator(".model-arch-card").count() >= 1
         svg = page.locator(".arch-graph-svg").first
-        assert "Transformer encoder" in (svg.text_content() or "")
+        text = svg.text_content() or ""
+        assert "Multi-head attention" in text
+        assert "Feed forward" in text
+        assert "RMSNorm" in text
+        assert "22 ×" in text
+        assert "GeGLU" in text
         toggle = page.locator("[data-arch-toggle]").first
         toggle.click()
-        page.wait_for_function(
-            "() => (document.querySelector('.arch-graph-svg')?.textContent || '').includes('RMSNorm')",
-            timeout=5000,
-        )
-        assert "GeGLU" in (svg.text_content() or "")
+        assert "GELU" in (svg.text_content() or "")
         assert page.locator("a[href*='hfviewer']").count() == 0
     finally:
         context.close()
@@ -125,7 +126,9 @@ def test_october_reve_card_mounts_local_graph(browser, real_docs_site):
         assert card.locator("a[href*='hfviewer']").count() == 0
         text = card.text_content() or ""
         assert "View architecture" not in text
-        assert "Transformer encoder" in text
+        assert "Multi-head attention" in text
+        assert "Feed forward" in text
+        assert "22 ×" in text
     finally:
         context.close()
 

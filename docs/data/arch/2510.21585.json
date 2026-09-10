@@ -1,5 +1,102 @@
 {
   "arxiv_id_base": "2510.21585",
+  "diagram": {
+    "annotations": {
+      "embed_dim": 512,
+      "left": [
+        {
+          "anchor": "enc.attn",
+          "id": "pe",
+          "label": "Fourier PE"
+        },
+        {
+          "anchor": "patch",
+          "id": "patch-meta",
+          "label": "Patch size 200,\noverlap 20"
+        }
+      ]
+    },
+    "below": [
+      {
+        "id": "eeg",
+        "kind": "input",
+        "label": "Sample EEG"
+      }
+    ],
+    "callouts": [
+      {
+        "activation": "GELU",
+        "anchor": "enc.mlp",
+        "hidden_dim": 1362,
+        "id": "ffn-mod",
+        "kind": "ffn",
+        "title": "FeedForward (GeGLU) module"
+      },
+      {
+        "anchor": "enc.attn",
+        "detail": "Head dim 64",
+        "id": "attn-heads",
+        "kind": "heads",
+        "label": "8 heads"
+      }
+    ],
+    "head": [
+      {
+        "id": "pool",
+        "kind": "pool",
+        "label": "Pooling"
+      },
+      {
+        "id": "out",
+        "kind": "linear",
+        "label": "Linear output layer"
+      }
+    ],
+    "notes": {
+      "freqs": 4,
+      "head_dim": 64
+    },
+    "param_label": "69M",
+    "repeat": {
+      "count": 22,
+      "id": "enc",
+      "steps": [
+        {
+          "id": "enc.n1",
+          "kind": "norm",
+          "label": "RMSNorm 1"
+        },
+        {
+          "id": "enc.attn",
+          "kind": "attention",
+          "label": "Multi-head attention"
+        },
+        {
+          "id": "enc.n2",
+          "kind": "norm",
+          "label": "RMSNorm 2"
+        },
+        {
+          "id": "enc.mlp",
+          "kind": "ffn",
+          "label": "Feed forward"
+        },
+        {
+          "id": "enc.add",
+          "kind": "add",
+          "label": "+"
+        }
+      ]
+    },
+    "stem": [
+      {
+        "id": "patch",
+        "kind": "embed",
+        "label": "Patch embedding layer"
+      }
+    ],
+    "title": "REVE"
+  },
   "edges": [
     {
       "from": "eeg",

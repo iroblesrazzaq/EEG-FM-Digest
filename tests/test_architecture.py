@@ -283,6 +283,8 @@ def test_site_js_renders_architecture_controls():
     assert "hfviewer" not in site_js
     arch_js = Path("docs/assets/arch-graph.js").read_text(encoding="utf-8")
     assert "ArchGraph" in arch_js
+    assert "curlyBrace" in arch_js
+    assert "FeedForward" in arch_js or "drawGatedFfn" in arch_js
     style = Path("docs/assets/style.css").read_text(encoding="utf-8")
     assert ".arch-graph-host" in style
     assert ".arch-fact-sheet" in style

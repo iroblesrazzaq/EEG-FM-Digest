@@ -64,7 +64,7 @@ PROJECT_REPO_URL = "https://github.com/iroblesrazzaq/EEG-FM-Digest"
 PERSONAL_WEBSITE_URL = "https://iroblesrazzaq.github.io/"
 LINKEDIN_URL = "https://www.linkedin.com/in/ismaelroblesrazzaq"
 EMAIL_ADDRESS = "ismaelroblesrazzaq@gmail.com"
-ASSET_VERSION = "20260910-2"
+ASSET_VERSION = "20260910-3"
 SITE_TAB_TITLE_BASE = "EEG-FM Digest"
 
 ICON_SVGS = {
@@ -383,7 +383,7 @@ def render_models_page() -> str:
 <section class='hero-banner'>
   <p class='hero-kicker'>Open weights</p>
   <h1>Models</h1>
-  <p class='sub'>Interactive architecture diagrams for EEG foundation models in this digest. Click a block marked ×N to expand the repeated layer.</p>
+  <p class='sub'>Architecture diagrams for EEG foundation models in this digest.</p>
 </section>
 <section id='results'></section>
 </main>

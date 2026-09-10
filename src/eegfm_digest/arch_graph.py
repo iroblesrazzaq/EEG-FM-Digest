@@ -154,6 +154,102 @@ def collapse_repeated_layers(tensor_names: list[str]) -> dict[str, Any]:
     return {"repeats": repeats, "leftover": leftover}
 
 
+def _format_param_label(count: int | None) -> str | None:
+    if not isinstance(count, int) or count <= 0:
+        return None
+    if count >= 1_000_000_000:
+        value = count / 1_000_000_000
+        text = f"{value:.0f}B" if value >= 10 else f"{value:.1f}B"
+        return text.replace(".0B", "B")
+    if count >= 1_000_000:
+        value = count / 1_000_000
+        text = f"{value:.0f}M" if value >= 10 else f"{value:.1f}M"
+        return text.replace(".0M", "M")
+    if count >= 1_000:
+        value = count / 1_000
+        text = f"{value:.0f}K" if value >= 10 else f"{value:.1f}K"
+        return text.replace(".0K", "K")
+    return str(count)
+
+
+def _mlp_hidden_dim(embed: int, mlp_ratio: Any) -> int:
+    try:
+        ratio = float(mlp_ratio)
+    except (TypeError, ValueError):
+        ratio = 2.66
+    return max(1, int(round(embed * ratio)))
+
+
+def reve_diagram(
+    *,
+    embed: int,
+    depth: int,
+    heads: int,
+    head_dim: int,
+    mlp_ratio: Any,
+    use_geglu: bool,
+    freqs: int,
+    patch_size: int,
+    patch_overlap: int,
+    num_params: int | None,
+) -> dict[str, Any]:
+    """Sebastian Raschka gallery layout: bottom-up chassis, ×N block, side callouts."""
+    hidden = _mlp_hidden_dim(embed, mlp_ratio)
+    activation = "GELU" if use_geglu else "GELU"
+    ffn_title = "FeedForward (GeGLU) module" if use_geglu else "FeedForward module"
+    param_label = _format_param_label(num_params)
+    return {
+        "title": "REVE",
+        "param_label": param_label,
+        "below": [{"id": "eeg", "label": "Sample EEG", "kind": "input"}],
+        "stem": [{"id": "patch", "label": "Patch embedding layer", "kind": "embed"}],
+        "repeat": {
+            "id": "enc",
+            "count": depth,
+            "steps": [
+                {"id": "enc.n1", "label": "RMSNorm 1", "kind": "norm"},
+                {"id": "enc.attn", "label": "Multi-head attention", "kind": "attention"},
+                {"id": "enc.n2", "label": "RMSNorm 2", "kind": "norm"},
+                {"id": "enc.mlp", "label": "Feed forward", "kind": "ffn"},
+                {"id": "enc.add", "label": "+", "kind": "add"},
+            ],
+        },
+        "head": [
+            {"id": "pool", "label": "Pooling", "kind": "pool"},
+            {"id": "out", "label": "Linear output layer", "kind": "linear"},
+        ],
+        "callouts": [
+            {
+                "id": "ffn-mod",
+                "kind": "ffn",
+                "anchor": "enc.mlp",
+                "title": ffn_title,
+                "activation": activation,
+                "hidden_dim": hidden,
+            },
+            {
+                "id": "attn-heads",
+                "kind": "heads",
+                "anchor": "enc.attn",
+                "label": f"{heads} heads",
+                "detail": f"Head dim {head_dim}",
+            },
+        ],
+        "annotations": {
+            "embed_dim": embed,
+            "left": [
+                {"id": "pe", "label": "Fourier PE", "anchor": "enc.attn"},
+                {
+                    "id": "patch-meta",
+                    "label": f"Patch size {patch_size},\noverlap {patch_overlap}",
+                    "anchor": "patch",
+                },
+            ],
+        },
+        "notes": {"freqs": freqs, "head_dim": head_dim},
+    }
+
+
 def graph_from_tensors(
     tensor_names: list[str],
     *,
@@ -201,7 +297,7 @@ def graph_from_tensors(
 
 
 def reve_graph(cfg: dict[str, Any] | None = None) -> dict[str, Any]:
-    """hfviewer-style REVE overview with an expandable encoder stack."""
+    """REVE node graph plus a Raschka-gallery ``diagram`` for the SVG renderer."""
     merged = merge_reve_config(cfg)
     embed = _first_int(merged.get("embed_dim"), merged.get("hidden_size"), merged.get("d_model")) or 512
     depth = _first_int(merged.get("depth"), merged.get("num_hidden_layers"), merged.get("n_layer")) or 22
@@ -213,6 +309,7 @@ def reve_graph(cfg: dict[str, Any] | None = None) -> dict[str, Any]:
     patch_size = _first_int(merged.get("patch_size")) or 200
     patch_overlap = _first_int(merged.get("patch_overlap")) or 20
     mlp_label = "GeGLU MLP" if use_geglu else "MLP"
+    num_params = _first_int(merged.get("num_params"))
 
     nodes: list[dict[str, Any]] = [
         {
@@ -263,7 +360,19 @@ def reve_graph(cfg: dict[str, Any] | None = None) -> dict[str, Any]:
         {"from": "enc", "to": "pool"},
         {"from": "pool", "to": "out", "shape": f"(B, {embed})"},
     ]
-    return {"nodes": nodes, "edges": edges}
+    diagram = reve_diagram(
+        embed=embed,
+        depth=depth,
+        heads=heads,
+        head_dim=head_dim,
+        mlp_ratio=mlp_ratio,
+        use_geglu=use_geglu,
+        freqs=freqs,
+        patch_size=patch_size,
+        patch_overlap=patch_overlap,
+        num_params=num_params,
+    )
+    return {"nodes": nodes, "edges": edges, "diagram": diagram}
 
 
 def graph_for_model(

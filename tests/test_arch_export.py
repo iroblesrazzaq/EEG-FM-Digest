@@ -43,6 +43,8 @@ def test_build_export_payload_reve_has_graph_path_not_hfviewer():
     assert "hfviewer_url" not in site
     assert site["fact_sheet"]["num_layers"] == 22
     assert site["fact_sheet"]["hidden_size"] == 512
+    assert payload["diagram"]["repeat"]["count"] == 22
+    assert payload["diagram"]["title"] == "REVE"
 
 
 def test_write_export_artifacts_patches_papers_and_catalog(tmp_path: Path):
