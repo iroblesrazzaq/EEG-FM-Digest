@@ -8,6 +8,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from .summary_attempt import site_summary_failed_reason
+
 
 def safe_str_list(value: Any) -> list[str]:
     if not isinstance(value, list):
@@ -74,20 +76,28 @@ def paper_rows_from_backend(backend_rows: list[dict[str, Any]]) -> list[dict[str
         if triage["decision"] != "accept":
             continue
         summary = row.get("paper_summary")
-        rows.append(
-            {
-                "arxiv_id_base": arxiv_id_base,
-                "arxiv_id": str(row.get("arxiv_id", "")).strip(),
-                "title": str(row.get("title", "")).strip(),
-                "published_date": str(row.get("published", "")).strip()[:10],
-                "authors": safe_str_list(row.get("authors")),
-                "categories": safe_str_list(row.get("categories")),
-                "links": safe_links(row.get("links"), arxiv_id_base),
-                "triage": triage,
-                "summary": summary if isinstance(summary, dict) else None,
-                "summary_failed_reason": None if isinstance(summary, dict) else summary_failure_reason(row),
-            }
+        failed_reason = site_summary_failed_reason(
+            summary=summary,
+            row=row,
+            fallback=summary_failure_reason(row),
         )
+        display_summary = summary if isinstance(summary, dict) and failed_reason is None else None
+        architecture = row.get("architecture")
+        paper_row: dict[str, Any] = {
+            "arxiv_id_base": arxiv_id_base,
+            "arxiv_id": str(row.get("arxiv_id", "")).strip(),
+            "title": str(row.get("title", "")).strip(),
+            "published_date": str(row.get("published", "")).strip()[:10],
+            "authors": safe_str_list(row.get("authors")),
+            "categories": safe_str_list(row.get("categories")),
+            "links": safe_links(row.get("links"), arxiv_id_base),
+            "triage": triage,
+            "summary": display_summary,
+            "summary_failed_reason": failed_reason,
+        }
+        if isinstance(architecture, dict):
+            paper_row["architecture"] = architecture
+        rows.append(paper_row)
     return rows
 
 
@@ -101,20 +111,25 @@ def paper_rows_from_summaries(
         if not arxiv_id_base:
             continue
         meta = metadata.get(arxiv_id_base, {}) if isinstance(metadata.get(arxiv_id_base, {}), dict) else {}
-        rows.append(
-            {
-                "arxiv_id_base": arxiv_id_base,
-                "arxiv_id": str(meta.get("arxiv_id", "")).strip(),
-                "title": str(summary.get("title", "")).strip(),
-                "published_date": str(summary.get("published_date", "")).strip(),
-                "authors": safe_str_list(meta.get("authors")),
-                "categories": safe_str_list(summary.get("categories")),
-                "links": safe_links(meta.get("links"), arxiv_id_base),
-                "triage": {"decision": "accept", "confidence": 0.0, "reasons": []},
-                "summary": summary,
-                "summary_failed_reason": None,
-            }
-        )
+        paper_row = {
+            "arxiv_id_base": arxiv_id_base,
+            "arxiv_id": str(meta.get("arxiv_id", "")).strip(),
+            "title": str(summary.get("title", "")).strip(),
+            "published_date": str(summary.get("published_date", "")).strip(),
+            "authors": safe_str_list(meta.get("authors")),
+            "categories": safe_str_list(summary.get("categories")),
+            "links": safe_links(meta.get("links"), arxiv_id_base),
+            "triage": {"decision": "accept", "confidence": 0.0, "reasons": []},
+            "summary": summary,
+            "summary_failed_reason": site_summary_failed_reason(
+                summary=summary,
+                row={},
+                fallback="summary_unavailable",
+            ),
+        }
+        if paper_row["summary_failed_reason"]:
+            paper_row["summary"] = None
+        rows.append(paper_row)
     return rows
 
 

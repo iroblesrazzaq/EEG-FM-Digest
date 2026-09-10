@@ -448,3 +448,118 @@ def test_run_window_invokes_stragglers_sweep(monkeypatch, tmp_path):
     db = DigestDB(cfg.data_dir / "digest.sqlite")
     assert db.get_summary("2501.00001") is not None
     db.close()
+
+
+def _json_placeholder(paper: dict, *, used_fulltext: bool = True) -> dict:
+    payload = _summary_payload(paper)
+    payload["used_fulltext"] = used_fulltext
+    payload["notes"] = "ok;summary_json_error"
+    payload["limitations"] = ["unknown", "summary_json_error"]
+    payload["one_liner"] = "Summary unavailable due to JSON validation failure."
+    return payload
+
+
+def test_get_accepted_without_summary_includes_json_placeholder(tmp_path):
+    cfg = _cfg(tmp_path)
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    paper = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted")
+    _seed_accept_without_summary(db, paper, "2025-01")
+    db.upsert_summary(
+        "2025-01",
+        _json_placeholder(paper),
+        meta={"summary_attempt": {"category": "llm_invalid_json", "error": None}},
+    )
+    assert db.get_accepted_without_summary() == [("2025-01", "2501.00001")]
+    db.close()
+
+
+def test_resummarize_overwrites_json_placeholder(monkeypatch, tmp_path):
+    cfg = _cfg(tmp_path)
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    paper = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")
+    _seed_accept_without_summary(db, paper, "2025-01")
+    db.upsert_summary("2025-01", _json_placeholder(paper))
+    db.close()
+
+    _patch_summary_stack(monkeypatch)
+    stats = resummarize_stragglers(cfg, no_site=True)
+    assert stats.attempted == 1
+    assert stats.succeeded == 1
+    assert stats.failed == 0
+
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    summary = db.get_summary("2501.00001")
+    assert summary is not None
+    assert "summary_json_error" not in summary["notes"]
+    assert db.get_accepted_without_summary() == []
+    db.close()
+
+
+def test_resummarize_ids_limits_set(monkeypatch, tmp_path):
+    cfg = _cfg(tmp_path)
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    first = _candidate("2501.00001", "2025-01-02T00:00:00Z", "First")
+    second = _candidate("2501.00002", "2025-01-03T00:00:00Z", "Second")
+    _seed_accept_without_summary(db, first, "2025-01")
+    _seed_accept_without_summary(db, second, "2025-01")
+    db.close()
+
+    calls: list[str] = []
+
+    def counting_summarize(paper, *_a, **_k):  # noqa: ANN001
+        calls.append(paper["arxiv_id_base"])
+        return _summary_payload(paper)
+
+    _patch_summary_stack(monkeypatch)
+    monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", counting_summarize)
+    stats = resummarize_stragglers(cfg, no_site=True, only_ids={"2501.00002"})
+    assert stats.attempted == 1
+    assert calls == ["2501.00002"]
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    assert db.get_summary("2501.00001") is None
+    assert db.get_summary("2501.00002") is not None
+    db.close()
+
+
+def test_resummarize_force_retries_fulltext(monkeypatch, tmp_path):
+    cfg = _cfg(tmp_path)
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    paper = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")
+    _seed_accept_without_summary(db, paper, "2025-01")
+    db.upsert_summary("2025-01", _summary_payload(paper))
+    db.close()
+
+    calls = {"n": 0}
+
+    def counting_summarize(paper, *_a, **_k):  # noqa: ANN001
+        calls["n"] += 1
+        payload = _summary_payload(paper)
+        payload["one_liner"] = "Forced rewrite."
+        return payload
+
+    _patch_summary_stack(monkeypatch)
+    monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", counting_summarize)
+    stats = resummarize_stragglers(cfg, no_site=True, force=True)
+    assert stats.attempted == 1
+    assert stats.succeeded == 1
+    assert calls["n"] == 1
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    assert db.get_summary("2501.00001")["one_liner"] == "Forced rewrite."
+    db.close()
+
+
+def test_resummarize_pdf_error_records_ok_abstract(monkeypatch, tmp_path):
+    cfg = _cfg(tmp_path)
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    paper = _candidate("2501.00001", "2025-01-02T00:00:00Z", "Accepted Paper")
+    _seed_accept_without_summary(db, paper, "2025-01")
+    db.close()
+
+    _patch_summary_stack(monkeypatch, download_raises=True)
+    stats = resummarize_stragglers(cfg, no_site=True)
+    assert stats.succeeded == 1
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    record = db.get_summary_with_meta("2501.00001")
+    assert record["data"]["used_fulltext"] is False
+    assert record["meta"]["summary_attempt"]["category"] == "ok_abstract"
+    db.close()

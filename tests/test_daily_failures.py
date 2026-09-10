@@ -223,3 +223,103 @@ def test_daily_mode_returns_nonzero_without_advancing_run_log(monkeypatch, tmp_p
     assert "2026-01-01T00:00:00Z" in log_path.read_text(encoding="utf-8")
     captured = capsys.readouterr()
     assert "Run log NOT advanced" in captured.err
+
+
+def _json_placeholder_summary(paper: dict) -> dict:
+    return {
+        "arxiv_id_base": paper["arxiv_id_base"],
+        "title": paper["title"],
+        "published_date": paper["published"][:10],
+        "categories": paper["categories"],
+        "paper_type": "other",
+        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "unique_contribution": "unknown",
+        "key_points": ["unknown", "unknown", "unknown"],
+        "data_scale": {"datasets": [], "subjects": None, "eeg_hours": None, "channels": None},
+        "method": {"architecture": None, "objective": None, "pretraining": None, "finetuning": None},
+        "evaluation": {"tasks": [], "benchmarks": [], "headline_results": []},
+        "open_source": {"code_url": None, "weights_url": None, "license": None},
+        "tags": {
+            "paper_type": [],
+            "backbone": [],
+            "objective": [],
+            "tokenization": [],
+            "topology": [],
+        },
+        "limitations": ["unknown", "summary_json_error"],
+        "used_fulltext": True,
+        "notes": "cached;summary_json_error",
+    }
+
+
+def test_pipeline_json_placeholder_counts_as_summary_failure(monkeypatch, tmp_path: Path):
+    candidate = _candidate("2501.00001", "2025-01-02T00:00:00Z")
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.fetch_month_candidates",
+        lambda *_a, **_k: [candidate],
+    )
+    _stub_llm(monkeypatch)
+    _stub_pdf(monkeypatch)
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.triage_paper",
+        lambda paper, *_a, **_k: {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "decision": "accept",
+            "confidence": 0.9,
+            "reasons": ["ok"],
+        },
+    )
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.summarize_paper",
+        lambda paper, *_a, **_k: _json_placeholder_summary(paper),
+    )
+
+    cfg = _cfg(tmp_path)
+    stats = run_month(cfg, "2025-01", no_site=True)
+
+    assert stats.summary_failures == 1
+    assert stats.failed_summary_ids == ("2501.00001",)
+    assert stats.failed_summary_categories == ("llm_invalid_json",)
+    assert stats.summarized == 0
+
+    from eegfm_digest.db import DigestDB
+
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    record = db.get_summary_with_meta("2501.00001")
+    assert record is not None
+    assert record["meta"]["summary_attempt"]["category"] == "llm_invalid_json"
+    assert db.get_accepted_without_summary() == [("2025-01", "2501.00001")]
+    db.close()
+
+
+def test_pipeline_hard_summary_exception_is_llm_other(monkeypatch, tmp_path: Path):
+    candidate = _candidate("2501.00001", "2025-01-02T00:00:00Z")
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.fetch_month_candidates",
+        lambda *_a, **_k: [candidate],
+    )
+    _stub_llm(monkeypatch)
+    _stub_pdf(monkeypatch)
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.triage_paper",
+        lambda paper, *_a, **_k: {
+            "arxiv_id_base": paper["arxiv_id_base"],
+            "decision": "accept",
+            "confidence": 0.9,
+            "reasons": ["ok"],
+        },
+    )
+    monkeypatch.setattr(
+        "eegfm_digest.pipeline.summarize_paper",
+        lambda *_a, **_k: (_ for _ in ()).throw(RuntimeError("summary exploded")),
+    )
+    cfg = _cfg(tmp_path)
+    stats = run_month(cfg, "2025-01", no_site=True)
+    assert stats.failed_summary_categories == ("llm_other",)
+    rows = [
+        json.loads(line)
+        for line in (cfg.output_dir / "2025-01" / "backend_rows.jsonl").read_text().splitlines()
+        if line.strip()
+    ]
+    assert rows[0]["summary_attempt"]["category"] == "llm_other"

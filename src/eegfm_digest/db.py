@@ -174,23 +174,27 @@ class DigestDB:
         ).fetchall()
         return [json.loads(row["summary_json"]) for row in rows]
 
-    def get_accepted_without_summary(self) -> list[tuple[str, str]]:
-        """Return ``(month, arxiv_id_base)`` for accepts that need a full-text summary.
-
-        Includes accepts with no summary row, and accepts whose stored summary is
-        abstract-only (``used_fulltext`` is not true) so a later PDF success can
-        upgrade them.
-        """
+    def list_summaries_with_meta_for_month(self, month: str) -> list[dict[str, Any]]:
         rows = self.conn.execute(
             """
-            SELECT t.month, t.arxiv_id_base, t.triage_json, s.summary_json
-            FROM triage t
-            LEFT JOIN summaries s ON s.arxiv_id_base = t.arxiv_id_base
-            WHERE s.arxiv_id_base IS NULL
-               OR IFNULL(json_extract(s.summary_json, '$.used_fulltext'), 0) != 1
-            ORDER BY t.month, t.arxiv_id_base
-            """
+            SELECT summary_json, summary_meta_json
+            FROM summaries
+            WHERE month=?
+            ORDER BY arxiv_id_base
+            """,
+            (month,),
         ).fetchall()
+        out: list[dict[str, Any]] = []
+        for row in rows:
+            out.append(
+                {
+                    "data": json.loads(row["summary_json"]),
+                    "meta": json.loads(row["summary_meta_json"]) if row["summary_meta_json"] else None,
+                }
+            )
+        return out
+
+    def _accepted_rows(self, rows: list[sqlite3.Row]) -> list[tuple[str, str]]:
         out: list[tuple[str, str]] = []
         for row in rows:
             try:
@@ -203,6 +207,38 @@ class DigestDB:
                 continue
             out.append((str(row["month"]), str(row["arxiv_id_base"])))
         return out
+
+    def list_accepted(self) -> list[tuple[str, str]]:
+        """Return ``(month, arxiv_id_base)`` for every current accept."""
+        rows = self.conn.execute(
+            """
+            SELECT t.month, t.arxiv_id_base, t.triage_json
+            FROM triage t
+            ORDER BY t.month, t.arxiv_id_base
+            """
+        ).fetchall()
+        return self._accepted_rows(rows)
+
+    def get_accepted_without_summary(self) -> list[tuple[str, str]]:
+        """Return ``(month, arxiv_id_base)`` for accepts that need a full-text summary.
+
+        Includes accepts with no summary row, accepts whose stored summary is
+        abstract-only (``used_fulltext`` is not true), and accepts whose stored
+        summary is the JSON-repair placeholder so a later run can replace it.
+        """
+        rows = self.conn.execute(
+            """
+            SELECT t.month, t.arxiv_id_base, t.triage_json, s.summary_json
+            FROM triage t
+            LEFT JOIN summaries s ON s.arxiv_id_base = t.arxiv_id_base
+            WHERE s.arxiv_id_base IS NULL
+               OR IFNULL(json_extract(s.summary_json, '$.used_fulltext'), 0) != 1
+               OR instr(IFNULL(json_extract(s.summary_json, '$.notes'), ''), 'summary_json_error') > 0
+               OR json_extract(s.summary_meta_json, '$.summary_attempt.category') = 'llm_invalid_json'
+            ORDER BY t.month, t.arxiv_id_base
+            """
+        ).fetchall()
+        return self._accepted_rows(rows)
 
     def upsert_run(self, month: str, stats: dict[str, Any]) -> None:
         self.conn.execute(

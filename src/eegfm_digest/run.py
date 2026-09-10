@@ -9,7 +9,7 @@ from pathlib import Path
 from dateutil.relativedelta import relativedelta
 
 from .config import load_config
-from .pipeline import run_month, run_window
+from .pipeline import run_month, run_window, resummarize_stragglers
 from .llm_logging import log_daily_failure_summary
 from .run_log import RunLog, compute_since, format_utc, load_run_log, save_run_log
 
@@ -134,6 +134,7 @@ def _run_daily(args: argparse.Namespace) -> int:
             summary_failures=stats.total_summary_failures,
             failed_triage_ids=list(stats.failed_triage_ids),
             failed_summary_ids=list(stats.failed_summary_ids),
+            summary_categories=list(getattr(stats, "failed_summary_categories", ()) or ()),
         )
         print(
             f"[daily] WARNING: {partial_failures} paper(s) failed LLM processing "
@@ -148,6 +149,43 @@ def _run_daily(args: argparse.Namespace) -> int:
         print(f"[daily] success=true wrote {run_log_path}")
     else:
         print("[daily] success=true (dry-run: run log not written)")
+    return 0
+
+
+def _parse_ids(raw: str | None) -> set[str] | None:
+    if raw is None:
+        return None
+    ids = {part.strip() for part in raw.split(",") if part.strip()}
+    return ids
+
+
+def _run_resummarize(args: argparse.Namespace) -> int:
+    cfg = load_config()
+    if args.max_candidates is not None:
+        cfg = replace(cfg, max_candidates=args.max_candidates)
+    if args.max_accepted is not None:
+        cfg = replace(cfg, max_accepted=args.max_accepted)
+    if args.include_borderline:
+        cfg = replace(cfg, include_borderline=True)
+
+    only_ids = _parse_ids(args.ids)
+    stats = resummarize_stragglers(
+        cfg,
+        no_pdf=args.no_pdf,
+        no_site=args.no_site,
+        only_ids=only_ids,
+        force=args.force,
+    )
+    print(
+        f"[resummarize] attempted={stats.attempted} succeeded={stats.succeeded} "
+        f"failed={stats.failed} months={list(stats.affected_months)}"
+    )
+    if stats.failed_ids:
+        print(
+            f"[resummarize] failed_ids={','.join(stats.failed_ids)}",
+            file=sys.stderr,
+        )
+        return 1
     return 0
 
 
@@ -189,7 +227,42 @@ def main() -> None:
     parser.add_argument("--no-pdf", action="store_true")
     parser.add_argument("--no-site", action="store_true")
     parser.add_argument("--force", action="store_true")
+    parser.add_argument(
+        "--resummarize",
+        action="store_true",
+        help="Retry accepted papers that are missing a summary, abstract-only, or JSON placeholders",
+    )
+    parser.add_argument(
+        "--ids",
+        default=None,
+        help="Comma-separated arXiv ids (requires --resummarize)",
+    )
     args = parser.parse_args()
+
+    if args.ids is not None and not args.resummarize:
+        parser.error("--ids requires --resummarize")
+
+    if args.resummarize:
+        if args.daily:
+            parser.error("--resummarize and --daily are mutually exclusive")
+        if args.month is not None:
+            parser.error("--resummarize and --month are mutually exclusive")
+        if args.feature_paper is not None:
+            parser.error("--feature-paper is not supported with --resummarize")
+        daily_only_set = [
+            flag
+            for flag, was_set in (
+                ("--since", args.since is not None),
+                ("--until", args.until is not None),
+                ("--dry-run", args.dry_run),
+            )
+            if was_set
+        ]
+        if daily_only_set:
+            parser.error(
+                f"{', '.join(daily_only_set)} require --daily (resummarize ignores them)"
+            )
+        sys.exit(_run_resummarize(args))
 
     if args.daily:
         if args.month is not None:
