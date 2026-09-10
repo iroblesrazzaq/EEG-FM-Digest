@@ -123,6 +123,9 @@
           ? "Masked grouped-query attention"
           : "Grouped-query attention";
       }
+      if (/causal attention/i.test(label)) {
+        return "Causal attention";
+      }
       if (/masked|causal/i.test(label)) {
         return "Masked multi-head attention";
       }
