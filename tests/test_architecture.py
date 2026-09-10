@@ -290,6 +290,10 @@ def test_site_js_renders_architecture_controls():
     assert "curlyBrace" in arch_js
     assert "FeedForward" in arch_js or "drawGatedFfn" in arch_js
     assert "function ffnIsGated" in arch_js
+    assert "function drawGatedFfn" in arch_js
+    assert "function arrowLeft" in arch_js
+    assert "data-arch-brace" in arch_js
+    assert "data-arch-ffn" in arch_js
     assert "function drawUngatedFfn" in arch_js
     assert "Vocabulary size of" in arch_js
     style = Path("docs/assets/style.css").read_text(encoding="utf-8")

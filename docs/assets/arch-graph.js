@@ -375,6 +375,29 @@
     );
   }
 
+  function arrowLeft(parent, xRight, xLeft, y, colors) {
+    const head = 5;
+    if (xRight - xLeft < 6) {
+      return;
+    }
+    parent.appendChild(
+      svgEl("line", {
+        x1: xRight,
+        y1: y,
+        x2: xLeft + head - 0.4,
+        y2: y,
+        stroke: colors.ink,
+        "stroke-width": 1,
+      }),
+    );
+    parent.appendChild(
+      svgEl("polygon", {
+        points: `${xLeft},${y} ${xLeft + head},${y - 2.8} ${xLeft + head},${y + 2.8}`,
+        fill: colors.ink,
+      }),
+    );
+  }
+
   function connectColumn(parent, boxes, colors) {
     for (let i = 0; i < boxes.length - 1; i += 1) {
       const lower = boxes[i];
@@ -493,6 +516,8 @@
     ].join(" ");
     parent.appendChild(
       svgEl("path", {
+        class: "arch-repeat-brace",
+        "data-arch-brace": "repeat",
         d: path,
         fill: "none",
         stroke: colors.ink,
@@ -602,33 +627,9 @@
     };
     drawPill(group, top, colors, { fontSize: 10, rx: 7, maxChars: 18 });
     drawPill(group, bot, colors, { fontSize: 10, rx: 7, maxChars: 18 });
-    group.appendChild(
-      svgEl("ellipse", {
-        cx: act.cx,
-        cy: act.cy,
-        rx: act.w / 2,
-        ry: act.h / 2,
-        fill: colors.surface,
-        stroke: colors.ink,
-        "stroke-width": 1.1,
-      }),
-    );
-    group.appendChild(
-      svgEl(
-        "text",
-        {
-          x: act.cx,
-          y: act.cy + 3.5,
-          "text-anchor": "middle",
-          fill: colors.ink,
-          "font-size": 8.5,
-          "font-family": FONT,
-        },
-        act.label,
-      ),
-    );
-    arrowUp(group, cx, top.y + top.h, act.cy - act.h / 2, colors);
-    arrowUp(group, cx, act.cy + act.h / 2, bot.y, colors);
+    drawPill(group, act, colors, { fontSize: 9, rx: 11, maxChars: 20 });
+    arrowUp(group, cx, bot.y, act.cy + act.h / 2, colors);
+    arrowUp(group, cx, act.cy - act.h / 2, top.y + top.h, colors);
     drawHiddenDim(group, spec, cx, y, h, colors);
     parent.appendChild(group);
     return { x, y, w, h: h + (spec.hidden_dim ? 56 : 0), cx };
@@ -636,8 +637,9 @@
 
   function drawGatedFfn(parent, spec, x, y, colors, focused) {
     const w = CALLOUT_W;
-    const h = 148;
+    const h = 172;
     const group = svgEl("g", { class: "arch-callout-ffn" });
+    group.setAttribute("data-arch-ffn", "gated");
     if (spec.title) {
       group.appendChild(
         svgEl(
@@ -668,24 +670,38 @@
         "stroke-dasharray": "5 3.5",
       }),
     );
-    const pillW = 108;
-    const pillH = 20;
-    const cx = x + w / 2;
-    const top = { x: cx - pillW / 2, y: y + 16, w: pillW, h: pillH, cx, cy: y + 16 + pillH / 2, label: "Linear layer" };
-    const bot = { x: cx - pillW / 2, y: y + 112, w: pillW, h: pillH, cx, cy: y + 112 + pillH / 2, label: "Linear layer" };
-    const mul = { cx, cy: y + 74, r: 8 };
-    const actW = 74;
-    const actH = 20;
+    const pillW = 110;
+    const pillH = 22;
+    const colX = x + 100;
+    const top = {
+      x: colX - pillW / 2,
+      y: y + 10,
+      w: pillW,
+      h: pillH,
+      cx: colX,
+      cy: y + 10 + pillH / 2,
+      label: "Linear layer",
+    };
+    const bot = {
+      x: colX - pillW / 2,
+      y: y + 138,
+      w: pillW,
+      h: pillH,
+      cx: colX,
+      cy: y + 138 + pillH / 2,
+      label: "Linear layer",
+    };
+    const mul = { cx: colX, cy: y + 54, r: 8 };
     const act = {
-      x: x + 14,
-      y: mul.cy - actH / 2,
-      w: actW,
-      h: actH,
-      cx: x + 14 + actW / 2,
-      cy: mul.cy,
+      x: colX - 60,
+      y: y + 88,
+      w: 120,
+      h: 24,
+      cx: colX,
+      cy: y + 100,
       label: `${spec.activation || "GELU"} activation`,
     };
-    const sideW = 96;
+    const sideW = 100;
     const side = {
       x: x + w - 14 - sideW,
       y: mul.cy - pillH / 2,
@@ -697,32 +713,12 @@
     };
     drawPill(group, top, colors, { fontSize: 10, rx: 7, maxChars: 18 });
     drawPill(group, bot, colors, { fontSize: 10, rx: 7, maxChars: 18 });
+    drawPill(group, act, colors, { fontSize: 9, rx: 12, maxChars: 20 });
     drawPill(group, side, colors, { fontSize: 10, rx: 7, maxChars: 18 });
-    group.appendChild(
-      svgEl("ellipse", {
-        cx: act.cx,
-        cy: act.cy,
-        rx: act.w / 2,
-        ry: act.h / 2,
-        fill: colors.surface,
-        stroke: colors.ink,
-        "stroke-width": 1.1,
-      }),
-    );
-    group.appendChild(
-      svgEl(
-        "text",
-        {
-          x: act.cx,
-          y: act.cy + 3.5,
-          "text-anchor": "middle",
-          fill: colors.ink,
-          "font-size": 8.5,
-          "font-family": FONT,
-        },
-        act.label,
-      ),
-    );
+    arrowUp(group, colX, bot.y, act.y + act.h, colors);
+    arrowUp(group, colX, act.y, mul.cy + mul.r, colors);
+    arrowUp(group, colX, mul.cy - mul.r, top.y + top.h, colors);
+    arrowLeft(group, side.x, mul.cx + mul.r, mul.cy, colors);
     group.appendChild(
       svgEl("circle", {
         cx: mul.cx,
@@ -741,37 +737,15 @@
           y: mul.cy + 3.6,
           "text-anchor": "middle",
           fill: colors.ink,
-          "font-size": 11,
+          "font-size": 12,
           "font-family": FONT,
         },
         "×",
       ),
     );
-    arrowUp(group, cx, top.y + top.h, mul.cy - mul.r - 1, colors);
-    arrowUp(group, cx, mul.cy + mul.r + 1, bot.y, colors);
-    group.appendChild(
-      svgEl("line", {
-        x1: act.x + act.w,
-        y1: act.cy,
-        x2: mul.cx - mul.r,
-        y2: mul.cy,
-        stroke: colors.ink,
-        "stroke-width": 1.05,
-      }),
-    );
-    group.appendChild(
-      svgEl("line", {
-        x1: side.x,
-        y1: side.cy,
-        x2: mul.cx + mul.r,
-        y2: mul.cy,
-        stroke: colors.ink,
-        "stroke-width": 1.05,
-      }),
-    );
-    drawHiddenDim(group, spec, cx, y, h, colors);
+    drawHiddenDim(group, spec, x + w / 2, y, h, colors);
     parent.appendChild(group);
-    return { x, y, w, h: h + (spec.hidden_dim ? 56 : 0), cx };
+    return { x, y, w, h: h + (spec.hidden_dim ? 56 : 0), cx: colX };
   }
 
   function drawFfnCallout(parent, spec, x, y, colors, focused) {
@@ -891,17 +865,15 @@
 
     if (steps.length) {
       const braceX = blockX - 2;
-      const attnBox = stepPlaced.find((box) => box.kind === "attention");
-      const firstBox = stepPlaced[0];
-      const braceTop = attnBox ? attnBox.y + attnBox.h + 2 : blockTop + 20;
-      const braceBot = firstBox ? firstBox.y + firstBox.h + 8 : blockBottom - 10;
-      curlyBrace(svg, braceX, Math.min(braceTop, braceBot), Math.max(braceTop, braceBot), colors);
+      const braceTop = blockTop + 8;
+      const braceBot = blockBottom - 8;
+      curlyBrace(svg, braceX, braceTop, braceBot, colors);
       svg.appendChild(
         svgEl(
           "text",
           {
             x: braceX - 12,
-            y: (Math.min(braceTop, braceBot) + Math.max(braceTop, braceBot)) / 2 + 4,
+            y: (braceTop + braceBot) / 2 + 4,
             "text-anchor": "end",
             fill: colors.ink,
             "font-size": 13,
@@ -976,7 +948,7 @@
     if (headsSpec) {
       const anchor = byId[headsSpec.anchor] || stepPlaced.find((box) => box.kind === "attention");
       const hx = CALLOUT_X;
-      const hy = ffnBox ? ffnBox.y + 148 + 16 : (anchor ? anchor.cy + 4 : blockTop + 80);
+      const hy = ffnBox ? ffnBox.y + ffnBox.h + 14 : (anchor ? anchor.cy + 4 : blockTop + 80);
       svg.appendChild(
         svgEl(
           "text",

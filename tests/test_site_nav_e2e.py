@@ -103,6 +103,14 @@ def test_models_tab_renders_reve_diagram(browser, real_docs_site):
         assert "RMSNorm" in text
         assert "22 ×" in text
         assert "GeGLU" in text
+        brace = page.locator("[data-arch-brace='repeat']").first
+        block = page.locator(".arch-repeat-block").first
+        brace_box = brace.bounding_box()
+        block_box = block.bounding_box()
+        assert brace_box and block_box
+        assert brace_box["height"] >= block_box["height"] * 0.8
+        assert page.locator("[data-arch-ffn='gated']").count() >= 1
+        assert "GELU activation" in text
         toggle = page.locator("[data-arch-toggle]").first
         toggle.click()
         assert "GELU" in (svg.text_content() or "")
