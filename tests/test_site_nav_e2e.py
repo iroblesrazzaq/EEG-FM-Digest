@@ -87,34 +87,56 @@ def test_models_tab_renders_reve_diagram(browser, real_docs_site):
     graph = real_docs_site["root"] / "data" / "arch" / "2510.21585.json"
     if not graph.is_file():
         pytest.skip("REVE architecture graph is not committed yet")
-    context = browser.new_context()
+    context = browser.new_context(viewport={"width": 1400, "height": 900})
     try:
         page = context.new_page()
         page.goto(f"{real_docs_site['base_url']}/models/index.html")
         assert "Models" in page.title()
         nav_texts = page.locator("nav.site-nav a.site-nav-link").all_text_contents()
         assert "Models" in nav_texts
-        page.wait_for_selector(".arch-graph-svg", timeout=8000)
-        assert page.locator(".model-arch-card").count() >= 1
-        svg = page.locator(".arch-graph-svg").first
+        page.wait_for_selector('[id="arch-2510.21585"] .arch-graph-svg', timeout=8000)
+        assert page.locator(".model-arch-card").count() >= 4
+        card = page.locator('[id="arch-2510.21585"]')
+        svg = card.locator(".arch-graph-svg")
         text = svg.text_content() or ""
         assert "Multi-head attention" in text
         assert "Feed forward" in text
         assert "RMSNorm" in text
         assert "22 ×" in text
         assert "GeGLU" in text
-        brace = page.locator("[data-arch-brace='repeat']").first
-        block = page.locator(".arch-repeat-block").first
+        brace = card.locator("[data-arch-brace='repeat']")
+        block = card.locator(".arch-repeat-block")
         brace_box = brace.bounding_box()
         block_box = block.bounding_box()
         assert brace_box and block_box
         assert brace_box["height"] >= block_box["height"] * 0.8
-        assert page.locator("[data-arch-ffn='gated']").count() >= 1
+        assert card.locator("[data-arch-ffn='gated']").count() == 1
         assert "GELU activation" in text
-        toggle = page.locator("[data-arch-toggle]").first
+        layout = page.evaluate(
+            """() => {
+              const ffn = document.querySelector('[id="arch-2510.21585"] [data-arch-ffn="gated"]');
+              const mul = ffn && ffn.querySelector("circle");
+              const labels = {};
+              if (ffn) {
+                ffn.querySelectorAll("text").forEach((node) => {
+                  labels[node.textContent || ""] = Number(node.getAttribute("y"));
+                });
+              }
+              return {
+                mulCy: mul ? Number(mul.getAttribute("cy")) : null,
+                geluY: labels["GELU activation"] ?? null,
+                topY: labels["Linear layer"] ?? null,
+              };
+            }"""
+        )
+        assert layout["mulCy"] is not None and layout["geluY"] is not None
+        assert layout["geluY"] > layout["mulCy"], "GELU must sit on the spine below the multiply"
+        toggle = card.locator("[data-arch-toggle]").first
         toggle.click()
         assert "GELU" in (svg.text_content() or "")
         assert page.locator("a[href*='hfviewer']").count() == 0
+        for arxiv_id in ("2405.18765", "2412.07236", "2607.27308"):
+            assert page.locator(f'[id="arch-{arxiv_id}"] .arch-graph-svg').count() == 1
     finally:
         context.close()
 
