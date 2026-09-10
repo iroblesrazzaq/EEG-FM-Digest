@@ -122,17 +122,20 @@ def fact_sheet_from_config(cfg: dict[str, Any]) -> dict[str, Any]:
             cfg.get("n_embd"),
             cfg.get("d_model"),
             cfg.get("n_embed"),
+            cfg.get("embed_dim"),
         ),
         "num_layers": _first_int(
             cfg.get("num_hidden_layers"),
             cfg.get("n_layer"),
             cfg.get("n_layers"),
             cfg.get("num_layers"),
+            cfg.get("depth"),
         ),
         "num_attention_heads": _first_int(
             cfg.get("num_attention_heads"),
             cfg.get("n_head"),
             cfg.get("n_heads"),
+            cfg.get("heads"),
         ),
         "num_key_value_heads": _first_int(
             cfg.get("num_key_value_heads"),

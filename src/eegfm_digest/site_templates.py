@@ -64,7 +64,7 @@ PROJECT_REPO_URL = "https://github.com/iroblesrazzaq/EEG-FM-Digest"
 PERSONAL_WEBSITE_URL = "https://iroblesrazzaq.github.io/"
 LINKEDIN_URL = "https://www.linkedin.com/in/ismaelroblesrazzaq"
 EMAIL_ADDRESS = "ismaelroblesrazzaq@gmail.com"
-ASSET_VERSION = "20260816-2"
+ASSET_VERSION = "20260910-1"
 SITE_TAB_TITLE_BASE = "EEG-FM Digest"
 
 ICON_SVGS = {
@@ -165,15 +165,42 @@ def header_contact_links_html() -> str:
     return "".join(links)
 
 
+def relative_nav(active_tab: str, depth: int) -> str:
+    prefix = "../" * depth
+    home = f"{prefix}index.html" if depth else "index.html"
+    return nav_html(
+        home,
+        f"{prefix}explore/index.html",
+        f"{prefix}models/index.html",
+        f"{prefix}process/index.html",
+        active_tab,
+    )
+
+
+def stylesheet_tag(depth: int) -> str:
+    prefix = "../" * depth
+    return f"<link rel='stylesheet' href='{prefix}assets/style.css?v={ASSET_VERSION}'>"
+
+
+def script_tags(depth: int, indent: str = "") -> str:
+    prefix = "../" * depth
+    return (
+        f"{indent}<script src='{prefix}assets/arch-graph.js?v={ASSET_VERSION}'></script>\n"
+        f"{indent}<script src='{prefix}assets/site.js?v={ASSET_VERSION}'></script>"
+    )
+
+
 def nav_html(
     home_href: str,
     explore_href: str,
+    models_href: str,
     process_href: str,
     active_tab: str,
 ) -> str:
     tabs = [
         ("home", "Monthly Digest", home_href),
         ("explore", "Search", explore_href),
+        ("models", "Models", models_href),
         ("process", "About", process_href),
     ]
     links = "".join(
@@ -227,10 +254,10 @@ def render_process_page() -> str:
     limitation_items = "".join(f"<li>{html.escape(text)}</li>" for text in PROCESS_LIMITATIONS)
     triage_prompt = html.escape(load_prompt_text(prompt_path("triage.md")))
     summary_prompt = html.escape(load_prompt_text(prompt_path("summarize.md")))
-    nav = nav_html("../index.html", "../explore/index.html", "../process/index.html", "process")
+    nav = relative_nav("process", 1)
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>{html.escape(tab_title("About"))}</title>
-<link rel='stylesheet' href='../assets/style.css?v={ASSET_VERSION}'></head><body>
+{stylesheet_tag(1)}</head><body>
 {nav}
 <main class='container process-page'>
 <h1>About This Digest</h1>
@@ -288,10 +315,10 @@ def render_month_page(
     manifest_json = html.escape("../../data/months.json")
     month_title = html.escape(month_label(month))
     month_tab_title = html.escape(tab_title(month_tab_label(month)))
-    nav = nav_html("../../index.html", "../../explore/index.html", "../../process/index.html", "home")
+    nav = relative_nav("home", 2)
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>{month_tab_title}</title>
-<link rel='stylesheet' href='../../assets/style.css?v={ASSET_VERSION}'></head>
+{stylesheet_tag(2)}</head>
 <body>
   {nav}
   <main id='digest-app' class='container' data-view='month' data-month='{month_attr}' data-manifest-json='{manifest_json}' data-month-json='{month_json}'>
@@ -305,17 +332,17 @@ def render_month_page(
     <p id='results-meta' class='small'></p>
     <section id='results'></section>
   </main>
-  <script src='../../assets/site.js?v={ASSET_VERSION}'></script>
+{script_tags(2, indent="  ")}
 </body></html>
 """
 
 
 def render_home_page(months: list[str]) -> str:
     fallback_months = html.escape(json.dumps(months, ensure_ascii=False))
-    nav = nav_html("index.html", "explore/index.html", "process/index.html", "home")
+    nav = relative_nav("home", 0)
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>{html.escape(tab_title())}</title>
-<link rel='stylesheet' href='assets/style.css?v={ASSET_VERSION}'></head><body>
+{stylesheet_tag(0)}</head><body>
 {nav}
 <main id='digest-app' class='container' data-view='home' data-month='' data-manifest-json='data/months.json' data-fallback-months='{fallback_months}'>
 {about_digest_block("process/index.html", include_process_cta=False)}
@@ -323,17 +350,17 @@ def render_home_page(months: list[str]) -> str:
 <section id='home-controls' class='controls'></section>
 <section id='home-results'></section>
 </main>
-<script src='assets/site.js?v={ASSET_VERSION}'></script>
+{script_tags(0)}
 </body></html>
 """
 
 
 def render_explore_page(months: list[str]) -> str:
     fallback_months = html.escape(json.dumps(months, ensure_ascii=False))
-    nav = nav_html("../index.html", "../explore/index.html", "../process/index.html", "explore")
+    nav = relative_nav("explore", 1)
     return f"""<!doctype html>
 <html><head><meta charset='utf-8'><title>{html.escape(tab_title("Search"))}</title>
-<link rel='stylesheet' href='../assets/style.css?v={ASSET_VERSION}'></head><body>
+{stylesheet_tag(1)}</head><body>
 {nav}
 <main id='digest-app' class='container' data-view='explore' data-month='' data-manifest-json='../data/months.json' data-fallback-months='{fallback_months}'>
 <h1>Search</h1>
@@ -341,6 +368,25 @@ def render_explore_page(months: list[str]) -> str:
 <p id='results-meta' class='small'></p>
 <section id='results'></section>
 </main>
-<script src='../assets/site.js?v={ASSET_VERSION}'></script>
+{script_tags(1)}
+</body></html>
+"""
+
+
+def render_models_page() -> str:
+    nav = relative_nav("models", 1)
+    return f"""<!doctype html>
+<html><head><meta charset='utf-8'><title>{html.escape(tab_title("Models"))}</title>
+{stylesheet_tag(1)}</head><body>
+{nav}
+<main id='digest-app' class='container' data-view='models' data-arch-catalog='../data/architectures.json'>
+<section class='hero-banner'>
+  <p class='hero-kicker'>Open weights</p>
+  <h1>Models</h1>
+  <p class='sub'>Interactive architecture diagrams for EEG foundation models in this digest. Click a block marked ×N to expand the repeated layer.</p>
+</section>
+<section id='results'></section>
+</main>
+{script_tags(1)}
 </body></html>
 """

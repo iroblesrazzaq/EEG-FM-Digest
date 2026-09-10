@@ -848,6 +848,33 @@ button:disabled {
   color: var(--ink);
 }
 
+.arch-graph-host {
+  margin-top: 12px;
+  padding: 8px 4px 4px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-strong);
+  overflow-x: auto;
+}
+
+.arch-graph-svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.arch-graph-loading {
+  margin: 8px 12px;
+}
+
+.model-arch-card h2 {
+  margin: 4px 0 6px;
+}
+
+.model-arch-card .hero-kicker {
+  margin-bottom: 4px;
+}
+
 .empty-state {
   padding: 14px;
   border: 1px dashed var(--line-strong);

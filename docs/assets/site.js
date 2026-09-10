@@ -159,6 +159,35 @@ function resolveMonthJsonPath(path, view) {
   return view === "explore" ? `../${value}` : value;
 }
 
+function resolveSiteJsonPath(path, view) {
+  const value = String(path || "").trim();
+  if (!value) {
+    return value;
+  }
+  if (
+    value.startsWith("http://") ||
+    value.startsWith("https://") ||
+    value.startsWith("/") ||
+    value.startsWith("./") ||
+    value.startsWith("../")
+  ) {
+    return value;
+  }
+  if (view === "month") {
+    return `../../${value}`;
+  }
+  if (view === "explore" || view === "models" || view === "process") {
+    return `../${value}`;
+  }
+  return value;
+}
+
+function mountArchGraphs(root) {
+  if (typeof window !== "undefined" && window.ArchGraph && typeof window.ArchGraph.mountAll === "function") {
+    window.ArchGraph.mountAll(root);
+  }
+}
+
 function normalizeMonthRev(monthRev) {
   const value = String(monthRev || "").trim();
   return value || "legacy";
@@ -493,7 +522,7 @@ function normalizeArchitecture(raw) {
   return {
     status: String(raw.status || "").trim(),
     hf_repo: String(raw.hf_repo || "").trim(),
-    hfviewer_url: String(raw.hfviewer_url || "").trim(),
+    graph_path: String(raw.graph_path || "").trim(),
     skip_reason: String(raw.skip_reason || "").trim(),
     fact_sheet: factSheet,
   };
@@ -880,12 +909,9 @@ function renderPaperCard(paper, view, isFeatured) {
     links.push(`<a class="resource-btn resource-btn-weights" href="${esc(weightsUrl)}">Model Weights</a>`);
   }
   const architecture = paper.architecture;
-  const hfviewerUrl = architecture && architecture.hfviewer_url ? String(architecture.hfviewer_url).trim() : "";
-  if (hfviewerUrl) {
-    links.push(`<a class="resource-btn resource-btn-arch" href="${esc(hfviewerUrl)}" rel="noopener noreferrer" target="_blank">View architecture</a>`);
-  }
   const linksHtml = links.length ? `<div class="resource-links">${links.join("")}</div>` : "";
   const factSheetHtml = renderArchitectureFactSheet(architecture);
+  const graphHtml = renderArchitectureGraphHost(architecture, view);
 
   return `
     <article class="${cardClass}" id="${esc(paper.arxiv_id_base)}">
@@ -898,9 +924,20 @@ function renderPaperCard(paper, view, isFeatured) {
       ${detailHtml}
       ${tagsHtml}
       ${factSheetHtml}
+      ${graphHtml}
       ${linksHtml}
     </article>
   `;
+}
+
+function formatFactValue(key, value) {
+  if (key === "num_params") {
+    const n = Number(value);
+    if (Number.isFinite(n)) {
+      return n.toLocaleString("en-US");
+    }
+  }
+  return String(value);
 }
 
 function renderArchitectureFactSheet(architecture) {
@@ -925,12 +962,87 @@ function renderArchitectureFactSheet(architecture) {
     if (value === null || value === undefined || String(value).trim() === "") {
       continue;
     }
-    rows.push(`<div><dt>${esc(label)}</dt><dd>${esc(String(value))}</dd></div>`);
+    rows.push(`<div><dt>${esc(label)}</dt><dd>${esc(formatFactValue(key, value))}</dd></div>`);
   }
   if (!rows.length) {
     return "";
   }
   return `<div class="arch-fact-sheet"><h4>Architecture</h4><dl>${rows.join("")}</dl></div>`;
+}
+
+function renderArchitectureGraphHost(architecture, view) {
+  if (!architecture) {
+    return "";
+  }
+  const graphPath = String(architecture.graph_path || "").trim();
+  if (!graphPath) {
+    return "";
+  }
+  const src = resolveSiteJsonPath(graphPath, view);
+  const archId = String(architecture.hf_repo || "").trim();
+  return `<div class="arch-graph-host" data-arch-src="${esc(src)}" data-arch-id="${esc(archId)}"></div>`;
+}
+
+function monthHrefForView(month, view) {
+  const value = String(month || "").trim();
+  if (!value) {
+    return "";
+  }
+  if (view === "models" || view === "explore" || view === "process") {
+    return `../digest/${esc(value)}/index.html`;
+  }
+  if (view === "month") {
+    return `../${esc(value)}/index.html`;
+  }
+  return `digest/${esc(value)}/index.html`;
+}
+
+function renderModelArchCard(entry) {
+  const title = String(entry.title || entry.label || entry.arxiv_id_base || "Model").trim();
+  const label = String(entry.label || "").trim();
+  const month = String(entry.month || "").trim();
+  const repo = String(entry.hf_repo || "").trim();
+  const arxivId = String(entry.arxiv_id_base || "").trim();
+  const graphPath = String(entry.graph_path || "").trim();
+  const monthHref = month ? `${monthHrefForView(month, "models")}#${esc(arxivId)}` : "";
+  const meta = [monthDisplayLabel(month), repo].filter(Boolean).join(" · ");
+  const graphHtml = graphPath
+    ? `<div class="arch-graph-host" data-arch-src="${esc(resolveSiteJsonPath(graphPath, "models"))}" data-arch-id="${esc(repo)}"></div>`
+    : "";
+  return `
+    <article class="model-arch-card paper-card" id="arch-${esc(arxivId)}">
+      <p class="hero-kicker">${esc(label || "Architecture")}</p>
+      <h2>${esc(title)}</h2>
+      <p class="small">${esc(meta)}</p>
+      ${monthHref ? `<p class="small"><a href="${monthHref}">View in ${esc(monthDisplayLabel(month))} digest</a></p>` : ""}
+      ${graphHtml}
+    </article>
+  `;
+}
+
+async function renderModelsGallery(app) {
+  const results = app.querySelector("#results");
+  if (!results) {
+    return;
+  }
+  const catalogPath = String(app.dataset.archCatalog || "../data/architectures.json");
+  let models = [];
+  try {
+    const catalog = await fetchJson(catalogPath);
+    if (Array.isArray(catalog)) {
+      models = catalog;
+    } else if (catalog && typeof catalog === "object") {
+      models = asArray(catalog.models);
+    }
+  } catch (_err) {
+    models = [];
+  }
+  if (!models.length) {
+    results.innerHTML = "<p class='empty-state'>No architecture diagrams yet.</p>";
+    return;
+  }
+  results.innerHTML = models.map((entry) => renderModelArchCard(entry || {})).join("\n");
+  mountArchGraphs(results);
 }
 
 function buildResultsCsv(papers) {
@@ -1336,6 +1448,7 @@ function renderResults(app, state) {
   results.innerHTML = filtered
     .map((paper) => renderPaperCard(paper, state.view, paper.arxiv_id_base === featuredPaperId))
     .join("\n");
+  mountArchGraphs(results);
   syncExploreExportState(app, state);
 }
 
@@ -1658,6 +1771,11 @@ async function setupDigestApp() {
   const manifestPath = String(app.dataset.manifestJson || "data/months.json");
   const monthJsonPath = String(app.dataset.monthJson || "");
   const fallbackMonths = parseFallbackMonths(app.dataset.fallbackMonths || "[]");
+
+  if (view === "models") {
+    await renderModelsGallery(app);
+    return true;
+  }
 
   let manifest = normalizeManifest(null, fallbackMonths);
   try {

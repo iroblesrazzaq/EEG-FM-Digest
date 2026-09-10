@@ -10,13 +10,16 @@ from .site_payload import month_manifest_item, month_payload
 from .site_templates import (
     render_explore_page,
     render_home_page,
+    render_models_page,
     render_month_page,
     render_process_page,
 )
 
 __all__ = [
+    "refresh_html_shells",
     "render_explore_page",
     "render_home_page",
+    "render_models_page",
     "render_month_page",
     "render_process_page",
     "update_home",
@@ -59,6 +62,9 @@ def update_home(docs_dir: Path) -> None:
     explore_dir = docs_dir / "explore"
     explore_dir.mkdir(parents=True, exist_ok=True)
     (explore_dir / "index.html").write_text(render_explore_page(months), encoding="utf-8")
+    models_dir = docs_dir / "models"
+    models_dir.mkdir(parents=True, exist_ok=True)
+    (models_dir / "index.html").write_text(render_models_page(), encoding="utf-8")
     process_dir = docs_dir / "process"
     process_dir.mkdir(parents=True, exist_ok=True)
     (process_dir / "index.html").write_text(render_process_page(), encoding="utf-8")
@@ -73,3 +79,17 @@ def update_home(docs_dir: Path) -> None:
         encoding="utf-8",
     )
     (docs_dir / ".nojekyll").write_text("\n", encoding="utf-8")
+
+
+def refresh_html_shells(docs_dir: Path) -> None:
+    """Rewrite static HTML shells (nav/assets) without touching papers.json."""
+    digest_root = docs_dir / "digest"
+    if digest_root.exists():
+        for month_dir in sorted(p for p in digest_root.iterdir() if p.is_dir()):
+            if not month_dir.name[0:4].isdigit():
+                continue
+            (month_dir / "index.html").write_text(
+                render_month_page(month_dir.name, [], {}, {}),
+                encoding="utf-8",
+            )
+    update_home(docs_dir)
