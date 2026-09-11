@@ -13,6 +13,11 @@
           "anchor": "vq",
           "id": "vq-meta",
           "label": "Frozen codebook"
+        },
+        {
+          "anchor": "patch",
+          "id": "sensor-meta",
+          "label": "EEG + MEG"
         }
       ]
     },
@@ -57,6 +62,7 @@
     ],
     "meta": {
       "causal": false,
+      "denoise": false,
       "eeg_like": true,
       "gated": false,
       "has_patch": false
@@ -70,6 +76,7 @@
     "repeat": {
       "count": 12,
       "id": "enc",
+      "role": "encoder",
       "steps": [
         {
           "id": "enc.n1",
@@ -98,6 +105,40 @@
         }
       ]
     },
+    "stacks": [
+      {
+        "count": 12,
+        "id": "enc",
+        "role": "encoder",
+        "steps": [
+          {
+            "id": "enc.n1",
+            "kind": "norm",
+            "label": "LayerNorm 1"
+          },
+          {
+            "id": "enc.attn",
+            "kind": "attention",
+            "label": "Multi-head attention"
+          },
+          {
+            "id": "enc.n2",
+            "kind": "norm",
+            "label": "LayerNorm 2"
+          },
+          {
+            "id": "enc.mlp",
+            "kind": "ffn",
+            "label": "Feed forward"
+          },
+          {
+            "id": "enc.add",
+            "kind": "add",
+            "label": "+"
+          }
+        ]
+      }
+    ],
     "stem": [
       {
         "id": "patch",

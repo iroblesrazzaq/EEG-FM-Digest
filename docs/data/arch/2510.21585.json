@@ -62,6 +62,7 @@
     ],
     "meta": {
       "causal": false,
+      "denoise": false,
       "eeg_like": true,
       "gated": true,
       "has_patch": true
@@ -75,6 +76,7 @@
     "repeat": {
       "count": 22,
       "id": "enc",
+      "role": "encoder",
       "steps": [
         {
           "id": "enc.n1",
@@ -103,6 +105,40 @@
         }
       ]
     },
+    "stacks": [
+      {
+        "count": 22,
+        "id": "enc",
+        "role": "encoder",
+        "steps": [
+          {
+            "id": "enc.n1",
+            "kind": "norm",
+            "label": "RMSNorm 1"
+          },
+          {
+            "id": "enc.attn",
+            "kind": "attention",
+            "label": "Multi-head attention"
+          },
+          {
+            "id": "enc.n2",
+            "kind": "norm",
+            "label": "RMSNorm 2"
+          },
+          {
+            "id": "enc.mlp",
+            "kind": "ffn",
+            "label": "Feed forward"
+          },
+          {
+            "id": "enc.add",
+            "kind": "add",
+            "label": "+"
+          }
+        ]
+      }
+    ],
     "stem": [
       {
         "id": "patch",

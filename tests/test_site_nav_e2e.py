@@ -151,11 +151,23 @@ def test_models_tab_renders_reve_diagram(browser, real_docs_site):
         luna = page.locator('[id="arch-2510.22257"] .arch-graph-svg').text_content() or ""
         assert "Channel unifier" in luna
         assert "Learned queries" in luna
+        assert "Query attention" in luna
         brainomni = page.locator('[id="arch-2505.18185"] .arch-graph-svg').text_content() or ""
         assert "Sensor encoder" in brainomni
         assert "VQ-VAE codebook" in brainomni
+        assert "EEG + MEG" in brainomni
         femba = page.locator('[id="arch-2502.06438"] .arch-graph-svg').text_content() or ""
         assert "Bidirectional Mamba" in femba
+        assert "Forward" in femba
+        assert "Reverse" in femba
+        zuna = page.locator('[id="arch-2607.27308"] .arch-graph-svg').text_content() or ""
+        assert "Encoder" in zuna
+        assert "Decoder" in zuna
+        assert "Cross attention" in zuna
+        assert "Noisy EEG" in zuna
+        assert "Reconstruction head" in zuna
+        assert page.locator('[id="arch-2607.27308"] [data-arch-stack-role="decoder"]').count() == 1
+        assert page.locator('[id="arch-2510.22257"] [data-arch-stack-role="query"]').count() == 1
         eegpt = page.locator('[id="arch-2410.19779"] .arch-graph-svg').text_content() or ""
         assert "BrainGPT" in eegpt
         assert "Autoregressive transformer" in eegpt

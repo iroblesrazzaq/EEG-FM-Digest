@@ -3,7 +3,13 @@
   "diagram": {
     "annotations": {
       "embed_dim": 385,
-      "left": []
+      "left": [
+        {
+          "anchor": "enc.attn",
+          "id": "mamba-dir",
+          "label": "Forward ∥ Reverse"
+        }
+      ]
     },
     "below": [
       {
@@ -28,9 +34,10 @@
     ],
     "meta": {
       "causal": false,
+      "denoise": false,
       "eeg_like": true,
       "gated": false,
-      "has_patch": true
+      "has_patch": false
     },
     "notes": {
       "backbone": "mamba",
@@ -40,6 +47,7 @@
     "repeat": {
       "count": 12,
       "id": "enc",
+      "role": "encoder",
       "steps": [
         {
           "id": "enc.n1",
@@ -58,6 +66,30 @@
         }
       ]
     },
+    "stacks": [
+      {
+        "count": 12,
+        "id": "enc",
+        "role": "encoder",
+        "steps": [
+          {
+            "id": "enc.n1",
+            "kind": "norm",
+            "label": "LayerNorm 1"
+          },
+          {
+            "id": "enc.attn",
+            "kind": "attention",
+            "label": "Bidirectional Mamba"
+          },
+          {
+            "id": "enc.add",
+            "kind": "add",
+            "label": "+"
+          }
+        ]
+      }
+    ],
     "stem": [
       {
         "id": "patch",

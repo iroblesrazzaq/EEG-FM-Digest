@@ -18,6 +18,11 @@
           "anchor": "enc.mlp",
           "id": "ffn-kind",
           "label": "SwiGLU\n1 layer"
+        },
+        {
+          "anchor": "dec.cross",
+          "id": "cross-meta",
+          "label": "Attend encoder"
         }
       ]
     },
@@ -25,7 +30,7 @@
       {
         "id": "eeg",
         "kind": "input",
-        "label": "Sample EEG"
+        "label": "Noisy EEG"
       }
     ],
     "callouts": [
@@ -50,30 +55,33 @@
     "family": "Denoising transformer",
     "head": [
       {
-        "id": "pool",
-        "kind": "pool",
-        "label": "Pooling"
-      },
-      {
         "id": "out",
         "kind": "linear",
-        "label": "Linear output layer"
+        "label": "Reconstruction head"
       }
     ],
     "meta": {
       "causal": false,
+      "denoise": true,
       "eeg_like": true,
       "gated": true,
       "has_patch": false
     },
     "notes": {
       "family": "Denoising transformer",
-      "head_dim": 64
+      "head_dim": 64,
+      "objective": "denoise",
+      "stacks": [
+        "encoder",
+        "decoder"
+      ]
     },
     "param_label": "382M",
     "repeat": {
       "count": 16,
       "id": "enc",
+      "label": "Encoder",
+      "role": "encoder",
       "steps": [
         {
           "id": "enc.n1",
@@ -102,6 +110,84 @@
         }
       ]
     },
+    "stacks": [
+      {
+        "count": 16,
+        "id": "enc",
+        "label": "Encoder",
+        "role": "encoder",
+        "steps": [
+          {
+            "id": "enc.n1",
+            "kind": "norm",
+            "label": "RMSNorm 1"
+          },
+          {
+            "id": "enc.attn",
+            "kind": "attention",
+            "label": "Multi-head attention"
+          },
+          {
+            "id": "enc.n2",
+            "kind": "norm",
+            "label": "RMSNorm 2"
+          },
+          {
+            "id": "enc.mlp",
+            "kind": "ffn",
+            "label": "Feed forward"
+          },
+          {
+            "id": "enc.add",
+            "kind": "add",
+            "label": "+"
+          }
+        ]
+      },
+      {
+        "count": 16,
+        "id": "dec",
+        "label": "Decoder",
+        "role": "decoder",
+        "steps": [
+          {
+            "id": "dec.n1",
+            "kind": "norm",
+            "label": "RMSNorm 1"
+          },
+          {
+            "id": "dec.attn",
+            "kind": "attention",
+            "label": "Multi-head attention"
+          },
+          {
+            "id": "dec.n2",
+            "kind": "norm",
+            "label": "RMSNorm 2"
+          },
+          {
+            "id": "dec.cross",
+            "kind": "attention",
+            "label": "Cross attention"
+          },
+          {
+            "id": "dec.n3",
+            "kind": "norm",
+            "label": "RMSNorm 3"
+          },
+          {
+            "id": "dec.mlp",
+            "kind": "ffn",
+            "label": "Feed forward"
+          },
+          {
+            "id": "dec.add",
+            "kind": "add",
+            "label": "+"
+          }
+        ]
+      }
+    ],
     "stem": [
       {
         "id": "patch",
@@ -161,6 +247,44 @@
     {
       "children": [
         {
+          "id": "model.encoder.attention",
+          "kind": "attn",
+          "label": "Attention"
+        },
+        {
+          "id": "model.encoder.attention_norm",
+          "kind": "attn",
+          "label": "Attention norm"
+        },
+        {
+          "id": "model.encoder.attention_norm_post",
+          "kind": "attn",
+          "label": "Attention norm post"
+        },
+        {
+          "id": "model.encoder.feed_forward",
+          "kind": "mlp",
+          "label": "Feed forward"
+        },
+        {
+          "id": "model.encoder.ffn_norm",
+          "kind": "mlp",
+          "label": "Ffn norm"
+        },
+        {
+          "id": "model.encoder.ffn_norm_post",
+          "kind": "mlp",
+          "label": "Ffn norm post"
+        }
+      ],
+      "id": "model.encoder",
+      "kind": "repeat",
+      "label": "Model encoder",
+      "repeat": 16
+    },
+    {
+      "children": [
+        {
           "id": "model.decoder.attention",
           "kind": "attn",
           "label": "Attention"
@@ -214,44 +338,6 @@
       "id": "model.decoder",
       "kind": "repeat",
       "label": "Model decoder",
-      "repeat": 16
-    },
-    {
-      "children": [
-        {
-          "id": "model.encoder.attention",
-          "kind": "attn",
-          "label": "Attention"
-        },
-        {
-          "id": "model.encoder.attention_norm",
-          "kind": "attn",
-          "label": "Attention norm"
-        },
-        {
-          "id": "model.encoder.attention_norm_post",
-          "kind": "attn",
-          "label": "Attention norm post"
-        },
-        {
-          "id": "model.encoder.feed_forward",
-          "kind": "mlp",
-          "label": "Feed forward"
-        },
-        {
-          "id": "model.encoder.ffn_norm",
-          "kind": "mlp",
-          "label": "Ffn norm"
-        },
-        {
-          "id": "model.encoder.ffn_norm_post",
-          "kind": "mlp",
-          "label": "Ffn norm post"
-        }
-      ],
-      "id": "model.encoder",
-      "kind": "repeat",
-      "label": "Model encoder",
       "repeat": 16
     },
     {

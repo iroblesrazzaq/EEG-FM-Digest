@@ -126,6 +126,12 @@
       if (/causal attention/i.test(label)) {
         return "Causal attention";
       }
+      if (/channel-query|query attention/i.test(label)) {
+        return "Query attention";
+      }
+      if (/cross attention/i.test(label)) {
+        return "Cross attention";
+      }
       if (/masked|causal/i.test(label)) {
         return "Masked multi-head attention";
       }
@@ -304,6 +310,11 @@
       repeat: repeatNode
         ? { id: repeatNode.id, count: Number(repeatNode.repeat) || 1, steps }
         : { id: "block", count: 1, steps },
+      stacks: [
+        repeatNode
+          ? { id: repeatNode.id, count: Number(repeatNode.repeat) || 1, steps }
+          : { id: "block", count: 1, steps },
+      ],
       head,
       callouts,
       annotations: {
@@ -323,6 +334,9 @@
         below: asArray(diagram.below),
         stem: asArray(diagram.stem),
         repeat: diagram.repeat || { count: 1, steps: [] },
+        stacks: asArray(diagram.stacks).length
+          ? asArray(diagram.stacks)
+          : [diagram.repeat || { count: 1, steps: [] }],
         head: asArray(diagram.head),
         callouts: asArray(diagram.callouts),
         annotations: diagram.annotations || {},
@@ -529,6 +543,12 @@
     if (/criss-cross/i.test(label)) {
       return "criss";
     }
+    if (/channel-query|query attention/i.test(label)) {
+      return "query";
+    }
+    if (/cross attention/i.test(label)) {
+      return "cross";
+    }
     if (/masked|causal/i.test(label)) {
       return "causal";
     }
@@ -556,6 +576,11 @@
         opts.fill = colors.accentDeep;
         opts.textFill = colors.surface;
         opts.rx = 12;
+      }
+      if (mixer === "cross" || mixer === "query") {
+        opts.fill = colors.accent;
+        opts.textFill = colors.surface;
+        opts.dark = true;
       }
       if (mixer === "causal") {
         opts.dash = "3.5 2.6";
@@ -832,22 +857,39 @@
     const src = host.getAttribute("data-arch-src") || "";
     const focused = focusedBySrc.get(src) || "";
     const diagram = resolveDiagram(graph);
-    const repeat = diagram.repeat || { count: 1, steps: [] };
-    const steps = asArray(repeat.steps);
+    const stacks = (asArray(diagram.stacks).length
+      ? asArray(diagram.stacks)
+      : [diagram.repeat || { count: 1, steps: [] }]
+    ).filter((stack) => asArray(stack && stack.steps).length);
     const stem = asArray(diagram.stem);
     const head = asArray(diagram.head);
     const below = asArray(diagram.below);
     const annotations = diagram.annotations || {};
     const leftNotes = asArray(annotations.left);
+    const multi = stacks.length > 1;
 
     const cx = CHASSIS_X + CHASSIS_W / 2;
     const stemH = stackHeight(stem, INNER_GAP, stepSize);
     const headH = stackHeight(head, INNER_GAP, stepSize);
-    const stepsH = stackHeight(steps, INNER_GAP, stepSize);
-    const blockH = stepsH + BLOCK_PAD_Y * 2;
+    const stackMetrics = stacks.map((stack) => {
+      const stackSteps = asArray(stack.steps);
+      const labelH = multi && stack.label ? 18 : 0;
+      const stepsH = stackHeight(stackSteps, INNER_GAP, stepSize);
+      return {
+        stack,
+        steps: stackSteps,
+        labelH,
+        stepsH,
+        blockH: stepsH + BLOCK_PAD_Y * 2 + labelH,
+      };
+    });
+    const stacksH = stackMetrics.reduce((sum, metric, index) => {
+      const gap = index < stackMetrics.length - 1 ? STACK_GAP : 0;
+      return sum + metric.blockH + gap;
+    }, 0);
     const chassisInner =
       (stem.length ? stemH + STACK_GAP : 0) +
-      (steps.length ? blockH : 0) +
+      stacksH +
       (head.length ? STACK_GAP + headH : 0);
     const chassisH = Math.max(220, chassisInner + CHASSIS_PAD_Y * 2);
     const belowH = below.length ? PILL_H : 0;
@@ -921,30 +963,27 @@
       }),
     );
 
-    const blockBottom = innerBottom - (stem.length ? stemH + STACK_GAP : 0);
-    const blockTop = blockBottom - (steps.length ? blockH : 0);
     const blockX = CHASSIS_X + BLOCK_PAD_LEFT;
     const blockW = CHASSIS_W - BLOCK_PAD_LEFT - BLOCK_PAD_RIGHT;
-    const headBottom = (steps.length ? blockTop : innerBottom - (stem.length ? stemH + STACK_GAP : 0)) - (head.length ? STACK_GAP : 0);
-    const headPlaced = placeUp(head, headBottom, cx, INNER_GAP, stepSize);
-
-    if (steps.length) {
-      svg.appendChild(
-        svgEl("rect", {
-          class: "arch-repeat-block",
-          x: blockX,
-          y: blockTop,
-          width: blockW,
-          height: blockH,
-          rx: 28,
-          ry: 28,
-          fill: colors.block,
-        }),
-      );
-    }
-
-    const stepPlaced = placeUp(steps, blockBottom - BLOCK_PAD_Y, cx, INNER_GAP, stepSize);
     const stemPlaced = placeUp(stem, innerBottom, cx, INNER_GAP, stepSize);
+    let cursor = stemPlaced.length
+      ? stemPlaced[stemPlaced.length - 1].y - STACK_GAP
+      : innerBottom;
+    const stackLayouts = stackMetrics.map((metric) => {
+      const blockBottom = cursor;
+      const blockTop = blockBottom - metric.blockH;
+      const stepBottom = blockBottom - BLOCK_PAD_Y;
+      const stepPlaced = placeUp(metric.steps, stepBottom, cx, INNER_GAP, stepSize);
+      cursor = blockTop - STACK_GAP;
+      return {
+        ...metric,
+        blockTop,
+        blockBottom,
+        stepPlaced,
+      };
+    });
+    const headPlaced = placeUp(head, cursor, cx, INNER_GAP, stepSize);
+    const stepPlaced = stackLayouts.flatMap((layout) => layout.stepPlaced);
 
     const byId = {};
     [...stemPlaced, ...stepPlaced, ...headPlaced].forEach((box) => {
@@ -953,17 +992,59 @@
       }
     });
 
-    if (steps.length) {
+    stackLayouts.forEach((layout) => {
+      const block = svgEl("rect", {
+        class: "arch-repeat-block",
+        x: blockX,
+        y: layout.blockTop,
+        width: blockW,
+        height: layout.blockH,
+        rx: 28,
+        ry: 28,
+        fill: colors.block,
+      });
+      if (layout.stack.role) {
+        block.setAttribute("data-arch-stack-role", String(layout.stack.role));
+      }
+      if (layout.stack.id) {
+        block.setAttribute("data-arch-stack-id", String(layout.stack.id));
+      }
+      svg.appendChild(block);
+      if (layout.labelH && layout.stack.label) {
+        svg.appendChild(
+          svgEl(
+            "text",
+            {
+              x: cx,
+              y: layout.blockTop + 16,
+              "text-anchor": "middle",
+              fill: colors.accentDeep,
+              "font-size": 11,
+              "font-weight": 700,
+              "font-family": FONT,
+              "data-arch-stack-label": String(layout.stack.label),
+            },
+            layout.stack.label,
+          ),
+        );
+      }
       const braceRight = blockX - 6;
-      const braceTop = blockTop + 6;
-      const braceBot = blockBottom - 6;
+      const braceTop = layout.blockTop + 6;
+      const braceBot = layout.blockBottom - 6;
       curlyBrace(svg, braceRight, braceTop, braceBot, colors);
+      const midY = (braceTop + braceBot) / 2 + 4;
+      const noteConflict = layout.stepPlaced.some((box) => {
+        if (Math.abs(box.cy - midY) > 18) {
+          return false;
+        }
+        return leftNotes.some((note) => note && note.anchor === box.id);
+      });
       svg.appendChild(
         svgEl(
           "text",
           {
             x: braceRight - 38,
-            y: (braceTop + braceBot) / 2 + 4,
+            y: noteConflict ? midY - 22 : midY,
             "text-anchor": "end",
             fill: colors.ink,
             "font-size": 13,
@@ -971,10 +1052,10 @@
             "font-family": FONT,
             "data-arch-repeat-label": "true",
           },
-          `${Number(repeat.count) || 1} ×`,
+          `${Number(layout.stack.count) || 1} ×`,
         ),
       );
-    }
+    });
 
     const flow = [...stemPlaced, ...stepPlaced, ...headPlaced];
     connectColumn(svg, flow, colors);
@@ -1027,10 +1108,11 @@
     const callouts = asArray(diagram.callouts);
     const ffnSpec = callouts.find((item) => item && item.kind === "ffn");
     const headsSpec = callouts.find((item) => item && item.kind === "heads");
+    const fallbackBlockTop = stackLayouts[0] ? stackLayouts[0].blockTop : chassisTop;
     let ffnBox = null;
     if (ffnSpec) {
       const anchor = byId[ffnSpec.anchor] || stepPlaced.find((box) => box.kind === "ffn");
-      const ffnY = Math.max(chassisTop - 2, (anchor ? anchor.y : blockTop) - 28);
+      const ffnY = Math.max(chassisTop - 2, (anchor ? anchor.y : fallbackBlockTop) - 28);
       ffnBox = drawFfnCallout(svg, ffnSpec, CALLOUT_X, ffnY, colors, focused === (anchor && anchor.id));
       if (anchor) {
         leader(svg, anchor.x + anchor.w, anchor.cy, CALLOUT_X - 2, ffnY + 24, colors);
@@ -1039,7 +1121,7 @@
     if (headsSpec) {
       const anchor = byId[headsSpec.anchor] || stepPlaced.find((box) => box.kind === "attention");
       const hx = CALLOUT_X;
-      const preferred = anchor ? anchor.cy + 4 : blockTop + 80;
+      const preferred = anchor ? anchor.cy + 4 : fallbackBlockTop + 80;
       const dashedBottom = ffnBox ? ffnBox.y + (ffnBox.rectH != null ? ffnBox.rectH : ffnBox.h) : null;
       const hy =
         dashedBottom != null && preferred < dashedBottom + 8 ? dashedBottom + 16 : preferred;
@@ -1076,10 +1158,20 @@
         note.id === "unify-meta" ||
         note.id === "causal-mask" ||
         note.id === "chan-meta" ||
-        /^(fourier|rope|qk-|frozen|asymmetric|geglu|swiglu|gelu|learned|causal|electrode)/i.test(String(note.label || ""));
-      const lines = wrapLines(note.label, isShort ? 16 : 18);
-      const textX = isShort ? CHASSIS_X - 14 : CHASSIS_X - 72;
-      const textY = anchor.cy - ((lines.length - 1) * 7);
+        note.id === "mamba-dir" ||
+        note.id === "sensor-meta" ||
+        note.id === "cross-meta" ||
+        /^(fourier|rope|qk-|frozen|asymmetric|geglu|swiglu|gelu|learned|causal|electrode|forward|attend|eeg)/i.test(
+          String(note.label || ""),
+        );
+      const lines = wrapLines(note.label, isShort ? 22 : 18);
+      const textX = isShort ? CHASSIS_X - 18 : CHASSIS_X - 72;
+      let textY = anchor.cy - (lines.length - 1) * 7;
+      const sameAnchor = leftNotes.filter((other) => other && other.anchor === note.anchor);
+      const offsetIndex = sameAnchor.indexOf(note);
+      if (offsetIndex > 0) {
+        textY -= offsetIndex * 26;
+      }
       lines.forEach((line, index) => {
         svg.appendChild(
           svgEl(
@@ -1097,7 +1189,7 @@
           ),
         );
       });
-      leader(svg, textX + 6, anchor.cy, anchor.x - 2, anchor.cy, colors);
+      leader(svg, textX + 6, textY + (lines.length - 1) * 7, anchor.x - 2, anchor.cy, colors);
     });
 
     if (annotations.vocab_size) {
