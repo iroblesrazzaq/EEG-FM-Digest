@@ -57,9 +57,10 @@
     ],
     "meta": {
       "causal": true,
+      "denoise": false,
       "eeg_like": true,
       "gated": false,
-      "has_patch": true
+      "has_patch": false
     },
     "notes": {
       "family": "Autoregressive transformer",
@@ -70,6 +71,7 @@
     "repeat": {
       "count": 8,
       "id": "enc",
+      "role": "encoder",
       "steps": [
         {
           "id": "enc.n1",
@@ -98,6 +100,40 @@
         }
       ]
     },
+    "stacks": [
+      {
+        "count": 8,
+        "id": "enc",
+        "role": "encoder",
+        "steps": [
+          {
+            "id": "enc.n1",
+            "kind": "norm",
+            "label": "LayerNorm 1"
+          },
+          {
+            "id": "enc.attn",
+            "kind": "attention",
+            "label": "Causal attention"
+          },
+          {
+            "id": "enc.n2",
+            "kind": "norm",
+            "label": "LayerNorm 2"
+          },
+          {
+            "id": "enc.mlp",
+            "kind": "ffn",
+            "label": "Feed forward"
+          },
+          {
+            "id": "enc.add",
+            "kind": "add",
+            "label": "+"
+          }
+        ]
+      }
+    ],
     "stem": [
       {
         "id": "patch",

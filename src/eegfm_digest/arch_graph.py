@@ -527,6 +527,147 @@ def _is_criss_cross(blob: str) -> bool:
     return spatial and temporal
 
 
+_STACK_ROLE_ORDER = {"encoder": 0, "query": 1, "decoder": 2}
+_STACK_LABELS = {"encoder": "Encoder", "decoder": "Decoder", "query": "Channel unifier"}
+_GALLERY_STACK_IDS = {"encoder": "enc", "decoder": "dec", "query": "qry"}
+
+
+def _is_denoise(label: str | None, title: str | None, arxiv_id: str | None = None) -> bool:
+    if str(arxiv_id or "").strip() == "2607.27308":
+        return True
+    text = f"{label or ''} {title or ''}".lower()
+    return any(token in text for token in ("denois", "super-resolution", "superresolution", "zuna"))
+
+
+def _stack_role(prefix: str, children: list[dict[str, Any]] | None = None) -> str:
+    p = (prefix or "").strip(".").lower()
+    child_blob = " ".join(
+        f"{item.get('id', '')} {item.get('label', '')}" for item in (children or [])
+    ).lower()
+    if any(token in p for token in ("query", "unifier")) and "decoder" not in p:
+        return "query"
+    if "cross_attn" in p and "decoder" not in p:
+        return "query"
+    if "decoder" in p:
+        return "decoder"
+    if any(token in p for token in ("encoder", "backbone", "mamba")):
+        return "encoder"
+    if "cross_attention" in child_blob or (".cross_attn" in child_blob and "query" not in p):
+        return "decoder"
+    return "encoder"
+
+
+def _stacks_from_names(tensor_names: list[str] | None) -> list[dict[str, Any]]:
+    """Group ``*.layers.{i}.*`` / ``*.blocks.{i}.*`` prefixes into encoder/query/decoder stacks."""
+    grouped: dict[str, dict[int, list[str]]] = {}
+    for name in tensor_names or []:
+        match = _LAYER_RE.match(name)
+        if not match:
+            continue
+        prefix = match.group("prefix") or "encoder"
+        idx = int(match.group("idx"))
+        rest = match.group("rest")
+        grouped.setdefault(prefix, {}).setdefault(idx, []).append(rest)
+    stacks: list[dict[str, Any]] = []
+    for prefix, by_idx in grouped.items():
+        indices = sorted(by_idx)
+        if not indices:
+            continue
+        count = max(indices) - min(indices) + 1 if len(indices) >= 2 else 1
+        if count < 2:
+            continue
+        first_rests = by_idx[indices[0]]
+        children: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for rest in first_rests:
+            key = rest.split(".", 1)[0]
+            if key in seen:
+                continue
+            seen.add(key)
+            children.append(
+                {
+                    "id": f"{prefix}.{key}",
+                    "label": _pretty_module(key),
+                    "kind": _module_kind(key),
+                }
+            )
+        stacks.append(
+            {
+                "prefix": prefix,
+                "count": count,
+                "children": children,
+                "role": _stack_role(prefix, children),
+            }
+        )
+    stacks.sort(key=lambda item: (_STACK_ROLE_ORDER.get(item["role"], 9), item["prefix"]))
+    return stacks
+
+
+def _block_steps(
+    prefix: str,
+    *,
+    role: str,
+    children: list[dict[str, Any]] | None,
+    norm_label: str,
+    mixer_label: str,
+    has_ffn: bool,
+    mamba: bool,
+) -> list[dict[str, Any]]:
+    """One Pre-LN (or Mamba) cartoon; decoder stacks insert cross-attention."""
+    has_cross = role == "decoder" or any(
+        "cross_attention" in str(item.get("id") or "").lower()
+        for item in (children or [])
+    )
+    if role == "query":
+        has_cross = False
+    steps: list[dict[str, Any]] = [{"id": f"{prefix}.n1", "label": f"{norm_label} 1", "kind": "norm"}]
+    if mamba and role == "encoder":
+        steps.append({"id": f"{prefix}.attn", "label": mixer_label, "kind": "attention"})
+        steps.append({"id": f"{prefix}.add", "label": "+", "kind": "add"})
+        return steps
+    steps.append({"id": f"{prefix}.attn", "label": mixer_label, "kind": "attention"})
+    next_norm = 2
+    if has_cross:
+        steps.extend(
+            [
+                {"id": f"{prefix}.n{next_norm}", "label": f"{norm_label} {next_norm}", "kind": "norm"},
+                {"id": f"{prefix}.cross", "label": "Cross attention", "kind": "attention"},
+            ]
+        )
+        next_norm += 1
+    if has_ffn:
+        steps.extend(
+            [
+                {"id": f"{prefix}.n{next_norm}", "label": f"{norm_label} {next_norm}", "kind": "norm"},
+                {"id": f"{prefix}.mlp", "label": "Feed forward", "kind": "ffn"},
+            ]
+        )
+    steps.append({"id": f"{prefix}.add", "label": "+", "kind": "add"})
+    return steps
+
+
+def _mixer_for_role(
+    role: str,
+    *,
+    mamba: bool,
+    bidirectional_mamba: bool,
+    criss_cross: bool,
+    causal: bool,
+    eeg_like: bool,
+    heads: int,
+    kv_heads: int | None,
+) -> str:
+    if role == "query":
+        return "Query attention"
+    if mamba and role == "encoder":
+        return "Bidirectional Mamba" if bidirectional_mamba else "Mamba"
+    if criss_cross and role == "encoder":
+        return "Criss-cross attention"
+    return _attention_label(
+        heads=heads or 1, kv_heads=kv_heads, causal=causal and role == "encoder", eeg_like=eeg_like
+    )
+
+
 def _uses_vq_codebook(label: str | None, blob: str, cfg: dict[str, Any] | None = None) -> bool:
     if isinstance(cfg, dict) and _first_int(cfg.get("codebook_size"), cfg.get("num_quantizers")):
         return True
@@ -649,18 +790,19 @@ def diagram_from_hf(
     activation = _gallery_activation(cfg, gated, blob)
     hidden = _ffn_width(cfg, embed, tensors)
     norm_label = "RMSNorm" if rms else "LayerNorm"
-    has_pool = (not causal) and (
+    denoise = eeg_like and _is_denoise(display, paper_title, arxiv_id)
+    has_pool = (not causal) and (not denoise) and (
         eeg_like or any(token in blob for token in ("pooler", ".pool.", "pooling", "avg_pool", "mean_pool"))
     )
     has_patch = bool(patch_size) or "patch_embed" in blob or "patch_embedding" in blob
     has_wpe = "wpe" in blob or "wpe.weight" in blob or "position_embedding" in blob
 
     if eeg_like:
-        below_id, stem_id, prefix, attn_id, mlp_id = "eeg", "patch", "enc", "enc.attn", "enc.mlp"
-        below_label = "Sample EEG"
+        below_id, stem_id, prefix = "eeg", "patch", "enc"
+        below_label = "Noisy EEG" if denoise else "Sample EEG"
         stem_label = "Sensor encoder" if _first_int(cfg.get("n_neuro")) else "Patch embedding layer"
     else:
-        below_id, stem_id, prefix, attn_id, mlp_id = "input", "embed", "block", "block.attn", "block.mlp"
+        below_id, stem_id, prefix = "input", "embed", "block"
         below_label = "Sample input"
         stem_label = "Token embedding layer"
 
@@ -680,24 +822,62 @@ def diagram_from_hf(
     electrode_wise = "chan_embed" in blob or "chans_id" in blob
     bidirectional_mamba = mamba and ("mamba_fwd" in blob and "mamba_rev" in blob)
     sensor = bool(_first_int(cfg.get("n_neuro")))
-    steps = [{"id": f"{prefix}.n1", "label": f"{norm_label} 1", "kind": "norm"}]
-    if mamba:
-        attn_label = "Bidirectional Mamba" if bidirectional_mamba else "Mamba"
-    elif criss_cross:
-        attn_label = "Criss-cross attention"
-    else:
-        attn_label = _attention_label(
-            heads=heads or 1, kv_heads=kv_heads, causal=causal, eeg_like=eeg_like
+    detected = _stacks_from_names(tensor_names)
+    if not detected:
+        detected = [{"prefix": prefix, "count": depth, "children": [], "role": "encoder"}]
+    multi = len(detected) > 1
+    gallery_stacks: list[dict[str, Any]] = []
+    used_ids: set[str] = set()
+    for item in detected:
+        role = str(item.get("role") or "encoder")
+        gallery_id = _GALLERY_STACK_IDS.get(role, "enc") if eeg_like else "block"
+        if gallery_id in used_ids:
+            gallery_id = f"{gallery_id}{len(used_ids)}"
+        used_ids.add(gallery_id)
+        mixer_label = _mixer_for_role(
+            role,
+            mamba=mamba,
+            bidirectional_mamba=bidirectional_mamba,
+            criss_cross=criss_cross,
+            causal=causal,
+            eeg_like=eeg_like,
+            heads=heads,
+            kv_heads=kv_heads,
         )
-    steps.append({"id": attn_id, "label": attn_label, "kind": "attention"})
-    if has_ffn:
-        steps.extend(
-            [
-                {"id": f"{prefix}.n2", "label": f"{norm_label} 2", "kind": "norm"},
-                {"id": mlp_id, "label": "Feed forward", "kind": "ffn"},
-            ]
-        )
-    steps.append({"id": f"{prefix}.add", "label": "+", "kind": "add"})
+        if mamba and role == "encoder":
+            stack_has_ffn = False
+        elif role == "query":
+            child_blob = " ".join(str(child.get("id") or "") for child in item.get("children") or []).lower()
+            stack_has_ffn = any(
+                token in child_blob for token in ("mlp", "linear", "feed_forward", "fc1")
+            )
+        else:
+            stack_has_ffn = has_ffn
+        name_count = int(item.get("count") or 1)
+        count = max(name_count, depth) if role in {"encoder", "decoder"} and depth else name_count
+        stack: dict[str, Any] = {
+            "id": gallery_id,
+            "count": count,
+            "role": role,
+            "steps": _block_steps(
+                gallery_id,
+                role=role,
+                children=list(item.get("children") or []),
+                norm_label=norm_label,
+                mixer_label=mixer_label,
+                has_ffn=stack_has_ffn,
+                mamba=mamba,
+            ),
+        }
+        if multi:
+            stack["label"] = _STACK_LABELS.get(role, role[:1].upper() + role[1:])
+        gallery_stacks.append(stack)
+    primary = next((item for item in gallery_stacks if item.get("role") == "encoder"), gallery_stacks[0])
+    prefix = str(primary["id"])
+    attn_id, mlp_id = f"{prefix}.attn", f"{prefix}.mlp"
+    steps = list(primary["steps"])
+    has_query_stack = any(item.get("role") == "query" for item in gallery_stacks)
+    has_decoder_stack = any(item.get("role") == "decoder" for item in gallery_stacks)
     stem = [{"id": stem_id, "label": stem_label, "kind": "embed"}]
     if vq_codebook:
         stem.append({"id": "vq", "label": "VQ-VAE codebook", "kind": "embed"})
@@ -706,6 +886,8 @@ def diagram_from_hf(
     head: list[dict[str, Any]] = []
     if causal and eeg_like:
         head.append({"id": "out", "label": "Next-token head", "kind": "linear"})
+    elif denoise:
+        head.append({"id": "out", "label": "Reconstruction head", "kind": "linear"})
     else:
         if has_pool:
             head.append({"id": "pool", "label": "Pooling", "kind": "pool"})
@@ -714,7 +896,7 @@ def diagram_from_hf(
         head.append({"id": "out", "label": "Linear output layer", "kind": "linear"})
 
     callouts: list[dict[str, Any]] = []
-    if has_ffn:
+    if any(step.get("kind") == "ffn" for step in steps):
         callouts.append(
             {
                 "id": "ffn-mod",
@@ -755,19 +937,27 @@ def diagram_from_hf(
         left.append({"id": "cost-st", "label": "O(N²T) ∥ O(NT²)", "anchor": attn_id})
     if causal:
         left.append({"id": "causal-mask", "label": "Causal mask\nnext-token", "anchor": attn_id})
-    if has_ffn:
+    if has_ffn and any(step.get("kind") == "ffn" for step in steps):
         if gated:
             glu = "GeGLU" if activation == "GELU" else "SwiGLU"
             left.append({"id": "ffn-kind", "label": f"{glu}\n1 layer", "anchor": mlp_id})
         else:
             left.append({"id": "ffn-kind", "label": f"{activation}\n2-layer MLP", "anchor": mlp_id})
+    if bidirectional_mamba:
+        left.append({"id": "mamba-dir", "label": "Forward ∥ Reverse", "anchor": attn_id})
     if vq_codebook:
         left.append({"id": "vq-meta", "label": "Frozen codebook", "anchor": "vq"})
     if electrode_wise:
         left.append({"id": "chan-meta", "label": "Electrode-wise", "anchor": "chan"})
+    if sensor:
+        left.append({"id": "sensor-meta", "label": "EEG + MEG", "anchor": stem_id})
     if channel_unify:
-        stem.append({"id": "unify", "label": "Channel unifier", "kind": "embed"})
-        left.append({"id": "unify-meta", "label": "Learned queries", "anchor": "unify"})
+        unify_anchor = "qry.attn" if has_query_stack else "unify"
+        if not has_query_stack:
+            stem.append({"id": "unify", "label": "Channel unifier", "kind": "embed"})
+        left.append({"id": "unify-meta", "label": "Learned queries", "anchor": unify_anchor})
+    if has_decoder_stack:
+        left.append({"id": "cross-meta", "label": "Attend encoder", "anchor": "dec.cross"})
     if patch_size:
         overlap_bit = f",\noverlap {patch_overlap}" if patch_overlap is not None else ""
         left.append(
@@ -811,6 +1001,16 @@ def diagram_from_hf(
         title=f"{display} {paper_title}",
     )
     notes["family"] = family
+    if denoise and not causal:
+        notes["objective"] = "denoise"
+    if multi:
+        notes["stacks"] = [str(item.get("role") or "") for item in gallery_stacks]
+
+    repeat: dict[str, Any] = {"id": prefix, "count": int(primary["count"]), "steps": steps}
+    if primary.get("label"):
+        repeat["label"] = primary["label"]
+    if primary.get("role"):
+        repeat["role"] = primary["role"]
 
     return {
         "title": display,
@@ -818,12 +1018,19 @@ def diagram_from_hf(
         "param_label": _format_param_label(params),
         "below": [{"id": below_id, "label": below_label, "kind": "input"}],
         "stem": stem,
-        "repeat": {"id": prefix, "count": depth, "steps": steps},
+        "repeat": repeat,
+        "stacks": gallery_stacks,
         "head": head,
         "callouts": callouts,
         "annotations": annotations,
         "notes": notes,
-        "meta": {"eeg_like": eeg_like, "causal": causal, "gated": gated, "has_patch": has_patch},
+        "meta": {
+            "eeg_like": eeg_like,
+            "causal": causal,
+            "gated": gated,
+            "has_patch": has_patch,
+            "denoise": denoise,
+        },
     }
 
 
@@ -848,6 +1055,13 @@ def graph_from_tensors(
         {"id": "input", "label": "Input", "kind": "input"},
     ]
     leftover = collapsed["leftover"]
+    repeats = sorted(
+        collapsed["repeats"],
+        key=lambda node: (
+            _STACK_ROLE_ORDER.get(_stack_role(str(node.get("id") or ""), list(node.get("children") or [])), 9),
+            str(node.get("id") or ""),
+        ),
+    )
     stem_names = [
         name
         for name in leftover
@@ -855,7 +1069,7 @@ def graph_from_tensors(
     ]
     if stem_names:
         nodes.append({"id": "stem", "label": "Stem / embeddings", "kind": "stem"})
-    nodes.extend(collapsed["repeats"])
+    nodes.extend(repeats)
     head_names = [
         name
         for name in leftover
