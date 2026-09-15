@@ -10,47 +10,54 @@ from .keywords import EEG_KEYWORDS, FM_KEYWORDS_SET_A, FM_KEYWORDS_SET_B
 from .resources import prompt_path
 
 SHORT_BLURB = (
-    "This digest serves as a monthly update on the current EEG foundation model literature on arXiv. "
-    "We filter with arXiv title and abstract keywords, and a triage LLM to decide on papers that qualify. "
-    "Then, we generate a summary of the entire paper with an LLM. "
-    "I manually choose the featured paper of the month."
+    "This digest tracks EEG foundation-model preprints on arXiv. A daily GitHub Actions pipeline "
+    "retrieves candidates by keyword, an LLM triages title and abstract, and accepted papers get "
+    "schema-validated structured summaries on this site. I still choose the featured paper of the month by hand."
 )
 
 PROCESS_DETAILS_INTRO = (
-    "This digest serves as a monthly update on the current EEG foundation model literature. "
-    "I built it so I can keep up to date with the latest EEG FM papers, mostly using Codex 5.3. "
-    "The process is as follows:"
+    "This digest is an automated tracker of EEG foundation-model literature on arXiv. "
+    "I built it so I can keep up with new EEG-FM papers without reading every preprint by hand. "
+    "The live pipeline is as follows:"
 )
 
 PROCESS_DETAILS_STEPS = [
     (
-        "First we call the arXiv API to retrieve papers with EEG-FM-related terms in their title and abstract. "
-        "This yielded me 492 candidate papers."
+        "Retrieve: call the arXiv API with EEG-FM keyword queries on title and abstract. "
+        "A one-time backfill covered 2021 through early 2026; since then a daily cron fetches the "
+        "new window (with overlap so missed papers retry). 758 candidates have been triaged to date."
     ),
     (
-        "Then, I use an LLM on the title and abstract to triage all papers returned by the arXiv search. "
-        "The model returns a decision (accept, reject, borderline), its confidence, and 2-4 reasons "
-        "for its decision. 94 papers passed this step."
+        "Triage: an LLM reads title and abstract and returns accept, reject, or borderline, plus "
+        "confidence and 2-4 reasons. Invalid JSON gets one repair pass. Only accepts are published. "
+        "180 papers have passed triage and appear on the site."
     ),
     (
-        "Finally, for all models accepted by the triage LLM, we download the pdf, extract text with PyMuPDF, "
-        "and run a summary LLM where we extract a summary, bullet points, unique contribution, and tags."
+        "Summarize: download the PDF, extract text (PyMuPDF, then pypdf / pdfminer fallbacks; "
+        "abstract-only if the PDF fails), and run a summary LLM into a fixed schema: architecture, "
+        "pretraining objective, data scale, evaluation, tags, limitations, and a short writeup."
+    ),
+    (
+        "Publish: regenerate this static GitHub Pages site from SQLite state. New-model papers "
+        "are also synced to the awesome-eeg-fm list. Featured papers are still chosen manually."
     ),
 ]
 
 PROCESS_DETAILS_FOOTER = (
-    "Current triage and summary LLM calls use gemma-4-31b-it via Google AI Studio. "
-    "For all previous papers (2021 - Jan 2026), running this whole process cost ~3 million tokens, so each accepted paper costs "
-    "~30,000 tokens (including averaged triage costs for papers that don't pass). Crucially, this digest "
-    "excludes models pretrained on data from one specific task and fine-tuned specifically for that same task "
-    "- we define an EEG FM as a large model pretrained on EEG data, built with the potential and intention "
-    "for broad transfer. I update the digest at least once a month, hopefully every week if I'm diligent."
+    "Triage and summary calls currently use gemma-4-31b-it via Google AI Studio. "
+    "The pipeline runs unattended daily at 10:00 UTC on GitHub Actions, with incremental SQLite "
+    "caching, JSON-repair, PDF retries, and rate-limit backoff so a failed paper is retried the next day. "
+    "The 2021–Jan 2026 backfill cost ~3 million tokens (~30,000 tokens per accepted paper, including "
+    "averaged triage cost of rejects). Crucially, this digest excludes models pretrained on one specific "
+    "task and fine-tuned only for that same task — we define an EEG FM as a large model pretrained on "
+    "EEG data, built with the potential and intention for broad transfer."
 )
 
 PROCESS_LIMITATIONS = [
-    "Only checks paper on arXiv.",
+    "Only checks papers on arXiv.",
     "arXiv keyword search may miss papers.",
     "Triage LLM could misclassify a paper.",
+    "A failed daily run (arXiv outage or LLM rate limits) does not advance the query window, so a day can lag until the next successful run.",
     (
         "Summary LLM is not an expert on the literature - one consequence is that it lacks "
         "the expertise to judge important and novel contributions, so it must rely on the paper "
