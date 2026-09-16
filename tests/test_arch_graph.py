@@ -371,9 +371,10 @@ def test_diagram_from_hf_labram_tensors_infer_heads_pe_and_mlp_width():
     assert ffn["activation"] == "GELU"
     assert ffn["hidden_dim"] == 800
     assert [item["label"] for item in diagram["stem"]] == ["Patch embedding layer", "VQ-VAE codebook"]
+    assert diagram["stem"][1].get("side") == "left"
     left = [item["label"] for item in diagram["annotations"]["left"]]
     assert "Absolute PE" in left
-    assert "Frozen codebook" in left
+    assert "Frozen codebook" not in left
     assert "QK-Norm" in left
     assert diagram["annotations"]["embed_dim"] == 200
     assert diagram["notes"]["tokenizer"] == "vqvae"
@@ -409,11 +410,15 @@ def test_diagram_from_hf_cbramod_criss_cross_attention():
     }
     diagram = diagram_from_hf(cfg, tensors=tensors, label="CBraMod")
     attn_labels = [step["label"] for step in diagram["repeat"]["steps"] if step["kind"] == "attention"]
-    assert attn_labels == ["Criss-cross attention"]
-    left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
-    assert left["cost-st"] == "O(N²T) ∥ O(NT²)"
-    assert left["pe"] == "Asymmetric PE"
-    assert left["ffn-kind"] == "GELU\n2-layer MLP"
+    assert attn_labels == []
+    parallel = next(step for step in diagram["repeat"]["steps"] if step["kind"] == "parallel")
+    assert parallel["label"] == "Criss-cross attention"
+    assert [item["label"] for item in parallel["items"]] == ["Spatial", "Temporal"]
+    left = {item["id"]: item for item in diagram["annotations"]["left"]}
+    assert left["cost-st"]["label"] == "O(N²T) ∥ O(NT²)"
+    assert left["cost-st"].get("side") == "right"
+    assert left["pe"]["label"] == "Asymmetric PE"
+    assert left["ffn-kind"]["label"] == "GELU\n2-layer MLP"
     assert diagram["notes"]["attn"] == "criss_cross"
     assert "Spatial attention" not in [step["label"] for step in diagram["repeat"]["steps"]]
     assert "Temporal attention" not in [step["label"] for step in diagram["repeat"]["steps"]]
@@ -484,9 +489,12 @@ def test_diagram_from_hf_brainomni_lm_aliases_and_codebook():
         "Sensor encoder",
         "VQ-VAE codebook",
     ]
+    assert diagram["stem"][1].get("side") == "left"
+    assert diagram["stem"][1].get("detail") == "4×512 codes"
     assert diagram["notes"]["tokenizer"] == "vqvae"
     left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
-    assert left["vq-meta"] == "Frozen codebook"
+    assert "vq-meta" not in left
+    assert "Frozen codebook" not in left.values()
     assert left["sensor-meta"] == "EEG + MEG"
     assert diagram["family"] == "Sensor-encoder transformer"
     ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
@@ -505,13 +513,16 @@ def test_diagram_from_hf_femba_bidirectional_mamba():
     }
     diagram = diagram_from_hf(cfg, tensors=tensors, label="FEMBA")
     assert diagram["repeat"]["count"] == 10
-    assert [step["kind"] for step in diagram["repeat"]["steps"]] == ["norm", "attention", "add"]
-    assert diagram["repeat"]["steps"][1]["label"] == "Bidirectional Mamba"
+    assert [step["kind"] for step in diagram["repeat"]["steps"]] == ["norm", "parallel", "add"]
+    mixer = diagram["repeat"]["steps"][1]
+    assert mixer["label"] == "Bidirectional Mamba"
+    assert [item["label"] for item in mixer["items"]] == ["Forward Mamba", "Reverse Mamba"]
     assert diagram["annotations"]["embed_dim"] == 385
     assert diagram["notes"]["backbone"] == "mamba"
     assert diagram["family"] == "Bidirectional Mamba"
     left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
-    assert left["mamba-dir"] == "Forward ∥ Reverse"
+    assert "mamba-dir" not in left
+    assert "Forward ∥ Reverse" not in left.values()
     assert not any(item["kind"] == "ffn" for item in diagram["callouts"])
 
 

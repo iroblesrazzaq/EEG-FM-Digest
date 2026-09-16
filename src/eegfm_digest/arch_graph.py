@@ -612,6 +612,8 @@ def _block_steps(
     mixer_label: str,
     has_ffn: bool,
     mamba: bool,
+    bidirectional_mamba: bool = False,
+    criss_cross: bool = False,
 ) -> list[dict[str, Any]]:
     """One Pre-LN (or Mamba) cartoon; decoder stacks insert cross-attention."""
     has_cross = role == "decoder" or any(
@@ -622,10 +624,36 @@ def _block_steps(
         has_cross = False
     steps: list[dict[str, Any]] = [{"id": f"{prefix}.n1", "label": f"{norm_label} 1", "kind": "norm"}]
     if mamba and role == "encoder":
-        steps.append({"id": f"{prefix}.attn", "label": mixer_label, "kind": "attention"})
+        if bidirectional_mamba:
+            steps.append(
+                {
+                    "id": f"{prefix}.mixer",
+                    "kind": "parallel",
+                    "label": "Bidirectional Mamba",
+                    "items": [
+                        {"id": f"{prefix}.fwd", "kind": "attention", "label": "Forward Mamba"},
+                        {"id": f"{prefix}.rev", "kind": "attention", "label": "Reverse Mamba"},
+                    ],
+                }
+            )
+        else:
+            steps.append({"id": f"{prefix}.attn", "label": mixer_label, "kind": "attention"})
         steps.append({"id": f"{prefix}.add", "label": "+", "kind": "add"})
         return steps
-    steps.append({"id": f"{prefix}.attn", "label": mixer_label, "kind": "attention"})
+    if criss_cross and role == "encoder":
+        steps.append(
+            {
+                "id": f"{prefix}.mixer",
+                "kind": "parallel",
+                "label": "Criss-cross attention",
+                "items": [
+                    {"id": f"{prefix}.spatial", "kind": "attention", "label": "Spatial"},
+                    {"id": f"{prefix}.temporal", "kind": "attention", "label": "Temporal"},
+                ],
+            }
+        )
+    else:
+        steps.append({"id": f"{prefix}.attn", "label": mixer_label, "kind": "attention"})
     next_norm = 2
     if has_cross:
         steps.extend(
@@ -867,6 +895,8 @@ def diagram_from_hf(
                 mixer_label=mixer_label,
                 has_ffn=stack_has_ffn,
                 mamba=mamba,
+                bidirectional_mamba=bidirectional_mamba,
+                criss_cross=criss_cross,
             ),
         }
         if multi:
@@ -874,13 +904,29 @@ def diagram_from_hf(
         gallery_stacks.append(stack)
     primary = next((item for item in gallery_stacks if item.get("role") == "encoder"), gallery_stacks[0])
     prefix = str(primary["id"])
-    attn_id, mlp_id = f"{prefix}.attn", f"{prefix}.mlp"
     steps = list(primary["steps"])
+    parallel = next((step for step in steps if step.get("kind") == "parallel"), None)
+    attn_id = str(parallel["id"]) if parallel else f"{prefix}.attn"
+    mlp_id = f"{prefix}.mlp"
     has_query_stack = any(item.get("role") == "query" for item in gallery_stacks)
     has_decoder_stack = any(item.get("role") == "decoder" for item in gallery_stacks)
+    if has_query_stack:
+        channel_unify = True
     stem = [{"id": stem_id, "label": stem_label, "kind": "embed"}]
     if vq_codebook:
-        stem.append({"id": "vq", "label": "VQ-VAE codebook", "kind": "embed"})
+        vq_node: dict[str, Any] = {
+            "id": "vq",
+            "label": "VQ-VAE codebook",
+            "kind": "embed",
+            "side": "left",
+        }
+        n_codes = _first_int(cfg.get("codebook_size"))
+        n_quantizers = _first_int(cfg.get("num_quantizers"))
+        if n_codes and n_quantizers and n_quantizers > 1:
+            vq_node["detail"] = f"{n_quantizers}×{n_codes} codes"
+        elif n_codes:
+            vq_node["detail"] = f"{n_codes} codes"
+        stem.append(vq_node)
     if electrode_wise:
         stem.append({"id": "chan", "label": "Electrode embedding", "kind": "embed"})
     head: list[dict[str, Any]] = []
@@ -934,7 +980,14 @@ def diagram_from_hf(
     if qk_norm:
         left.append({"id": "qk-norm", "label": "QK-Norm", "anchor": attn_id})
     if criss_cross:
-        left.append({"id": "cost-st", "label": "O(N²T) ∥ O(NT²)", "anchor": attn_id})
+        left.append(
+            {
+                "id": "cost-st",
+                "label": "O(N²T) ∥ O(NT²)",
+                "anchor": attn_id,
+                "side": "right",
+            }
+        )
     if causal:
         left.append({"id": "causal-mask", "label": "Causal mask\nnext-token", "anchor": attn_id})
     if has_ffn and any(step.get("kind") == "ffn" for step in steps):
@@ -943,10 +996,6 @@ def diagram_from_hf(
             left.append({"id": "ffn-kind", "label": f"{glu}\n1 layer", "anchor": mlp_id})
         else:
             left.append({"id": "ffn-kind", "label": f"{activation}\n2-layer MLP", "anchor": mlp_id})
-    if bidirectional_mamba:
-        left.append({"id": "mamba-dir", "label": "Forward ∥ Reverse", "anchor": attn_id})
-    if vq_codebook:
-        left.append({"id": "vq-meta", "label": "Frozen codebook", "anchor": "vq"})
     if electrode_wise:
         left.append({"id": "chan-meta", "label": "Electrode-wise", "anchor": "chan"})
     if sensor:

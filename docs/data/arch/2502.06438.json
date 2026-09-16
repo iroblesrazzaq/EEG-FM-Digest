@@ -3,13 +3,7 @@
   "diagram": {
     "annotations": {
       "embed_dim": 385,
-      "left": [
-        {
-          "anchor": "enc.attn",
-          "id": "mamba-dir",
-          "label": "Forward ∥ Reverse"
-        }
-      ]
+      "left": []
     },
     "below": [
       {
@@ -55,8 +49,20 @@
           "label": "LayerNorm 1"
         },
         {
-          "id": "enc.attn",
-          "kind": "attention",
+          "id": "enc.mixer",
+          "items": [
+            {
+              "id": "enc.fwd",
+              "kind": "attention",
+              "label": "Forward Mamba"
+            },
+            {
+              "id": "enc.rev",
+              "kind": "attention",
+              "label": "Reverse Mamba"
+            }
+          ],
+          "kind": "parallel",
           "label": "Bidirectional Mamba"
         },
         {
@@ -78,8 +84,20 @@
             "label": "LayerNorm 1"
           },
           {
-            "id": "enc.attn",
-            "kind": "attention",
+            "id": "enc.mixer",
+            "items": [
+              {
+                "id": "enc.fwd",
+                "kind": "attention",
+                "label": "Forward Mamba"
+              },
+              {
+                "id": "enc.rev",
+                "kind": "attention",
+                "label": "Reverse Mamba"
+              }
+            ],
+            "kind": "parallel",
             "label": "Bidirectional Mamba"
           },
           {

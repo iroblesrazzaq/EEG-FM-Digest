@@ -10,9 +10,10 @@
           "label": "Asymmetric PE"
         },
         {
-          "anchor": "enc.attn",
+          "anchor": "enc.mixer",
           "id": "cost-st",
-          "label": "O(N²T) ∥ O(NT²)"
+          "label": "O(N²T) ∥ O(NT²)",
+          "side": "right"
         },
         {
           "anchor": "enc.mlp",
@@ -76,8 +77,20 @@
           "label": "LayerNorm 1"
         },
         {
-          "id": "enc.attn",
-          "kind": "attention",
+          "id": "enc.mixer",
+          "items": [
+            {
+              "id": "enc.spatial",
+              "kind": "attention",
+              "label": "Spatial"
+            },
+            {
+              "id": "enc.temporal",
+              "kind": "attention",
+              "label": "Temporal"
+            }
+          ],
+          "kind": "parallel",
           "label": "Criss-cross attention"
         },
         {
@@ -109,8 +122,20 @@
             "label": "LayerNorm 1"
           },
           {
-            "id": "enc.attn",
-            "kind": "attention",
+            "id": "enc.mixer",
+            "items": [
+              {
+                "id": "enc.spatial",
+                "kind": "attention",
+                "label": "Spatial"
+              },
+              {
+                "id": "enc.temporal",
+                "kind": "attention",
+                "label": "Temporal"
+              }
+            ],
+            "kind": "parallel",
             "label": "Criss-cross attention"
           },
           {

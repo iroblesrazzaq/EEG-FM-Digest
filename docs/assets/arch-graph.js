@@ -10,7 +10,7 @@
   const ADD_R = 9.5;
   const INNER_GAP = 16;
   const STACK_GAP = 18;
-  const BLOCK_PAD_LEFT = 56;
+  const BLOCK_PAD_LEFT = 64;
   const BLOCK_PAD_RIGHT = 28;
   const BLOCK_PAD_Y = 18;
   const CHASSIS_PAD_Y = 26;
@@ -107,6 +107,12 @@
     }
     if (kind === "attn" || kind === "attention") {
       if (/mamba/i.test(label)) {
+        if (/forward/i.test(label)) {
+          return "Forward Mamba";
+        }
+        if (/reverse/i.test(label)) {
+          return "Reverse Mamba";
+        }
         return /bidirectional/i.test(label) ? "Bidirectional Mamba" : "Mamba";
       }
       if (/criss-cross|criss_cross/i.test(label)) {
@@ -352,6 +358,9 @@
     if (step.kind === "add") {
       return { w: ADD_R * 2, h: ADD_R * 2 };
     }
+    if (step.kind === "parallel") {
+      return { w: PILL_W + 20, h: ATTN_H };
+    }
     if (step.kind === "attention") {
       return { w: PILL_W + 8, h: ATTN_H };
     }
@@ -386,10 +395,44 @@
         h: size.h,
         cx: centerX,
         cy: y + size.h / 2,
+        items: item.items,
+        side: item.side,
+        detail: item.detail,
       });
       cursor = y - gap;
     }
     return placed;
+  }
+
+  function bandOverlaps(bands, y0, y1) {
+    return bands.some((band) => y0 < band.y1 && y1 > band.y0);
+  }
+
+  function occupyBand(bands, y0, y1, pad) {
+    const padding = pad || 0;
+    bands.push({ y0: y0 - padding, y1: y1 + padding });
+  }
+
+  function freeY(bands, preferred, height, minY, maxY, pad) {
+    const padding = pad || 0;
+    const fits = (y) => {
+      if (y < minY || y + height > maxY) {
+        return false;
+      }
+      return !bandOverlaps(bands, y - padding, y + height + padding);
+    };
+    if (fits(preferred)) {
+      return preferred;
+    }
+    for (let step = 12; step <= 160; step += 12) {
+      if (fits(preferred - step)) {
+        return preferred - step;
+      }
+      if (fits(preferred + step)) {
+        return preferred + step;
+      }
+    }
+    return Math.max(minY, Math.min(preferred, maxY - height));
   }
 
   function arrowUp(parent, x, yBottom, yTop, colors) {
@@ -565,12 +608,51 @@
     }
     if (box.kind === "add") {
       drawAdd(group, box, colors);
+    } else if (box.kind === "parallel") {
+      group.setAttribute("data-arch-parallel", box.label || "parallel");
+      const items = asArray(box.items);
+      const gap = 16;
+      const count = Math.max(items.length, 1);
+      const childW = (box.w - gap * (count - 1)) / count;
+      items.forEach((item, index) => {
+        const child = {
+          id: item.id,
+          label: item.label,
+          kind: item.kind || "attention",
+          x: box.x + index * (childW + gap),
+          y: box.y,
+          w: childW,
+          h: box.h,
+          cx: box.x + index * (childW + gap) + childW / 2,
+          cy: box.cy,
+        };
+        drawBox(group, child, colors);
+      });
+      if (items.length === 2) {
+        group.appendChild(
+          svgEl(
+            "text",
+            {
+              x: box.cx,
+              y: box.cy + 4,
+              "text-anchor": "middle",
+              fill: colors.ink,
+              "font-size": 12,
+              "font-weight": 700,
+              "font-family": FONT,
+              "data-arch-join": "parallel",
+            },
+            "∥",
+          ),
+        );
+      }
     } else {
       const mixer = mixerKind(box);
       const isAttn = box.kind === "attention";
       const opts = {
         dark: isAttn && mixer !== "mamba",
-        maxChars: isAttn ? 22 : 28,
+        maxChars: isAttn ? (box.w < 110 ? 14 : 22) : 28,
+        fontSize: box.w < 110 ? 9.5 : undefined,
       };
       if (mixer === "mamba") {
         opts.fill = colors.accentDeep;
@@ -588,6 +670,41 @@
       drawPill(group, box, colors, opts);
       if (mixer) {
         group.setAttribute("data-arch-mixer", mixer);
+      }
+      if (box.side === "left" && /vq|codebook/i.test(String(box.label || ""))) {
+        group.setAttribute("data-arch-vq", "side");
+        group.appendChild(
+          svgEl(
+            "text",
+            {
+              x: box.cx,
+              y: box.y - 6,
+              "text-anchor": "middle",
+              fill: colors.ink,
+              "font-size": 11,
+              "font-weight": 600,
+              "font-family": FONT,
+            },
+            "Frozen codebook",
+          ),
+        );
+        if (box.detail) {
+          group.appendChild(
+            svgEl(
+              "text",
+              {
+                x: box.cx,
+                y: box.y + box.h + 13,
+                "text-anchor": "middle",
+                fill: colors.accentDeep,
+                "font-size": 10,
+                "font-weight": 600,
+                "font-family": FONT,
+              },
+              String(box.detail),
+            ),
+          );
+        }
       }
     }
     parent.appendChild(group);
@@ -861,7 +978,9 @@
       ? asArray(diagram.stacks)
       : [diagram.repeat || { count: 1, steps: [] }]
     ).filter((stack) => asArray(stack && stack.steps).length);
-    const stem = asArray(diagram.stem);
+    const stemAll = asArray(diagram.stem);
+    const stem = stemAll.filter((item) => item && item.side !== "left");
+    const stemSide = stemAll.filter((item) => item && item.side === "left");
     const head = asArray(diagram.head);
     const below = asArray(diagram.below);
     const annotations = diagram.annotations || {};
@@ -991,6 +1110,100 @@
         byId[box.id] = box;
       }
     });
+    const leftColumnNotes = leftNotes.filter(
+      (note) => note && note.side !== "right" && note.id !== "vq-meta",
+    );
+    const rightColumnNotes = leftNotes.filter((note) => note && note.side === "right");
+
+    function noteIsShort(note) {
+      return (
+        note.id === "pe" ||
+        note.id === "qk-norm" ||
+        note.id === "vq-meta" ||
+        note.id === "cost-st" ||
+        note.id === "ffn-kind" ||
+        note.id === "unify-meta" ||
+        note.id === "causal-mask" ||
+        note.id === "chan-meta" ||
+        note.id === "mamba-dir" ||
+        note.id === "sensor-meta" ||
+        note.id === "cross-meta" ||
+        /^(fourier|rope|qk-|frozen|asymmetric|geglu|swiglu|gelu|learned|causal|electrode|forward|attend|eeg|o\()/i.test(
+          String(note.label || ""),
+        )
+      );
+    }
+
+    const leftLayouts = [];
+    leftColumnNotes.forEach((note) => {
+      const anchor =
+        byId[note.anchor] || stepPlaced.find((box) => box.kind === "attention") || stemPlaced[0];
+      if (!anchor || anchor.side === "left") {
+        return;
+      }
+      const isShort = noteIsShort(note);
+      const lines = wrapLines(note.label, isShort ? 22 : 18);
+      const layout = {
+        note,
+        anchor,
+        lines,
+        isShort,
+        textX: isShort ? CHASSIS_X - 18 : CHASSIS_X - 72,
+        textY: anchor.cy - (lines.length - 1) * 7,
+      };
+      const sameAnchor = leftLayouts.filter((other) => other.anchor.id === layout.anchor.id);
+      if (sameAnchor.length) {
+        layout.textY -= sameAnchor.length * 26;
+      }
+      leftLayouts.push(layout);
+    });
+
+    const leftOccupied = [];
+    leftLayouts.forEach((layout) => {
+      occupyBand(leftOccupied, layout.textY - 10, layout.textY + layout.lines.length * 14 - 4, 4);
+    });
+
+    const sidePlaced = [];
+    if (stemPlaced.length && stemSide.length) {
+      const anchor = stemPlaced[0];
+      stemSide.forEach((item) => {
+        const w = 118;
+        const h = PILL_H;
+        const caption = 16;
+        const detailH = item.detail ? 16 : 0;
+        const totalH = caption + h + detailH;
+        const minY = chassisTop + 10;
+        const maxY = Math.max(minY + totalH, anchor.y - 6);
+        const yTop = freeY(
+          leftOccupied,
+          anchor.y - 56 - caption,
+          totalH,
+          minY,
+          maxY,
+          8,
+        );
+        const yPill = yTop + caption;
+        const x = Math.max(8, CHASSIS_X - 22 - w);
+        const box = {
+          id: item.id,
+          label: item.label,
+          kind: item.kind || "embed",
+          side: "left",
+          detail: item.detail,
+          w,
+          h,
+          x,
+          y: yPill,
+          cx: x + w / 2,
+          cy: yPill + h / 2,
+        };
+        occupyBand(leftOccupied, yTop, yPill + h + detailH, 6);
+        sidePlaced.push(box);
+        if (box.id) {
+          byId[box.id] = box;
+        }
+      });
+    }
 
     stackLayouts.forEach((layout) => {
       const block = svgEl("rect", {
@@ -1033,18 +1246,16 @@
       const braceBot = layout.blockBottom - 6;
       curlyBrace(svg, braceRight, braceTop, braceBot, colors);
       const midY = (braceTop + braceBot) / 2 + 4;
-      const noteConflict = layout.stepPlaced.some((box) => {
-        if (Math.abs(box.cy - midY) > 18) {
-          return false;
-        }
-        return leftNotes.some((note) => note && note.anchor === box.id);
-      });
+      const labelH = 16;
+      const yTop = freeY(leftOccupied, midY - 10, labelH, braceTop + 2, braceBot - 2, 4);
+      const textY = yTop + 12;
+      occupyBand(leftOccupied, yTop, yTop + labelH, 4);
       svg.appendChild(
         svgEl(
           "text",
           {
-            x: braceRight - 38,
-            y: noteConflict ? midY - 22 : midY,
+            x: braceRight - 28,
+            y: textY,
             "text-anchor": "end",
             fill: colors.ink,
             "font-size": 13,
@@ -1090,9 +1301,16 @@
     }
 
     stemPlaced.forEach((box) => drawBox(svg, box, colors));
+    sidePlaced.forEach((box) => {
+      const anchor = stemPlaced[0];
+      if (anchor) {
+        leader(svg, box.x + box.w, box.cy, anchor.x - 2, anchor.y + 2, colors);
+      }
+      drawBox(svg, box, colors);
+    });
     stepPlaced.forEach((box) => {
       const group = drawBox(svg, box, colors);
-      if (box.kind === "ffn" || box.kind === "attention") {
+      if (box.kind === "ffn" || box.kind === "attention" || box.kind === "parallel") {
         group.setAttribute("tabindex", "0");
         group.setAttribute("role", "button");
         group.setAttribute("data-arch-toggle", box.id);
@@ -1109,6 +1327,7 @@
     const ffnSpec = callouts.find((item) => item && item.kind === "ffn");
     const headsSpec = callouts.find((item) => item && item.kind === "heads");
     const fallbackBlockTop = stackLayouts[0] ? stackLayouts[0].blockTop : chassisTop;
+    const rightOccupied = [];
     let ffnBox = null;
     if (ffnSpec) {
       const anchor = byId[ffnSpec.anchor] || stepPlaced.find((box) => box.kind === "ffn");
@@ -1117,6 +1336,7 @@
       if (anchor) {
         leader(svg, anchor.x + anchor.w, anchor.cy, CALLOUT_X - 2, ffnY + 24, colors);
       }
+      occupyBand(rightOccupied, ffnBox.y - 18, ffnBox.y + ffnBox.h, 4);
     }
     if (headsSpec) {
       const anchor = byId[headsSpec.anchor] || stepPlaced.find((box) => box.kind === "attention");
@@ -1142,43 +1362,48 @@
       if (anchor) {
         leader(svg, anchor.x + anchor.w, anchor.cy, hx - 4, hy - 4, colors);
       }
+      occupyBand(rightOccupied, hy - 12, hy + 8, 4);
     }
 
-    leftNotes.forEach((note) => {
-      const anchor = byId[note.anchor] || stepPlaced.find((box) => box.kind === "attention") || stemPlaced[0];
+    rightColumnNotes.forEach((note) => {
+      const anchor =
+        byId[note.anchor] || stepPlaced.find((box) => box.kind === "attention") || stemPlaced[0];
       if (!anchor) {
         return;
       }
-      const isShort =
-        note.id === "pe" ||
-        note.id === "qk-norm" ||
-        note.id === "vq-meta" ||
-        note.id === "cost-st" ||
-        note.id === "ffn-kind" ||
-        note.id === "unify-meta" ||
-        note.id === "causal-mask" ||
-        note.id === "chan-meta" ||
-        note.id === "mamba-dir" ||
-        note.id === "sensor-meta" ||
-        note.id === "cross-meta" ||
-        /^(fourier|rope|qk-|frozen|asymmetric|geglu|swiglu|gelu|learned|causal|electrode|forward|attend|eeg)/i.test(
-          String(note.label || ""),
-        );
-      const lines = wrapLines(note.label, isShort ? 22 : 18);
-      const textX = isShort ? CHASSIS_X - 18 : CHASSIS_X - 72;
-      let textY = anchor.cy - (lines.length - 1) * 7;
-      const sameAnchor = leftNotes.filter((other) => other && other.anchor === note.anchor);
-      const offsetIndex = sameAnchor.indexOf(note);
-      if (offsetIndex > 0) {
-        textY -= offsetIndex * 26;
-      }
+      const lines = wrapLines(note.label, 22);
+      const h = lines.length * 14;
+      const preferred = anchor.cy - (lines.length - 1) * 7;
+      const textY = freeY(rightOccupied, preferred, h, chassisTop, chassisBottom - 8, 6);
+      occupyBand(rightOccupied, textY - 4, textY + h, 4);
       lines.forEach((line, index) => {
         svg.appendChild(
           svgEl(
             "text",
             {
-              x: textX,
+              x: CALLOUT_X,
               y: textY + index * 14,
+              fill: colors.ink,
+              "font-size": 11,
+              "font-weight": 600,
+              "font-family": FONT,
+              "data-arch-note": note.id || "",
+            },
+            line,
+          ),
+        );
+      });
+      leader(svg, anchor.x + anchor.w, anchor.cy, CALLOUT_X - 4, textY + (lines.length - 1) * 7, colors);
+    });
+
+    leftLayouts.forEach((layout) => {
+      layout.lines.forEach((line, index) => {
+        svg.appendChild(
+          svgEl(
+            "text",
+            {
+              x: layout.textX,
+              y: layout.textY + index * 14,
               "text-anchor": "end",
               fill: colors.ink,
               "font-size": 11,
@@ -1189,7 +1414,14 @@
           ),
         );
       });
-      leader(svg, textX + 6, textY + (lines.length - 1) * 7, anchor.x - 2, anchor.cy, colors);
+      leader(
+        svg,
+        layout.textX + 6,
+        layout.textY + (layout.lines.length - 1) * 7,
+        layout.anchor.x - 2,
+        layout.anchor.cy,
+        colors,
+      );
     });
 
     if (annotations.vocab_size) {
