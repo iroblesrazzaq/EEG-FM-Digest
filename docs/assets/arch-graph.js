@@ -629,22 +629,23 @@
         drawBox(group, child, colors);
       });
       if (items.length === 2) {
-        group.appendChild(
-          svgEl(
-            "text",
-            {
-              x: box.cx,
-              y: box.cy + 4,
-              "text-anchor": "middle",
-              fill: colors.ink,
-              "font-size": 12,
-              "font-weight": 700,
-              "font-family": FONT,
-              "data-arch-join": "parallel",
-            },
-            "∥",
-          ),
-        );
+        const join = svgEl("g", { "data-arch-join": "parallel" });
+        const h = 11;
+        const gap = 3.4;
+        [-gap / 2, gap / 2].forEach((dx) => {
+          join.appendChild(
+            svgEl("line", {
+              x1: box.cx + dx,
+              y1: box.cy - h / 2,
+              x2: box.cx + dx,
+              y2: box.cy + h / 2,
+              stroke: colors.ink,
+              "stroke-width": 1.5,
+              "stroke-linecap": "round",
+            }),
+          );
+        });
+        group.appendChild(join);
       }
     } else {
       const mixer = mixerKind(box);
