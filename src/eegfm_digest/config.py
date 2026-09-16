@@ -36,6 +36,7 @@ class Config:
     llm_temperature_summary: float = 0.2
     llm_max_output_tokens_triage: int = 1024
     llm_max_output_tokens_summary: int = 2048
+    daily_max_stragglers: int = 0
 
 
 def load_config() -> Config:
@@ -75,4 +76,5 @@ def load_config() -> Config:
         llm_temperature_summary=float(os.environ.get("LLM_TEMPERATURE_SUMMARY", "0.2")),
         llm_max_output_tokens_triage=int(os.environ.get("LLM_MAX_OUTPUT_TOKENS_TRIAGE", "1024")),
         llm_max_output_tokens_summary=int(os.environ.get("LLM_MAX_OUTPUT_TOKENS_SUMMARY", "2048")),
+        daily_max_stragglers=max(0, int(os.environ.get("DAILY_MAX_STRAGGLERS", "0"))),
     )

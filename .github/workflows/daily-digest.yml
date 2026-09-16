@@ -90,6 +90,7 @@ jobs:
       - run: pip install -e .
 
       - name: Run daily pipeline
+        id: pipeline
         # Inputs are passed via env to avoid ${{ }} expansion into the shell
         # script body (script-injection hardening).  The app token used by
         # this job can bypass `main` branch protection, so we treat the
@@ -102,12 +103,14 @@ jobs:
           GEMINI_MODEL_SUMMARY: gemma-4-31b-it
           # Gemma free-tier TPM is 16k input tokens/min. Cap prompts and space
           # calls so backlog windows can drain without hard-failing on 429s.
-          # LLMRateLimitError still fails the job after retries (run log not advanced).
+          # LLMRateLimitError / ArxivFetchError still fail the job after retries
+          # (run log not advanced). Per-paper JSON misses warn and continue.
           SUMMARY_MAX_INPUT_TOKENS: "8000"
           SUMMARY_EXCERPT_CHARS: "8000"
           TEXT_HEAD_CHARS: "24000"
           TEXT_TAIL_CHARS: "2000"
-          LLM_MAX_OUTPUT_TOKENS_SUMMARY: "1024"
+          LLM_MAX_OUTPUT_TOKENS_SUMMARY: "2048"
+          DAILY_MAX_STRAGGLERS: "8"
           LLM_CALL_SLEEP_SECONDS: "45"
           LLM_RATE_LIMIT_RETRIES: "8"
           LLM_RATE_LIMIT_BACKOFF_SECONDS: "5"
@@ -132,9 +135,9 @@ jobs:
           python -m eegfm_digest.run "${args[@]}"
 
       - name: Commit outputs (first commit)
-        # Outputs land first.  If this succeeds but the run-log commit below
-        # fails for any reason, tomorrow's run will redo the same window and
-        # dedupe via SQLite cache -- self-healing.
+        # Run even if the pipeline hard-failed (429 / arXiv) so SQLite and
+        # docs written before the exception still publish.  Tomorrow's overlap
+        # plus stragglers retry the rest; cache hits avoid double LLM spend.
         #
         # We commit the rendered site (docs/) and the triage/summary cache
         # (data/digest.sqlite).  outputs/ stays gitignored: it holds per-month
@@ -142,6 +145,7 @@ jobs:
         # reproducible from the DB + arXiv + LLM.  The -A flag on specific
         # pathspecs picks up creations/modifications/deletions without
         # erroring when a path does not yet exist on a fresh checkout.
+        if: ${{ !cancelled() }}
         id: commit_outputs
         run: |
           set -euo pipefail
@@ -156,10 +160,10 @@ jobs:
           fi
 
       - name: Commit run log (second commit)
-        # The run log advances only if the pipeline succeeded (i.e. step
-        # "Run daily pipeline" did not fail).  GitHub Actions skips later
-        # steps on earlier failure unless explicitly marked with
-        # if: always(), which this step is not -- so the contract holds.
+        # Advance the run log only when the pipeline returned 0.  A 429 or
+        # arXiv outage must leave last_successful_run.json untouched so the
+        # next cron re-covers the window via the 6h overlap.
+        if: ${{ steps.pipeline.outcome == 'success' }}
         run: |
           set -euo pipefail
           git add data/last_successful_run.json || true
@@ -170,6 +174,7 @@ jobs:
           fi
 
       - name: Push
+        if: ${{ !cancelled() }}
         run: |
           set -euo pipefail
           for attempt in 1 2; do

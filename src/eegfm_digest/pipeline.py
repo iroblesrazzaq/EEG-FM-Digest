@@ -584,6 +584,13 @@ def resummarize_stragglers(
             for month, aid in source
             if aid not in skip and (only_ids is None or aid in only_ids)
         ]
+        limit = int(getattr(cfg, "daily_max_stragglers", 0) or 0)
+        if limit > 0 and len(stragglers) > limit:
+            print(
+                f"[stragglers] capping {len(stragglers)} pending to {limit} this run",
+                flush=True,
+            )
+            stragglers = stragglers[:limit]
         if not stragglers:
             return StragglerStats()
 

@@ -79,7 +79,8 @@ def test_documented_batch_vs_pipeline_divergences():
             "pipeline --feature-paper CLI; batch uses featured_papers_path JSON map"
         ),
         "daily_run_log": (
-            "partial LLM failures and LLMRateLimitError do not advance last_successful_run.json"
+            "ArxivFetchError and LLMRateLimitError do not advance last_successful_run.json; "
+            "per-paper JSON/triage misses still advance it"
         ),
     }
     assert len(divergences) == 6

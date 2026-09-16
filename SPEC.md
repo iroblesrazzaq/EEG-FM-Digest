@@ -234,7 +234,7 @@ Window resolution:
 - arXiv query: `QUERY` appended with `AND submittedDate:[YYYYMMDDHHMM TO YYYYMMDDHHMM]`.
 - Window results are grouped by `published[:7]`; each distinct month triggers a normal `run_month` invocation.  SQLite cache ensures already-triaged papers do not re-invoke the LLM.
 
-Success definition: the run is "successful" iff `run_window` returns without raising `ArxivFetchError` or `LLMRateLimitError`.  On success the run log is overwritten with the new window end.  On failure the run log is left untouched and the next run auto-covers the same window via the overlap.
+Success definition: the run is "successful" iff `run_window` returns without raising `ArxivFetchError` or `LLMRateLimitError`.  On success the run log is overwritten with the new window end.  On failure the run log is left untouched and the next run auto-covers the same window via the overlap.  Per-paper invalid JSON is retried once then logged; the run still succeeds and failed papers remain in SQLite for straggler retry.
 
 Never catch `ArxivFetchError` or `LLMRateLimitError` inside `run_window`/`run_month`; daily callers depend on propagation to make the "no run-log advance" decision.
 
@@ -259,13 +259,14 @@ Optional:
 - `LLM_MAX_OUTPUT_TOKENS_TRIAGE` default 1024
 - `LLM_MAX_OUTPUT_TOKENS_SUMMARY` default 2048
 - `SUMMARY_MAX_INPUT_TOKENS` default 120000
+- `DAILY_MAX_STRAGGLERS` default 0 (unlimited). Daily workflow sets 8 so leftover JSON failures drain across days instead of one 429 storm.
 
 ## 10) Testing
 - Unit tests: arXiv parsing, month boundaries, dedupe, schema validation, render snapshots
 - Fixture-based integration test: cached `arxiv_raw.json`, stubbed LLM outputs
 
 ## 11) GitHub Actions
-- `.github/workflows/daily-digest.yml`: production incremental workflow. Runs on a `0 10 * * *` cron and also supports `workflow_dispatch` for verification runs and backfills. It runs `python -m eegfm_digest.run --daily`, then makes two commits per run — outputs + `data/digest.sqlite` first, `data/last_successful_run.json` second — so a run-log advance is never orphaned from the data it describes.
+- `.github/workflows/daily-digest.yml`: production incremental workflow. Runs on a `0 10 * * *` cron and also supports `workflow_dispatch` for verification runs and backfills. It runs `python -m eegfm_digest.run --daily`, then commits outputs + `data/digest.sqlite` even if the pipeline hard-failed (429 / arXiv), and commits `data/last_successful_run.json` only on pipeline success so a run-log advance is never orphaned from the data it describes.
 - Workflows must never auto-set `featured_paper`; leave it `null` unless the CLI flag is provided manually.
 - Test workflow: runs pytest on push/PR.
 - Manual / ad-hoc single-month runs use the CLI locally with `--month` (no scheduled workflow).
