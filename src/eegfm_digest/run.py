@@ -8,7 +8,9 @@ from pathlib import Path
 
 from dateutil.relativedelta import relativedelta
 
+from .arxiv import ArxivFetchError
 from .config import load_config
+from .llm import LLMRateLimitError
 from .llm_logging import log_daily_failure_summary
 from .pipeline import resummarize_stragglers, run_month, run_window
 from .run_log import RunLog, compute_since, format_utc, load_run_log, save_run_log
@@ -96,14 +98,21 @@ def _run_daily(args: argparse.Namespace) -> int:
         f"overlap_hours={args.overlap_hours} prior_run_log={'yes' if prior_log else 'no'}"
     )
 
-    stats = run_window(
-        cfg,
-        since,
-        until,
-        no_pdf=args.no_pdf,
-        no_site=args.no_site,
-        force=args.force,
-    )
+    try:
+        stats = run_window(
+            cfg,
+            since,
+            until,
+            no_pdf=args.no_pdf,
+            no_site=args.no_site,
+            force=args.force,
+        )
+    except (ArxivFetchError, LLMRateLimitError) as exc:
+        print(
+            f"[daily] hard failure: {type(exc).__name__}: {exc}",
+            file=sys.stderr,
+        )
+        return 1
 
     print(
         f"[daily] fetched={stats.window_candidates} "
@@ -139,10 +148,9 @@ def _run_daily(args: argparse.Namespace) -> int:
         print(
             f"[daily] WARNING: {partial_failures} paper(s) failed LLM processing "
             f"(triage={stats.total_triage_failures} summary={stats.total_summary_failures}). "
-            "Run log NOT advanced; failed papers will be retried next run.",
+            "Run log advanced; failed papers remain in SQLite for straggler retry.",
             file=sys.stderr,
         )
-        return 1
 
     if not args.dry_run:
         save_run_log(run_log_path, new_log)

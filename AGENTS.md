@@ -19,6 +19,7 @@ Implement SPEC.md using:
 - OPENROUTER_API_KEY (optional fallback)
 - OPENROUTER_MODEL_TRIAGE
 - OPENROUTER_MODEL_SUMMARY
+- DAILY_MAX_STRAGGLERS (0 = unlimited; daily workflow sets 8)
 
 ## Implementation rules
 - Keep pipeline staged: fetch -> triage -> (pdf+extract) -> summarize -> render -> publish.
@@ -70,9 +71,9 @@ Implement SPEC.md using:
 ## Daily mode
 - `--daily` resolves `since = last_query_end_utc - overlap_hours` (default 6h) from `data/last_successful_run.json`, or falls back to a 24h lookback when that file is absent.
 - `--until` defaults to wall-clock UTC.  `--since` / `--until` override everything (useful for backfills).
-- The run log is written only when `run_window` returns without raising; `ArxivFetchError` and `LLMRateLimitError` intentionally propagate so the next run re-covers the window via the 6h overlap.
+- The run log is written when `run_window` returns without raising; per-paper JSON/triage misses are warnings and still advance the log (stragglers retry them). `ArxivFetchError` and `LLMRateLimitError` fail the job so the next run re-covers the window via the 6h overlap.
 - Scheduled by `.github/workflows/daily-digest.yml` on a `0 10 * * *` cron; `workflow_dispatch` also exposes `since`/`until`/`dry_run` inputs for manual verification and backfills.
-- Commit pattern: outputs+SQLite in one commit, `data/last_successful_run.json` in a second commit on the same push.  Never amend the run log into a prior failed-pipeline commit.
+- Commit pattern: outputs+SQLite in one commit (even after a hard pipeline fail), `data/last_successful_run.json` in a second commit only on pipeline success. Never amend the run log into a prior failed-pipeline commit.
 
 ## Publishing
 - docs/.nojekyll must live inside docs/ (not repo root).

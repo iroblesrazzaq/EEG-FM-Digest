@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from datetime import datetime, timezone
 
 from eegfm_digest.config import Config
@@ -492,6 +493,36 @@ def test_resummarize_overwrites_json_placeholder(monkeypatch, tmp_path):
     assert summary is not None
     assert "summary_json_error" not in summary["notes"]
     assert db.get_accepted_without_summary() == []
+    db.close()
+
+
+def test_resummarize_stragglers_caps_to_daily_max(monkeypatch, tmp_path, capsys):
+    cfg = replace(_cfg(tmp_path), daily_max_stragglers=2)
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    first = _candidate("2501.00001", "2025-01-02T00:00:00Z", "First")
+    second = _candidate("2501.00002", "2025-01-03T00:00:00Z", "Second")
+    third = _candidate("2501.00003", "2025-01-04T00:00:00Z", "Third")
+    _seed_accept_without_summary(db, first, "2025-01")
+    _seed_accept_without_summary(db, second, "2025-01")
+    _seed_accept_without_summary(db, third, "2025-01")
+    db.close()
+
+    calls: list[str] = []
+
+    def counting_summarize(paper, *_a, **_k):  # noqa: ANN001
+        calls.append(paper["arxiv_id_base"])
+        return _summary_payload(paper)
+
+    _patch_summary_stack(monkeypatch)
+    monkeypatch.setattr("eegfm_digest.pipeline.summarize_paper", counting_summarize)
+    stats = resummarize_stragglers(cfg, no_site=True)
+    assert stats.attempted == 2
+    assert stats.succeeded == 2
+    assert calls == ["2501.00001", "2501.00002"]
+    assert "capping 3 pending to 2" in capsys.readouterr().out
+
+    db = DigestDB(cfg.data_dir / "digest.sqlite")
+    assert db.get_accepted_without_summary() == [("2025-01", "2501.00003")]
     db.close()
 
 

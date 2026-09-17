@@ -157,8 +157,7 @@ def test_pipeline_rate_limit_propagates(monkeypatch, tmp_path: Path):
         run_month(_cfg(tmp_path), "2025-01", no_site=True, no_pdf=True)
 
 
-def test_daily_mode_returns_nonzero_without_advancing_run_log(monkeypatch, tmp_path: Path, capsys):
-    candidate = _candidate("2501.00001", "2025-01-02T00:00:00Z")
+def test_daily_mode_advances_run_log_on_per_paper_failures(monkeypatch, tmp_path: Path, capsys):
     cfg = _cfg(tmp_path)
     monkeypatch.setattr("eegfm_digest.run.load_config", lambda: cfg)
 
@@ -185,6 +184,7 @@ def test_daily_mode_returns_nonzero_without_advancing_run_log(monkeypatch, tmp_p
             "total_summary_failures": 0,
             "failed_triage_ids": ("2501.00001",),
             "failed_summary_ids": (),
+            "failed_summary_categories": (),
             "per_month": (
                 type(
                     "MonthRunStats",
@@ -217,12 +217,58 @@ def test_daily_mode_returns_nonzero_without_advancing_run_log(monkeypatch, tmp_p
     )
 
     exit_code = _run_daily(Args())
-    assert exit_code == 1
-    assert load_run_log(log_path) is not None
-    assert "last_query_end_utc" in log_path.read_text(encoding="utf-8")
-    assert "2026-01-01T00:00:00Z" in log_path.read_text(encoding="utf-8")
+    assert exit_code == 0
+    saved = load_run_log(log_path)
+    assert saved is not None
+    assert saved.last_query_end_utc == "2026-01-02T00:00:00Z"
     captured = capsys.readouterr()
-    assert "Run log NOT advanced" in captured.err
+    assert "Run log advanced" in captured.err
+    assert "failed LLM processing" in captured.err
+
+
+def test_daily_mode_rate_limit_returns_nonzero_without_advancing_run_log(
+    monkeypatch, tmp_path: Path, capsys
+):
+    cfg = _cfg(tmp_path)
+    monkeypatch.setattr("eegfm_digest.run.load_config", lambda: cfg)
+
+    class Args:
+        max_candidates = None
+        max_accepted = None
+        include_borderline = False
+        overlap_hours = 6.0
+        since = datetime(2026, 1, 1, tzinfo=timezone.utc)
+        until = datetime(2026, 1, 2, tzinfo=timezone.utc)
+        no_pdf = True
+        no_site = True
+        force = False
+        dry_run = False
+
+    def boom(*_a, **_k):
+        raise LLMRateLimitError("quota exhausted")
+
+    monkeypatch.setattr("eegfm_digest.run.run_window", boom)
+
+    log_path = cfg.data_dir / "last_successful_run.json"
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    log_path.write_text(
+        json.dumps(
+            {
+                "last_success_utc": "2026-01-01T00:00:00Z",
+                "last_query_end_utc": "2026-01-01T00:00:00Z",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    exit_code = _run_daily(Args())
+    assert exit_code == 1
+    saved = load_run_log(log_path)
+    assert saved is not None
+    assert saved.last_query_end_utc == "2026-01-01T00:00:00Z"
+    captured = capsys.readouterr()
+    assert "LLMRateLimitError" in captured.err
+    assert "quota exhausted" in captured.err
 
 
 def _json_placeholder_summary(paper: dict) -> dict:
