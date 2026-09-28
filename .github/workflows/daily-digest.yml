@@ -173,17 +173,39 @@ jobs:
             git commit -m "auto: advance daily run log $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           fi
 
-      - name: Push
+      # Installation tokens last 1 hour. The pipeline often runs longer than
+      # that, so the token persisted by actions/checkout is expired by the time
+      # we push (git pull: "could not read Username"). Mint a new one here.
+      - uses: actions/create-github-app-token@v3
+        id: push_token_client
+        if: ${{ !cancelled() && steps.app_config.outputs.mode == 'client-id' }}
+        with:
+          client-id: ${{ steps.app_config.outputs.client_id }}
+          private-key: ${{ secrets.DIGEST_APP_PRIVATE_KEY }}
+      - uses: actions/create-github-app-token@v3
+        id: push_token_legacy
+        if: ${{ !cancelled() && steps.app_config.outputs.mode == 'app-id' }}
+        with:
+          app-id: ${{ steps.app_config.outputs.app_id }}
+          private-key: ${{ secrets.DIGEST_APP_PRIVATE_KEY }}
+      - name: Select fresh GitHub App token for push
+        id: push_token
         if: ${{ !cancelled() }}
+        env:
+          TOKEN_CLIENT: ${{ steps.push_token_client.outputs.token }}
+          TOKEN_LEGACY: ${{ steps.push_token_legacy.outputs.token }}
         run: |
           set -euo pipefail
-          for attempt in 1 2; do
-            git pull --rebase origin "${GITHUB_REF_NAME}"
-            if git push; then
-              exit 0
-            fi
-            echo "push rejected (attempt ${attempt}); retrying after rebase"
-            sleep 2
-          done
-          echo "::error::failed to push daily digest after rebase retries"
-          exit 1
+          token="${TOKEN_CLIENT:-${TOKEN_LEGACY:-}}"
+          if [ -z "$token" ]; then
+            echo "::error title=GitHub App token was not refreshed::Push needs a new installation token because the checkout token expires after 1 hour."
+            exit 1
+          fi
+          echo "::add-mask::$token"
+          echo "token=$token" >> "$GITHUB_OUTPUT"
+
+      - name: Push
+        if: ${{ !cancelled() }}
+        env:
+          GIT_TOKEN: ${{ steps.push_token.outputs.token }}
+        run: bash scripts/push_with_fresh_token.sh "${GITHUB_REF_NAME}"
