@@ -110,6 +110,18 @@ def test_daily_workflow_resolves_github_app_client_id_before_token_action():
     assert "client-id: ${{ vars.DIGEST_APP_CLIENT_ID }}" not in workflow
 
 
+def test_daily_workflow_mints_a_fresh_token_before_push():
+    workflow = (REPO_ROOT / ".github/workflows/daily-digest.yml").read_text(encoding="utf-8")
+    assert "id: push_token_client" in workflow
+    assert "id: push_token_legacy" in workflow
+    assert "id: push_token" in workflow
+    assert 'GIT_TOKEN: ${{ steps.push_token.outputs.token }}' in workflow
+    assert 'bash scripts/push_with_fresh_token.sh "${GITHUB_REF_NAME}"' in workflow
+    push_at = workflow.index("bash scripts/push_with_fresh_token.sh")
+    assert workflow.index("id: push_token_client") < push_at
+    assert workflow.index("id: pipeline") < push_at
+
+
 def test_single_month_run_main_respects_configured_models(monkeypatch, tmp_path):
     captured: dict[str, object] = {}
 

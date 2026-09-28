@@ -266,7 +266,7 @@ Optional:
 - Fixture-based integration test: cached `arxiv_raw.json`, stubbed LLM outputs
 
 ## 11) GitHub Actions
-- `.github/workflows/daily-digest.yml`: production incremental workflow. Runs on a `0 10 * * *` cron and also supports `workflow_dispatch` for verification runs and backfills. It runs `python -m eegfm_digest.run --daily`, then commits outputs + `data/digest.sqlite` even if the pipeline hard-failed (429 / arXiv), and commits `data/last_successful_run.json` only on pipeline success so a run-log advance is never orphaned from the data it describes.
+- `.github/workflows/daily-digest.yml`: production incremental workflow. Runs on a `0 10 * * *` cron and also supports `workflow_dispatch` for verification runs and backfills. It runs `python -m eegfm_digest.run --daily`, then commits outputs + `data/digest.sqlite` even if the pipeline hard-failed (429 / arXiv), and commits `data/last_successful_run.json` only on pipeline success so a run-log advance is never orphaned from the data it describes. Push mints a new GitHub App installation token. The checkout token expires after one hour, and the daily pipeline regularly runs longer than that.
 - Workflows must never auto-set `featured_paper`; leave it `null` unless the CLI flag is provided manually.
 - Test workflow: runs pytest on push/PR.
 - Manual / ad-hoc single-month runs use the CLI locally with `--month` (no scheduled workflow).

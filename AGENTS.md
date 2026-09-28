@@ -74,6 +74,7 @@ Implement SPEC.md using:
 - The run log is written when `run_window` returns without raising; per-paper JSON/triage misses are warnings and still advance the log (stragglers retry them). `ArxivFetchError` and `LLMRateLimitError` fail the job so the next run re-covers the window via the 6h overlap.
 - Scheduled by `.github/workflows/daily-digest.yml` on a `0 10 * * *` cron; `workflow_dispatch` also exposes `since`/`until`/`dry_run` inputs for manual verification and backfills.
 - Commit pattern: outputs+SQLite in one commit (even after a hard pipeline fail), `data/last_successful_run.json` in a second commit only on pipeline success. Never amend the run log into a prior failed-pipeline commit.
+- Push uses a GitHub App token minted after the pipeline. The checkout token expires after one hour, which is shorter than a typical daily run.
 
 ## Publishing
 - docs/.nojekyll must live inside docs/ (not repo root).
