@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import os
 import stat
 import subprocess
@@ -188,7 +189,8 @@ def test_push_configures_gh_and_retries_pull(tmp_path: Path):
     assert trace_text.index("gh auth setup-git --hostname github.com --force") < trace_text.index("pull --rebase origin main")
     assert trace_text.count("pull --rebase origin main") == 2
     assert "push origin HEAD:main" in trace_text
-    assert "push rejected (attempt 1)" in result.stderr
+    assert "pull failed (attempt 1)" in result.stderr
+    assert "push rejected" not in result.stderr
 
 
 def test_push_fails_when_token_missing(tmp_path: Path):
@@ -231,5 +233,108 @@ def test_push_reports_failure_after_two_attempts(tmp_path: Path):
         },
     )
     assert result.returncode == 1
+    assert "pull failed (attempt 1)" in result.stderr
+    assert "pull failed (attempt 2)" in result.stderr
+    assert "push rejected" not in result.stderr
     assert "failed to push daily digest after rebase retries" in result.stderr
     assert "fresh-token-value" not in result.stderr
+
+
+def test_push_reports_push_rejection_separately(tmp_path: Path):
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    state = tmp_path / "pushes"
+    _install_stub(
+        bin_dir / "git",
+        textwrap.dedent(
+            f"""\
+            #!/usr/bin/env bash
+            set -euo pipefail
+            if [[ "$1" == "config" || "$1" == "rebase" || "$1" == "pull" ]]; then
+              exit 0
+            fi
+            if [[ "$1" == "push" ]]; then
+              count=0
+              if [[ -f "{state}" ]]; then
+                count="$(cat "{state}")"
+              fi
+              count=$((count + 1))
+              printf '%s' "$count" > "{state}"
+              if [[ "$count" -eq 1 ]]; then
+                exit 1
+              fi
+              exit 0
+            fi
+            exit 1
+            """
+        ),
+    )
+    _install_stub(bin_dir / "gh", "#!/usr/bin/env bash\nexit 0\n")
+    result = _run(
+        ["bash", str(SCRIPT), "main"],
+        cwd=tmp_path,
+        env={
+            "PATH": f"{bin_dir}:{os.environ['PATH']}",
+            "GIT_TOKEN": "fresh-token-value",
+            "PUSH_RETRY_SLEEP_SECONDS": "0",
+        },
+    )
+    assert result.returncode == 0, result.stderr
+    assert "push rejected (attempt 1)" in result.stderr
+    assert "pull failed" not in result.stderr
+
+
+def test_real_git_receives_fresh_token_after_checkout_auth_is_removed(tmp_path: Path):
+    repo = tmp_path / "repo"
+    _init_repo(repo)
+    runner_temp = tmp_path / "runner"
+    runner_temp.mkdir()
+    home = tmp_path / "home"
+    home.mkdir()
+    stale = "stale-token-value"
+    fresh = "fresh-token-value"
+    encoded = base64.b64encode(f"x-access-token:{stale}".encode("ascii")).decode("ascii")
+    creds = runner_temp / "git-credentials-stale.config"
+    creds.write_text(
+        f'[http "https://github.com/"]\n\textraheader = AUTHORIZATION: basic {encoded}\n',
+        encoding="utf-8",
+    )
+    git_dir = str(repo / ".git").replace("\\", "/")
+    _git(repo, "config", "--local", f"includeIf.gitdir:{git_dir}.path", str(creds))
+
+    result = _run(
+        [
+            "bash",
+            "-c",
+            f'''source "{SCRIPT}"
+strip_persisted_checkout_auth
+configure_fresh_github_auth
+if git config --show-origin --get-regexp "extraheader"; then
+  echo "stale extraheader still visible" >&2
+  exit 4
+fi
+printf "protocol=https\\nhost=github.com\\n\\n" | git credential fill
+''',
+        ],
+        cwd=repo,
+        env={
+            "HOME": str(home),
+            "RUNNER_TEMP": str(runner_temp),
+            "GIT_TOKEN": fresh,
+            "GIT_TERMINAL_PROMPT": "0",
+        },
+    )
+    assert result.returncode == 0, result.stderr
+    assert "username=x-access-token" in result.stdout
+    assert f"password={fresh}" in result.stdout
+    assert stale not in result.stdout
+    config = (repo / ".git" / "config").read_text(encoding="utf-8")
+    gitconfig = (home / ".gitconfig").read_text(encoding="utf-8")
+    assert "extraheader" not in config
+    assert "git-credentials" not in config
+    assert fresh not in config
+    assert fresh not in gitconfig
+    assert stale not in config
+    assert stale not in gitconfig
+    assert "auth git-credential" in gitconfig
+    assert not creds.exists()

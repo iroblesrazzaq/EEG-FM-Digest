@@ -74,11 +74,16 @@ push_with_fresh_token() {
   export GIT_TERMINAL_PROMPT=0
   sleep_seconds="${PUSH_RETRY_SLEEP_SECONDS:-2}"
   for attempt in 1 2; do
-    if git pull --rebase origin "$branch" && git push origin "HEAD:${branch}"; then
+    pull_status=0
+    git pull --rebase origin "$branch" || pull_status=$?
+    if [ "$pull_status" -ne 0 ]; then
+      git rebase --abort >/dev/null 2>&1 || true
+      echo "pull failed (attempt ${attempt}); retrying" >&2
+    elif git push origin "HEAD:${branch}"; then
       return 0
+    else
+      echo "push rejected (attempt ${attempt}); retrying after rebase" >&2
     fi
-    git rebase --abort >/dev/null 2>&1 || true
-    echo "push rejected (attempt ${attempt}); retrying after rebase" >&2
     if [ "$attempt" -lt 2 ]; then
       sleep "$sleep_seconds"
     fi
