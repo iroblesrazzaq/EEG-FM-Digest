@@ -17,13 +17,19 @@ strip_persisted_checkout_auth() {
       base="$(basename "$value")"
       case "$base" in
         git-credentials-*.config)
-          git config --local --unset "$key" "$value" || true
+          # --unset treats the value as a regex. Credential paths contain
+          # dots, and a '+' would leave the expired include in place.
+          git config --local --unset --fixed-value "$key" "$value" || true
           remove_checkout_credentials_file "$value"
           ;;
       esac
     done <<< "$values"
   done <<< "$keys"
   git config --local --unset-all 'http.https://github.com/.extraheader' || true
+  if git config --local --get-regexp '^include[Ii]f\.gitdir:' 2>/dev/null | grep -q 'git-credentials-.*\.config'; then
+    echo "::error::expired checkout credentials are still configured" >&2
+    return 1
+  fi
 }
 
 remove_checkout_credentials_file() {
@@ -64,6 +70,8 @@ push_with_fresh_token() {
   fi
   strip_persisted_checkout_auth
   configure_fresh_github_auth
+  # Fail immediately if the fresh token is not offered, instead of prompting.
+  export GIT_TERMINAL_PROMPT=0
   sleep_seconds="${PUSH_RETRY_SLEEP_SECONDS:-2}"
   for attempt in 1 2; do
     if git pull --rebase origin "$branch" && git push origin "HEAD:${branch}"; then

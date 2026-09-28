@@ -64,6 +64,27 @@ def test_strip_removes_checkout_credential_include_and_file(tmp_path: Path):
     assert not creds.exists()
 
 
+def test_strip_removes_credential_path_with_regex_metacharacters(tmp_path: Path):
+    repo = tmp_path / "repo"
+    _init_repo(repo)
+    runner_temp = tmp_path / "runner"
+    runner_temp.mkdir()
+    creds = runner_temp / "git-credentials-a+b.config"
+    creds.write_text("stale\n", encoding="utf-8")
+    git_dir = str(repo / ".git").replace("\\", "/")
+    _git(repo, "config", "--local", f"includeIf.gitdir:{git_dir}.path", str(creds))
+
+    result = _run(
+        ["bash", "-c", f'source "{SCRIPT}"; strip_persisted_checkout_auth'],
+        cwd=repo,
+        env={"RUNNER_TEMP": str(runner_temp)},
+    )
+    assert result.returncode == 0, result.stderr
+    config = (repo / ".git" / "config").read_text(encoding="utf-8")
+    assert "git-credentials-a+b.config" not in config
+    assert not creds.exists()
+
+
 def test_strip_leaves_unrelated_include_and_files_outside_runner_temp(tmp_path: Path):
     repo = tmp_path / "repo"
     _init_repo(repo)
