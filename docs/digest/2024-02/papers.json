@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2402.17772",
+  "featured_paper_id": null,
   "month": "2024-02",
   "papers": [
     {
@@ -150,49 +150,70 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
+          "datasets": [
+            "ZuCo 1.0",
+            "ZuCo 2.0"
+          ],
           "eeg_hours": null,
           "subjects": null
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper proposes CET-MAE, a pre-trained model that aligns EEG and text using a multi-stream encoder with three objectives: masked text modeling, masked EEG reconstruction, and cross-modal contrastive learning. To leverage these representations, the E2T-PTR framework integrates the pre-trained EEG modules with a BART LLM for open-vocabulary text generation. Experiments on the ZuCo dataset demonstrate that this approach significantly improves BLEU and ROUGE scores over previous EEG-to-text baselines.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "ZuCo dataset"
+          ],
+          "headline_results": [
+            "Improved BLEU-4 by 32.21% and ROUGE-1 F1 by 8.34% compared to the baseline."
+          ],
+          "tasks": [
+            "EEG-to-Text decoding"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: CET-MAE uses a multi-stream transformer to learn aligned EEG-text representations through combined contrastive and masked autoencoding objectives.",
+          "Method novelty: Incorporates both word-level and sentence-level EEG features to mitigate data corruption caused by missing eye-tracking fixations.",
+          "Strong evidence: E2T-PTR outperforms state-of-the-art methods on the ZuCo dataset, improving BLEU-4 by 32.21% over the baseline."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Reliance on the ZuCo dataset, which is limited in scale compared to general LLM corpora.",
+          "Dependence on eye-tracking fixations for initial word-level EEG alignment.",
+          "The model is tested on reading tasks, which may not generalize directly to inner speech."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Multi-stream Transformer encoder for pre-training; BART LLM for decoding.",
+          "finetuning": "E2T-PTR fine-tunes the pre-trained EEG encoder and BART decoder for EEG-to-text generation.",
+          "objective": "Joint optimization of Masked Text Modeling, Masked EEG Modeling, and EEG-Text Contrastive Learning.",
+          "pretraining": "CET-MAE pre-training on EEG-text pairs with a 75% mask ratio."
         },
-        "notes": "{\"chars\": 59150, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=16593;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 59150, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8075;max_tokens=8000",
+        "one_liner": "A multimodal pre-training framework (CET-MAE) that combines contrastive learning and masked autoencoding to improve EEG-to-text decoding via transferable representations.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2024-02-27",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
         },
         "title": "Enhancing EEG-to-Text Decoding through Transferable Representations from Pre-trained Contrastive EEG-Text Masked Autoencoder",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Introduces a hybrid self-supervised learning strategy that integrates cross-modality contrastive alignment with intra-modality masked reconstruction for EEG-text representations.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -211,10 +232,11 @@
   "stats": {
     "accepted": 2,
     "candidates": 7,
-    "summarized": 2
+    "summarized": 3
   },
   "top_picks": [
     "2402.17433",
+    "2403.03222",
     "2402.17772"
   ]
 }

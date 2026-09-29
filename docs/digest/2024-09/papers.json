@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2409.12454",
+  "featured_paper_id": null,
   "month": "2024-09",
   "papers": [
     {
@@ -275,45 +275,62 @@
           "eeg_hours": null,
           "subjects": null
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper provides a holistic overview of spatio-temporal EEG analysis, categorizing advancements into representation learning, discriminative analysis, and generative applications. It specifically examines the transition from traditional deep learning to foundation models and LLM-based approaches for brain signal interpretation. The survey synthesizes current literature on self-supervised learning (contrastive and MAE), graph neural networks, and cross-modal generation of images and text from EEG.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "BCI Competition IV-1",
+            "Emobrain"
+          ],
+          "headline_results": [
+            "Comprehensive review of current SOTA models"
+          ],
+          "tasks": [
+            "EEG-to-Image",
+            "EEG-to-Text",
+            "Brain-Computer Interface"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "Survey of EEG analysis: encapsulates latest developments in self-supervised learning, foundation models, and generative AI for brain activity interpretation.",
+          "Taxonomy of methods: organizes EEG research into representation learning (contrastive/MAE), discriminative architectures (GNN/LLMs), and generative modalities (EEG-to-image/text).",
+          "Resource compilation: provides a curated list of relevant literature and open-source materials via a dedicated GitHub repository."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Does not propose a new model or benchmark.",
+          "Relies on existing literature rather than new experimental data.",
+          "The broad scope may limit the depth of analysis for specific niche EEG applications."
         ],
         "method": {
-          "architecture": null,
+          "architecture": "Survey Taxonomy",
           "finetuning": null,
-          "objective": null,
+          "objective": "Literature Review",
           "pretraining": null
         },
-        "notes": "{\"chars\": 114065, \"error\": null, \"pages\": 23, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=30455;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 114065, \"error\": null, \"pages\": 23, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7908",
+        "one_liner": "A comprehensive survey of modern EEG analysis techniques, covering self-supervised representation learning, discriminative foundation models, and generative EEG-to-X modalities.",
         "open_source": {
-          "code_url": null,
+          "code_url": "https://github.com/wpf535236337/LLMs4TS",
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "survey",
         "published_date": "2024-09-26",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "survey"
+          ],
           "tokenization": [],
           "topology": []
         },
         "title": "A Survey of Spatio-Temporal EEG data Analysis: from Models to Applications",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Provides a holistic frontier technology perspective on EEG analysis, specifically bridging the gap between traditional deep learning and emerging foundation models and LLMs.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -448,12 +465,13 @@
   "stats": {
     "accepted": 4,
     "candidates": 14,
-    "summarized": 4
+    "summarized": 6
   },
   "top_picks": [
     "2409.12454",
-    "2409.07480",
     "2410.08224",
+    "2409.07480",
+    "2410.07190",
     "2409.19130"
   ]
 }

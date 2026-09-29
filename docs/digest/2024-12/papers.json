@@ -1,27 +1,8 @@
 {
-  "featured_paper_id": "2412.07236",
+  "featured_paper_id": null,
   "month": "2024-12",
   "papers": [
     {
-      "architecture": {
-        "fact_sheet": {
-          "architectures": null,
-          "context_length": null,
-          "hidden_act": null,
-          "hidden_size": null,
-          "intermediate_size": null,
-          "model_type": null,
-          "num_attention_heads": null,
-          "num_key_value_heads": null,
-          "num_layers": null,
-          "num_params": 4924000,
-          "vocab_size": null
-        },
-        "graph_path": "data/arch/2412.07236.json",
-        "hf_repo": "braindecode/cbramod-pretrained",
-        "skip_reason": null,
-        "status": "ok"
-      },
       "arxiv_id": "2412.07236v6",
       "arxiv_id_base": "2412.07236",
       "authors": [
@@ -180,49 +161,72 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
+          "datasets": [
+            "9 pretraining datasets",
+            "11 evaluation datasets"
+          ],
+          "eeg_hours": 14943.0,
           "subjects": null
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper proposes NormWear, a foundation model for wearable sensing data (including EEG, ECG, PPG, GSR, and IMU) that utilizes Continuous Wavelet Transform (CWT) based tokenization and a channel-aware attention mechanism. Unlike prior univariate or fixed-sensor models, NormWear employs a shared-weight encoder and [CLS]-token fusion to handle arbitrary multivariate configurations. The model was pretrained on 14,943 hours of data via masked reconstruction and evaluated across 18 downstream tasks, demonstrating strong performance in zero-shot, partial-shot, and full-shot settings.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "11 public wearable sensing datasets"
+          ],
+          "headline_results": [
+            "Outperforms baselines in zero-shot and partial-shot settings across 18 applications."
+          ],
+          "tasks": [
+            "Mental health monitoring",
+            "Body state estimation",
+            "Vital signs monitoring",
+            "Disease risk prediction"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: NormWear is a multi-modal framework for wearable physiological signals that supports arbitrary sensor configurations.",
+          "Employs CWT-based tokenization and a shared-weight Transformer with [CLS]-attention fusion to capture both intra-channel temporal patterns and inter-channel relationships.",
+          "Demonstrates exceptional generalizability across 11 datasets and 18 healthcare applications, outperforming baselines in zero-shot and few-shot scenarios."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Reliance on heuristic data augmentation to expand the pretraining dataset size.",
+          "Use of frozen off-the-shelf encoders for representation alignment to avoid catastrophic forgetting.",
+          "Challenges associated with weakly labeled physiological signals in healthcare datasets."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Shared-weight Transformer Encoder with [CLS]-Attention Fusion and MSiTF for sensor-semantic alignment.",
+          "finetuning": "Evaluated using zero-shot, partial-shot, and full-shot settings across 18 downstream tasks.",
+          "objective": "Masked reconstruction using Mean Squared Error (MSE) loss.",
+          "pretraining": "Pretrained on 14,943 hours of multi-modal wearable data using a masked autoencoder approach."
         },
-        "notes": "{\"chars\": 114021, \"error\": null, \"pages\": 35, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=30676;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 114021, \"error\": null, \"pages\": 35, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7953",
+        "one_liner": "NormWear is a multi-modal foundation model for wearable physiological signals designed to be agnostic to sensor types and channel configurations.",
         "open_source": {
-          "code_url": null,
-          "license": null,
+          "code_url": "https://github.com/Mobile-Sensing-and-UbiComp-Laboratory/NormWear",
+          "license": "unknown",
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2024-12-12",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
         },
         "title": "Toward Foundation Model for Multivariate Wearable Sensing of Physiological Signals",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Introduces a modality- and channel-agnostic foundation model for wearable sensing using CWT-based multi-scale tokenization and a [CLS]-attention fusion mechanism for arbitrary multivariate inputs.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,

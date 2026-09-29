@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2604.04297",
+  "featured_paper_id": null,
   "month": "2026-04",
   "papers": [
     {
@@ -693,49 +693,77 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
+          "datasets": [
+            "TUAB",
+            "TUEV",
+            "SEED-V",
+            "CHB-MIT",
+            "Sleep-EDF",
+            "PhysioNet"
+          ],
+          "eeg_hours": 2000.0,
           "subjects": null
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper proposes MTEEG, a framework that utilizes task-specific Low-Rank Adaptation (LoRA) modules to enable a single pre-trained EEG model (LaBraM) to handle multiple downstream tasks concurrently. To address task conflicts arising from EEG heterogeneity, the authors explore three LoRA integration variants: separate modules (SP), a router-based MoE design (RT), and a decomposed projection approach (DC). Evaluation across six diverse EEG tasks demonstrates that MTEEG-DC outperforms most state-of-the-art single-task methods.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "TUAB",
+            "TUEV",
+            "SEED-V",
+            "CHB-MIT",
+            "Sleep-EDF",
+            "PhysioNet"
+          ],
+          "headline_results": [
+            "MTEEG-DC outperformed most state-of-the-art single-task methods across the six evaluated EEG tasks."
+          ],
+          "tasks": [
+            "Abnormal detection",
+            "Event type classification",
+            "Emotion recognition",
+            "Seizure detection",
+            "Sleep stage classification",
+            "Motor imagery classification"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "Method for multi-task EEG analysis: Proposes MTEEG, which uses task-specific LoRA modules to adapt a pre-trained LaBraM backbone to multiple tasks simultaneously.",
+          "Novel adaptation variants: Evaluates three LoRA configurations (SP, RT, DC), finding that decomposing projections (MTEEG-DC) best balances global knowledge reuse and task-specific disentanglement.",
+          "Strong empirical results: Surpasses state-of-the-art single-task baselines across six diverse tasks, including seizure detection and emotion recognition."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Potential for task conflicts in joint optimization due to EEG heterogeneity.",
+          "Dependence on the specific pre-trained LaBraM backbone.",
+          "Increased memory overhead when maintaining multiple LoRA modules compared to a single shared head."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Pre-trained LaBraM backbone with task-specific LoRA modules (SP, RT, or DC variants).",
+          "finetuning": "Task-specific Low-Rank Adaptation (LoRA) to disentangle parameter spaces and reduce task interference.",
+          "objective": "Multi-task joint optimization using task-specific loss functions (e.g., Cross-Entropy).",
+          "pretraining": "Self-supervised pre-training on 9 public datasets totaling approximately 2000 hours of EEG data."
         },
-        "notes": "{\"chars\": 36986, \"error\": null, \"pages\": 7, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=10828;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 36986, \"error\": null, \"pages\": 7, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8022;max_tokens=8000",
+        "one_liner": "A multi-task EEG analysis framework using task-specific LoRA modules to adapt a pre-trained model to multiple downstream tasks simultaneously while mitigating task conflicts.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "method",
         "published_date": "2026-04-28",
         "tags": {
-          "backbone": [],
+          "backbone": [
+            "transformer"
+          ],
           "objective": [],
-          "paper_type": [],
+          "paper_type": [
+            "post-training"
+          ],
           "tokenization": [],
           "topology": []
         },
         "title": "Towards Unified Multi-task EEG Analysis with Low-Rank Adaptation",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Introduces a multi-task EEG adaptation framework using LoRA variants to disentangle parameter spaces and alleviate task conflicts during joint optimization.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,

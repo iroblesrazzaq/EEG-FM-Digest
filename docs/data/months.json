@@ -8,11 +8,11 @@
       "json_path": "digest/2026-09/papers.json",
       "month": "2026-09",
       "month_label": "September 2026",
-      "month_rev": "e9d16f8b8efc6467",
+      "month_rev": "2304abe5ef483a60",
       "stats": {
-        "accepted": 3,
-        "candidates": 10,
-        "summarized": 3
+        "accepted": 19,
+        "candidates": 44,
+        "summarized": 15
       }
     },
     {
@@ -88,17 +88,12 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": {
-        "abs_url": "http://arxiv.org/abs/2604.04297v1",
-        "arxiv_id_base": "2604.04297",
-        "one_liner": "A compact 5.4M-parameter pan-modal foundation model that unifies EEG, ECG, and PPG processing within a single shared encoder for efficient edge deployment.",
-        "title": "PanLUNA: An Efficient and Robust Query-Unified Multimodal Model for Edge Biosignal Intelligence"
-      },
+      "featured": null,
       "href": "digest/2026-04/index.html",
       "json_path": "digest/2026-04/papers.json",
       "month": "2026-04",
       "month_label": "April 2026",
-      "month_rev": "6de41fce9f55f5f2",
+      "month_rev": "b9b6126485903e55",
       "stats": {
         "accepted": 7,
         "candidates": 19,
@@ -145,17 +140,12 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": {
-        "abs_url": "http://arxiv.org/abs/2601.17883v2",
-        "arxiv_id_base": "2601.17883",
-        "one_liner": "Comprehensive benchmark of 12 open-source EEG foundation models across 13 datasets spanning 9 BCI paradigms.",
-        "title": "EEG Foundation Models: Progresses, Benchmarking, and Open Problems"
-      },
+      "featured": null,
       "href": "digest/2026-01/index.html",
       "json_path": "digest/2026-01/papers.json",
       "month": "2026-01",
       "month_label": "January 2026",
-      "month_rev": "9224ae6526f662dd",
+      "month_rev": "6f7f857bb8c63c4b",
       "stats": {
         "accepted": 6,
         "candidates": 22,
@@ -354,21 +344,16 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": {
-        "abs_url": "http://arxiv.org/abs/2502.17464v1",
-        "arxiv_id_base": "2502.17464",
-        "one_liner": "A transformer-based EEG foundation model utilizing learnable channel mapping and a dual contrastive-reconstruction objective for cross-dataset generalization.",
-        "title": "Large Cognition Model: Towards Pretrained EEG Foundation Model"
-      },
+      "featured": null,
       "href": "digest/2025-02/index.html",
       "json_path": "digest/2025-02/papers.json",
       "month": "2025-02",
       "month_label": "February 2025",
-      "month_rev": "a214cfff48ba496a",
+      "month_rev": "5513177483799eda",
       "stats": {
         "accepted": 8,
         "candidates": 20,
-        "summarized": 8
+        "summarized": 9
       }
     },
     {
@@ -392,17 +377,12 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": {
-        "abs_url": "http://arxiv.org/abs/2412.07236v6",
-        "arxiv_id_base": "2412.07236",
-        "one_liner": "CBraMod is a novel EEG foundation model that uses criss-cross transformer architecture and asymmetric positional encoding to achieve state-of-the-art performance across 10 downstream BCI tasks.",
-        "title": "CBraMod: A Criss-Cross Brain Foundation Model for EEG Decoding"
-      },
+      "featured": null,
       "href": "digest/2024-12/index.html",
       "json_path": "digest/2024-12/papers.json",
       "month": "2024-12",
       "month_label": "December 2024",
-      "month_rev": "854708a40c0e9169",
+      "month_rev": "b6bacb0e1bb04b4c",
       "stats": {
         "accepted": 3,
         "candidates": 18,
@@ -449,21 +429,16 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": {
-        "abs_url": "http://arxiv.org/abs/2409.12454v1",
-        "arxiv_id_base": "2409.12454",
-        "one_liner": "FoME is a large-scale foundation model for EEG that uses adaptive temporal-lateral attention scaling to achieve state-of-the-art performance across multiple downstream tasks.",
-        "title": "FoME: A Foundation Model for EEG using Adaptive Temporal-Lateral Attention Scaling"
-      },
+      "featured": null,
       "href": "digest/2024-09/index.html",
       "json_path": "digest/2024-09/papers.json",
       "month": "2024-09",
       "month_label": "September 2024",
-      "month_rev": "c39adcfbcf540f66",
+      "month_rev": "b8855a701fe0c63c",
       "stats": {
         "accepted": 4,
         "candidates": 14,
-        "summarized": 4
+        "summarized": 6
       }
     },
     {
@@ -567,40 +542,30 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": {
-        "abs_url": "http://arxiv.org/abs/2402.17772v2",
-        "arxiv_id_base": "2402.17772",
-        "one_liner": "EEG2Rep is a self-supervised learning approach for EEG representation learning that uses semantic subsequence preserving masking and latent space reconstruction to generate rich semantic representations.",
-        "title": "EEG2Rep: Enhancing Self-supervised EEG Representation Through Informative Masked Inputs"
-      },
+      "featured": null,
       "href": "digest/2024-02/index.html",
       "json_path": "digest/2024-02/papers.json",
       "month": "2024-02",
       "month_label": "February 2024",
-      "month_rev": "0dd340fa32c9770c",
+      "month_rev": "b6ae76001ef25a9e",
       "stats": {
         "accepted": 2,
         "candidates": 7,
-        "summarized": 2
+        "summarized": 3
       }
     },
     {
       "empty_state": "has_papers",
-      "featured": {
-        "abs_url": "http://arxiv.org/abs/2401.10278v1",
-        "arxiv_id_base": "2401.10278",
-        "one_liner": "EEGFormer is a novel foundation model for EEG that uses vector-quantized pretraining on large-scale unlabeled data to learn universal, transferable, and interpretable representations.",
-        "title": "EEGFormer: Towards Transferable and Interpretable Large-Scale EEG Foundation Model"
-      },
+      "featured": null,
       "href": "digest/2024-01/index.html",
       "json_path": "digest/2024-01/papers.json",
       "month": "2024-01",
       "month_label": "January 2024",
-      "month_rev": "9ef99fbcb98e9764",
+      "month_rev": "05927c2da7c7b1b0",
       "stats": {
         "accepted": 2,
         "candidates": 12,
-        "summarized": 2
+        "summarized": 1
       }
     },
     {

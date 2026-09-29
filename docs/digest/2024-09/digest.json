@@ -1,11 +1,13 @@
 {
-  "featured_paper": "2409.12454",
+  "featured_paper": null,
   "month": "2024-09",
   "sections": [
     {
       "paper_ids": [
         "2409.07480",
         "2409.12454",
+        "2409.14021",
+        "2410.07190",
         "2409.19130"
       ],
       "title": "new_model"
@@ -14,18 +16,19 @@
       "paper_ids": [
         "2410.08224"
       ],
-      "title": "other"
+      "title": "survey"
     }
   ],
   "stats": {
     "accepted": 4,
     "candidates": 14,
-    "summarized": 4
+    "summarized": 6
   },
   "top_picks": [
     "2409.12454",
-    "2409.07480",
     "2410.08224",
+    "2409.07480",
+    "2410.07190",
     "2409.19130"
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2601.17883",
+  "featured_paper_id": null,
   "month": "2026-01",
   "papers": [
     {
@@ -614,50 +614,68 @@
           "cs.HC"
         ],
         "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
+          "channels": 32.0,
+          "datasets": [
+            "VR flight simulator dataset"
+          ],
+          "eeg_hours": 90.0,
+          "subjects": 30.0
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper proposes a pipeline using Brain Foundation Models (BFMs) to extract generalizable EEG features for real-time cognitive load monitoring. Unlike traditional task-specific models, this approach utilizes pre-trained encoders with anatomically-informed spatial pooling to handle heterogeneous electrode configurations. Evaluation on a VR flight simulator dataset shows that LaBraM outperforms state-of-the-art baselines, with Partition SHAP analysis confirming the model's reliance on prefrontal regions associated with cognitive control.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "PSD",
+            "EEGNet",
+            "EEGConformer"
+          ],
+          "headline_results": [
+            "LaBraM with a Linear layer achieved a Pearson correlation of 0.281, outperforming CBraMod and traditional baselines."
+          ],
+          "tasks": [
+            "Continuous cognitive load estimation"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "Application of EEG foundation models: Uses LaBraM and CBraMod to estimate cognitive load, achieving superior performance over PSD and end-to-end deep learning baselines.",
+          "Anatomically-informed pooling: Employs group-average spatial pooling across nine brain regions to improve cross-subject generalization across different electrode layouts.",
+          "Neuroscientific interpretability: Utilizes Partition SHAP to reveal that LaBraM focuses on prefrontal and parieto-occipital regions, with prefrontal relevance increasing as participants become more proficient."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Small sample size of 30 participants.",
+          "Reliance on a specific VR flight simulator task.",
+          "Downstream performance relies on relatively simple linear or shallow DNN layers.",
+          "Interpretability is based on SHAP approximations rather than direct neural evidence."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Pre-trained LaBraM and CBraMod encoders followed by group-average spatial pooling and temporal pooling (Global/Mean/MeanStd).",
+          "finetuning": "Downstream estimation using Linear (L1), DNN, or SVM layers.",
+          "objective": "Supervised regression for continuous cognitive load estimation.",
+          "pretraining": "Utilizes existing pre-trained Brain Foundation Models."
         },
-        "notes": "{\"chars\": 28420, \"error\": null, \"pages\": 5, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=8479;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 28420, \"error\": null, \"pages\": 5, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7869",
+        "one_liner": "Leverages pre-trained Brain Foundation Models (LaBraM and CBraMod) for interpretable and generalizable continuous cognitive load estimation in VR flight simulators.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "application",
         "published_date": "2026-01-29",
         "tags": {
-          "backbone": [],
+          "backbone": [
+            "transformer"
+          ],
           "objective": [],
-          "paper_type": [],
+          "paper_type": [
+            "post-training"
+          ],
           "tokenization": [],
-          "topology": []
+          "topology": [
+            "channel-flexible"
+          ]
         },
         "title": "Cognitive Load Estimation Using Brain Foundation Models and Interpretability for BCIs",
-        "unique_contribution": "unknown",
+        "unique_contribution": "First work to apply Brain Foundation Models to continuous cognitive load estimation and analyze their longitudinal behavior across multiple training days.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -679,9 +697,9 @@
     "summarized": 6
   },
   "top_picks": [
+    "2601.21965",
     "2601.17883",
     "2601.06134",
-    "2601.21965",
     "2601.22197",
     "2601.07877"
   ]

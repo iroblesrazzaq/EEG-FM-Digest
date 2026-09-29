@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2502.17464",
+  "featured_paper_id": null,
   "month": "2025-02",
   "papers": [
     {
@@ -121,25 +121,6 @@
       }
     },
     {
-      "architecture": {
-        "fact_sheet": {
-          "architectures": "FEMBA",
-          "context_length": null,
-          "hidden_act": null,
-          "hidden_size": null,
-          "intermediate_size": null,
-          "model_type": "femba",
-          "num_attention_heads": null,
-          "num_key_value_heads": null,
-          "num_layers": null,
-          "num_params": null,
-          "vocab_size": null
-        },
-        "graph_path": "data/arch/2502.06438.json",
-        "hf_repo": "PulpBio/FEMBA",
-        "skip_reason": null,
-        "status": "ok"
-      },
       "arxiv_id": "2502.06438v2",
       "arxiv_id_base": "2502.06438",
       "authors": [
@@ -723,50 +704,67 @@
           "eess.SP"
         ],
         "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
+          "channels": 14.0,
+          "datasets": [
+            "STEW"
+          ],
+          "eeg_hours": 2.0,
+          "subjects": 48.0
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper introduces EEGM2, a self-supervised framework designed for efficient long-sequence EEG modeling. It employs a U-shaped encoder-decoder architecture integrated with Mamba-2 blocks to achieve linear computational complexity, overcoming the quadratic scaling of Transformers. The model is trained using a joint temporal (L1) and spectral (Fourier-based) reconstruction loss to preserve both raw signal dynamics and frequency-domain characteristics. Results demonstrate state-of-the-art performance in classification and strong generalization across subjects and domains, with a lightweight variant (EEGM2 Light) suitable for resource-constrained BCI devices.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "STEW dataset"
+          ],
+          "headline_results": [
+            "Achieved state-of-the-art performance in EEG classification",
+            "Demonstrated strong generalization across subjects, tasks, and domains"
+          ],
+          "tasks": [
+            "Short-sequence modeling",
+            "Long-sequence modeling",
+            "EEG classification"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: EEGM2 utilizes a U-shaped encoder-decoder with Mamba-2 to achieve linear complexity and efficient long-sequence modeling.",
+          "Joint temporal-spectral objective: Employs a combined L1 and Fourier-based loss to preserve both raw temporal dynamics and frequency-domain characteristics.",
+          "High efficiency: Includes a lightweight variant (EEGM2 Light) that reduces parameters by 18x while maintaining strong performance for BCI deployment."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Dependence on the availability of high-quality EEG data for pre-training",
+          "Potential challenges in scaling to extremely high-density EEG montages"
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "U-shaped encoder-decoder with Mamba-2 blocks",
+          "finetuning": "Downstream classification tasks",
+          "objective": "Joint L1 and Fourier-based reconstruction loss",
+          "pretraining": "Self-supervised reconstruction of raw EEG signals"
         },
-        "notes": "{\"chars\": 54543, \"error\": null, \"pages\": 10, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=15390;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 54543, \"error\": null, \"pages\": 10, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8055;max_tokens=8000",
+        "one_liner": "EEGM2 is a self-supervised EEG framework using a U-shaped Mamba-2 architecture for efficient long-sequence representation learning.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2025-02-25",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
+          "backbone": [
+            "mamba-ssm"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
           "tokenization": [],
           "topology": []
         },
         "title": "An Efficient Self-Supervised Framework for Long-Sequence EEG Modeling",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Integrates a U-shaped architecture with Mamba-2 and a joint temporal-spectral reconstruction loss to enable linear-complexity modeling of long-range EEG dependencies.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -890,7 +888,7 @@
   "stats": {
     "accepted": 8,
     "candidates": 20,
-    "summarized": 8
+    "summarized": 9
   },
   "top_picks": [
     "2502.21086",
