@@ -147,8 +147,84 @@
         "pdf": "https://arxiv.org/pdf/2609.06849v1"
       },
       "published_date": "2026-09-06",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2609.06849",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Multimodal PSG"
+          ],
+          "eeg_hours": 2000000.0,
+          "subjects": null
+        },
+        "detailed_summary": "SleepFM-2 is a foundation model pretrained on 235,865 multimodal polysomnography (PSG) recordings using a combination of masked autoencoding and leave-one-out contrastive learning. It employs a two-stage transformer architecture with 1-second temporal patching and channel-region embeddings to capture fine-grained physiological signals across brain, heart, muscle, and respiratory systems. The model demonstrates strong transferability, predicting 215 incident disease phenotypes and generalizing to wearable sensors like headband EEG and wrist accelerometry using a frozen encoder.",
+        "evaluation": {
+          "benchmarks": [
+            "215 incident disease phenotypes",
+            "Wearable sensor transfer (headband, in-ear, wrist)"
+          ],
+          "headline_results": [
+            "C-index >= 0.75 for 215 incident disease phenotypes",
+            "Outperformed SleepFM and 480-feature baseline"
+          ],
+          "tasks": [
+            "Sleep staging",
+            "Event detection",
+            "Incident disease prediction",
+            "Subjective phenotype prediction"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: SleepFM-2 is pretrained on over two million hours of multimodal PSG data from 24 cohorts.",
+          "Method novelty: Combines masked autoencoding with a leave-one-out contrastive objective to learn representations across brain, heart, muscle, and respiratory signals.",
+          "Strong evidence: Predicts 215 incident disease phenotypes (C-index >= 0.75) and transfers to non-PSG sensors including in-ear EEG and wrist PPG."
+        ],
+        "limitations": [
+          "Requires an engineered bridge to transfer to accelerometry as it shares no channels with PSG.",
+          "A significant portion of learned features in the latent space do not align with known labeled domains.",
+          "Pretraining depends on high-cost clinical PSG recordings."
+        ],
+        "method": {
+          "architecture": "Two-stage transformer encoder with 1-second temporal patches and channel-region embeddings.",
+          "finetuning": "Frozen encoder with light task-specific heads.",
+          "objective": "Joint Masked Autoencoding (MAE) and Leave-One-Out Contrastive (LOO-CL) loss.",
+          "pretraining": "Pretrained on 235,865 recordings with a 55% masking rate using temporal-block, channel-block, and random masking."
+        },
+        "notes": "{\"chars\": 265640, \"error\": null, \"pages\": 63, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8041;max_tokens=8000",
+        "one_liner": "A multimodal sleep foundation model pretrained on 2 million hours of PSG that transfers to diverse clinical tasks, subjective reports, and wearable sensors.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-09-06",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Learning transferable human physiology from two million hours of sleep with SleepFM-2",
+        "unique_contribution": "Introduces a multimodal sleep foundation model that learns a transferable representation of human health capable of generalizing from clinical PSG to wearable sensors and subjective sleep experiences.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "Learning transferable human physiology from two million hours of sleep with SleepFM-2",
       "triage": {
         "confidence": 1.0,
@@ -1044,8 +1120,79 @@
         "pdf": "https://arxiv.org/pdf/2609.20595v2"
       },
       "published_date": "2026-09-17",
-      "summary": null,
-      "summary_failed_reason": "llm_other:InternalServerError",
+      "summary": {
+        "arxiv_id_base": "2609.20595",
+        "categories": [
+          "eess.AS",
+          "eess.SP",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Internal auditory EEG dataset"
+          ],
+          "eeg_hours": 250.0,
+          "subjects": 92.0
+        },
+        "detailed_summary": "The paper proposes a causal encoder-decoder model trained to map raw binaural acoustic waveforms directly to continuous EEG. Unlike previous models that target specific auditory stages, this foundation model is trained on diverse stimuli (speech, music, tonebursts) to capture physiology across the entire auditory pathway. Evaluation on pABR, speech TRFs, and BIC demonstrates that the model reproduces established human response morphologies and stimulus-dependent effects without task-specific fine-tuning.",
+        "evaluation": {
+          "benchmarks": [
+            "Human grand average waveforms",
+            "Subject-level correlation distributions"
+          ],
+          "headline_results": [
+            "Predicted waveforms closely resembled human grand averages across multiple auditory paradigms.",
+            "Correlations between predicted and actual EEG fell within the range of human subject-level distributions."
+          ],
+          "tasks": [
+            "pABR prediction",
+            "Speech TRF estimation",
+            "ABR-BIC prediction"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: a causal WaveNet-based encoder-decoder that transforms binaural audio into high-sample-rate EEG.",
+          "Captures both subcortical and cortical responses, reproducing established effects in pABR, speech TRFs, and binaural interaction components.",
+          "Trained on 250 hours of data from 92 subjects using a log-STFT loss to ensure high-frequency accuracy."
+        ],
+        "limitations": [
+          "Potential overestimation of neural adaptation or efferent activation effects.",
+          "Limited validation of BIC waveforms due to lack of available grand average data.",
+          "Training corpus lacks diversity in age and hearing ability.",
+          "Subject-specific conditioning effects were not fully analyzed."
+        ],
+        "method": {
+          "architecture": "Causal WaveNet encoder with a 24-band filterbank, 16-component latent bottleneck, and montage-specific spatial weights.",
+          "finetuning": "None; evaluated in a zero-shot manner using subject-specific conditioning.",
+          "objective": "Log-STFT prediction loss to emphasize higher frequency components of the EEG signal.",
+          "pretraining": "Trained on a large-scale corpus of binaural audio and corresponding EEG recordings."
+        },
+        "notes": "{\"chars\": 22130, \"error\": null, \"pages\": 5, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=6962",
+        "one_liner": "A causal neural network foundation model that predicts high-sample-rate human EEG from binaural audio across subcortical and cortical timescales.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-09-17",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "A Deep Neural Network for Predicting Continuous Human EEG Across the Auditory Pathway in Response to Sound",
+        "unique_contribution": "Develops a single audio-to-EEG foundation model capable of predicting auditory electrophysiology across diverse experimental paradigms and neural timescales.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "A Deep Neural Network for Predicting Continuous Human EEG Across the Auditory Pathway in Response to Sound",
       "triage": {
         "confidence": 0.9,
@@ -1753,18 +1900,168 @@
           "Analyzes the relationship between population training budgets and personalization gains"
         ]
       }
+    },
+    {
+      "arxiv_id": "2609.36087v1",
+      "arxiv_id_base": "2609.36087",
+      "authors": [
+        "Yipeng Zhang",
+        "Chenda Duan",
+        "Yuanyi Ding",
+        "Tianyi Wang",
+        "Atsuro Daida",
+        "Masaki Izumi",
+        "Yuta Tanoue",
+        "Naoto Kuroda",
+        "Shaun A. Hussain",
+        "Nishant Sinha",
+        "Eishi Asano. Hiroki Nariai",
+        "Vwani Roychowdhury"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2609.36087v1",
+        "pdf": "https://arxiv.org/pdf/2609.36087v1"
+      },
+      "published_date": "2026-09-28",
+      "summary": {
+        "arxiv_id_base": "2609.36087",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Omni-iEEG",
+            "BrainTreebank"
+          ],
+          "eeg_hours": null,
+          "subjects": 222.0
+        },
+        "detailed_summary": "PHASE proposes a two-stage foundation model consisting of a temporal stage (PHASE-T) and a spatiotemporal stage (PHASE-ST) that use measurable physiological properties as explicit learning targets. Unlike prior models that rely on implicit reconstruction, PHASE pairs masked latent prediction with targets like multi-scale wavelet power and cross-channel synchrony. Evaluation on the Omni-iEEG benchmark shows that frozen PHASE-T outperforms existing foundation models by up to 31%, while fine-tuned versions set a new state-of-the-art across clinical tasks.",
+        "evaluation": {
+          "benchmarks": [
+            "Omni-iEEG",
+            "BrainTreebank"
+          ],
+          "headline_results": [
+            "Frozen PHASE-T outperformed other foundation models by up to 31% on Omni-iEEG.",
+            "Fine-tuned PHASE-T surpassed task-specific supervised models on clinical tasks.",
+            "Superior performance on BrainTreebank auditory decoding compared to published models."
+          ],
+          "tasks": [
+            "Clinical task classification",
+            "Auditory sound volume decoding",
+            "Auditory pitch decoding"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: PHASE uses a two-stage hierarchical architecture (PHASE-T and PHASE-ST) to explicitly learn physiological targets instead of relying solely on implicit signal reconstruction.",
+          "Achieves state-of-the-art performance on Omni-iEEG clinical tasks and superior auditory decoding on BrainTreebank, outperforming task-specific models when fine-tuned.",
+          "Demonstrates strong generalization to unseen institutions and the ability to encapsulate anatomical and pathological characteristics without explicit labels during pretraining."
+        ],
+        "limitations": [
+          "Pretraining is sequential (temporal then spatial) rather than joint.",
+          "Temporal context is limited to one-minute windows.",
+          "Dependencies across separate recording windows are not explicitly modeled.",
+          "Evaluation is limited to a specific set of clinical and auditory tasks."
+        ],
+        "method": {
+          "architecture": "Two-stage hierarchy: PHASE-T (temporal) uses a fine-coarse-fine structure; PHASE-ST (spatiotemporal) extends frozen temporal features to model cross-channel relationships.",
+          "finetuning": "Linear probing (frozen) or full fine-tuning for downstream clinical tasks.",
+          "objective": "Masked latent prediction combined with explicit physiological targets (wavelet power, amplitude, phase-locking value, and correlation).",
+          "pretraining": "Sequential pretraining: first temporal representations (PHASE-T), then spatiotemporal representations (PHASE-ST)."
+        },
+        "notes": "{\"chars\": 95943, \"error\": null, \"pages\": 28, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8052;max_tokens=8000",
+        "one_liner": "A hierarchical iEEG foundation model that explicitly learns physiological characteristics and spatiotemporal relationships.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-09-28",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "PHASE: A Physiology-Guided Hierarchical Foundation Model for Intracranial EEG",
+        "unique_contribution": "PHASE incorporates explicit physiological supervision into a hierarchical pretraining framework to capture both fine-grained waveform structure and broad spatiotemporal relationships in iEEG.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "PHASE: A Physiology-Guided Hierarchical Foundation Model for Intracranial EEG",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly describes PHASE as a 'physiology-guided foundation model for Intracranial EEG'.",
+          "Pretrained on a large, heterogeneous dataset of 222 participants across nine clinical sites for broad transfer.",
+          "Evaluated on a broad benchmark (Omni-iEEG) using both frozen and fine-tuned representations across multiple clinical tasks.",
+          "Utilizes foundation model training paradigms such as masked latent prediction."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2609.36288v1",
+      "arxiv_id_base": "2609.36288",
+      "authors": [
+        "Jakob Steglich",
+        "Justus Meyer zu Bexten",
+        "Shakiba Moradi",
+        "Laure Ciernik",
+        "Simon M. Hofmann",
+        "Mina Jamshidi Idaji"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2609.36288v1",
+        "pdf": "https://arxiv.org/pdf/2609.36288v1"
+      },
+      "published_date": "2026-09-28",
+      "summary": null,
+      "summary_failed_reason": "llm_invalid_json",
+      "title": "Representational and Functional Robustness to Electrode Montages in EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly focuses on 'EEG foundation models (EEG-FMs)' in both title and abstract.",
+          "Conducts a systematic evaluation of representational and functional robustness across four different EEG-FMs.",
+          "Analyzes the generalizability and stability of EEG-FM embeddings across varying electrode montages."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 19,
-    "candidates": 44,
-    "summarized": 15
+    "accepted": 21,
+    "candidates": 49,
+    "summarized": 18
   },
   "top_picks": [
+    "2609.36087",
     "2609.34801",
     "2609.34466",
     "2609.34091",
-    "2609.33487",
-    "2609.32796"
+    "2609.33487"
   ]
 }

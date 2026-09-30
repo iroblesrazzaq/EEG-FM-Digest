@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2605.18085",
+  "featured_paper_id": null,
   "month": "2026-05",
   "papers": [
     {
@@ -1258,61 +1258,8 @@
         "pdf": "https://arxiv.org/pdf/2605.17562v1"
       },
       "published_date": "2026-05-17",
-      "summary": {
-        "arxiv_id_base": "2605.17562",
-        "categories": [
-          "cs.LG",
-          "cs.AI",
-          "cs.HC"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 105215, \"error\": null, \"pages\": 37, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=28578;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2026-05-17",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "Beyond Accuracy: Robustness, Interpretability and Expressiveness of EEG Foundation Models",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "llm_invalid_json",
       "title": "Beyond Accuracy: Robustness, Interpretability and Expressiveness of EEG Foundation Models",
       "triage": {
         "confidence": 1.0,
@@ -1556,6 +1503,13 @@
       }
     },
     {
+      "architecture": {
+        "fact_sheet": null,
+        "hf_repo": null,
+        "hfviewer_url": null,
+        "skip_reason": "not_huggingface",
+        "status": "skipped"
+      },
       "arxiv_id": "2605.18298v1",
       "arxiv_id_base": "2605.18298",
       "authors": [
@@ -1583,49 +1537,80 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
+          "datasets": [
+            "SEED",
+            "PhysioMI",
+            "M3CV",
+            "TSU",
+            "pBCIW"
+          ],
+          "eeg_hours": 917.0,
           "subjects": null
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "DARE-EEG proposes a self-supervised foundation model that addresses the violation of the Mask-Invariance Property in EEG masked reconstruction. It employs a dual-alignment strategy—combining anchor alignment for semantic stability and contrastive mask alignment for consistency across different masked views—alongside a conv-linear-probing strategy for flexible downstream adaptation. The model was pre-trained on over 917 hours of EEG data and demonstrated state-of-the-art performance and superior portability across seven diverse benchmarks.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "SEED",
+            "PhysioMI",
+            "M3CV",
+            "TSU",
+            "pBCIW"
+          ],
+          "headline_results": [
+            "Achieved state-of-the-art Balanced Accuracy across seven downstream benchmarks",
+            "Demonstrated superior cross-dataset portability compared to existing EEG-FMs"
+          ],
+          "tasks": [
+            "Emotion Recognition",
+            "Motor Imagery",
+            "Sleep Stage Classification"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: DARE-EEG uses dual-aligned representation learning to ensure latent consistency across different masked views of the same signal.",
+          "Introduces Conv-Linear-Probing (CLP) to adapt pre-trained features to varying electrode configurations and sampling rates via decoupled spectro-spatial projections.",
+          "Pre-trained on 264k+ samples (917+ hours) and achieves state-of-the-art accuracy and cross-dataset portability on seven benchmarks."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Sensitivity to low Signal-to-Noise Ratio (SNR) inherent in EEG data",
+          "High inter-subject variability and task-dependent fluctuations",
+          "Dependence on specific overlap ratios during mask alignment to avoid degenerate configurations"
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Masked Autoencoder with Global Learnable Tokens (GLTs) and Rotational Positional Embedding (RoPE)",
+          "finetuning": "Conv-Linear-Probing (CLP) for parameter-efficient adaptation to heterogeneous electrode configurations",
+          "objective": "Combined masked reconstruction (MSE), anchor alignment (MSE), and mask alignment (InfoNCE contrastive loss)",
+          "pretraining": "Self-supervised pre-training on 264,000+ samples using dual-alignment to enforce the Mask-Invariance Property"
         },
-        "notes": "{\"chars\": 96706, \"error\": null, \"pages\": 22, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=26189;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 96706, \"error\": null, \"pages\": 22, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8081;max_tokens=8000",
+        "one_liner": "A self-supervised EEG foundation model that enforces mask-invariance through dual-aligned representation learning.",
         "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
+          "code_url": "https://github.com/anonymous",
+          "license": "unknown",
+          "weights_url": "https://github.com/anonymous"
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2026-05-18",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
         },
         "title": "DARE-EEG: A Foundation Model for Mining Dual-Aligned Representation of EEG",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Introduces a dual-alignment framework combining anchor alignment and contrastive mask alignment to ensure representations are invariant to incomplete observations.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -1779,50 +1764,75 @@
           "q-bio.NC"
         ],
         "data_scale": {
-          "channels": null,
-          "datasets": [],
+          "channels": 63.0,
+          "datasets": [
+            "Things-EEG2",
+            "Things-MEG"
+          ],
           "eeg_hours": null,
-          "subjects": null
+          "subjects": 10.0
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "MindAlign proposes a two-stage framework for EEG-based visual decoding, starting with a masked reconstruction pre-training phase to learn spatio-temporal EEG regularities. It then jointly aligns EEG, image, and LLM-generated textual descriptions in a shared latent space using contrastive learning, where text acts as a semantic regularizer to stabilize the EEG-image signal. The approach achieves 54.1% Top-1 accuracy on the Things-EEG2 200-way zero-shot benchmark, significantly outperforming prior baselines.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "Things-EEG2",
+            "Things-MEG"
+          ],
+          "headline_results": [
+            "54.1% Top-1 accuracy on Things-EEG2",
+            "83.4% Top-5 accuracy on Things-EEG2"
+          ],
+          "tasks": [
+            "200-way zero-shot image retrieval",
+            "200-way zero-shot text retrieval"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: A tri-modal framework aligning EEG, vision, and language for zero-shot visual decoding.",
+          "Hybrid encoder architecture: Combines subject-specific adaptation, graph attention, and Transformers to capture complex spatio-temporal neural dynamics.",
+          "Strong zero-shot performance: Achieves 54.1% Top-1 accuracy on Things-EEG2, substantially exceeding the strongest prior baseline of 32.4%."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Low signal-to-noise ratio of EEG remains a fundamental challenge.",
+          "Inter-subject variability requires specific adaptation layers.",
+          "Reconstructed waveforms in pre-training capture low-frequency trends but lack fine-grained details.",
+          "Performance depends on the quality of LLM-generated textual descriptions."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Hybrid encoder featuring subject-specific adaptation, Graph Attention Network (GAT) for local coupling, and Transformer for global interactions.",
+          "finetuning": "Joint contrastive learning aligning EEG embeddings with frozen CLIP image and LLM-generated text embeddings.",
+          "objective": "Two-stage: Masked Autoencoder (MAE) reconstruction followed by tri-modal contrastive alignment.",
+          "pretraining": "Masked reconstruction of EEG spatio-temporal patches to learn general neural representations."
         },
-        "notes": "{\"chars\": 64786, \"error\": null, \"pages\": 20, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=18116;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 64786, \"error\": null, \"pages\": 20, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8041;max_tokens=8000",
+        "one_liner": "A tri-modal contrastive framework that aligns EEG, images, and LLM-generated text for zero-shot visual decoding.",
         "open_source": {
-          "code_url": null,
-          "license": null,
+          "code_url": "https://github.com/anon-eeg/eeg_image_decoding",
+          "license": "unknown",
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2026-05-23",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
         },
         "title": "MindAlign: Bridging EEG, Vision, and Language for Zero-Shot Visual Decoding",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Introduces a tri-modal alignment strategy using LLM-generated text as a semantic regularizer to stabilize and enhance EEG-to-image visual decoding.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -1853,59 +1863,8 @@
         "pdf": "https://arxiv.org/pdf/2605.24921v1"
       },
       "published_date": "2026-05-24",
-      "summary": {
-        "arxiv_id_base": "2605.24921",
-        "categories": [
-          "cs.LG"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 38046, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=11040;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2026-05-24",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "BandVQ: Band-Wise Vector-Quantized EEG Foundation Model",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "llm_invalid_json",
       "title": "BandVQ: Band-Wise Vector-Quantized EEG Foundation Model",
       "triage": {
         "confidence": 1.0,
@@ -1950,49 +1909,81 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
+          "datasets": [
+            "BCIC-IV 2A",
+            "Physionet-MI",
+            "Kaggle-ERN",
+            "Sleep-EDF"
+          ],
           "eeg_hours": null,
           "subjects": null
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper investigates why reconstruction-based EEG foundation models often underperform supervised models in low-resource settings. It proposes that the dominance of aperiodic (1/f) components in EEG signals causes reconstruction objectives to bias embeddings toward low-frequency and subject-specific information. This is validated using synthetic EEG signals and linear probes on four real-world BCI datasets, demonstrating that embeddings are better at subject identification than task decoding.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "Synthetic EEG",
+            "BCIC-IV 2A",
+            "Physionet-MI",
+            "Kaggle-ERN",
+            "Sleep-EDF"
+          ],
+          "headline_results": [
+            "High R2 for aperiodic components, low R2 for high-frequency oscillations",
+            "Superior performance in subject identification compared to task decoding"
+          ],
+          "tasks": [
+            "Aperiodic parameter decoding",
+            "Oscillation frequency decoding",
+            "Subject identification",
+            "Task classification"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "Methodological analysis of EEG foundation models: reveals that reconstruction-based pretext tasks lead to embeddings that preferentially encode aperiodic, low-frequency signals.",
+          "Synthetic validation shows high linear decodability for aperiodic exponents but poor decodability for high-frequency oscillatory components.",
+          "Real-world BCI evaluations show embeddings capture subject identity more strongly than task-relevant information, explaining sub-optimal downstream performance."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Focuses exclusively on reconstruction-based objectives, leaving other pretext tasks unexplored.",
+          "Synthetic data is single-channel, which may not fully capture complex multi-channel spatial interactions.",
+          "Does not propose a concrete new architecture, only suggests auxiliary losses for future work.",
+          "Evaluation is limited to linear probes, which may not capture non-linear representations."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Analysis of existing models (LaBraM, CBraMod, CSBrain)",
+          "finetuning": "Linear probing",
+          "objective": "Reconstruction-based pretraining",
+          "pretraining": "Masked reconstruction"
         },
-        "notes": "{\"chars\": 50623, \"error\": null, \"pages\": 18, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=14204;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 50623, \"error\": null, \"pages\": 18, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7945",
+        "one_liner": "Analyzes the spectral bias of reconstruction-based EEG foundation models, showing they prioritize aperiodic and low-frequency components over task-relevant high-frequency oscillations.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "method",
         "published_date": "2026-05-26",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch",
+            "latent-tokens"
+          ],
+          "topology": [
+            "topology-agnostic"
+          ]
         },
         "title": "Aperiodic and Low-Frequency Spectral Bias in Reconstruction based EEG Foundation Models",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Provides a mechanistic explanation for the failure of reconstruction-based EEG foundation models by demonstrating a spectral bias toward aperiodic and low-frequency components.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -2131,53 +2122,71 @@
         "arxiv_id_base": "2605.26910",
         "categories": [
           "cs.LG",
-          "cs.AI"
+          "cs.AI",
+          "q-bio.NC"
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
+          "datasets": [
+            "BCI Competition IV-2b",
+            "TUEV",
+            "TUAB"
+          ],
           "eeg_hours": null,
           "subjects": null
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper proposes EEG-FM-Audit, a comprehensive evaluation pipeline designed to address the lack of transparency and fair comparison in EEG foundation model (FM) research. It introduces an ASHA-driven protocol for optimizing supervised baselines, paradigm-level ablations to isolate the contributions of pretraining and LLM backbones, and a neurophysiological probing framework to analyze temporal, spatial, and spectral features. Applying this to four SOTA EEG-FMs across three datasets, the authors demonstrate that well-tuned supervised baselines can often match or exceed FM performance while using significantly fewer parameters.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "BCI Competition IV-2b",
+            "TUEV",
+            "TUAB"
+          ],
+          "headline_results": [
+            "Properly tuned supervised baselines can match or outperform FMs with fewer parameters.",
+            "FM learning paradigm effectiveness is highly dependent on dataset scale and architecture."
+          ],
+          "tasks": [
+            "EEG classification",
+            "Neurophysiological probing"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "Benchmark pipeline: EEG-FM-Audit provides a systematic framework to evaluate the actual performance gains and biological validity of EEG foundation models.",
+          "Fair comparison: Uses an ASHA-driven protocol to optimize supervised baselines, revealing that properly tuned smaller models can match or outperform complex FMs.",
+          "Interpretability: Employs neurophysiological probing (NPP) to quantify how FMs leverage temporal, spatial, and spectral EEG properties."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Effectiveness of FM learning paradigms is highly dependent on dataset scale and architecture.",
+          "Supervised baselines can match or outperform FMs when properly tuned, questioning inherent FM superiority.",
+          "The audit is limited to the four SOTA FMs and three public datasets selected for the study."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Audit pipeline consisting of ASHA-driven benchmarking, paradigm-level ablation, and Neurophysiological Probing (NPP).",
+          "finetuning": "Uses ASHA-driven hyperparameter optimization for fair baseline comparison.",
+          "objective": "Systematic evaluation of EEG-FM performance and biological validity.",
+          "pretraining": "Evaluates the impact of pretraining sources and LLM representations via ablation."
         },
-        "notes": "{\"chars\": 72875, \"error\": null, \"pages\": 26, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=20179;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 72875, \"error\": null, \"pages\": 26, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8047;max_tokens=8000",
+        "one_liner": "A systematic pipeline to audit EEG foundation models through optimized baseline benchmarking, paradigm ablation, and neurophysiological probing.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "benchmark",
         "published_date": "2026-05-26",
         "tags": {
           "backbone": [],
           "objective": [],
-          "paper_type": [],
+          "paper_type": [
+            "benchmark"
+          ],
           "tokenization": [],
           "topology": []
         },
         "title": "EEG-FM-Audit: A Systematic Evaluation and Analysis Pipeline for EEG Foundation Models",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Introduces a multi-level audit pipeline that combines automated hyperparameter optimization for baselines with paradigm-level ablations and neurophysiological probing to rigorously evaluate EEG foundation models.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -2326,59 +2335,8 @@
         "pdf": "https://arxiv.org/pdf/2605.29754v1"
       },
       "published_date": "2026-05-28",
-      "summary": {
-        "arxiv_id_base": "2605.29754",
-        "categories": [
-          "cs.AI"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 29966, \"error\": null, \"pages\": 6, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=8927;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2026-05-28",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "Benchmarking Positional Encoding Strategies for Transformer-Based EEG Foundation Models",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "llm_invalid_json",
       "title": "Benchmarking Positional Encoding Strategies for Transformer-Based EEG Foundation Models",
       "triage": {
         "confidence": 1.0,
@@ -2501,13 +2459,13 @@
   "stats": {
     "accepted": 24,
     "candidates": 52,
-    "summarized": 24
+    "summarized": 21
   },
   "top_picks": [
     "2606.00815",
     "2605.28563",
-    "2605.18085",
-    "2605.15698",
-    "2605.14698"
+    "2605.26910",
+    "2605.26434",
+    "2605.18298"
   ]
 }

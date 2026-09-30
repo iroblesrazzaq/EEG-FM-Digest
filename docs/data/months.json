@@ -8,11 +8,11 @@
       "json_path": "digest/2026-09/papers.json",
       "month": "2026-09",
       "month_label": "September 2026",
-      "month_rev": "2304abe5ef483a60",
+      "month_rev": "14e5aa500532e8cb",
       "stats": {
-        "accepted": 19,
-        "candidates": 44,
-        "summarized": 15
+        "accepted": 21,
+        "candidates": 49,
+        "summarized": 18
       }
     },
     {
@@ -69,21 +69,16 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": {
-        "abs_url": "http://arxiv.org/abs/2605.18085v1",
-        "arxiv_id_base": "2605.18085",
-        "one_liner": "An EEG foundation model using CKA-calibrated depth-stratified experts and prior-guided continuous tokenization to optimize cross-paradigm representation learning.",
-        "title": "PRiSE-EEG: A Prior-Guided Foundation Model with Depth-Stratified Experts for Cross-Paradigm EEG Representation Learning"
-      },
+      "featured": null,
       "href": "digest/2026-05/index.html",
       "json_path": "digest/2026-05/papers.json",
       "month": "2026-05",
       "month_label": "May 2026",
-      "month_rev": "1fc9e13f1e24db74",
+      "month_rev": "4b26db8c8c951c33",
       "stats": {
         "accepted": 24,
         "candidates": 52,
-        "summarized": 24
+        "summarized": 21
       }
     },
     {
