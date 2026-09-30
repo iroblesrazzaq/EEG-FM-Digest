@@ -28,9 +28,10 @@
     ],
     "meta": {
       "causal": false,
+      "denoise": false,
       "eeg_like": true,
       "gated": false,
-      "has_patch": true
+      "has_patch": false
     },
     "notes": {
       "backbone": "mamba",
@@ -40,6 +41,7 @@
     "repeat": {
       "count": 12,
       "id": "enc",
+      "role": "encoder",
       "steps": [
         {
           "id": "enc.n1",
@@ -47,8 +49,20 @@
           "label": "LayerNorm 1"
         },
         {
-          "id": "enc.attn",
-          "kind": "attention",
+          "id": "enc.mixer",
+          "items": [
+            {
+              "id": "enc.fwd",
+              "kind": "attention",
+              "label": "Forward Mamba"
+            },
+            {
+              "id": "enc.rev",
+              "kind": "attention",
+              "label": "Reverse Mamba"
+            }
+          ],
+          "kind": "parallel",
           "label": "Bidirectional Mamba"
         },
         {
@@ -58,6 +72,42 @@
         }
       ]
     },
+    "stacks": [
+      {
+        "count": 12,
+        "id": "enc",
+        "role": "encoder",
+        "steps": [
+          {
+            "id": "enc.n1",
+            "kind": "norm",
+            "label": "LayerNorm 1"
+          },
+          {
+            "id": "enc.mixer",
+            "items": [
+              {
+                "id": "enc.fwd",
+                "kind": "attention",
+                "label": "Forward Mamba"
+              },
+              {
+                "id": "enc.rev",
+                "kind": "attention",
+                "label": "Reverse Mamba"
+              }
+            ],
+            "kind": "parallel",
+            "label": "Bidirectional Mamba"
+          },
+          {
+            "id": "enc.add",
+            "kind": "add",
+            "label": "+"
+          }
+        ]
+      }
+    ],
     "stem": [
       {
         "id": "patch",

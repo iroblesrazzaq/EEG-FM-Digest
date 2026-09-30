@@ -141,21 +141,76 @@ def test_models_tab_renders_reve_diagram(browser, real_docs_site):
         assert "VQ-VAE codebook" in labram
         assert "Frozen codebook" in labram
         assert "QK-Norm" in labram
+        assert page.locator('[id="arch-2405.18765"] [data-arch-vq="side"]').count() == 1
         cbramod = page.locator('[id="arch-2412.07236"] .arch-graph-svg').text_content() or ""
-        assert "Criss-cross attention" in cbramod
+        assert "Criss-cross" in cbramod
         assert "Spatial attention" not in cbramod
         assert "Temporal attention" not in cbramod
+        assert "Spatial" in cbramod
+        assert "Temporal" in cbramod
         assert "O(N²T)" in cbramod
         assert "O(NT²)" in cbramod
         assert "2-layer MLP" in cbramod
+        assert page.locator('[id="arch-2412.07236"] [data-arch-parallel]').count() == 1
+        assert page.locator('[id="arch-2412.07236"] [data-arch-join="parallel"]').count() == 1
+        cost_x = page.evaluate(
+            """() => {
+              const node = document.querySelector('[id="arch-2412.07236"] [data-arch-note="cost-st"]');
+              return node ? Number(node.getAttribute("x")) : null;
+            }"""
+        )
+        assert cost_x is not None and cost_x >= 480
         luna = page.locator('[id="arch-2510.22257"] .arch-graph-svg').text_content() or ""
         assert "Channel unifier" in luna
         assert "Learned queries" in luna
+        assert "Query attention" in luna
         brainomni = page.locator('[id="arch-2505.18185"] .arch-graph-svg').text_content() or ""
         assert "Sensor encoder" in brainomni
         assert "VQ-VAE codebook" in brainomni
+        assert "EEG + MEG" in brainomni
+        assert page.locator('[id="arch-2505.18185"] [data-arch-vq="side"]').count() == 1
         femba = page.locator('[id="arch-2502.06438"] .arch-graph-svg').text_content() or ""
         assert "Bidirectional Mamba" in femba
+        assert "Forward Mamba" in femba
+        assert "Reverse Mamba" in femba
+        assert page.locator('[id="arch-2502.06438"] [data-arch-parallel]').count() == 1
+        assert page.locator('[id="arch-2502.06438"] [data-arch-join="parallel"]').count() == 1
+        positions = page.evaluate(
+            """() => {
+              const collect = (arxivId) => {
+                const svg = document.querySelector(`[id="arch-${arxivId}"] .arch-graph-svg`);
+                return [...svg.querySelectorAll("text")].map((node) => ({
+                  text: node.textContent || "",
+                  x: Number(node.getAttribute("x")),
+                  y: Number(node.getAttribute("y")),
+                }));
+              };
+              const yOf = (items, needle) => {
+                const hit = items.find((item) => item.text.includes(needle));
+                return hit ? hit.y : null;
+              };
+              const labram = collect("2405.18765");
+              const brain = collect("2505.18185");
+              return {
+                vq: yOf(labram, "VQ-VAE codebook"),
+                pe: yOf(labram, "Absolute PE"),
+                brainVq: yOf(brain, "VQ-VAE codebook"),
+                meg: yOf(brain, "EEG + MEG"),
+              };
+            }"""
+        )
+        assert positions["vq"] is not None and positions["pe"] is not None
+        assert abs(positions["vq"] - positions["pe"]) >= 20
+        assert positions["brainVq"] is not None and positions["meg"] is not None
+        assert abs(positions["brainVq"] - positions["meg"]) >= 20
+        zuna = page.locator('[id="arch-2607.27308"] .arch-graph-svg').text_content() or ""
+        assert "Encoder" in zuna
+        assert "Decoder" in zuna
+        assert "Cross attention" in zuna
+        assert "Noisy EEG" in zuna
+        assert "Reconstruction head" in zuna
+        assert page.locator('[id="arch-2607.27308"] [data-arch-stack-role="decoder"]').count() == 1
+        assert page.locator('[id="arch-2510.22257"] [data-arch-stack-role="query"]').count() == 1
         eegpt = page.locator('[id="arch-2410.19779"] .arch-graph-svg').text_content() or ""
         assert "BrainGPT" in eegpt
         assert "Autoregressive transformer" in eegpt
