@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2606.20812",
+  "featured_paper_id": null,
   "month": "2026-06",
   "papers": [
     {
@@ -792,50 +792,67 @@
           "cs.LG"
         ],
         "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
+          "channels": 6.0,
+          "datasets": [
+            "ICU EEG"
+          ],
+          "eeg_hours": 25.0,
+          "subjects": 25.0
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper investigates the application of EEG foundation models (REVE-base, LUNA-large, and LuMamba-Tiny) for detecting burst-suppression patterns in reduced-montage ICU EEG. Unlike prior work relying on patient-specific calibration or simple window-based metrics, this study introduces an event-based evaluation and burst-per-minute (BPM) error analysis. Results demonstrate that fine-tuned FMs, particularly REVE-base, significantly outperform task-specific EEGNet and adaptive thresholding baselines in estimating clinical burst counts.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "Leave-One-Subject-Out (LOO) cross-validation"
+          ],
+          "headline_results": [
+            "REVE-base achieved an event-based F1 score of 0.868.",
+            "BPM MAE reduced by 52.1% vs EEGNet and 36.2% vs RVT."
+          ],
+          "tasks": [
+            "Burst-Suppression Detection"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "Application of EEG foundation models: Evaluates REVE-base, LUNA-large, and LuMamba-Tiny for burst-suppression detection in ICU patients.",
+          "Superior clinical performance: REVE-base reduced burst-per-minute error by 52.1% compared to EEGNet and 36.2% compared to adaptive thresholding.",
+          "Data efficiency: Pretrained representations significantly improve performance when labeled data is scarce, with REVE-base outperforming random initialization by 0.723 F1 points at 25% data."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Small cohort size (25 patients)",
+          "Lack of validation on external cohorts",
+          "Potential confounding effects of model size and pretraining data scale"
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Evaluates REVE-base, LUNA-large, and LuMamba-Tiny backbones with a mean-pooling MLP classifier.",
+          "finetuning": "AdamW optimizer, learning rate 2e-5, cosine schedule, and layer-wise learning rate decay (0.75).",
+          "objective": "Supervised fine-tuning for binary classification of burst vs. suppression.",
+          "pretraining": "Utilizes pretrained weights from REVE, LUNA, and LuMamba models."
         },
-        "notes": "{\"chars\": 24279, \"error\": null, \"pages\": 4, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7600;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 24279, \"error\": null, \"pages\": 4, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7600",
+        "one_liner": "Evaluates the efficacy of pretrained EEG foundation models for automatic burst-suppression detection in ICU settings using an event-based clinical framework.",
         "open_source": {
-          "code_url": null,
+          "code_url": "Available upon publication",
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "application",
         "published_date": "2026-06-18",
         "tags": {
-          "backbone": [],
+          "backbone": [
+            "transformer",
+            "mamba-ssm"
+          ],
           "objective": [],
-          "paper_type": [],
+          "paper_type": [
+            "benchmark"
+          ],
           "tokenization": [],
-          "topology": []
+          "topology": [
+            "topology-agnostic"
+          ]
         },
         "title": "Evaluation of EEG Foundation Models for Event-Based Burst-Suppression Detection in ICU",
-        "unique_contribution": "unknown",
+        "unique_contribution": "First evaluation of EEG foundation models for generalized burst-suppression detection in ICU EEG using a clinically-oriented event-based evaluation framework.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -1218,49 +1235,60 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
+          "datasets": [
+            "53 reviewed entries"
+          ],
           "eeg_hours": null,
           "subjects": null
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper proposes a task specification layer that pairs human-readable task documents with executable task kernels, governed by a shared rulebook to standardize EEG benchmarking. Unlike previous standards that focus on file organization or metadata, this approach specifies task semantics and executable logic to enable reusable benchmarking across diverse datasets without repackaging raw data. The authors release a community-reviewed corpus of 53 entries with 245 task definitions and validate the infrastructure by instantiating these units across four EEG foundation model backbones.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "Community-reviewed EEG corpus"
+          ],
+          "headline_results": [
+            "Successfully instantiated benchmark units across four different EEG foundation model backbones."
+          ],
+          "tasks": [
+            "Benchmark unit instantiation"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "Benchmark infrastructure: Proposes a standardized task specification layer using paired documents and executable kernels to enable reusable EEG benchmarking.",
+          "Rulebook-guided automation: Employs NeuroDoc for LLM-assisted drafting and NeuroAudit for community review to ensure task claims are evidence-backed and machine-checkable.",
+          "Resource release: Provides a community-reviewed corpus containing 53 benchmark entries and 245 task definitions across diverse EEG paradigms."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Inherits limitations from public EEG repositories, such as uneven demographic and clinical coverage.",
+          "Laboratory-specific acquisition protocols and device differences may persist.",
+          "LLM-assisted drafting can introduce unsupported interpretations or subtle mismatches between documents and kernels."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
+          "architecture": "Task specification layer consisting of Task Documents (semantics) and Task Kernels (executable logic).",
+          "finetuning": "LLM-assisted drafting via NeuroDoc and community review via NeuroAudit.",
+          "objective": "Standardize the construction and auditing of EEG benchmarks via a governance rulebook.",
           "pretraining": null
         },
-        "notes": "{\"chars\": 194036, \"error\": null, \"pages\": 62, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=54587;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 194036, \"error\": null, \"pages\": 62, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7954",
+        "one_liner": "Introduces NeuroDoc and NeuroAudit, a rulebook-guided framework for creating standardized, executable, and auditable EEG benchmark units from heterogeneous datasets.",
         "open_source": {
           "code_url": null,
-          "license": null,
+          "license": "unknown",
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "benchmark",
         "published_date": "2026-06-22",
         "tags": {
           "backbone": [],
           "objective": [],
-          "paper_type": [],
+          "paper_type": [
+            "benchmark"
+          ],
           "tokenization": [],
           "topology": []
         },
         "title": "EEG Benchmarking Needs a Task Specification Layer: NeuroDoc for Rulebook-Guided, Executable Benchmark Construction",
-        "unique_contribution": "unknown",
+        "unique_contribution": "A rulebook-guided task specification language and toolchain (NeuroDoc/NeuroAudit) that transforms heterogeneous EEG recordings into executable and auditable benchmark units.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -1390,9 +1418,9 @@
   },
   "top_picks": [
     "2606.30104",
+    "2606.22925",
     "2606.20812",
     "2606.20673",
-    "2606.09605",
-    "2606.09189"
+    "2606.20074"
   ]
 }

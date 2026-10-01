@@ -1258,8 +1258,89 @@
         "pdf": "https://arxiv.org/pdf/2605.17562v1"
       },
       "published_date": "2026-05-17",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2605.17562",
+        "categories": [
+          "cs.LG",
+          "cs.AI",
+          "cs.HC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Movement",
+            "Motor-Imagery",
+            "ERP",
+            "Eyes",
+            "Memory",
+            "Sleep"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes a comprehensive evaluation framework for EEG foundation models (EEG-FMs) that extends beyond clean accuracy to assess robustness, interpretability, and expressiveness. It introduces the application of Attention-Aware Layer-Wise Relevance Propagation (AttnLRP) to verify that models attend to task-appropriate brain regions and investigates how pooling strategies affect linear probing performance. Benchmarking six EEG-FMs across eight datasets reveals that while clean accuracy gains over supervised baselines are modest, the models generally align with known neurophysiology, though robustness varies significantly across different perturbation types.",
+        "evaluation": {
+          "benchmarks": [
+            "Robustness (Noise/Dropout)",
+            "Interpretability (AttnLRP)",
+            "Expressiveness (Linear Probing)"
+          ],
+          "headline_results": [
+            "EEG-FMs show modest clean accuracy gains over EEGNet.",
+            "BrainOmni is most noise-robust but fragile under zero-padded dropout.",
+            "Representational capacity is preserved at the token level but lost during mean pooling."
+          ],
+          "tasks": [
+            "Movement",
+            "Motor-Imagery",
+            "ERP",
+            "Eyes",
+            "Memory",
+            "Sleep"
+          ]
+        },
+        "key_points": [
+          "Benchmark study: Evaluates six EEG foundation models across eight datasets to analyze robustness, interpretability, and expressiveness.",
+          "Findings show that models generally attend to neurophysiologically correct brain regions, but robustness to noise does not necessarily imply robustness to channel dropout.",
+          "Demonstrates that the perceived low quality of pre-trained representations in head-only probing is primarily a result of suboptimal pooling strategies."
+        ],
+        "limitations": [
+          "Some models were not evaluated on the Sleep benchmark due to computational constraints.",
+          "BIOT failed to learn on all benchmarks and was excluded from subsequent analyses.",
+          "Certain datasets were excluded from interpretability analysis due to eye-movement artefact contamination.",
+          "The study focuses on test-time perturbations rather than training-time robustness."
+        ],
+        "method": {
+          "architecture": "Benchmarking of six EEG-FMs (REVE, BrainOmni, NeuroRVQ, LaBraM, CBraMod, BIOT) and an EEGNet baseline.",
+          "finetuning": "Full fine-tuning and head-only linear probing",
+          "objective": "Evaluation of robustness via test-time perturbations, interpretability via AttnLRP, and expressiveness via block-wise linear probing.",
+          "pretraining": "Existing pre-trained EEG-FM weights"
+        },
+        "notes": "{\"chars\": 105215, \"error\": null, \"pages\": 37, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8047;max_tokens=8000",
+        "one_liner": "A systematic benchmark of six EEG foundation models focusing on robustness to signal corruption, neurophysiological interpretability, and representational expressiveness.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-05-17",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Beyond Accuracy: Robustness, Interpretability and Expressiveness of EEG Foundation Models",
+        "unique_contribution": "Provides the first systematic assessment of EEG foundation models' robustness to realistic signal perturbations, their neurophysiological interpretability via AttnLRP, and the role of pooling in their representational expressiveness.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "Beyond Accuracy: Robustness, Interpretability and Expressiveness of EEG Foundation Models",
       "triage": {
         "confidence": 1.0,
@@ -2459,7 +2540,7 @@
   "stats": {
     "accepted": 24,
     "candidates": 52,
-    "summarized": 21
+    "summarized": 22
   },
   "top_picks": [
     "2606.00815",

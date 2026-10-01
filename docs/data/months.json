@@ -31,36 +31,26 @@
     },
     {
       "empty_state": "has_papers",
-      "featured": {
-        "abs_url": "http://arxiv.org/abs/2607.03925v1",
-        "arxiv_id_base": "2607.03925",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "title": "NeuroOnline: Bridging Pretraining and Online Adaptation for EEG Foundation Models"
-      },
+      "featured": null,
       "href": "digest/2026-07/index.html",
       "json_path": "digest/2026-07/papers.json",
       "month": "2026-07",
       "month_label": "July 2026",
-      "month_rev": "5d57bd72a203babc",
+      "month_rev": "f15a3ab58db464cc",
       "stats": {
         "accepted": 15,
         "candidates": 33,
-        "summarized": 15
+        "summarized": 10
       }
     },
     {
       "empty_state": "has_papers",
-      "featured": {
-        "abs_url": "http://arxiv.org/abs/2606.20812v1",
-        "arxiv_id_base": "2606.20812",
-        "one_liner": "A sample-efficient EEG foundation model using continuous-time flow matching and a factorized SplitUNet architecture to avoid signal discretization.",
-        "title": "B[FM]$^2$: Brain Foundation Model via Flow Matching with SplitUNet"
-      },
+      "featured": null,
       "href": "digest/2026-06/index.html",
       "json_path": "digest/2026-06/papers.json",
       "month": "2026-06",
       "month_label": "June 2026",
-      "month_rev": "cce50a993cfbd555",
+      "month_rev": "9d5c956c87e1b3be",
       "stats": {
         "accepted": 13,
         "candidates": 28,
@@ -74,11 +64,11 @@
       "json_path": "digest/2026-05/papers.json",
       "month": "2026-05",
       "month_label": "May 2026",
-      "month_rev": "4b26db8c8c951c33",
+      "month_rev": "c76afda0bbdcd8a0",
       "stats": {
         "accepted": 24,
         "candidates": 52,
-        "summarized": 21
+        "summarized": 22
       }
     },
     {
@@ -556,11 +546,11 @@
       "json_path": "digest/2024-01/papers.json",
       "month": "2024-01",
       "month_label": "January 2024",
-      "month_rev": "05927c2da7c7b1b0",
+      "month_rev": "0c76b3971e746729",
       "stats": {
         "accepted": 2,
         "candidates": 12,
-        "summarized": 1
+        "summarized": 2
       }
     },
     {

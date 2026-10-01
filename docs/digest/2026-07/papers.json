@@ -1,5 +1,5 @@
 {
-  "featured_paper_id": "2607.03925",
+  "featured_paper_id": null,
   "month": "2026-07",
   "papers": [
     {
@@ -124,60 +124,8 @@
         "pdf": "https://arxiv.org/pdf/2607.07720v2"
       },
       "published_date": "2026-07-04",
-      "summary": {
-        "arxiv_id_base": "2607.07720",
-        "categories": [
-          "cs.LG",
-          "cs.AI"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 30336, \"error\": null, \"pages\": 12, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=9085;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2026-07-04",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "Omni-Sleep: A Sleep Foundation Model via Hierarchical Contrastive Learning of CNS--ANS Dynamic",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "llm_invalid_json",
       "title": "Omni-Sleep: A Sleep Foundation Model via Hierarchical Contrastive Learning of CNS-ANS Dynamics",
       "triage": {
         "confidence": 1.0,
@@ -215,49 +163,77 @@
         ],
         "data_scale": {
           "channels": null,
-          "datasets": [],
+          "datasets": [
+            "BCIC-2A",
+            "BCIC-2B",
+            "SHU-MI",
+            "PhysioNet-MI",
+            "FACED",
+            "SEED-V"
+          ],
           "eeg_hours": null,
           "subjects": null
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper proposes NeuroOnline, a framework that shifts EEG foundation models from a static deployment paradigm to continuous online adaptation. It integrates multi-view consistency learning to align representations with downstream tasks and context-aware representation modulation using learnable prompts and cross-attention to handle non-stationary EEG distributions. Evaluation across six benchmarks for motor imagery and emotion recognition demonstrates that NeuroOnline consistently outperforms offline fine-tuning and basic online updating baselines.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "BCIC-2A",
+            "BCIC-2B",
+            "SHU-MI",
+            "PhysioNet-MI",
+            "FACED",
+            "SEED-V"
+          ],
+          "headline_results": [
+            "Average relative improvement of 6.23% in motor imagery Kappa",
+            "Average relative improvement of 19.44% in emotion recognition accuracy"
+          ],
+          "tasks": [
+            "Motor Imagery",
+            "Emotion Recognition"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New adaptation method: NeuroOnline enables pretrained EEG foundation models to continuously adapt to evolving neural dynamics in online settings.",
+          "Combines multi-view consistency learning for task alignment with a cross-attention-based context prompt for dynamic representation modulation.",
+          "Demonstrates significant improvements across motor imagery and emotion recognition tasks, particularly in challenging multi-class scenarios."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Dependence on the quality of the initial pretrained foundation model.",
+          "Potential computational overhead of performing online updates during deployment.",
+          "Sensitivity to the choice of augmentation strategies for multi-view consistency.",
+          "Performance may vary depending on the severity of the distribution shift."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Integrates a backbone EEG-FM (e.g., CBraMod, LaBraM) with a modulator consisting of a learnable context prompt and cross-attention.",
+          "finetuning": "Performs incremental online updates to the modulator and backbone parameters in a causal setting.",
+          "objective": "Combines task-specific classification loss with a multi-view consistency loss using temporal and frequency masking.",
+          "pretraining": "Utilizes existing pretrained EEG foundation models as the starting point."
         },
-        "notes": "{\"chars\": 75817, \"error\": null, \"pages\": 22, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=20660;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 75817, \"error\": null, \"pages\": 22, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7953",
+        "one_liner": "A unified framework for the continuous online adaptation of pretrained EEG foundation models to mitigate distribution shifts and task misalignment.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "method",
         "published_date": "2026-07-04",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "post-training"
+          ],
           "tokenization": [],
           "topology": []
         },
         "title": "NeuroOnline: Bridging Pretraining and Online Adaptation for EEG Foundation Models",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Introduces a dual-mechanism framework combining multi-view consistency learning and context-aware modulation to enable real-time adaptation of EEG foundation models.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -623,59 +599,8 @@
         "pdf": "https://arxiv.org/pdf/2607.21384v1"
       },
       "published_date": "2026-07-23",
-      "summary": {
-        "arxiv_id_base": "2607.21384",
-        "categories": [
-          "cs.AI"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 32677, \"error\": null, \"pages\": 7, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8133;max_tokens=8000;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2026-07-23",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "Multimodal Pretraining for Generalizable EEG Representation Learning",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "llm_invalid_json",
       "title": "Multimodal Pretraining for Generalizable EEG Representation Learning",
       "triage": {
         "confidence": 1.0,
@@ -805,62 +730,8 @@
         "pdf": "https://arxiv.org/pdf/2607.24834v1"
       },
       "published_date": "2026-07-23",
-      "summary": {
-        "arxiv_id_base": "2607.24834",
-        "categories": [
-          "q-bio.NC",
-          "cs.AI",
-          "cs.ET",
-          "cs.LG"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 68414, \"error\": null, \"pages\": 21, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8012;max_tokens=8000;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2026-07-23",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "Foundation Models for EEG Are Blind to Long-Range Temporal Correlations: A Spectral-Temporal Dissociation Behind Their Cross-Population Fragility",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "llm_invalid_json",
       "title": "Foundation Models for EEG Are Blind to Long-Range Temporal Correlations: A Spectral-Temporal Dissociation Behind Their Cross-Population Fragility",
       "triage": {
         "confidence": 1.0,
@@ -996,61 +867,8 @@
         "pdf": "https://arxiv.org/pdf/2607.23554v1"
       },
       "published_date": "2026-07-26",
-      "summary": {
-        "arxiv_id_base": "2607.23554",
-        "categories": [
-          "cs.LG",
-          "cs.AI",
-          "eess.SP"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 96099, \"error\": null, \"pages\": 25, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7967;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2026-07-26",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "Neonatal Hypoxic-ischaemic Encephalopathy Classification from the EEG and HRV Signals Using a Conformer based Masked Autoencoder",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "llm_invalid_json",
       "title": "Neonatal Hypoxic-ischaemic Encephalopathy Classification from the EEG and HRV Signals Using a Conformer based Masked Autoencoder",
       "triage": {
         "confidence": 0.9,
@@ -1286,25 +1104,6 @@
       }
     },
     {
-      "architecture": {
-        "fact_sheet": {
-          "architectures": null,
-          "context_length": null,
-          "hidden_act": null,
-          "hidden_size": 1024,
-          "intermediate_size": null,
-          "model_type": null,
-          "num_attention_heads": null,
-          "num_key_value_heads": null,
-          "num_layers": 16,
-          "num_params": 382106752,
-          "vocab_size": null
-        },
-        "graph_path": "data/arch/2607.27308.json",
-        "hf_repo": "Zyphra/ZUNA1.1",
-        "skip_reason": null,
-        "status": "ok"
-      },
       "arxiv_id": "2607.27308v1",
       "arxiv_id_base": "2607.27308",
       "authors": [
@@ -1424,59 +1223,8 @@
         "pdf": "https://arxiv.org/pdf/2607.27913v1"
       },
       "published_date": "2026-07-30",
-      "summary": {
-        "arxiv_id_base": "2607.27913",
-        "categories": [
-          "cs.LG"
-        ],
-        "data_scale": {
-          "channels": null,
-          "datasets": [],
-          "eeg_hours": null,
-          "subjects": null
-        },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
-        "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
-        },
-        "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
-        ],
-        "limitations": [
-          "unknown",
-          "summary_json_error"
-        ],
-        "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
-        },
-        "notes": "{\"chars\": 26622, \"error\": null, \"pages\": 11, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8012;max_tokens=8000;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
-        "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
-        },
-        "paper_type": "other",
-        "published_date": "2026-07-30",
-        "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
-        },
-        "title": "S-CEReBrO: Breaking the Memory Barrier in Continuous EEG Monitoring",
-        "unique_contribution": "unknown",
-        "used_fulltext": true
-      },
-      "summary_failed_reason": null,
+      "summary": null,
+      "summary_failed_reason": "llm_invalid_json",
       "title": "S-CEReBrO: Breaking the Memory Barrier in Continuous EEG Monitoring",
       "triage": {
         "confidence": 1.0,
@@ -1493,7 +1241,7 @@
   "stats": {
     "accepted": 15,
     "candidates": 33,
-    "summarized": 15
+    "summarized": 10
   },
   "top_picks": [
     "2607.27308",

@@ -24,8 +24,79 @@
         "pdf": "https://arxiv.org/pdf/2401.05446v1"
       },
       "published_date": "2024-01-09",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2401.05446",
+        "categories": [
+          "eess.SP",
+          "cs.AI",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Various EEG benchmarks reviewed"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper provides a comprehensive review of self-supervised learning (SSL) applied to temporal EEG signals to address the scarcity and inconsistency of labeled data. It establishes a taxonomy categorizing SSL methods into predictive-based, generative-based, contrastive-based, and graph-based approaches. The survey further investigates the adaptation of these SSL frameworks to various downstream EEG tasks and discusses future research directions.",
+        "evaluation": {
+          "benchmarks": [
+            "Various public EEG datasets"
+          ],
+          "headline_results": [
+            "SSL improves performance in low-label regimes across multiple EEG tasks."
+          ],
+          "tasks": [
+            "epilepsy recognition",
+            "emotion recognition",
+            "sleep research",
+            "brain-computer interfaces"
+          ]
+        },
+        "key_points": [
+          "Survey paper: A systematic review of self-supervised learning (SSL) for EEG signals, focusing on representation learning to overcome label scarcity.",
+          "Categorizes EEG-SSL methods into four main classes: predictive-based, generative-based, contrastive-based, and graph-based.",
+          "Analyzes the transition from pretext task pre-training to downstream task fine-tuning across various EEG benchmarks."
+        ],
+        "limitations": [
+          "Focuses primarily on temporal EEG signals.",
+          "Does not propose a new unified benchmark for comparing all reviewed SSL methods."
+        ],
+        "method": {
+          "architecture": "Reviews various architectures including CNNs, RNNs, and Transformers.",
+          "finetuning": "Analyzes adaptation to downstream EEG tasks.",
+          "objective": "Reviews predictive, generative, contrastive, and graph-based SSL objectives.",
+          "pretraining": "Discusses pre-train, joint-train, and unsupervised-train paradigms."
+        },
+        "notes": "{\"chars\": 147135, \"error\": null, \"pages\": 35, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7871",
+        "one_liner": "A systematic survey of self-supervised learning (SSL) frameworks for EEG signal representation and their application to downstream tasks.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "survey",
+        "published_date": "2024-01-09",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "survey"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Self-supervised Learning for Electroencephalogram: A Systematic Survey",
+        "unique_contribution": "Provides a systematic taxonomy and comprehensive review of self-supervised learning frameworks specifically tailored for EEG signal representation.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "Self-supervised Learning for Electroencephalogram: A Systematic Survey",
       "triage": {
         "confidence": 0.9,
@@ -158,9 +229,10 @@
   "stats": {
     "accepted": 2,
     "candidates": 12,
-    "summarized": 1
+    "summarized": 2
   },
   "top_picks": [
-    "2401.10278"
+    "2401.10278",
+    "2401.05446"
   ]
 }

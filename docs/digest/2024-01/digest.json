@@ -7,14 +7,21 @@
         "2401.10278"
       ],
       "title": "new_model"
+    },
+    {
+      "paper_ids": [
+        "2401.05446"
+      ],
+      "title": "survey"
     }
   ],
   "stats": {
     "accepted": 2,
     "candidates": 12,
-    "summarized": 1
+    "summarized": 2
   },
   "top_picks": [
-    "2401.10278"
+    "2401.10278",
+    "2401.05446"
   ]
 }
