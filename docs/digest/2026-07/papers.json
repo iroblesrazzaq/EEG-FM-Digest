@@ -124,8 +124,85 @@
         "pdf": "https://arxiv.org/pdf/2607.07720v2"
       },
       "published_date": "2026-07-04",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2607.07720",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 5.0,
+          "datasets": [
+            "SHHS",
+            "WSC",
+            "MESA"
+          ],
+          "eeg_hours": 100000.0,
+          "subjects": null
+        },
+        "detailed_summary": "Omni-Sleep proposes a structure-aware representation learning framework that distinguishes between intra-system consistency (within CNS/ANS) and inter-system synchronization (between CNS and ANS). Unlike prior flat-fusion models, it combines these contrastive objectives with long-horizon latent masked modeling to capture both micro-scale morphology and macro-scale sleep dynamics. Pre-trained on over 100,000 hours of multimodal PSG data, it demonstrates superior performance in sleep staging and multi-disease classification, particularly under label scarcity and missing modality conditions.",
+        "evaluation": {
+          "benchmarks": [
+            "CinC 2018",
+            "ISRUC-Sleep",
+            "SHHS1"
+          ],
+          "headline_results": [
+            "Outperforms SleepFM and SleepGPT in accuracy, F1, and AUROC across multiple datasets.",
+            "Demonstrates robustness to missing modalities and superior performance in few-shot scenarios."
+          ],
+          "tasks": [
+            "Sleep staging",
+            "Multi-disease classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: Omni-Sleep utilizes a CNS/ANS physiological prior to learn structured representations from multimodal PSG signals.",
+          "Employs a hierarchical pretraining strategy combining intra- and inter-system contrastive learning with long-horizon latent prediction.",
+          "Achieves state-of-the-art results in OOD sleep staging and multi-disease classification, showing high robustness to missing sensors."
+        ],
+        "limitations": [
+          "Reliance on a predefined CNS/ANS physiological partition as a prior.",
+          "Requirement for large-scale multimodal PSG data for effective pretraining."
+        ],
+        "method": {
+          "architecture": "1D convolutional patch encoder followed by a RoFormer sequence encoder and MLP projection head.",
+          "finetuning": "Evaluated using both linear probing (frozen backbone) and full fine-tuning.",
+          "objective": "Hierarchical contrastive learning (intra-system and inter-system) combined with latent-space masked temporal modeling.",
+          "pretraining": "Two-stage process: first contrastive learning for system-level consistency, then joint contrastive and masked prediction for temporal dynamics."
+        },
+        "notes": "{\"chars\": 30337, \"error\": null, \"pages\": 12, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7993",
+        "one_liner": "A multimodal sleep foundation model using CNS/ANS physiological priors and hierarchical contrastive learning to improve robustness and generalization.",
+        "open_source": {
+          "code_url": "https://github.com/AutoBrain-sleep/OmniSleep",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-07-04",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive",
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Omni-Sleep: A Sleep Foundation Model via Hierarchical Contrastive Learning of CNS-ANS Dynamics",
+        "unique_contribution": "Introduces a sleep foundation model that leverages the physiological partition of the central and autonomic nervous systems as a prior for hierarchical contrastive learning.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "Omni-Sleep: A Sleep Foundation Model via Hierarchical Contrastive Learning of CNS-ANS Dynamics",
       "triage": {
         "confidence": 1.0,
@@ -730,8 +807,94 @@
         "pdf": "https://arxiv.org/pdf/2607.24834v1"
       },
       "published_date": "2026-07-23",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2607.24834",
+        "categories": [
+          "q-bio.NC",
+          "cs.AI",
+          "cs.ET",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 19.0,
+          "datasets": [
+            "CAUEEG",
+            "BrainLat",
+            "ds004504",
+            "ASZED-153"
+          ],
+          "eeg_hours": 60000.0,
+          "subjects": 1476.0
+        },
+        "detailed_summary": "The paper investigates whether EEG foundation models (FMs) preserve long-range temporal correlations (LRTC) of the alpha-band envelope, quantified by the detrended-fluctuation-analysis (DFA) exponent. By probing five models (REVE, LaBraM, BENDR, CBraMod, BIOT), the authors find a spectral-temporal dissociation: spectral-input models capture the aperiodic 1/f slope but not LRTC, while raw-waveform models capture neither. The study demonstrates that frozen FM embeddings are dominated by recording-site leakage and fail in zero-shot cross-population transfer, whereas the discarded LRTC feature is site-robust and transfers more effectively.",
+        "evaluation": {
+          "benchmarks": [
+            "CAUEEG",
+            "BrainLat",
+            "ds004504",
+            "ASZED-153"
+          ],
+          "headline_results": [
+            "R^2 for DFA recovery was near zero for all models",
+            "Recording-site decoding accuracy reached 0.98-1.00",
+            "Zero-shot cross-population transfer of embeddings collapsed to chance"
+          ],
+          "tasks": [
+            "DFA exponent recovery",
+            "1/f slope recovery",
+            "Cross-population transfer",
+            "Recording-site decoding"
+          ]
+        },
+        "key_points": [
+          "Benchmark study of EEG foundation models: reveals that current FMs are blind to long-range temporal correlations (LRTC) despite capturing static spectral properties in some architectures.",
+          "Demonstrates a spectral-temporal dissociation where spectral-input models recover the 1/f slope but not the DFA exponent, while raw-waveform models fail at both.",
+          "Shows that frozen FM embeddings are heavily dominated by recording-site identity (0.98-1.00 accuracy), whereas the site-robust LRTC feature is discarded."
+        ],
+        "limitations": [
+          "Cross-population transfer results for the DFA exponent were directionally consistent but underpowered for family-wise significance.",
+          "The BrainLat cohort required a shorter DFA scale range due to recording length, introducing filter-induced autocorrelation.",
+          "The study focuses on the alpha-band envelope, which may not represent all forms of LRTC in EEG.",
+          "The analysis of raw-waveform models was descriptive due to co-varying design axes."
+        ],
+        "method": {
+          "architecture": "Probing frozen embeddings of five FMs (REVE, LaBraM, BENDR, CBraMod, BIOT) using ridge, gradient-boosting, and random-forest regressors.",
+          "finetuning": "Frozen embedding probing with linear and non-linear regressors.",
+          "objective": "Recovery of the DFA exponent and 1/f slope from frozen embeddings.",
+          "pretraining": "Various SSL objectives including masked reconstruction and contrastive learning."
+        },
+        "notes": "{\"chars\": 68414, \"error\": null, \"pages\": 21, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8012;max_tokens=8000",
+        "one_liner": "An audit of five EEG foundation models revealing their inability to capture long-range temporal correlations, contributing to poor cross-population generalization.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-07-23",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Foundation Models for EEG Are Blind to Long-Range Temporal Correlations: A Spectral-Temporal Dissociation Behind Their Cross-Population Fragility",
+        "unique_contribution": "Identifies a mechanistic failure in EEG-FM pretraining objectives to encode long-range temporal correlations, explaining a gap between FM embeddings and site-robust biomarkers.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "Foundation Models for EEG Are Blind to Long-Range Temporal Correlations: A Spectral-Temporal Dissociation Behind Their Cross-Population Fragility",
       "triage": {
         "confidence": 1.0,
@@ -867,8 +1030,82 @@
         "pdf": "https://arxiv.org/pdf/2607.23554v1"
       },
       "published_date": "2026-07-26",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2607.23554",
+        "categories": [
+          "cs.LG",
+          "cs.AI",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": 8.0,
+          "datasets": [
+            "Neonatal EEG/HRV dataset"
+          ],
+          "eeg_hours": 6030.0,
+          "subjects": 181.0
+        },
+        "detailed_summary": "The paper proposes MAEConformer, a self-supervised framework that integrates the Conformer architecture with a Masked Autoencoder (MAE) to learn representations from unlabelled EEG and HRV signals. It introduces a multi-resolution short-time Fourier transform (MR-STFT) loss to complement the reconstruction objective, enabling the model to capture both temporal and spectral characteristics across multiple scales. The model was pretrained on 6,030 hours of EEG and 4,868 hours of HRV data, demonstrating strong transferability in neonatal hypoxic-ischaemic encephalopathy (HIE) severity classification.",
+        "evaluation": {
+          "benchmarks": [
+            "Internal neonatal HIE dataset"
+          ],
+          "headline_results": [
+            "EEG binary classification AUC: 97.19%",
+            "EEG four-class classification AUC: 96.56%",
+            "HRV binary classification AUC: 82.42%"
+          ],
+          "tasks": [
+            "HIE severity classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: MAEConformer uses a hybrid Conformer architecture to learn robust representations from large-scale unlabelled EEG and HRV data.",
+          "Introduces a frequency-aware MR-STFT loss to improve spectral reconstruction fidelity across multiple temporal scales.",
+          "Achieves high performance in neonatal HIE severity classification, with a test AUC of 97.19% for binary EEG-based tasks."
+        ],
+        "limitations": [
+          "Focuses specifically on neonatal HIE, which may limit generalizability to other age groups or pathologies.",
+          "Relies on 5-minute windowing of one-hour epochs, potentially missing very long-term dependencies.",
+          "Downstream evaluation is limited to HIE severity classification."
+        ],
+        "method": {
+          "architecture": "Conformer-based Masked Autoencoder (MAE) using a hybrid CNN-Transformer encoder and a lightweight decoder.",
+          "finetuning": "Linear probing and full finetuning for HIE severity classification (binary and four-class).",
+          "objective": "Combination of time-domain reconstruction loss and multi-resolution short-time Fourier transform (MR-STFT) loss.",
+          "pretraining": "Self-supervised pretraining on 6,030 hours of unlabelled EEG and 4,868 hours of unlabelled HRV recordings."
+        },
+        "notes": "{\"chars\": 96099, \"error\": null, \"pages\": 25, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7967",
+        "one_liner": "A self-supervised MAE framework using a Conformer backbone and multi-resolution spectral loss for EEG and HRV representation learning.",
+        "open_source": {
+          "code_url": "https://github.com/syu-kylin/MAEConformer",
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-07-26",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Neonatal Hypoxic-ischaemic Encephalopathy Classification from the EEG and HRV Signals Using a Conformer based Masked Autoencoder",
+        "unique_contribution": "Combines a Conformer backbone with a Masked Autoencoder and a multi-resolution STFT loss to jointly capture local and global temporal-spectral features in physiological signals.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "Neonatal Hypoxic-ischaemic Encephalopathy Classification from the EEG and HRV Signals Using a Conformer based Masked Autoencoder",
       "triage": {
         "confidence": 0.9,
@@ -1223,8 +1460,81 @@
         "pdf": "https://arxiv.org/pdf/2607.27913v1"
       },
       "published_date": "2026-07-30",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2607.27913",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 62.0,
+          "datasets": [],
+          "eeg_hours": 25000.0,
+          "subjects": 12000.0
+        },
+        "detailed_summary": "S-CEReBrO introduces a Windowed Alternating Attention mechanism that factorizes spatiotemporal attention into fixed-size windows, eliminating the memory overflow typically associated with global attention in Transformers. Unlike prior work, it maintains a constant KV cache memory relative to signal duration, allowing it to process signals up to 14 hours long. The model was pre-trained on over 25,000 hours of EEG data and achieves state-of-the-art results on 7 of 11 downstream tasks while using significantly fewer parameters than existing foundation models.",
+        "evaluation": {
+          "benchmarks": [
+            "Clinical Neurology",
+            "BCI"
+          ],
+          "headline_results": [
+            "SoTA on 7 of 11 tasks",
+            "2.1x throughput increase over linear attention",
+            "Constant memory footprint relative to signal length"
+          ],
+          "tasks": [
+            "seizure detection",
+            "sleep staging",
+            "motor imagery",
+            "state monitoring"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: S-CEReBrO utilizes windowed alternating attention to break the memory barrier in continuous EEG monitoring.",
+          "Achieves constant resident memory (O(1) KV cache), enabling the processing of signals 100x longer than full self-attention.",
+          "Outperforms existing foundation models on 7 of 11 benchmarks with up to 60% fewer parameters."
+        ],
+        "limitations": [
+          "Lack of existing long-form benchmarks for hour-scale streaming evaluation.",
+          "Limited sample efficiency when adapting to exceptionally small datasets."
+        ],
+        "method": {
+          "architecture": "Transformer with Windowed Alternating Attention (WSA and WTA blocks)",
+          "finetuning": "Linear probing and full fine-tuning on 11 downstream tasks",
+          "objective": "Masked autoencoding",
+          "pretraining": "Pre-trained on 25k+ hours of EEG data"
+        },
+        "notes": "{\"chars\": 26622, \"error\": null, \"pages\": 11, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8012;max_tokens=8000",
+        "one_liner": "A streaming EEG foundation model using windowed alternating attention to achieve constant memory footprint for continuous monitoring.",
+        "open_source": {
+          "code_url": "available",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-07-30",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "S-CEReBrO: Breaking the Memory Barrier in Continuous EEG Monitoring",
+        "unique_contribution": "Introduces Windowed Alternating Attention to enable constant KV cache memory and linear complexity for continuous, long-term EEG monitoring.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "S-CEReBrO: Breaking the Memory Barrier in Continuous EEG Monitoring",
       "triage": {
         "confidence": 1.0,
@@ -1241,13 +1551,13 @@
   "stats": {
     "accepted": 15,
     "candidates": 33,
-    "summarized": 10
+    "summarized": 14
   },
   "top_picks": [
+    "2607.27913",
     "2607.27308",
     "2607.27268",
-    "2607.24519",
-    "2607.21402",
-    "2607.11578"
+    "2607.24834",
+    "2607.24519"
   ]
 }

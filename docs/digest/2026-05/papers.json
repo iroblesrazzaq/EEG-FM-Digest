@@ -1944,8 +1944,80 @@
         "pdf": "https://arxiv.org/pdf/2605.24921v1"
       },
       "published_date": "2026-05-24",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2605.24921",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "71 public corpora"
+          ],
+          "eeg_hours": 357000.0,
+          "subjects": 9200.0
+        },
+        "detailed_summary": "BandVQ decomposes EEG signals into five canonical frequency bands, each processed by an independent VQ-VAE tokenizer to generate discrete codes. A shared Transformer encoder is then pretrained on these codes using a masked prediction objective, incorporating quantized log-power and metadata tokens to handle signal heterogeneity. The model was pretrained on 71 public corpora and demonstrated superior transfer performance on three cognitive tasks and competitive results on three motor imagery tasks.",
+        "evaluation": {
+          "benchmarks": [
+            "6 subject-independent classification datasets"
+          ],
+          "headline_results": [
+            "Highest reported results on 3 cognitive tasks",
+            "Competitive performance on 3 motor imagery tasks"
+          ],
+          "tasks": [
+            "Cognitive task classification",
+            "Motor imagery classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: BandVQ utilizes five independent VQ-VAE tokenizers for different frequency bands to avoid the information loss typical of broadband quantization.",
+          "Incorporates region-based masking to prevent spatial shortcuts and metadata prefix tokens to condition the model on recording context and task family.",
+          "Pretrained on over 357,000 single-channel hours from 9,200+ subjects, achieving state-of-the-art results on several cognitive classification tasks."
+        ],
+        "limitations": [
+          "Comparison with baselines is not fully controlled as BandVQ is fine-tuned while some baselines used fixed-feature SVMs.",
+          "Dependence on the availability of metadata (reference, task family, phase) for optimal performance.",
+          "The model's performance on motor imagery tasks is competitive but not superior to all existing baselines."
+        ],
+        "method": {
+          "architecture": "Two-stage pipeline consisting of five band-specific VQ-VAE tokenizers followed by a shared Transformer encoder with band-specific prediction heads.",
+          "finetuning": "Joint fine-tuning of the Transformer encoder and a task-specific linear classification head.",
+          "objective": "Masked code prediction using a cross-entropy loss on the discrete VQ indices.",
+          "pretraining": "Offline training of VQ-VAEs followed by Transformer pretraining on a large-scale multi-dataset corpus using region-based masking."
+        },
+        "notes": "{\"chars\": 38046, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7956",
+        "one_liner": "A band-wise vector-quantized EEG foundation model that uses frequency-specific tokenizers and metadata conditioning to learn transferable representations.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-05-24",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "discrete-code-prediction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "BandVQ: Band-Wise Vector-Quantized EEG Foundation Model",
+        "unique_contribution": "Introduces a band-wise VQ-VAE tokenization strategy combined with region-based masking and metadata prefix tokens to preserve frequency-specific activity and recording context.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "BandVQ: Band-Wise Vector-Quantized EEG Foundation Model",
       "triage": {
         "confidence": 1.0,
@@ -2416,8 +2488,86 @@
         "pdf": "https://arxiv.org/pdf/2605.29754v1"
       },
       "published_date": "2026-05-28",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2605.29754",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 128.0,
+          "datasets": [
+            "HBN-EEG",
+            "PhysioNet-MI",
+            "FACED"
+          ],
+          "eeg_hours": null,
+          "subjects": 3000.0
+        },
+        "detailed_summary": "The paper evaluates five positional encoding (PE) strategies—including a newly proposed Spherical Positional Encoding (SPE)—within the CBraMod transformer backbone. Unlike previous works that rely on learned or conditional encodings, SPE leverages the physical azimuth and inclination angles of electrodes to incorporate scalp geometry as a parameter-free inductive bias. The study demonstrates through linear probing and fine-tuning on motor imagery and emotion recognition tasks that the optimal PE strategy is task-dependent, with SPE excelling in motor imagery while Asymmetric Conditional Positional Encoding (ACPE) shows broader consistency.",
+        "evaluation": {
+          "benchmarks": [
+            "PhysioNet-MI",
+            "FACED"
+          ],
+          "headline_results": [
+            "SPE achieved the highest linear probe accuracy for motor imagery.",
+            "ACPE demonstrated the most consistent performance across different tasks.",
+            "NoPE (no positional encoding) resulted in the highest pretraining loss, confirming the necessity of spatial information."
+          ],
+          "tasks": [
+            "Motor Imagery Classification",
+            "Emotion Recognition"
+          ]
+        },
+        "key_points": [
+          "Benchmark study: Evaluates five positional encoding strategies within the CBraMod backbone to determine how spatial information affects EEG representation learning.",
+          "Proposed SPE method: Introduces Spherical Positional Encoding using azimuth and inclination angles to provide a parameter-free, geometry-aware inductive bias.",
+          "Task-dependent results: Finds that no universal PE strategy exists, as SPE performs best for motor imagery while ACPE and learnable PE are more effective for emotion recognition."
+        ],
+        "limitations": [
+          "Performance differences between PE strategies are relatively small across most tasks.",
+          "Optimal PE strategy is task-dependent, meaning no universal solution was found.",
+          "ACPE is sensitive to channel ordering and may degrade if channels are permuted.",
+          "SPE exhibited training instability when paired with deeper classification heads.",
+          "Learnable PE requires re-initialization when transferring across different electrode montages."
+        ],
+        "method": {
+          "architecture": "CBraMod criss-cross transformer",
+          "finetuning": "Linear probing and full fine-tuning on downstream motor imagery and emotion recognition tasks.",
+          "objective": "Masked patch reconstruction (MSE)",
+          "pretraining": "Self-supervised pretraining on HBN-EEG dataset using five different PE variants (ACPE, SPE, SPE+Proj, Learnable, NoPE)."
+        },
+        "notes": "{\"chars\": 29966, \"error\": null, \"pages\": 6, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7919",
+        "one_liner": "A systematic benchmark of five positional encoding strategies for transformer-based EEG foundation models, introducing a new spherical geometry-based approach.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-05-28",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Benchmarking Positional Encoding Strategies for Transformer-Based EEG Foundation Models",
+        "unique_contribution": "Introduces Spherical Positional Encoding (SPE) to incorporate scalp geometry and provides a controlled benchmark of positional encoding strategies for EEG foundation models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "Benchmarking Positional Encoding Strategies for Transformer-Based EEG Foundation Models",
       "triage": {
         "confidence": 1.0,
@@ -2540,13 +2690,13 @@
   "stats": {
     "accepted": 24,
     "candidates": 52,
-    "summarized": 22
+    "summarized": 24
   },
   "top_picks": [
     "2606.00815",
+    "2605.29754",
     "2605.28563",
     "2605.26910",
-    "2605.26434",
-    "2605.18298"
+    "2605.26434"
   ]
 }

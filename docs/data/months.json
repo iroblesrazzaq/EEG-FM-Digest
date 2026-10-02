@@ -36,11 +36,11 @@
       "json_path": "digest/2026-07/papers.json",
       "month": "2026-07",
       "month_label": "July 2026",
-      "month_rev": "f15a3ab58db464cc",
+      "month_rev": "3ef659330e9297f7",
       "stats": {
         "accepted": 15,
         "candidates": 33,
-        "summarized": 10
+        "summarized": 14
       }
     },
     {
@@ -64,11 +64,11 @@
       "json_path": "digest/2026-05/papers.json",
       "month": "2026-05",
       "month_label": "May 2026",
-      "month_rev": "c76afda0bbdcd8a0",
+      "month_rev": "d0ecba787c986bbe",
       "stats": {
         "accepted": 24,
         "candidates": 52,
-        "summarized": 22
+        "summarized": 24
       }
     },
     {
