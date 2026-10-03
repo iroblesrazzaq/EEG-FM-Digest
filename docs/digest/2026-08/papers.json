@@ -37,45 +37,59 @@
           "eeg_hours": null,
           "subjects": null
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper identifies a persistent low-frequency bias in EEG foundation models caused by the 1/f spectral structure of EEG and the spectral bias of neural networks, which is further exacerbated by l2 reconstruction losses. To correct this, the authors propose FAME, a framework that reconstructs independently standardized time-frequency activity across predefined EEG bands with equal weighting. Evaluation on 41 tasks in OmniEEG-Bench shows that FAME achieves state-of-the-art performance on 24 tasks by learning more spectrally balanced representations.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "OmniEEG-Bench"
+          ],
+          "headline_results": [
+            "Achieved SOTA on 24 out of 41 tasks"
+          ],
+          "tasks": [
+            "Downstream EEG classification tasks"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: FAME addresses the systemic low-frequency bias in EEG representations by implementing frequency-balanced masked autoencoding.",
+          "Method novelty: The framework standardizes reconstruction targets within predefined spectral bands (delta, theta, alpha, beta, gamma) and assigns equal weights to their losses.",
+          "Concrete evidence: FAME achieved state-of-the-art results on 24 out of 41 downstream tasks in the OmniEEG-Bench benchmark."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "The effectiveness of the model depends on the choice of the predefined frequency partition.",
+          "The relationship between frequency balance and downstream performance is task-dependent."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "Masked autoencoder using temporal patching",
+          "finetuning": "Linear probing and full finetuning on 41 downstream tasks",
+          "objective": "Frequency-balanced reconstruction of log-power time-frequency activity",
+          "pretraining": "Pretraining on large-scale EEG data using frequency-balanced masked autoencoding"
         },
-        "notes": "{\"chars\": 95617, \"error\": null, \"pages\": 20, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7992;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 95617, \"error\": null, \"pages\": 20, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7992",
+        "one_liner": "Introduces FAME, a frequency-balanced masked autoencoder that mitigates the inherent low-frequency bias in EEG foundation models by standardizing and equally weighting reconstruction losses across spectral bands.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2026-08-03",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
           "topology": []
         },
         "title": "Understanding and Correcting Low-Frequency Bias in EEG Foundation Model",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Proposes a frequency-balanced masked autoencoding objective that decouples supervision from intrinsic spectral power by independently standardizing and equally weighting reconstruction losses across EEG frequency bands.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -526,6 +540,13 @@
       }
     },
     {
+      "architecture": {
+        "fact_sheet": null,
+        "hf_repo": null,
+        "hfviewer_url": null,
+        "skip_reason": "not_huggingface",
+        "status": "skipped"
+      },
       "arxiv_id": "2608.13072v1",
       "arxiv_id_base": "2608.13072",
       "authors": [
@@ -552,50 +573,75 @@
           "cs.AI"
         ],
         "data_scale": {
-          "channels": null,
-          "datasets": [],
+          "channels": 65.0,
+          "datasets": [
+            "18 datasets"
+          ],
           "eeg_hours": null,
           "subjects": null
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "EEG-PRIME proposes a two-stage framework consisting of masked pretraining with frequency-cutoff augmentation and prototype-aligned instruction tuning. It introduces a tri-level conditioning mechanism—incorporating task-semantic prompts, dataset-specific embeddings, and subject-invariance constraints—that modulates a Q-Former via Layer-wise Query Modulation (LQM). The model replaces task-specific heads with a unified prototype-based classifier using frozen text embeddings, demonstrating strong cross-subject and zero-shot transfer capabilities across 18 diverse BCI datasets.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "Cross-subject decoding",
+            "Zero-shot transfer"
+          ],
+          "headline_results": [
+            "Outperformed SOTA baselines and prior EEG-FMs in cross-subject settings across 16 datasets.",
+            "Zero-shot accuracy on held-out datasets was comparable to within-session calibration."
+          ],
+          "tasks": [
+            "Motor Imagery",
+            "Emotion Recognition",
+            "ADHD Detection",
+            "Covert Speech",
+            "Mental Workload"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "New EEG foundation model: EEG-PRIME uses a two-stage approach combining masked reconstruction pretraining with instruction tuning for multi-task BCI decoding.",
+          "Employs Layer-wise Query Modulation (LQM) to inject task and dataset conditions, alongside adversarial training with a gradient reversal layer to ensure subject-invariant representations.",
+          "Achieves competitive zero-shot transfer and cross-subject performance across 18 datasets spanning five paradigms, including motor imagery and emotion recognition."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Dependence on the quality of frozen SBERT embeddings for task and prototype definition.",
+          "Potential sensitivity to the choice of template channels (C*=65) during unification.",
+          "Computational overhead of the Q-Former and LQM during the instruction tuning stage."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "CNN-tokenizer, Transformer, Q-Former with Layer-wise Query Modulation (LQM), and a prototype-based unified head.",
+          "finetuning": "Instruction tuning with tri-level conditioning (task, dataset, subject) and adversarial training for subject invariance.",
+          "objective": "Stage 1: Masked reconstruction. Stage 2: Prototype-aligned instruction tuning using cosine similarity to frozen text embeddings.",
+          "pretraining": "Masked reconstruction with frequency-cutoff spectral augmentation."
         },
-        "notes": "{\"chars\": 76656, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7984;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 76656, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7984",
+        "one_liner": "A two-stage EEG foundation model utilizing multi-level conditioning and prototype-aligned instruction tuning for cross-dataset multi-task decoding.",
         "open_source": {
-          "code_url": null,
-          "license": null,
-          "weights_url": null
+          "code_url": "https://github.com/ZhangShuailei/EEG-PRIME",
+          "license": "unknown",
+          "weights_url": "https://github.com/ZhangShuailei/EEG-PRIME"
         },
-        "paper_type": "other",
+        "paper_type": "new_model",
         "published_date": "2026-08-13",
         "tags": {
-          "backbone": [],
-          "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
         },
         "title": "EEG-PRIME: Prototype-Aligned Representation Learning with Multi-Level Conditioning for EEG Decoding",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Introduces a tri-level conditioning framework and prototype-aligned classification to enable unified, subject-invariant EEG decoding across heterogeneous label spaces without task-specific heads.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -1067,50 +1113,70 @@
           "q-bio.NC"
         ],
         "data_scale": {
-          "channels": null,
-          "datasets": [],
+          "channels": 30.0,
+          "datasets": [
+            "Alzheimer's Disease EEG dataset"
+          ],
           "eeg_hours": null,
-          "subjects": null
+          "subjects": 206.0
         },
-        "detailed_summary": "Unable to produce a reliable multi-sentence summary due to JSON validation failure.",
+        "detailed_summary": "The paper proposes a diagnostic pipeline for Alzheimer's Disease (AD) by leveraging the Large Brain Model (LaBraM), a foundation model pretrained on over 2,500 hours of EEG data. The framework extracts high-dimensional latent embeddings from 8-second EEG segments and employs a non-linear Random Forest classifier to distinguish dementia patients from healthy controls. The method achieves an ROC-AUC of 89.36%, significantly outperforming traditional spectral baselines such as band-power and FOOOF parameterization.",
         "evaluation": {
-          "benchmarks": [],
-          "headline_results": [],
-          "tasks": []
+          "benchmarks": [
+            "Band-power",
+            "FOOOF (Fitting Oscillations & One-Over-F)"
+          ],
+          "headline_results": [
+            "ROC-AUC: 89.36% ± 3.49%",
+            "PR AUC: 81.45% ± 4.43%",
+            "Balanced Accuracy: 82.44% ± 4.34%"
+          ],
+          "tasks": [
+            "Dementia vs Healthy Control classification"
+          ]
         },
         "key_points": [
-          "unknown",
-          "unknown",
-          "unknown"
+          "Application of an EEG foundation model: Utilizes LaBraM embeddings and a Random Forest classifier to diagnose Alzheimer's Disease.",
+          "Superior performance: Achieves 89.36% ROC-AUC using only 8-second segments, surpassing traditional band-power and FOOOF spectral features.",
+          "Clinical alignment: Occlusion analysis confirms the model captures validated biomarkers like Alpha and Theta rhythm degradation."
         ],
         "limitations": [
-          "unknown",
-          "summary_json_error"
+          "Small sample size (N=206) relative to the high dimensionality of the latent embeddings.",
+          "Reliance on a specific pretrained foundation model (LaBraM).",
+          "Use of short 8-second segments may not capture all long-term EEG dynamics."
         ],
         "method": {
-          "architecture": null,
-          "finetuning": null,
-          "objective": null,
-          "pretraining": null
+          "architecture": "LaBraM Transformer Encoder -> PCA -> Random Forest classifier",
+          "finetuning": "Frozen embeddings used as features for a Random Forest head",
+          "objective": "Binary classification (AD vs Healthy Control)",
+          "pretraining": "LaBraM pretrained on 2,500+ hours of unlabeled EEG data"
         },
-        "notes": "{\"chars\": 34861, \"error\": null, \"pages\": 7, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8015;max_tokens=8000;summary_json_error",
-        "one_liner": "Summary unavailable due to JSON validation failure.",
+        "notes": "{\"chars\": 34861, \"error\": null, \"pages\": 7, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8015;max_tokens=8000",
+        "one_liner": "A diagnostic framework for Alzheimer's Disease that utilizes latent embeddings from the LaBraM foundation model paired with a Random Forest classifier.",
         "open_source": {
           "code_url": null,
           "license": null,
           "weights_url": null
         },
-        "paper_type": "other",
+        "paper_type": "application",
         "published_date": "2026-08-27",
         "tags": {
-          "backbone": [],
+          "backbone": [
+            "transformer"
+          ],
           "objective": [],
-          "paper_type": [],
-          "tokenization": [],
-          "topology": []
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
         },
         "title": "Leveraging a Foundation Model for the EEG-Based Diagnosis of Alzheimer's Disease",
-        "unique_contribution": "unknown",
+        "unique_contribution": "Demonstrates that high-dimensional latent representations from a pretrained EEG foundation model can isolate non-linear biomarkers for Alzheimer's diagnosis where traditional manual spectral feature engineering fails.",
         "used_fulltext": true
       },
       "summary_failed_reason": null,
@@ -1132,10 +1198,10 @@
     "summarized": 11
   },
   "top_picks": [
+    "2608.27719",
     "2608.24727",
     "2608.24597",
     "2608.13676",
-    "2608.11656",
-    "2608.07033"
+    "2608.13072"
   ]
 }

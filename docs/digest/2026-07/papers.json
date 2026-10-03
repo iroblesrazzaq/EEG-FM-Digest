@@ -676,8 +676,78 @@
         "pdf": "https://arxiv.org/pdf/2607.21384v1"
       },
       "published_date": "2026-07-23",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2607.21384",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "CHB-MIT"
+          ],
+          "eeg_hours": null,
+          "subjects": 19.0
+        },
+        "detailed_summary": "The paper proposes a multimodal foundation model that aligns raw EEG signals (via a Mamba-based encoder), time-frequency scalograms (via a ViT-style encoder), and text in a shared embedding space. The model is pretrained using self-supervised techniques including masked modeling, cross-view contrastive alignment, and temporal consistency losses to learn seizure-relevant representations without labels. Evaluation on the CHB-MIT benchmark demonstrates state-of-the-art performance, while a leave-one-subject-out (LOSO) protocol highlights the inherent difficulty of patient-independent seizure detection.",
+        "evaluation": {
+          "benchmarks": [
+            "CHB-MIT"
+          ],
+          "headline_results": [
+            "AUROC 0.874 (single model) and 0.878 (ensemble) on CHB-MIT",
+            "0.558 mean balanced accuracy in Leave-One-Subject-Out (LOSO) evaluation"
+          ],
+          "tasks": [
+            "seizure detection",
+            "seizure localization"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: Integrates Mamba-based raw signal encoding, ViT-style time-frequency encoding, and text encoding into a shared latent space.",
+          "Self-supervised pretraining: Employs masked modeling and cross-view contrastive alignment to learn representations without labeled data.",
+          "Strong benchmark performance: Achieves state-of-the-art AUROC of 0.878 on the CHB-MIT seizure detection benchmark."
+        ],
+        "limitations": [
+          "Significant performance drop in patient-independent (LOSO) scenarios compared to within-subject splits.",
+          "Difficulty in detecting short, low-amplitude, or focal seizures.",
+          "Susceptibility to false positives from interictal abnormalities and artifacts."
+        ],
+        "method": {
+          "architecture": "Mamba (raw signal), ViT (time-frequency), and a lightweight text encoder",
+          "finetuning": "Fine-tuned on seizure detection benchmarks",
+          "objective": "Masked modeling, cross-view contrastive alignment, and temporal consistency losses",
+          "pretraining": "Self-supervised multimodal alignment in a shared embedding space"
+        },
+        "notes": "{\"chars\": 32677, \"error\": null, \"pages\": 7, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8133;max_tokens=8000",
+        "one_liner": "A multimodal EEG foundation model integrating raw signals, time-frequency data, and text for generalizable seizure detection.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-07-23",
+        "tags": {
+          "backbone": [
+            "mamba-ssm",
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Multimodal Pretraining for Generalizable EEG Representation Learning",
+        "unique_contribution": "Develops a multimodal foundation model that jointly aligns raw EEG, CWT-based time-frequency scalograms, and textual information to improve seizure detection generalizability.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "Multimodal Pretraining for Generalizable EEG Representation Learning",
       "triage": {
         "confidence": 1.0,
@@ -1551,7 +1621,7 @@
   "stats": {
     "accepted": 15,
     "candidates": 33,
-    "summarized": 14
+    "summarized": 15
   },
   "top_picks": [
     "2607.27913",

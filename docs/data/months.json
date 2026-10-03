@@ -8,11 +8,11 @@
       "json_path": "digest/2026-09/papers.json",
       "month": "2026-09",
       "month_label": "September 2026",
-      "month_rev": "14e5aa500532e8cb",
+      "month_rev": "865bf5e5be4f3bbe",
       "stats": {
         "accepted": 21,
         "candidates": 49,
-        "summarized": 18
+        "summarized": 21
       }
     },
     {
@@ -22,7 +22,7 @@
       "json_path": "digest/2026-08/papers.json",
       "month": "2026-08",
       "month_label": "August 2026",
-      "month_rev": "4d3392b46f56cc28",
+      "month_rev": "ed75315c1a8a4f10",
       "stats": {
         "accepted": 11,
         "candidates": 29,
@@ -36,11 +36,11 @@
       "json_path": "digest/2026-07/papers.json",
       "month": "2026-07",
       "month_label": "July 2026",
-      "month_rev": "3ef659330e9297f7",
+      "month_rev": "7352eace1543bc51",
       "stats": {
         "accepted": 15,
         "candidates": 33,
-        "summarized": 14
+        "summarized": 15
       }
     },
     {

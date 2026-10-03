@@ -1220,8 +1220,79 @@
         "pdf": "https://arxiv.org/pdf/2609.23924v1"
       },
       "published_date": "2026-09-20",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2609.23924",
+        "categories": [
+          "cs.LG",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": 22.0,
+          "datasets": [
+            "BCI Competition IV-2a",
+            "BNCI2014-004"
+          ],
+          "eeg_hours": null,
+          "subjects": 9.0
+        },
+        "detailed_summary": "The paper audits LaBraM and CBraMod on motor imagery using a validation-locked protocol to ensure no evaluation labels influence model selection. It finds that supervised models consistently outperform these foundation models on the four-class BCI Competition IV-2a dataset. Furthermore, the authors demonstrate that the impact of input pipelines (broadband vs. narrowband) varies by architecture, suggesting that single-comparator benchmarks may misattribute performance gaps between pretrained and supervised models.",
+        "evaluation": {
+          "benchmarks": [
+            "BCI Competition IV-2a",
+            "BNCI2014-004"
+          ],
+          "headline_results": [
+            "Supervised models outperform foundation models on BCI IV-2a.",
+            "CBraMod is competitive with supervised models on BNCI2014-004."
+          ],
+          "tasks": [
+            "4-class motor imagery",
+            "2-class motor imagery"
+          ]
+        },
+        "key_points": [
+          "Benchmark of EEG foundation models: Audits LaBraM and CBraMod on motor imagery, finding they are outperformed by supervised baselines on BCI IV-2a.",
+          "Methodological insight: Shows that switching to broadband input improves some supervised architectures (ATCNet) while harming others (EEG Conformer).",
+          "Calibration finding: Demonstrates that temperature scaling can align foundation model calibration (ECE) with supervised models despite lower accuracy."
+        ],
+        "limitations": [
+          "Evaluated only two foundation models out of four attempted.",
+          "Only two motor-imagery datasets used.",
+          "BNCI2014-004 is not a controlled replication of BCI IV-2a due to different electrode counts.",
+          "Subject-level inference limited to nine participants.",
+          "Matched-input analysis re-tunes hyperparameters, capturing pipeline plus tuning effects."
+        ],
+        "method": {
+          "architecture": "Audits LaBraM and CBraMod (Transformers) against supervised baselines (ShallowConvNet, ATCNet, EEG Conformer).",
+          "finetuning": "Validation-locked protocol for learning rate and freeze-depth selection.",
+          "objective": "Frozen probing and fine-tuning for motor imagery classification.",
+          "pretraining": "Utilizes existing pretraining of LaBraM and CBraMod."
+        },
+        "notes": "{\"chars\": 25572, \"error\": null, \"pages\": 5, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7941",
+        "one_liner": "An audit of EEG foundation models on motor imagery tasks using a leakage-controlled protocol and matched-input analysis.",
+        "open_source": {
+          "code_url": "provided",
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-09-20",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Matched-Input Estimates Differ in Sign Across Architectures: Auditing EEG Foundation Models on Motor Imagery",
+        "unique_contribution": "Introduces a validation-locked evaluation protocol and demonstrates that the effect of input pipelines on performance is architecture-dependent.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "Matched-Input Estimates Differ in Sign Across Architectures: Auditing EEG Foundation Models on Motor Imagery",
       "triage": {
         "confidence": 1.0,
@@ -1362,8 +1433,75 @@
         "pdf": "https://arxiv.org/pdf/2609.32743v1"
       },
       "published_date": "2026-09-26",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2609.32743",
+        "categories": [
+          "cs.LG",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "23 public datasets"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes EEG-Arena, an open-source evaluation framework designed to systematically assess the transferability and scaling properties of EEG foundation models (FMs). By conducting over 20,000 evaluations across 23 public datasets and 57 tasks, the authors compare 30 FMs against 25 supervised baselines. The results demonstrate that while pretraining generally improves downstream performance and data scaling yields sustained gains, there is no consistent positive relationship between model parameter count and performance.",
+        "evaluation": {
+          "benchmarks": [
+            "EEG-Arena"
+          ],
+          "headline_results": [
+            "FMs generally outperform supervised baselines",
+            "Data scaling provides sustained gains",
+            "No consistent link between parameter count and performance"
+          ],
+          "tasks": [
+            "57 downstream tasks"
+          ]
+        },
+        "key_points": [
+          "Benchmark for EEG foundation models: Introduces EEG-Arena, evaluating 30 FMs and 25 supervised baselines across 57 downstream tasks from 23 datasets.",
+          "Scaling insights: Finds that increasing pretraining data scale provides sustained gains, whereas increasing parameter count does not show a consistent positive relationship with performance.",
+          "Performance benefits: Demonstrates that EEG FMs generally outperform supervised baselines and that channel-flexible architectures offer superior absolute performance."
+        ],
+        "limitations": [
+          "Lack of consistent positive relationship between parameter count and performance in existing FMs",
+          "Dependence on the availability and quality of public EEG datasets",
+          "Variability in EEG recordings across subjects and acquisition systems"
+        ],
+        "method": {
+          "architecture": "EEG-Arena framework",
+          "finetuning": "Evaluation across 57 downstream tasks",
+          "objective": "Standardized benchmarking of 30 FMs and 25 baselines",
+          "pretraining": "Analysis of pretraining data scale and benefits"
+        },
+        "notes": "{\"chars\": 550457, \"error\": null, \"pages\": 91, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8064;max_tokens=8000",
+        "one_liner": "Introduces EEG-Arena, a large-scale open-source benchmark evaluating 30 EEG foundation models and 25 supervised baselines across 57 downstream tasks.",
+        "open_source": {
+          "code_url": "eeg.fm",
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-09-26",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Benchmarking EEG Foundation Models at Scale: Lessons from 20,000 Evaluations",
+        "unique_contribution": "Introduces EEG-Arena, a comprehensive benchmarking infrastructure that isolates the effects of pretraining, model size, and data scale across a vast array of EEG tasks and models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "Benchmarking EEG Foundation Models at Scale: Lessons from 20,000 Evaluations",
       "triage": {
         "confidence": 1.0,
@@ -2038,8 +2176,77 @@
         "pdf": "https://arxiv.org/pdf/2609.36288v1"
       },
       "published_date": "2026-09-28",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2609.36288",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 128.0,
+          "datasets": [
+            "HBN",
+            "Motor Imagery Dataset"
+          ],
+          "eeg_hours": null,
+          "subjects": 152.0
+        },
+        "detailed_summary": "The paper proposes a joint functional and representational framework to evaluate the robustness of four EEG foundation models (SingLEM, CBraMod, LUNA, and REVE) to changes in electrode montages. Unlike previous work focusing primarily on downstream performance, this study dissociates representational similarity from functional stability using linear probes and Centered Kernel Alignment (CKA). Results on resting-state and motor-imagery tasks demonstrate that montage robustness is a joint property of the encoder and its aggregation method, with anatomically aligned ROI pooling significantly outperforming learned global readouts.",
+        "evaluation": {
+          "benchmarks": [
+            "N2M (N-channel to M-channel) linear probes"
+          ],
+          "headline_results": [
+            "ROI pooling is more robust than learned global readouts",
+            "Representational stability does not imply functional stability"
+          ],
+          "tasks": [
+            "Cross-subject resting-state classification",
+            "Within-subject motor-imagery classification"
+          ]
+        },
+        "key_points": [
+          "Benchmark study: Evaluates the impact of electrode montage changes on the representations and predictions of four state-of-the-art EEG foundation models.",
+          "Findings reveal a dissociation between representational similarity and functional stability, meaning stable embeddings do not guarantee stable downstream performance.",
+          "Identifies that ROI-based aggregation is significantly more robust to channel reduction than learned global readouts."
+        ],
+        "limitations": [
+          "Cross-model patterns are consistent with hypotheses but do not identify exact causes.",
+          "Models differ in pretraining data and size, making it hard to isolate the effect of channel-fusion alone.",
+          "Preprocessing was matched to pretraining configurations, which may limit the attribution of differences to architecture."
+        ],
+        "method": {
+          "architecture": "Evaluation of SingLEM, CBraMod, LUNA, and REVE",
+          "finetuning": "Linear probing for downstream classification",
+          "objective": "Robustness analysis via linear probing and CKA",
+          "pretraining": "Existing EEG-FM pretraining"
+        },
+        "notes": "{\"chars\": 52882, \"error\": null, \"pages\": 17, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8036;max_tokens=8000",
+        "one_liner": "A systematic analysis of how electrode montage variations affect the representational stability and downstream performance of EEG foundation models.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-09-28",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Representational and Functional Robustness to Electrode Montages in EEG Foundation Models",
+        "unique_contribution": "Demonstrates that representational stability and functional performance are dissociated in EEG-FMs and that anatomically aligned aggregation is critical for maintaining robustness across different montages.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "Representational and Functional Robustness to Electrode Montages in EEG Foundation Models",
       "triage": {
         "confidence": 1.0,
@@ -2055,13 +2262,13 @@
   "stats": {
     "accepted": 21,
     "candidates": 49,
-    "summarized": 18
+    "summarized": 21
   },
   "top_picks": [
+    "2609.36288",
     "2609.36087",
     "2609.34801",
     "2609.34466",
-    "2609.34091",
-    "2609.33487"
+    "2609.34091"
   ]
 }
