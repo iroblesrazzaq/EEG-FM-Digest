@@ -1,6 +1,20 @@
 {
-  "latest": "2026-09",
+  "latest": "2026-10",
   "months": [
+    {
+      "empty_state": "has_papers",
+      "featured": null,
+      "href": "digest/2026-10/index.html",
+      "json_path": "digest/2026-10/papers.json",
+      "month": "2026-10",
+      "month_label": "October 2026",
+      "month_rev": "83061f93cd82ae15",
+      "stats": {
+        "accepted": 3,
+        "candidates": 7,
+        "summarized": 3
+      }
+    },
     {
       "empty_state": "has_papers",
       "featured": null,

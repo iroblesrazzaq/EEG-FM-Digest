@@ -1,0 +1,342 @@
+{
+  "featured_paper_id": null,
+  "month": "2026-10",
+  "papers": [
+    {
+      "arxiv_id": "2610.01124v1",
+      "arxiv_id_base": "2610.01124",
+      "authors": [
+        "Jiazhen Hong",
+        "Xiaotian Zhou",
+        "Zihao Ding",
+        "Kailong Wang",
+        "Yu Wu"
+      ],
+      "categories": [
+        "cs.AI",
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.01124v1",
+        "pdf": "https://arxiv.org/pdf/2610.01124v1"
+      },
+      "published_date": "2026-10-01",
+      "summary": {
+        "arxiv_id_base": "2610.01124",
+        "categories": [
+          "cs.AI",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Liu2024",
+            "BNCI2014-008",
+            "BNCI2015-003",
+            "Nakanishi2015",
+            "Huebner2017"
+          ],
+          "eeg_hours": null,
+          "subjects": 90.0
+        },
+        "detailed_summary": "The paper proposes CortexBridge, an adapter that maps arbitrary EEG electrode layouts into a shared cortical latent space using electrode and atlas coordinates. Unlike prior coordinate-driven methods that remain in scalp space, CortexBridge uses an anatomically grounded routing mechanism to interface with frozen foundation models. Evaluation on five MOABB datasets across three paradigms shows consistent performance gains for EEGPT, LaBraM, and CBraMod.",
+        "evaluation": {
+          "benchmarks": [
+            "MOABB"
+          ],
+          "headline_results": [
+            "Improved 13/15 evaluations across three foundation models.",
+            "Average gains: EEGPT (0.80%), LaBraM (0.70%), CBraMod (3.26%).",
+            "Maximum gain of 13.02% on SSVEP classification."
+          ],
+          "tasks": [
+            "Motor Imagery",
+            "P300",
+            "SSVEP"
+          ]
+        },
+        "key_points": [
+          "Method for EEG-FM adaptation: Proposes CortexBridge, a lightweight adapter that aligns arbitrary scalp montages to a shared cortical atlas space.",
+          "Anatomically grounded routing: Uses electrode coordinates and the Schaefer atlas to learn sparse ROI routing and multi-scale cortical interactions.",
+          "Broad empirical gains: Improves 13 of 15 evaluations across three frozen foundation models and three EEG paradigms, with a peak gain of 13.02% in SSVEP classification."
+        ],
+        "limitations": [
+          "Evaluation limited to five public datasets and three EEG paradigms.",
+          "Needs extension to more recording systems and larger participant populations.",
+          "Lacks theoretical analysis of the learned cortical mapping."
+        ],
+        "method": {
+          "architecture": "Lightweight adapter using coordinate-aware cross-attention for sparse electrode-to-ROI routing (Schaefer atlas), multi-scale Gaussian diffusion for cortical interactions, and a residual interface.",
+          "finetuning": "Trained as a lightweight interface to map raw EEG inputs to the latent space of frozen models (EEGPT, LaBraM, CBraMod).",
+          "objective": "Task-specific loss combined with a column-balance penalty to ensure balanced ROI utilization.",
+          "pretraining": "None; the adapter is trained on downstream tasks while the backbone foundation models remain frozen."
+        },
+        "notes": "{\"chars\": 22931, \"error\": null, \"pages\": 8, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7077",
+        "one_liner": "A lightweight adapter that aligns heterogeneous EEG montages to a shared cortical atlas space for better transfer to frozen foundation models.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-10-01",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "channel-flexible",
+            "topology-agnostic"
+          ]
+        },
+        "title": "CortexBridge: Cortical Alignment of EEG Montages for Foundation Models",
+        "unique_contribution": "Introduces cortical alignment as a learnable, anatomically grounded routing mechanism to map heterogeneous EEG montages into a shared cortical latent space for foundation model adaptation.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "CortexBridge: Cortical Alignment of EEG Montages for Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets EEG foundation models, specifically mentioning EEGPT, LaBraM, and CBraMod.",
+          "Proposes a cortical alignment adapter to solve montage heterogeneity for pretrained EEG-FMs.",
+          "Fits the EEG-FM ecosystem criteria as a work on adaptation and alignment for broad transfer."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2610.03546v1",
+      "arxiv_id_base": "2610.03546",
+      "authors": [
+        "Yubo Wang",
+        "Jingying Ma",
+        "Xinliang Zhou",
+        "Yangxuan Zhou",
+        "Jiquan Wang",
+        "Sha Zhao",
+        "Yiyuan Yang",
+        "Yi Ding",
+        "Ziyu Jia",
+        "Chenyu Liu",
+        "Cuntai Guan"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.03546v1",
+        "pdf": "https://arxiv.org/pdf/2610.03546v1"
+      },
+      "published_date": "2026-10-02",
+      "summary": {
+        "arxiv_id_base": "2610.03546",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "6 held-out target datasets"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "ZeroMAG proposes a method to extend frozen EEG foundation models (EFMs) to multimodal recordings without requiring target labels or target-side optimization. It utilizes a configuration-invariant adapter architecture and a two-stage generator—combining a VAE-based representation learner and a conditional diffusion model—to produce adapter weights in a function-constrained latent space. Evaluation across six held-out datasets and three EFM backbones shows that ZeroMAG significantly outperforms EEG-only inference and approaches the performance of supervised multimodal adaptation.",
+        "evaluation": {
+          "benchmarks": [
+            "6 held-out target datasets"
+          ],
+          "headline_results": [
+            "Improved balanced accuracy by 7.22% over EEG-only and 4.89% over direct weight regression",
+            "Within 0.50 percentage points of supervised multimodal adaptation"
+          ],
+          "tasks": [
+            "Sleep staging",
+            "Emotion recognition",
+            "Cognitive load",
+            "Motor imagery",
+            "Freezing-of-gait detection"
+          ]
+        },
+        "key_points": [
+          "Method for zero-shot multimodal adaptation: Extends frozen EEG foundation models to include companion physiological signals without target-side training or labels.",
+          "Function-constrained generation: Employs a two-stage process using a VAE and a Diffusion Transformer (DiT) to ensure generated adapters maintain predictive consistency with reference adapters.",
+          "Strong empirical performance: Improves balanced accuracy by 7.22 percentage points over EEG-only baselines and nearly matches supervised multimodal adaptation across six held-out datasets."
+        ],
+        "limitations": [
+          "Depends on the availability and quality of source reference adapters.",
+          "Requires a compatible prediction head trained on source data for the supported task.",
+          "Performance is dependent on the coverage and quality of the unlabeled calibration data.",
+          "Does not establish transferability of a single generator to arbitrary new architectures."
+        ],
+        "method": {
+          "architecture": "1+N adapter (frozen EEG anchor + modality-specific branches) with a DiT-based generator.",
+          "finetuning": "None (zero-shot generation).",
+          "objective": "Function-preserving reconstruction and conditional latent diffusion.",
+          "pretraining": "Two-stage training involving VAE representation learning followed by DiT conditional generation."
+        },
+        "notes": "{\"chars\": 117041, \"error\": null, \"pages\": 41, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8043;max_tokens=8000",
+        "one_liner": "A zero-shot framework that generates multimodal adapters for frozen EEG foundation models using unlabeled target data and task context.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-10-02",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "ZeroMAG: Zero-Shot Multimodal Adapter Generation for Plug-and-Play EEG Foundation Models",
+        "unique_contribution": "Introduces a zero-shot adapter generation pipeline that maps unlabeled target recordings and task context to functional adapter weights via a conditional diffusion model.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "ZeroMAG: Zero-Shot Multimodal Adapter Generation for Plug-and-Play EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets EEG foundation models (EFMs) and their reusable knowledge.",
+          "Proposes a framework (ZeroMAG) for adapting frozen EEG-FM encoders to multimodal recordings.",
+          "Evaluates the approach using three different EFM backbones."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2610.05503v1",
+      "arxiv_id_base": "2610.05503",
+      "authors": [
+        "Rita Huan-Ting Peng",
+        "Nhat Bui"
+      ],
+      "categories": [
+        "cs.LG",
+        "eess.SP",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.05503v1",
+        "pdf": "https://arxiv.org/pdf/2610.05503v1"
+      },
+      "published_date": "2026-10-04",
+      "summary": {
+        "arxiv_id_base": "2610.05503",
+        "categories": [
+          "cs.LG",
+          "eess.SP",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "TUEG",
+            "TUAB",
+            "TUEP"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes the Universal Semantic EEG Foundation Model (USE-FM), a parameter-efficient autoencoder pretrained on the Temple University Hospital EEG Corpus (TUEG) via self-supervised signal reconstruction. Unlike larger existing models, USE-FM utilizes a frozen-encoder protocol for downstream tasks, demonstrating that a compact architecture with only 1.46 million parameters can learn transferable semantic representations. Evaluation on TUAB and TUEP datasets shows competitive performance compared to larger models like LUNA-Base and CBraMod, supported by latent space analysis using clustering and visualization.",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "TUEP"
+          ],
+          "headline_results": [
+            "TUAB AUC: 85.24 ± 5.61",
+            "TUEP SEN: 75.00 ± 14.14",
+            "TUEP F1: 70.37 ± 4.01"
+          ],
+          "tasks": [
+            "Abnormal EEG detection (TUAB)",
+            "Epileptic seizure recognition (TUEP)"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: USE-FM is a lightweight CNN-Transformer autoencoder with only 1.46M parameters, approximately one-fifth the size of existing models.",
+          "Employs a frozen-encoder transfer protocol on TUAB and TUEP, achieving competitive results including an AUC of 85.24% on TUAB and an F1-score of 70.37% on TUEP.",
+          "Validates the organization of the learned latent space through k-means clustering, PCA, and t-SNE visualization, showing representations comparable to larger models."
+        ],
+        "limitations": [
+          "Relies on a frozen-encoder protocol which may limit peak performance compared to full fine-tuning.",
+          "Evaluation is limited to two specific downstream datasets (TUAB and TUEP).",
+          "The architecture is adapted from a prior framework rather than being a completely novel design."
+        ],
+        "method": {
+          "architecture": "CNN-Transformer autoencoder",
+          "finetuning": "Frozen-encoder transfer (only downstream head trained)",
+          "objective": "Self-supervised signal reconstruction (MSE loss)",
+          "pretraining": "Pretrained on TUEG"
+        },
+        "notes": "{\"chars\": 27490, \"error\": null, \"pages\": 6, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8032;max_tokens=8000",
+        "one_liner": "A lightweight CNN-Transformer EEG foundation model that achieves competitive cross-disorder transfer performance using a frozen-encoder protocol.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-10-04",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Lightweight Semantic EEG Foundation Model for Frozen Cross-Disorder Transfer",
+        "unique_contribution": "Demonstrates that a lightweight EEG foundation model can learn universal semantic representations capable of competitive frozen-transfer across neurological disorders without requiring millions of parameters.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Lightweight Semantic EEG Foundation Model for Frozen Cross-Disorder Transfer",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly proposes the Universal Semantic EEG Foundation Model (USE-FM) for transferable neural representations.",
+          "Uses self-supervised pretraining on the Temple University Hospital EEG Corpus (TUEG) for broad transfer.",
+          "Evaluates the model using a frozen-transfer protocol across multiple distinct downstream clinical tasks.",
+          "Directly compares the proposed model against existing EEG foundation models like LUNA-Base and CBraMod."
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 3,
+    "candidates": 7,
+    "summarized": 3
+  },
+  "top_picks": [
+    "2610.05503",
+    "2610.03546",
+    "2610.01124"
+  ]
+}
