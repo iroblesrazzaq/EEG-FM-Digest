@@ -5,7 +5,8 @@
     {
       "paper_ids": [
         "2610.01124",
-        "2610.03546"
+        "2610.03546",
+        "2610.07484"
       ],
       "title": "method"
     },
@@ -17,11 +18,12 @@
     }
   ],
   "stats": {
-    "accepted": 3,
-    "candidates": 7,
-    "summarized": 3
+    "accepted": 4,
+    "candidates": 11,
+    "summarized": 4
   },
   "top_picks": [
+    "2610.07484",
     "2610.05503",
     "2610.03546",
     "2610.01124"

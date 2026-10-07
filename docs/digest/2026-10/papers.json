@@ -327,14 +327,124 @@
           "Directly compares the proposed model against existing EEG foundation models like LUNA-Base and CBraMod."
         ]
       }
+    },
+    {
+      "arxiv_id": "2610.07484v1",
+      "arxiv_id_base": "2610.07484",
+      "authors": [
+        "Peng Xie",
+        "Yequan Bie",
+        "Jianda Mao",
+        "Kani Chen"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.07484v1",
+        "pdf": "https://arxiv.org/pdf/2610.07484v1"
+      },
+      "published_date": "2026-10-05",
+      "summary": {
+        "arxiv_id_base": "2610.07484",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 19.0,
+          "datasets": [
+            "TUEG v2.0.1"
+          ],
+          "eeg_hours": 2388.0,
+          "subjects": 2100.0
+        },
+        "detailed_summary": "The paper introduces SpecBraM, which replaces traditional waveform reconstruction or discrete code prediction with the prediction of fixed narrow-band log spectral energy for masked patches. This approach avoids the irreducible noise of phase-sensitive waveform reconstruction and aligns the pretext task with the spectral features used in clinical EEG readouts. Evaluation on ISRUC and HMC sleep staging datasets shows that masked band-power prediction (MBP) significantly improves balanced accuracy and label efficiency compared to waveform-based targets.",
+        "evaluation": {
+          "benchmarks": [
+            "ISRUC",
+            "HMC",
+            "PhysioNet-MI",
+            "SEED-VIG"
+          ],
+          "headline_results": [
+            "Balanced accuracy of 0.7916 (ISRUC) and 0.7425 (HMC) using frozen features",
+            "Outperforms CBraMod and LaBraM on 7 downstream tasks using frozen features"
+          ],
+          "tasks": [
+            "Sleep staging",
+            "Mental Arithmetic",
+            "Depression screening",
+            "Emotion recognition",
+            "Motor imagery",
+            "Vigilance"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: SpecBraM utilizes masked band-power prediction instead of waveform reconstruction to learn more robust spectral representations.",
+          "Demonstrates superior label efficiency, with MBP exceeding waveform targets by 4.7-7.3 balanced-accuracy points when using only 1% of labels for sleep staging.",
+          "Shows that frozen features outperform existing models like CBraMod and LaBraM across seven downstream tasks, though gains are task-dependent."
+        ],
+        "limitations": [
+          "Performance gains do not extend to all spectral-cue tasks, such as motor imagery and depression screening.",
+          "Vigilance regression results suggest potential low-frequency ocular contamination in the pretraining target.",
+          "The optimal frequency band partition and estimator remain unexplored."
+        ],
+        "method": {
+          "architecture": "12-layer criss-cross transformer (51.3M params)",
+          "finetuning": "Linear probing and full fine-tuning on downstream tasks",
+          "objective": "MSE of predicted vs actual log spectral energy in 5 narrow bands with SIGReg isotropy penalty",
+          "pretraining": "Masked Band-Power Prediction (MBP) on TUEG dataset"
+        },
+        "notes": "{\"chars\": 56093, \"error\": null, \"pages\": 12, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7967",
+        "one_liner": "SpecBraM proposes masked band-power prediction as a task-aligned pretraining target for EEG foundation models, outperforming waveform reconstruction in sleep staging.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-10-05",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "SpecBraM: What Should an EEG Foundation Model Predict? Masked Band-Power Prediction versus Waveform Reconstruction",
+        "unique_contribution": "Proposes masked band-power prediction (MBP) as a pretraining target to align EEG foundation models with the spectral physical quantities relevant to downstream clinical tasks.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "SpecBraM: What Should an EEG Foundation Model Predict? Masked Band-Power Prediction versus Waveform Reconstruction",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Title explicitly mentions 'EEG Foundation Model'.",
+          "Focuses on comparing pretraining targets (masked band-power prediction vs waveform reconstruction) for reusable EEG representations.",
+          "Utilizes large-scale pretraining (2,388 hours) and evaluates via linear probing and fine-tuning across multiple downstream tasks."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 3,
-    "candidates": 7,
-    "summarized": 3
+    "accepted": 4,
+    "candidates": 11,
+    "summarized": 4
   },
   "top_picks": [
+    "2610.07484",
     "2610.05503",
     "2610.03546",
     "2610.01124"
