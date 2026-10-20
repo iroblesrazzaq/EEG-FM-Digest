@@ -224,6 +224,112 @@
       }
     },
     {
+      "arxiv_id": "2610.10571v1",
+      "arxiv_id_base": "2610.10571",
+      "authors": [
+        "Minsu Kim",
+        "Ye-Sung Kim",
+        "Hyeseong Jeon",
+        "Wooseok Hyung",
+        "Joshua Lee",
+        "Chang-Hwan Im"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.10571v1",
+        "pdf": "https://arxiv.org/pdf/2610.10571v1"
+      },
+      "published_date": "2026-10-04",
+      "summary": {
+        "arxiv_id_base": "2610.10571",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "106 datasets"
+          ],
+          "eeg_hours": 80000.0,
+          "subjects": 29048.0
+        },
+        "detailed_summary": "SPERA proposes a latent-space prediction framework based on the Joint-Embedding Predictive Architecture (JEPA) to avoid reconstructing non-neural artifacts. It introduces a Legendre-polynomial spatial prior to encode scalp electrode geometry and a relational spectral regularizer to align latent similarities with spectral views. The model was pretrained on 80,000 hours of EEG from 106 datasets and demonstrated state-of-the-art average balanced accuracy across nine downstream clinical, cognitive, and BCI tasks.",
+        "evaluation": {
+          "benchmarks": [
+            "9 downstream EEG tasks"
+          ],
+          "headline_results": [
+            "Achieved the highest average balanced accuracy across all 9 evaluated downstream tasks compared to other foundation models."
+          ],
+          "tasks": [
+            "sleep staging",
+            "motor imagery",
+            "emotion recognition",
+            "clinical diagnosis",
+            "cognitive state detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: SPERA utilizes a JEPA-style latent prediction objective to learn representations robust to non-neural artifacts.",
+          "Incorporates a learnable Legendre-polynomial spatial prior to handle heterogeneous electrode montages across different datasets.",
+          "Achieves superior performance across nine diverse downstream tasks using a massive pretraining corpus of 80,000 EEG hours."
+        ],
+        "limitations": [
+          "High computational overhead for dense pairwise Legendre bias in full-attention blocks.",
+          "Dependence on 3D electrode coordinates or standard montage mappings.",
+          "Pretraining data distribution is heavily skewed toward clinical recordings (82.08%)."
+        ],
+        "method": {
+          "architecture": "Hybrid Transformer backbone interleaving factorized (temporal/spatial) and full-attention blocks, using a Legendre-polynomial spherical prior.",
+          "finetuning": "Linear Probing (LP) and Linear Probing followed by Fine-Tuning (LPFT).",
+          "objective": "JEPA latent prediction objective combined with a Relational Spectral Regularizer (RSReg) based on KL divergence of similarity matrices.",
+          "pretraining": "Large-scale pretraining on a multi-domain EEG corpus comprising 80,000 hours of data."
+        },
+        "notes": "{\"chars\": 166099, \"error\": null, \"pages\": 48, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7945",
+        "one_liner": "A JEPA-based EEG foundation model using a Legendre-polynomial spherical prior and relational spectral regularization to handle diverse electrode geometries and frequency components.",
+        "open_source": {
+          "code_url": "https://github.com/sees4321/SPERA_EEG",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-10-04",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "SPERA: Spherical Prior EEG Foundation Model with Geometry- and Frequency-Aware Latent Prediction",
+        "unique_contribution": "Introduces a Legendre-polynomial spherical prior and a relational spectral regularizer within a JEPA framework to create a geometry- and frequency-aware EEG foundation model.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "SPERA: Spherical Prior EEG Foundation Model with Geometry- and Frequency-Aware Latent Prediction",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies as an 'EEG foundation model' designed as a 'general-purpose backbone'.",
+          "Pretrained on a massive scale (80,000 hours of EEG from 106 datasets) for broad transfer.",
+          "Demonstrates utility across nine diverse downstream tasks spanning clinical, cognitive, and BCI applications."
+        ]
+      }
+    },
+    {
       "arxiv_id": "2610.05503v1",
       "arxiv_id_base": "2610.05503",
       "authors": [
@@ -436,17 +542,811 @@
           "Utilizes large-scale pretraining (2,388 hours) and evaluates via linear probing and fine-tuning across multiple downstream tasks."
         ]
       }
+    },
+    {
+      "arxiv_id": "2610.09287v1",
+      "arxiv_id_base": "2610.09287",
+      "authors": [
+        "Dung Truong",
+        "Kuntal Kokate",
+        "Arnaud Delorme"
+      ],
+      "categories": [
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.09287v1",
+        "pdf": "https://arxiv.org/pdf/2610.09287v1"
+      },
+      "published_date": "2026-10-07",
+      "summary": {
+        "arxiv_id_base": "2610.09287",
+        "categories": [
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": 129.0,
+          "datasets": [
+            "HBN"
+          ],
+          "eeg_hours": null,
+          "subjects": 2156.0
+        },
+        "detailed_summary": "The paper investigates how increasing the number of subjects affects cross-modal EEG-video alignment using the HBN dataset. It identifies a critical onset at approximately 50 subjects, below which scaling is unproductive, but above which decoding performance improves log-linearly. The authors show that initializing the encoder from a pretrained EEG foundation model (REVE) increases the scaling exponent by approximately 1.6x and reduces the compute required to reach convergence compared to random initialization.",
+        "evaluation": {
+          "benchmarks": [
+            "HBN dataset"
+          ],
+          "headline_results": [
+            "Log-linear scaling above 50 subjects",
+            "1.6x scaling acceleration with FM initialization",
+            "Superior top-1 retrieval accuracy for pretrained models"
+          ],
+          "tasks": [
+            "Stimulus-feature probe",
+            "Fit-free movie-moment retrieval",
+            "Cross-task transfer"
+          ]
+        },
+        "key_points": [
+          "Method study on EEG scaling: reveals that naturalistic video decoding improves log-linearly with subject count only after a threshold of ~50 participants.",
+          "Foundation model advantage: initializing with REVE weights enables 1.6x faster scaling per cohort doubling and superior retrieval accuracy compared to random initialization.",
+          "Compute efficiency: pretrained encoders reach better performance optima using a fraction of the training compute (e.g., 26.6 vs 63.3 PFLOPs)."
+        ],
+        "limitations": [
+          "Results based on a single dataset (HBN) and montage.",
+          "Only one training stimulus and one transfer target used.",
+          "Small number of draws per cell limits p-value precision.",
+          "High subject overlap (86%) at the top rung of the scaling ladder.",
+          "Capacity axis limited to only two depths (12 and 22).",
+          "No comprehensive hyperparameter sweep performed for each arm."
+        ],
+        "method": {
+          "architecture": "REVE (Transformer, depth 22)",
+          "finetuning": "Cross-modal alignment with V-JEPA-2 vision teacher",
+          "objective": "Soft-target CLIP contrastive loss",
+          "pretraining": "REVE foundation model"
+        },
+        "notes": "{\"chars\": 85585, \"error\": null, \"pages\": 22, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7858",
+        "one_liner": "Demonstrates a log-linear scaling law for EEG-video decoding that activates above 50 subjects and is significantly accelerated by EEG foundation model initialization.",
+        "open_source": {
+          "code_url": "https://github.com/braindecode/braindecode",
+          "license": "unknown",
+          "weights_url": "available via braindecode"
+        },
+        "paper_type": "method",
+        "published_date": "2026-10-07",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "post-training",
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Scaling subjects in cross-modal alignment: video decoding with EEG foundation model",
+        "unique_contribution": "Identifies a subject-count onset (S ≈ 50) for productive scaling in EEG-video alignment and proves that EEG-FM initialization significantly accelerates this scaling.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Scaling subjects in cross-modal alignment: video decoding with EEG foundation model",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly focuses on scaling and initializing from an EEG foundation model",
+          "Investigates cross-modal alignment (EEG-video) as a frontier for EEG-FM scaling",
+          "Evaluates the performance gains of EEG-FM initialization over random initialization"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2610.09355v1",
+      "arxiv_id_base": "2610.09355",
+      "authors": [
+        "Parastoo Azizeddin",
+        "Omid Sharafi",
+        "Maryam M. Shanechi"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.09355v1",
+        "pdf": "https://arxiv.org/pdf/2610.09355v1"
+      },
+      "published_date": "2026-10-07",
+      "summary": {
+        "arxiv_id_base": "2610.09355",
+        "categories": [
+          "cs.LG",
+          "cs.AI",
+          "cs.CV"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "HMC",
+            "SEED",
+            "EEGMAT",
+            "TUAB"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes BraVista, a framework that encodes multichannel EEG signals into structured STFT spectrogram images to interface with pretrained vision-language models (VLMs). Unlike prior EEG foundation models that require large-scale EEG-specific pretraining, BraVista leverages the visual and linguistic priors of a general-domain VLM through continued post-training. The approach is evaluated on four diverse datasets (sleep, emotion, workload, and abnormality detection), demonstrating that structured visual representations enable effective unified multi-task decoding.",
+        "evaluation": {
+          "benchmarks": [
+            "HMC",
+            "SEED",
+            "EEGMAT",
+            "TUAB"
+          ],
+          "headline_results": [
+            "STFT images significantly outperformed raw time-series and topographies",
+            "Achieved strong balanced accuracy across four diverse EEG decoding tasks"
+          ],
+          "tasks": [
+            "Sleep staging",
+            "Emotion recognition",
+            "Cognitive workload estimation",
+            "Abnormal EEG detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: BraVista utilizes a vision-language model (Qwen3-VL-2B) to decode EEG signals by treating them as structured images.",
+          "Method novelty: Employs STFT-based image grids and instruction-conditioning to enable multi-task learning across diverse BCI applications.",
+          "Evidence: Outperforms zero-shot VLMs and shows robustness to noise across sleep staging, emotion recognition, cognitive workload, and abnormality detection tasks."
+        ],
+        "limitations": [
+          "Focuses on producing class labels without explicitly leveraging the reasoning capabilities of VLMs.",
+          "Lacks integration of subject-specific metadata or clinical history.",
+          "Does not employ reinforcement learning to guide model reasoning across temporal segments."
+        ],
+        "method": {
+          "architecture": "Qwen3-VL-2B (SigLIP-2 vision encoder, vision-language merger, and language model decoder)",
+          "finetuning": "Full fine-tuning of the vision encoder and LoRA for the language model decoder",
+          "objective": "Supervised Fine-Tuning (SFT) for autoregressive conditional generation",
+          "pretraining": "Leverages general-domain VLM priors from Qwen3-VL"
+        },
+        "notes": "{\"chars\": 50922, \"error\": null, \"pages\": 16, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7958",
+        "one_liner": "BraVista adapts general-domain vision-language models to EEG decoding by representing multichannel signals as structured STFT images.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-10-07",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "autoregressive"
+          ],
+          "paper_type": [
+            "new-model",
+            "post-training"
+          ],
+          "tokenization": [],
+          "topology": [
+            "topology-agnostic"
+          ]
+        },
+        "title": "Multimodal LLMs Can Learn to Read Brain Signals: A Vision--Language Model for Unified Multi-Task EEG Decoding",
+        "unique_contribution": "Introduces a structured visual interface using STFT spectrogram grids that allows general-domain VLMs to perform unified multi-task EEG decoding without EEG-specific pretraining.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Multimodal LLMs Can Learn to Read Brain Signals: A Vision--Language Model for Unified Multi-Task EEG Decoding",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Focuses on unified multi-task EEG decoding across diverse datasets (sleep, emotion, workload, abnormal EEG).",
+          "Proposes a framework to adapt general-domain foundation models (VLMs) to EEG signals via continued post-training.",
+          "Explicitly aims to learn EEG representations that generalize across cognitive tasks, subjects, and recording conditions."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2610.14497v1",
+      "arxiv_id_base": "2610.14497",
+      "authors": [
+        "Yuqiu Deng",
+        "Muyun Jiang",
+        "Zongpeng Zhang",
+        "Mingqing Xiao",
+        "Yansen Wang",
+        "Peiliang Gong",
+        "Xinliang Zhou",
+        "Yi Ding",
+        "Ziyu Jia",
+        "Cuntai Guan",
+        "Chenyu Liu"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.14497v1",
+        "pdf": "https://arxiv.org/pdf/2610.14497v1"
+      },
+      "published_date": "2026-10-10",
+      "summary": {
+        "arxiv_id_base": "2610.14497",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "BCIC-IV-2a",
+            "FACED",
+            "ISRUC-S1",
+            "MentalArith.",
+            "BCIC-Speech",
+            "Mumtaz2016"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes DEFT, a post-backbone adapter designed to mitigate the burden of subject-related variation in pretrained EEG foundation model (EFM) embeddings. It factorizes mixed pretrained tokens into a task-content branch and a subject-style branch using a recursive Gaussian disentangler, guided by temporal-variance regularization, subject-aware contrastive learning, and reconstruction. Experiments across four EFM backbones and six diverse EEG datasets demonstrate that performing downstream prediction solely from the isolated content branch consistently improves performance over vanilla fine-tuning in cross-subject settings.",
+        "evaluation": {
+          "benchmarks": [
+            "Subject-disjoint evaluation across 6 datasets"
+          ],
+          "headline_results": [
+            "Consistent improvement in Balanced Accuracy (B-ACC) over vanilla fine-tuning across four EFM backbones."
+          ],
+          "tasks": [
+            "motor imagery",
+            "emotion recognition",
+            "sleep staging",
+            "workload assessment",
+            "speech decoding",
+            "MDD classification"
+          ]
+        },
+        "key_points": [
+          "Method for EFM fine-tuning: Proposes DEFT, a plug-and-play adapter that separates pretrained tokens into content and style branches to reduce subject-related bias.",
+          "Novel disentanglement mechanism: Uses recursive Gaussian refinement and temporal-variance constraints to ensure content captures dynamics while style captures stable subject traits.",
+          "Broad empirical validation: Improves performance across four foundation backbones and six diverse EEG tasks, particularly in cross-subject scenarios."
+        ],
+        "limitations": [
+          "Requires subject identity labels during training for the contrastive loss.",
+          "Performance gains vary across different datasets and backbones.",
+          "The method is a post-backbone adapter and does not modify the pretraining phase."
+        ],
+        "method": {
+          "architecture": "Post-backbone adapter with Recursive Gaussian Disentangler and dual branches (Content/Style).",
+          "finetuning": "Disentanglement-enhanced fine-tuning where the classifier operates only on the content branch.",
+          "objective": "Combined loss including cross-entropy, temporal-variance, subject-aware contrastive learning, and reconstruction.",
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 114295, \"error\": null, \"pages\": 38, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8423;max_tokens=8000",
+        "one_liner": "A plug-and-play adapter for EEG foundation models that disentangles task-oriented content from subject-specific style to improve cross-subject decoding.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-10-10",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "DEFT: Disentanglement-Enhanced Fine-Tuning for EEG Foundation Models",
+        "unique_contribution": "Introduces a 'factorize-before-classify' adapter that explicitly separates subject-consistent style from task-oriented content in pretrained EEG representations to reduce classifier burden.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "DEFT: Disentanglement-Enhanced Fine-Tuning for EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets EEG foundation models (EFMs) in both title and abstract.",
+          "Proposes a specific fine-tuning method (DEFT) designed for EFM backbones.",
+          "Focuses on improving the utility of pretrained EEG representations for downstream tasks."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2610.15104v1",
+      "arxiv_id_base": "2610.15104",
+      "authors": [
+        "Ryota Kanai"
+      ],
+      "categories": [
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.15104v1",
+        "pdf": "https://arxiv.org/pdf/2610.15104v1"
+      },
+      "published_date": "2026-10-10",
+      "summary": null,
+      "summary_failed_reason": "llm_invalid_json",
+      "title": "Predicting Cognitive Tasks from Single-Channel EEG through Task-Semantic Alignment",
+      "triage": {
+        "confidence": 0.8,
+        "decision": "accept",
+        "reasons": [
+          "EEG is the central modality used for predicting cognitive tasks.",
+          "The paper proposes a task-semantic alignment framework to enable zero-shot and few-shot transfer.",
+          "The abstract explicitly frames the findings as being useful for training an EEG foundation model."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2610.16264v1",
+      "arxiv_id_base": "2610.16264",
+      "authors": [
+        "David Aquilué-Llorens",
+        "Abel Puigseslloses",
+        "Angel Blanco",
+        "Claire Braboszcz",
+        "Aureli Soria-Frisch"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.16264v1",
+        "pdf": "https://arxiv.org/pdf/2610.16264v1"
+      },
+      "published_date": "2026-10-12",
+      "summary": {
+        "arxiv_id_base": "2610.16264",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 19.0,
+          "datasets": [
+            "Synthetic alpha slowing",
+            "Synthetic beta/gamma slowing",
+            "BBHI"
+          ],
+          "eeg_hours": null,
+          "subjects": 963.0
+        },
+        "detailed_summary": "The paper investigates how unsupervised autoencoders (LSTMVAE, VAEEG, Transformer) and the REVE foundation model handle the characteristic 1/f power decay of EEG signals. It demonstrates that Mean Squared Error (MSE) loss leads to a magnitude-driven masking effect, where high-frequency information is under-represented in the latent space. Using synthetic data and the BBHI empirical dataset, the authors show that while low-frequency shifts like alpha slowing are captured, high-frequency transients are often lost unless latent dimensionality is significantly increased.",
+        "evaluation": {
+          "benchmarks": [
+            "Synthetic frequency-shifted EEG",
+            "BBHI empirical dataset"
+          ],
+          "headline_results": [
+            "Confirmed magnitude-driven masking of high-frequency components in MSE-based autoencoders.",
+            "Demonstrated that latent dimensionality must be significantly increased to capture high-frequency transients."
+          ],
+          "tasks": [
+            "Spectral fidelity analysis",
+            "Frequency shift detection"
+          ]
+        },
+        "key_points": [
+          "Methodological analysis of EEG representation learning: examines spectral biases across various autoencoder architectures and the REVE foundation model.",
+          "Reveals that standard time-domain reconstruction losses prioritize high-power low frequencies, effectively smoothing out high-frequency transients.",
+          "Demonstrates that increasing latent dimensionality can mitigate spectral attenuation but compromises model compactness and generative stability."
+        ],
+        "limitations": [
+          "Synthetic data simplifies non-linear dynamics and omits inter-channel correlations.",
+          "Empirical validation on BBHI used only a single seed due to compute constraints.",
+          "Increasing latent dimensionality to fix spectral bias reduces generative stability.",
+          "The study focuses primarily on unsupervised reconstruction rather than supervised downstream tasks."
+        ],
+        "method": {
+          "architecture": "Evaluation of LSTMVAE, VAEEG, and Transformer autoencoders, alongside the frozen REVE foundation model (Transformer encoder).",
+          "finetuning": null,
+          "objective": "Mean Squared Error (MSE) and Evidence Lower Bound (ELBO) for reconstruction; masked-autoencoding for REVE.",
+          "pretraining": "REVE was pretrained on 60,000 hours of EEG data."
+        },
+        "notes": "{\"chars\": 81132, \"error\": null, \"pages\": 30, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7926",
+        "one_liner": "Systematic analysis of spectral bias in unsupervised EEG representation learning, revealing that time-domain reconstruction losses mask critical high-frequency biomarkers.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-10-12",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Spectral Considerations on Unsupervised Time-domain EEG Representation Learning with Deep Networks",
+        "unique_contribution": "Identifies a magnitude-driven masking effect in time-domain EEG autoencoders that suppresses high-frequency biomarkers due to the interaction between MSE loss and the 1/f power spectrum.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Spectral Considerations on Unsupervised Time-domain EEG Representation Learning with Deep Networks",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "EEG is the primary modality.",
+          "Explicitly evaluates a state-of-the-art EEG foundation model.",
+          "Provides systematic analysis of unsupervised representations to improve future large-scale foundation-level feature extractors."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2610.16589v1",
+      "arxiv_id_base": "2610.16589",
+      "authors": [
+        "Xin Liu",
+        "Feng Lu",
+        "Wei Li"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.16589v1",
+        "pdf": "https://arxiv.org/pdf/2610.16589v1"
+      },
+      "published_date": "2026-10-12",
+      "summary": {
+        "arxiv_id_base": "2610.16589",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 64.0,
+          "datasets": [
+            "BETA",
+            "Tsinghua SSVEP",
+            "Cho2017",
+            "PhysioNet-MI",
+            "FACED",
+            "SEED-V"
+          ],
+          "eeg_hours": 99.4,
+          "subjects": null
+        },
+        "detailed_summary": "HyBRA proposes a hyperbolic global-local brain-region aggregation mechanism to handle heterogeneous electrode montages by mapping channel tokens to a fixed regional space. It combines electrode coordinates and region priors with feature-dependent hyperbolic distances and a channel-evidence injection branch to preserve fine-grained cues. The model is pretrained via masked reconstruction of latent features and region-level signals, demonstrating superior balanced accuracy across six benchmark datasets compared to existing foundation models.",
+        "evaluation": {
+          "benchmarks": [
+            "OpenBMI-MI",
+            "BCIC-IV 2a",
+            "TUAB",
+            "TUEV",
+            "Siena",
+            "MentalArithmetic"
+          ],
+          "headline_results": [
+            "Macro-averaged balanced accuracy of 0.7278 across six benchmarks.",
+            "96.8% fewer parameters than CSBrain on OpenBMI-MI."
+          ],
+          "tasks": [
+            "Motor Imagery",
+            "SSVEP",
+            "Emotion Recognition"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: HyBRA uses hyperbolic global-local aggregation to create a montage-independent regional representation.",
+          "Employs a Region-Time Transformer pretrained with masked reconstruction of latent features and region-level signals.",
+          "Outperforms existing models on six benchmarks, achieving higher balanced accuracy with significantly fewer parameters."
+        ],
+        "limitations": [
+          "Performance gains on some datasets like TUAB and Siena are smaller than on others.",
+          "Does not uniformly improve every secondary metric, such as AUROC on specific datasets.",
+          "Relies on predefined brain-region priors for channel-region associations."
+        ],
+        "method": {
+          "architecture": "Coordinate-Aware Patch Encoding, Hyperbolic Region Mixer, and Region-Time Transformer.",
+          "finetuning": "End-to-end fine-tuning with a compact CNN head for downstream tasks.",
+          "objective": "Masked reconstruction of latent features and region-level signals.",
+          "pretraining": "Self-supervised pretraining on seven datasets using masked reconstruction."
+        },
+        "notes": "{\"chars\": 42735, \"error\": null, \"pages\": 9, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8009;max_tokens=8000",
+        "one_liner": "A self-supervised EEG framework that maps heterogeneous channel observations into a fixed regional token space using hyperbolic geometry.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-10-12",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "HyBRA-EEG: Hyperbolic Global-Local Brain-Region Aggregation for Self-Supervised EEG Representation Learning",
+        "unique_contribution": "Introduces a hyperbolic region mixer and a channel-evidence injection pathway to map heterogeneous EEG montages into a consistent, fixed regional token space.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "HyBRA-EEG: Hyperbolic Global-Local Brain-Region Aggregation for Self-Supervised EEG Representation Learning",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Focuses on self-supervised EEG pretraining to improve transferability across heterogeneous recordings",
+          "Uses a masked reconstruction objective for pretraining, a core characteristic of foundation models",
+          "Evaluates the resulting representations across six benchmark datasets"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2610.17451v1",
+      "arxiv_id_base": "2610.17451",
+      "authors": [
+        "Alvise Dei Rossi",
+        "Luigi Fiorillo",
+        "Giuliana Monachino",
+        "Alessia Calzoni",
+        "Julia van der Meer",
+        "Markus H. Schmidt",
+        "Claudio L. A. Bassetti",
+        "Silvia Santini",
+        "Francesca Faraci"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.17451v1",
+        "pdf": "https://arxiv.org/pdf/2610.17451v1"
+      },
+      "published_date": "2026-10-12",
+      "summary": {
+        "arxiv_id_base": "2610.17451",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Bern Sleep-Wake Registry"
+          ],
+          "eeg_hours": null,
+          "subjects": 7195.0
+        },
+        "detailed_summary": "The paper evaluates the utility of frozen representations from prominent self-supervised PSG foundation models (SleepFM, OSF, Hypnos) and large-scale supervised encoders (U-Sleep, SleepTransformer) for multilabel identification of six sleep-wake and circadian disorder groups. Using a common Coupled Mamba downstream framework on 7,906 PSGs, the authors find that supervised encoders pretrained at comparable scale and modality coverage match or exceed the performance of self-supervised FMs. The results highlight that respiratory modality coverage and pretraining scale are more critical for clinical disorder identification than the choice of self-supervised versus supervised objectives.",
+        "evaluation": {
+          "benchmarks": [
+            "Bern Sleep-Wake Registry (BSWR)"
+          ],
+          "headline_results": [
+            "Supervised encoders matched or outperformed self-supervised FMs when scale and modality coverage were comparable."
+          ],
+          "tasks": [
+            "Multilabel identification of 6 sleep-wake and circadian disorder groups"
+          ]
+        },
+        "key_points": [
+          "Benchmark study: Compares self-supervised PSG foundation models against large-scale supervised encoders for identifying six sleep-wake and circadian disorder groups.",
+          "Findings show that supervised pretraining at comparable scale and modality coverage (especially respiratory signals) matches or exceeds self-supervised performance.",
+          "Supervised encoders exhibited superior downstream data efficiency compared to self-supervised foundation models."
+        ],
+        "limitations": [
+          "Evaluated on a single tertiary referral registry, which may limit generalizability.",
+          "SWCD identification is closely related to sleep architecture, potentially favoring staging-based representations.",
+          "Did not perform fully factorial retraining across all architectures and corpora due to scale."
+        ],
+        "method": {
+          "architecture": "Frozen representations from U-Sleep, SleepTransformer, SleepFM, OSF, and Hypnos fed into a mask-aware Coupled Mamba state-space model.",
+          "finetuning": "Linear probing/downstream training of the Coupled Mamba head.",
+          "objective": "Multilabel classification of six disorder groups.",
+          "pretraining": "Supervised sleep-staging (U-Sleep, SleepTransformer) and various self-supervised objectives (SleepFM, OSF, Hypnos)."
+        },
+        "notes": "{\"chars\": 65451, \"error\": null, \"pages\": 17, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7886",
+        "one_liner": "A large-scale benchmark comparing self-supervised PSG foundation models against large-scale supervised sleep-staging encoders for sleep-wake disorder identification.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-10-12",
+        "tags": {
+          "backbone": [
+            "transformer",
+            "mamba-ssm"
+          ],
+          "objective": [
+            "contrastive",
+            "discrete-code-prediction"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch",
+            "discrete-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "On Sleep-Wake Disorder Identification from Polysomnographic Representations",
+        "unique_contribution": "Demonstrates that large-scale, multi-cohort supervised sleep-staging encoders can outperform self-supervised PSG foundation models in identifying clinical sleep-wake disorders when modality coverage is matched.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "On Sleep-Wake Disorder Identification from Polysomnographic Representations",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly evaluates 'Self-supervised polysomnography foundation models (PSG FMs)' and their downstream potential.",
+          "Uses frozen representations from large-scale pretrained models for transfer learning tasks.",
+          "PSG is a multimodal signal where EEG is a central and core modality.",
+          "Fits the ecosystem criteria as a benchmark/evaluation of foundation model representations against supervised baselines."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2610.25211v1",
+      "arxiv_id_base": "2610.25211",
+      "authors": [
+        "Wei Xiong",
+        "Jiangtong Li",
+        "Han Zhao",
+        "Linxiao Yang",
+        "Jie Li",
+        "Changjun Jiang"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.25211v1",
+        "pdf": "https://arxiv.org/pdf/2610.25211v1"
+      },
+      "published_date": "2026-10-18",
+      "summary": {
+        "arxiv_id_base": "2610.25211",
+        "categories": [
+          "cs.LG",
+          "cs.AI",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "HBN",
+            "Workload",
+            "PhysioMI",
+            "BCIC-IV-2a",
+            "ADFTD",
+            "HMC"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "NeuroAct proposes a dual-loop autonomous research agent framework designed to improve EEG decoding by explicitly diagnosing signal structure, representations, and training dynamics. Unlike prior reward-driven search methods, it employs an inner loop for hypothesis testing and an outer loop to distill and reuse conditional recommendations across different tasks. The framework's effectiveness is demonstrated across four research settings using six datasets, showing significant gains in balanced accuracy and efficiency through experience reuse.",
+        "evaluation": {
+          "benchmarks": [
+            "BrainBench"
+          ],
+          "headline_results": [
+            "Setting A: 80.88 macro-average",
+            "Setting B: EEGPT BA +7.34 points",
+            "Setting C: ADFTD BA +16.33 points",
+            "Setting D: Workload BA 85.02%"
+          ],
+          "tasks": [
+            "EEG General Analysis",
+            "Cross-task Model Optimization",
+            "Single-task Open Research",
+            "Collaborative Prediction"
+          ]
+        },
+        "key_points": [
+          "New research method: An autonomous agent framework that employs a dual-loop system to guide EEG analysis and decoding through evidence-based diagnostics.",
+          "Implements an inner loop for hypothesis-driven model refinement and an outer loop for distilling conditional recommendations that improve performance on subsequent tasks.",
+          "Demonstrated significant improvements across multiple benchmarks, including a 16.33 point BA gain on ADFTD and a 16.15 point BA increase on BCIC-IV-2a via experience reuse."
+        ],
+        "limitations": [
+          "High reliance on LLM token budgets (capped at 50M tokens per study).",
+          "Performance is dependent on the quality of the LLM backend used.",
+          "Requires access to a pool of existing EEG foundation models for collaborative prediction.",
+          "Computational cost of running multiple iterative experiments in the inner loop."
+        ],
+        "method": {
+          "architecture": "Dual-loop agent framework (Coordinator, Researcher, Developer, Reviewer) utilizing LLM backends (DeepSeek-V4 Flash, GPT-5.6 Luna, Qwen3.8 Flash Next).",
+          "finetuning": "Task-specific adaptation, model combination, and joint multi-task training guided by the agent.",
+          "objective": "Optimize EEG decoding performance (BA, AUROC, Pearson r) and research efficiency (token cost).",
+          "pretraining": "N/A (uses existing EEG-FMs like EEGPT, BENDR, LaBraM)."
+        },
+        "notes": "{\"chars\": 106077, \"error\": null, \"pages\": 30, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8014;max_tokens=8000",
+        "one_liner": "An autonomous research agent framework that uses a dual-loop system to optimize EEG analysis and decoding through evidence-guided diagnostics and cross-task experience reuse.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-10-18",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "NeuroAct: Advancing EEG Analysis and Decoding via Dual-Loop Autonomous Research",
+        "unique_contribution": "Introduces a dual-loop autonomous agent that leverages explicit diagnostic evidence and cross-task experience reuse to optimize EEG foundation model adaptation and decoding.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "NeuroAct: Advancing EEG Analysis and Decoding via Dual-Loop Autonomous Research",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly mentions implementing autonomous research across 'EEG foundation models'.",
+          "Demonstrates performance improvements on EEGPT, a known EEG foundation model.",
+          "Targets the EEG-FM ecosystem through cross-task model optimization and adaptation."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 4,
-    "candidates": 11,
-    "summarized": 4
+    "accepted": 13,
+    "candidates": 32,
+    "summarized": 12
   },
   "top_picks": [
+    "2610.14497",
+    "2610.10571",
+    "2610.09287",
     "2610.07484",
-    "2610.05503",
-    "2610.03546",
-    "2610.01124"
+    "2610.05503"
   ]
 }
