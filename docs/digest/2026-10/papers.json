@@ -889,8 +889,75 @@
         "pdf": "https://arxiv.org/pdf/2610.15104v1"
       },
       "published_date": "2026-10-10",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2610.15104",
+        "categories": [
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": 1.0,
+          "datasets": [],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes a task-semantic alignment framework that maps EEG signals from a single anterior-posterior differential channel into a shared semantic space with task descriptions. Unlike task-agnostic self-supervised learning, this approach uses a sentence encoder to embed experimental instructions, stimuli, and response demands, allowing the model to rank candidate tasks without target-specific calibration. Evaluation on a ten-class task demonstrates zero-shot balanced accuracy of 30.13% and few-shot accuracy reaching 74.99% when using the test participant's own recordings.",
+        "evaluation": {
+          "benchmarks": [
+            "Zero-shot balanced accuracy",
+            "Few-shot balanced accuracy"
+          ],
+          "headline_results": [
+            "Zero-shot: 30.13% balanced accuracy",
+            "Few-shot (cross-participant): 34.47%",
+            "Few-shot (within-participant): 74.99%"
+          ],
+          "tasks": [
+            "Ten-class cognitive task prediction"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: Aligns single-channel EEG signals with semantic embeddings of task instructions and stimuli for cognitive state decoding.",
+          "Achieves zero-shot task prediction with 30.13% balanced accuracy (vs 10% chance) and significant few-shot gains up to 74.99%.",
+          "Identifies that training on datasets with multiple tasks per participant is more effective for transfer than adding datasets with limited task variety."
+        ],
+        "limitations": [
+          "Zero-shot performance remains relatively low compared to within-participant few-shot performance.",
+          "Adding datasets with only one or a few tasks per participant can sometimes reduce performance.",
+          "The model is constrained to a single anterior-posterior differential channel."
+        ],
+        "method": {
+          "architecture": "EEG encoder aligned with a sentence encoder's task vectors",
+          "finetuning": "Few-shot adaptation using small sets of target task examples",
+          "objective": "Contrastive-style alignment of EEG signals with semantic task embeddings",
+          "pretraining": "Trained on publicly available EEG data from various labs"
+        },
+        "notes": "{\"chars\": 197784, \"error\": null, \"pages\": 67, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8026;max_tokens=8000",
+        "one_liner": "A framework that aligns single-channel EEG signals with semantic task embeddings to enable zero-shot and few-shot cognitive task prediction.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-10-10",
+        "tags": {
+          "backbone": [],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Predicting Cognitive Tasks from Single-Channel EEG through Task-Semantic Alignment",
+        "unique_contribution": "Introduces a method to align single-channel EEG signals with structured task-semantic vectors to facilitate zero-shot transfer across diverse cognitive tasks.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "Predicting Cognitive Tasks from Single-Channel EEG through Task-Semantic Alignment",
       "triage": {
         "confidence": 0.8,
@@ -1340,7 +1407,7 @@
   "stats": {
     "accepted": 13,
     "candidates": 32,
-    "summarized": 12
+    "summarized": 13
   },
   "top_picks": [
     "2610.14497",
