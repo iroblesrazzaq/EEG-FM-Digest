@@ -1402,18 +1402,228 @@
           "Targets the EEG-FM ecosystem through cross-task model optimization and adaptation."
         ]
       }
+    },
+    {
+      "arxiv_id": "2610.29320v1",
+      "arxiv_id_base": "2610.29320",
+      "authors": [
+        "Kleanthis Avramidis",
+        "Ivan Tashev",
+        "Dimitra Emmanouilidou"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.NE"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.29320v1",
+        "pdf": "https://arxiv.org/pdf/2610.29320v1"
+      },
+      "published_date": "2026-10-21",
+      "summary": {
+        "arxiv_id_base": "2610.29320",
+        "categories": [
+          "cs.LG",
+          "cs.NE"
+        ],
+        "data_scale": {
+          "channels": 128.0,
+          "datasets": [
+            "Healthy Brain Network EEG (HBN-EEG)"
+          ],
+          "eeg_hours": 820.0,
+          "subjects": 1131.0
+        },
+        "detailed_summary": "BrainCodes proposes a compact foundation model combining a frozen RVQ tokenizer with a factorized Transformer U-Net backbone. Unlike typical reconstruction-based models, it employs masked discrete code prediction and an auxiliary task of detecting synthetic narrowband bursts to preserve physiologically relevant features. Evaluation across 14 benchmarks, including consumer-grade wearables, shows it matches or exceeds larger SOTA models while using significantly fewer parameters.",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "TUEV",
+            "ISRUC",
+            "Siena",
+            "PhysioNet-MI",
+            "BCI IV-2a",
+            "EEGMAT",
+            "EESM23"
+          ],
+          "headline_results": [
+            "Achieved highest mean nBAC among compared foundation models",
+            "Maintained high performance on sparse consumer-grade montages"
+          ],
+          "tasks": [
+            "Sleep staging",
+            "Motor imagery",
+            "Cognitive load",
+            "Epilepsy detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: BrainCodes uses a quantization-based tokenizer and a factorized Transformer U-Net to learn transferable features with only 1.9M parameters.",
+          "Novel pretraining: Combines masked discrete code prediction with an auxiliary objective that injects synthetic narrowband bursts to ensure sensitivity to neural oscillations.",
+          "Strong transferability: Outperforms baselines on low-resource wearable devices and retains 91% of full-montage performance with only 4 electrodes."
+        ],
+        "limitations": [
+          "Pretraining corpus consists primarily of children and adolescents, potentially limiting generalization to older adults.",
+          "The model relies on a frozen external tokenizer, making the total system footprint dependent on that component.",
+          "Evaluation on consumer-grade hardware is limited to a small number of datasets."
+        ],
+        "method": {
+          "architecture": "Frozen RVQ tokenizer (BioCodec) + Factorized Transformer U-Net with 3D rotary positional encoding for channels.",
+          "finetuning": "Linear probing and full fine-tuning of the backbone for downstream tasks.",
+          "objective": "Masked discrete code prediction (primary) and region oscillation injection (auxiliary).",
+          "pretraining": "Self-supervised pretraining on the HBN-EEG dataset."
+        },
+        "notes": "{\"chars\": 95636, \"error\": null, \"pages\": 27, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7971",
+        "one_liner": "A lightweight EEG foundation model utilizing discrete neural codes and an oscillation-injection objective to maintain spatial and spectral sensitivity.",
+        "open_source": {
+          "code_url": "https://github.com/unknown",
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-10-21",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "discrete-code-prediction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "discrete-tokens"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "BrainCodes: A Lightweight EEG Foundation Model over Discrete Neural Codes",
+        "unique_contribution": "Introduces a discrete-code prediction objective supplemented by an oscillation-injection auxiliary task to preserve spectral and spatial EEG structures in a lightweight architecture.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "BrainCodes: A Lightweight EEG Foundation Model over Discrete Neural Codes",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies as an 'EEG foundation model' (BrainCodes) designed for transferable EEG features.",
+          "Pretrained using self-supervised learning on a large-scale dataset of 800+ hours from 1,000+ participants.",
+          "Demonstrates broad transferability across diverse neurophysiological tasks including sleep staging, attention, and cognitive load."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2610.29367v1",
+      "arxiv_id_base": "2610.29367",
+      "authors": [
+        "Kleanthis Avramidis",
+        "Ivan Tashev",
+        "Dimitra Emmanouilidou"
+      ],
+      "categories": [
+        "cs.NE"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.29367v1",
+        "pdf": "https://arxiv.org/pdf/2610.29367v1"
+      },
+      "published_date": "2026-10-21",
+      "summary": {
+        "arxiv_id_base": "2610.29367",
+        "categories": [
+          "cs.NE"
+        ],
+        "data_scale": {
+          "channels": 64.0,
+          "datasets": [
+            "PhysioNet-MI",
+            "Siena Scalp"
+          ],
+          "eeg_hours": null,
+          "subjects": 34.0
+        },
+        "detailed_summary": "The paper proposes a set of spatial and spectral perturbation probes to assess if EEG foundation models (EEG-FMs) are grounded in physiological properties like electrode locality and waveform morphology. By testing five existing EEG-FMs (BIOT, LaBraM, CBraMod, CSBrain, REVE) on motor-imagery and seizure datasets, the authors demonstrate a dissociation between what a model encodes in its representations and what it actually uses for downstream predictions. Results show that while some models are sensitive to spatial or spectral perturbations in their latent space, this sensitivity does not always translate to changes in classification accuracy.",
+        "evaluation": {
+          "benchmarks": [
+            "PhysioNet-MI",
+            "Siena Scalp"
+          ],
+          "headline_results": [
+            "REVE showed the strongest spatial and spectral grounding.",
+            "Observed dissociation between representational sensitivity and downstream reliance across most models."
+          ],
+          "tasks": [
+            "Motor Imagery Classification",
+            "Seizure Detection"
+          ]
+        },
+        "key_points": [
+          "Benchmark study: evaluates five EEG foundation models using perturbation probes to test spatial and spectral grounding.",
+          "Reveals a dissociation where representational sensitivity to signal properties does not necessarily imply downstream reliance for task accuracy.",
+          "Finds that REVE exhibits the strongest grounding in both topographic locality and clinical waveform morphology compared to other tested models."
+        ],
+        "limitations": [
+          "Evaluation is limited to five specific published EEG foundation models.",
+          "Probing is performed using only linear readouts on frozen encoders.",
+          "The dataset size for probing is a subset of the full available data.",
+          "Clinical markers used in spectral probes are synthetic/simulated."
+        ],
+        "method": {
+          "architecture": "Perturbation-based probing framework applied to frozen EEG-FM encoders with linear readouts.",
+          "finetuning": "Linear probing on frozen representations",
+          "objective": "Evaluation of representational sensitivity via latent displacement and downstream accuracy drop.",
+          "pretraining": "N/A (evaluates existing pre-trained models)"
+        },
+        "notes": "{\"chars\": 30846, \"error\": null, \"pages\": 5, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7869",
+        "one_liner": "Introduces a perturbation-based probing framework to evaluate whether EEG foundation models encode and rely on physiologically interpretable spatial and spectral signal structures.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-10-21",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Probing Spatial and Spectral Grounding in EEG Foundation Models",
+        "unique_contribution": "A systematic probing framework that disentangles architectural access, representational encoding, and functional reliance on spatial and spectral grounding in EEG foundation models.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Probing Spatial and Spectral Grounding in EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets the evaluation of 'EEG foundation models'",
+          "Introduces a systematic probing framework for spatial and spectral grounding in EEG-FMs",
+          "Evaluates five published EEG foundation models across different recording types"
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 13,
-    "candidates": 32,
-    "summarized": 13
+    "accepted": 15,
+    "candidates": 36,
+    "summarized": 15
   },
   "top_picks": [
+    "2610.29367",
+    "2610.29320",
     "2610.14497",
     "2610.10571",
-    "2610.09287",
-    "2610.07484",
-    "2610.05503"
+    "2610.09287"
   ]
 }
