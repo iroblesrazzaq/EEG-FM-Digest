@@ -1612,18 +1612,252 @@
           "Evaluates five published EEG foundation models across different recording types"
         ]
       }
+    },
+    {
+      "arxiv_id": "2610.32067v1",
+      "arxiv_id_base": "2610.32067",
+      "authors": [
+        "Mingyu Jeon",
+        "Suwan Cho",
+        "Jae Young Suh"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.32067v1",
+        "pdf": "https://arxiv.org/pdf/2610.32067v1"
+      },
+      "published_date": "2026-10-23",
+      "summary": {
+        "arxiv_id_base": "2610.32067",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "APAVA",
+            "BCI IV 2a",
+            "Lee2019",
+            "TUSL",
+            "TUAB",
+            "BNCI2014-009",
+            "ISRUC",
+            "FACED"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes a controlled evaluation protocol for EEG foundation models incorporating random initialization, band-power baselines, and validation-selected probes. It evaluates six models (five public and one in-house) across nine benchmarks, finding that many reported gains vanish when layers are selected on validation rather than test sets. The results demonstrate that random initialization often matches pretraining on specific tasks and that simple band-power features frequently outperform complex foundation models on emotion and motor imagery.",
+        "evaluation": {
+          "benchmarks": [
+            "APAVA",
+            "BCI IV 2a",
+            "Lee2019",
+            "TUSL",
+            "TUAB",
+            "BNCI2014-009",
+            "ISRUC",
+            "FACED"
+          ],
+          "headline_results": [
+            "Test-selection inflates layer-wise peaks by +0.034 on average.",
+            "Band-power baselines are rarely beaten on emotion or motor imagery tasks.",
+            "Only 5 of 30 fine-tuning pairs showed gains beyond seed noise."
+          ],
+          "tasks": [
+            "Alzheimer's detection",
+            "Motor Imagery",
+            "Slowing detection",
+            "Abnormal detection",
+            "P300",
+            "Sleep staging",
+            "Emotion recognition"
+          ]
+        },
+        "key_points": [
+          "Benchmark study: Evaluates six EEG foundation models using a controlled protocol to identify overestimations in reported downstream gains.",
+          "Reveals that picking probed layers based on test scores inflates performance and that band-power baselines are rarely beaten on emotion or motor imagery tasks.",
+          "Finds that for many model-dataset pairs, random initialization performs comparably to pretraining under frozen probing."
+        ],
+        "limitations": [
+          "The in-house model's SincNet filters acted as low-pass filters, limiting its ability to capture mu and beta rhythms for motor imagery.",
+          "Fine-tuning gains were measured using a shared canonical schedule, which serves as a lower bound rather than the absolute best per-model performance.",
+          "The number of seeds (5) is small, making it difficult to reach conventional statistical significance for every single cell.",
+          "Input handling differences across models are confounded with corpus and implementation maturity."
+        ],
+        "method": {
+          "architecture": "Evaluates five public models (LaBraM, EEGPT, CBraMod, LUNA, LuMamba) and one in-house JEPA-style model with a SincNet front-end and 8-layer transformer encoder.",
+          "finetuning": "Comparison between frozen linear probing (validation-selected) and full fine-tuning using a shared canonical schedule.",
+          "objective": "Comparison of pretraining objectives against random initialization and 5-band log-power baselines.",
+          "pretraining": "The in-house model was pretrained on the REVE corpus using a JEPA-style objective with a SIGReg regularizer."
+        },
+        "notes": "{\"chars\": 62241, \"error\": null, \"pages\": 21, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7904",
+        "one_liner": "A systematic re-evaluation of EEG foundation models using rigorous controls to assess the actual gains of pretraining over random initialization and simple spectral baselines.",
+        "open_source": {
+          "code_url": "unknown",
+          "license": "unknown",
+          "weights_url": "unknown"
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-10-23",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "discrete-code-prediction"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Controlled Evaluation of EEG Foundation Models: Random Initialisation, Band-Power and Validation-Selected Probes",
+        "unique_contribution": "Introduces a rigorous evaluation framework for EEG foundation models that uses random-initialization twins and band-power anchors to isolate the true benefit of pretraining.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Controlled Evaluation of EEG Foundation Models: Random Initialisation, Band-Power and Validation-Selected Probes",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly evaluates five publicly released EEG foundation models and an in-house JEPA-style model.",
+          "Focuses on the systematic evaluation and benchmarking of EEG-FMs using controlled protocols.",
+          "Proposes reporting practices specifically for the EEG foundation model community."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2610.35246v1",
+      "arxiv_id_base": "2610.35246",
+      "authors": [
+        "Abdulkader Helwan",
+        "Khadidja Henni",
+        "Lina Abou-Abbas"
+      ],
+      "categories": [
+        "cs.LG",
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.35246v1",
+        "pdf": "https://arxiv.org/pdf/2610.35246v1"
+      },
+      "published_date": "2026-10-26",
+      "summary": {
+        "arxiv_id_base": "2610.35246",
+        "categories": [
+          "cs.LG",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": 64.0,
+          "datasets": [
+            "TUEV"
+          ],
+          "eeg_hours": 147.0,
+          "subjects": null
+        },
+        "detailed_summary": "NOMAD-EEG introduces a generative diffusion-based architecture designed to be independent of electrode count, identity, order, and input length. It factorizes spatio-temporal mixing by alternating bidirectional S4D (State-Space Model) layers for patch-free temporal processing at 20ms resolution and multi-head attention for spatial mixing, where electrodes are identified via Fourier features of 3D scalp positions. Pre-trained on 147 hours of unlabelled TUEV data, the 12M-parameter model outperformed seven larger foundation models on various downstream tasks, including seizure detection and motor imagery, using frozen linear probes.",
+        "evaluation": {
+          "benchmarks": [
+            "EEGMMIDB",
+            "Siena",
+            "Bonn",
+            "TUEP",
+            "TUEV"
+          ],
+          "headline_results": [
+            "Outperformed 7 other foundation models on several tasks",
+            "EEGMMIDB motor imagery: 0.442 balanced accuracy",
+            "Siena seizure detection: 0.622 macro F1",
+            "Bonn seizure detection: 0.999 AUROC"
+          ],
+          "tasks": [
+            "Motor imagery",
+            "Seizure detection",
+            "Epilepsy diagnosis",
+            "Event classification",
+            "P300 detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: A 12M-parameter diffusion model that is natively agnostic to electrode montage and input length.",
+          "Combines bidirectional S4D layers for patch-free temporal processing with 3D coordinate-conditioned attention for spatial mixing.",
+          "Outperformed seven larger foundation models on seizure detection and motor imagery benchmarks using frozen linear probes."
+        ],
+        "limitations": [
+          "Pre-trained on a single EEG corpus (TUEV), which may limit generalizability compared to multi-corpus pre-training.",
+          "Scaling studies indicated that significantly larger models with more data did not yield substantial performance gains.",
+          "Performance depends on the availability and accuracy of 3D scalp coordinate metadata for electrodes."
+        ],
+        "method": {
+          "architecture": "Diffusion model with a convolutional stem and 16 blocks of alternating bidirectional S4D layers (temporal) and multi-head attention layers (spatial) using 3D scalp coordinates.",
+          "finetuning": "Evaluated using frozen linear probes or token-based fine-tuning on downstream tasks.",
+          "objective": "Denoising diffusion with a cosine noise schedule.",
+          "pretraining": "Pre-trained on 147 hours of unlabelled EEG data from the TUEV corpus."
+        },
+        "notes": "{\"chars\": 98383, \"error\": null, \"pages\": 37, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8044;max_tokens=8000",
+        "one_liner": "A montage- and length-agnostic generative EEG foundation model using diffusion, state-space layers, and 3D coordinate-based attention.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-10-26",
+        "tags": {
+          "backbone": [
+            "diffusion",
+            "mamba-ssm"
+          ],
+          "objective": [],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": [
+            "topology-agnostic",
+            "channel-flexible"
+          ]
+        },
+        "title": "NOMAD-EEG: Native Omni-Montage Adaptive Diffusion",
+        "unique_contribution": "The first EEG foundation model to simultaneously combine a generative diffusion objective, 3D position-based montage independence, and patch-free temporal modeling.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "NOMAD-EEG: Native Omni-Montage Adaptive Diffusion",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies as a 'generative EEG foundation model' designed for broad transfer across varying montages and lengths.",
+          "Pre-trained on unlabelled EEG data and evaluated using frozen linear probes across ten different datasets.",
+          "Directly compares performance against seven other existing EEG foundation models."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 15,
-    "candidates": 36,
-    "summarized": 15
+    "accepted": 17,
+    "candidates": 42,
+    "summarized": 17
   },
   "top_picks": [
+    "2610.35246",
+    "2610.32067",
     "2610.29367",
     "2610.29320",
-    "2610.14497",
-    "2610.10571",
-    "2610.09287"
+    "2610.14497"
   ]
 }
