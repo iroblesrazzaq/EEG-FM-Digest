@@ -1846,18 +1846,117 @@
           "Directly compares performance against seven other existing EEG foundation models."
         ]
       }
+    },
+    {
+      "arxiv_id": "2610.38152v1",
+      "arxiv_id_base": "2610.38152",
+      "authors": [
+        "Ruoxi Piao",
+        "Alicia Lu",
+        "Yunzhen Zhang",
+        "Mustafa Mısır",
+        "Hasan Onur Keleş"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2610.38152v1",
+        "pdf": "https://arxiv.org/pdf/2610.38152v1"
+      },
+      "published_date": "2026-10-28",
+      "summary": {
+        "arxiv_id_base": "2610.38152",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "FOG",
+            "ISRUC"
+          ],
+          "eeg_hours": null,
+          "subjects": 12.0
+        },
+        "detailed_summary": "The paper proposes BridgeRouter, a framework that treats cross-modal transfer as an instance-level algorithm selection problem. It utilizes a portfolio of frozen EEG foundation models connected via lightweight bridges to target modalities (EMG/ECG), using a lightweight MLP to predict the relative performance gain of alternative routes over a default 'Single Best Solver' anchor. Evaluation on FOG and ISRUC datasets demonstrates that instance-level routing significantly outperforms global model selection, achieving 81.38% balanced accuracy on FOG and 62.92% on ISRUC.",
+        "evaluation": {
+          "benchmarks": [
+            "FOG dataset",
+            "ISRUC dataset"
+          ],
+          "headline_results": [
+            "FOG: 81.38% balanced accuracy (+11.49% over SBS)",
+            "ISRUC: 62.92% balanced accuracy (+3.83% over SBS)"
+          ],
+          "tasks": [
+            "EMG-based freezing-of-gait (FOG) detection",
+            "ECG-based sleep classification"
+          ]
+        },
+        "key_points": [
+          "New routing method: BridgeRouter dynamically selects the best cross-modal bridge from a portfolio of frozen EEG foundation models for each input instance.",
+          "Predicts anchor-relative negative log-likelihood gains using a lightweight MLP based on target-modality representations, requiring only one bridge execution at inference.",
+          "Improved performance on EMG-based gait detection (81.38% balanced accuracy) and ECG-based sleep classification (62.92% balanced accuracy) compared to fixed-route baselines."
+        ],
+        "limitations": [
+          "Requires paired EEG-target recordings during the training phase to establish bridges and router gains.",
+          "Performance is capped by the quality of the available foundation model portfolio.",
+          "FOG evaluation follows sample-wise splitting, which may not reflect unseen-subject generalization."
+        ],
+        "method": {
+          "architecture": "Portfolio of frozen EEG foundation models and frozen target encoders connected by lightweight bridges, managed by an MLP router.",
+          "finetuning": "Training of lightweight bridges and the MLP router on paired cross-modal data.",
+          "objective": "Regression of anchor-relative negative log-likelihood (NLL) gains.",
+          "pretraining": "Uses existing EEG FMs (e.g., BIOT, CBraMod, LaBraM)."
+        },
+        "notes": "{\"chars\": 61565, \"error\": null, \"pages\": 18, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8012;max_tokens=8000",
+        "one_liner": "A gain-aware routing framework that dynamically selects the optimal cross-modal bridge for each instance to transfer pretrained EEG foundation models to other biosignals.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-10-28",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "BridgeRouter: Gain-Aware Instance Routing over Cross-Modal Bridge Portfolios",
+        "unique_contribution": "Introduces anchor-relative gain prediction to enable instance-level routing among multiple cross-modal bridge pathways using only target-modality information at inference.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "BridgeRouter: Gain-Aware Instance Routing over Cross-Modal Bridge Portfolios",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets 'pretrained, task-adapted EEG foundation models'",
+          "Proposes a routing mechanism for a portfolio of 'EEG foundation-model bridge pathways'",
+          "Focuses on the adaptation and cross-modal transfer ecosystem of EEG-FMs"
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 17,
-    "candidates": 42,
-    "summarized": 17
+    "accepted": 18,
+    "candidates": 45,
+    "summarized": 18
   },
   "top_picks": [
+    "2610.38152",
     "2610.35246",
     "2610.32067",
     "2610.29367",
-    "2610.29320",
-    "2610.14497"
+    "2610.29320"
   ]
 }
