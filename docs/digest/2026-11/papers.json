@@ -1,0 +1,44 @@
+{
+  "featured_paper_id": null,
+  "month": "2026-11",
+  "papers": [
+    {
+      "arxiv_id": "2611.05097v1",
+      "arxiv_id_base": "2611.05097",
+      "authors": [
+        "Nicolas Waehner",
+        "Enzo Tagliazucchi",
+        "Jacobo Sitt",
+        "Demian Wassermann",
+        "Giovanni Franco Gabriel Marraffini",
+        "Trinidad Borrell"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.05097v1",
+        "pdf": "https://arxiv.org/pdf/2611.05097v1"
+      },
+      "published_date": "2026-11-03",
+      "summary": null,
+      "summary_failed_reason": "llm_other:InternalServerError",
+      "title": "The Platonic Brain: Representational Convergence in EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly focuses on 'EEG foundation models' in both the title and abstract.",
+          "Analyzes representational convergence and alignment, which falls under the EEG-FM ecosystem/evaluation criteria.",
+          "EEG is the central modality used to test the Platonic Representation Hypothesis."
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "accepted": 1,
+    "candidates": 6,
+    "summarized": 0
+  },
+  "top_picks": []
+}
