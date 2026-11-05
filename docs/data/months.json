@@ -2,17 +2,17 @@
   "latest": "2026-11",
   "months": [
     {
-      "empty_state": "no_summaries",
+      "empty_state": "has_papers",
       "featured": null,
       "href": "digest/2026-11/index.html",
       "json_path": "digest/2026-11/papers.json",
       "month": "2026-11",
       "month_label": "November 2026",
-      "month_rev": "63b4fa861dd7a895",
+      "month_rev": "42e8d5c4896fcbc1",
       "stats": {
-        "accepted": 1,
-        "candidates": 6,
-        "summarized": 0
+        "accepted": 6,
+        "candidates": 11,
+        "summarized": 6
       }
     },
     {

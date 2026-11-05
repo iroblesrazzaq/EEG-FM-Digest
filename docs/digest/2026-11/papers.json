@@ -3,6 +3,124 @@
   "month": "2026-11",
   "papers": [
     {
+      "architecture": {
+        "fact_sheet": null,
+        "hf_repo": null,
+        "hfviewer_url": null,
+        "skip_reason": "not_a_model_repo",
+        "status": "skipped"
+      },
+      "arxiv_id": "2611.03165v1",
+      "arxiv_id_base": "2611.03165",
+      "authors": [
+        "Jun-Yu Pan",
+        "Ruicheng Yin",
+        "Bao-Liang Lu",
+        "Dongsheng Li",
+        "Wei-Long Zheng",
+        "Yansen Wang"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.03165v1",
+        "pdf": "https://arxiv.org/pdf/2611.03165v1"
+      },
+      "published_date": "2026-11-02",
+      "summary": {
+        "arxiv_id_base": "2611.03165",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Quark",
+            "Atom",
+            "Molecule"
+          ],
+          "eeg_hours": 79910.0,
+          "subjects": null
+        },
+        "detailed_summary": "The paper scales the LaBraM EEG foundation model by increasing pretraining data across three collections (Quark, Atom, Molecule) and expanding encoder capacity from 5.8M to 1.97B parameters. It employs a neural spectrum tokenizer and masked-code prediction objective to learn representations across 23 diverse downstream tasks. Results show that scaling improves both full fine-tuning and linear probing, with the Atom-L* model outperforming the strongest baseline by 3.61 percentage points in mean balanced accuracy.",
+        "evaluation": {
+          "benchmarks": [
+            "23 diverse downstream tasks"
+          ],
+          "headline_results": [
+            "Atom-L* achieved 59.05% mean balanced accuracy (Full-FT), +3.61 pp over REVE Large",
+            "Quark-G achieved 54.33% mean balanced accuracy (LP)"
+          ],
+          "tasks": [
+            "Clinical classification",
+            "Motor imagery",
+            "EEG-based classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: Scales LaBraM to 1.97B parameters and ~80k hours of data, achieving state-of-the-art mean balanced accuracy of 59.05% on 23 tasks.",
+          "Scaling analysis: Reveals that larger encoders benefit more from full fine-tuning than linear probing and that downstream performance can decouple from pretraining loss.",
+          "Data efficiency: Shows that broader source coverage (Atom) can outperform larger but less diverse collections (Quark) at matched model sizes."
+        ],
+        "limitations": [
+          "Downstream performance can decline even as pretraining loss continues to fall.",
+          "Linear probing performance does not consistently guarantee strong full fine-tuning results.",
+          "Increasing the size of the language model readout (Qwen3) provided no consistent gain in multitask classification.",
+          "Data saturation occurs depending on model capacity, limiting the returns of simply adding more hours."
+        ],
+        "method": {
+          "architecture": "Neural spectrum tokenizer with scaled encoders (5.8M to 1.97B parameters)",
+          "finetuning": "Full fine-tuning (Full-FT) and Linear Probing (LP)",
+          "objective": "Masked-code prediction",
+          "pretraining": "Distributed training on heterogeneous EEG recordings across three data collections"
+        },
+        "notes": "{\"chars\": 220272, \"error\": null, \"pages\": 66, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8005;max_tokens=8000",
+        "one_liner": "A systematic scaling study of the LaBraM EEG foundation model, expanding data up to 79,910 hours and model capacity up to 1.97 billion parameters.",
+        "open_source": {
+          "code_url": "https://github.com/LaBraM",
+          "license": "unknown",
+          "weights_url": "https://huggingface.co/LaBraM"
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-11-02",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "LaBraM at Scale: Scaling Data and Models for EEG Pretraining",
+        "unique_contribution": "Provides a comprehensive analysis of the scaling laws for EEG foundation models, demonstrating capacity-dependent data saturation and the divergence between linear probing and full fine-tuning performance.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "LaBraM at Scale: Scaling Data and Models for EEG Pretraining",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies as scaling an 'EEG foundation model' (LaBraM)",
+          "Focuses on large-scale pretraining across multiple EEG collections for broad transfer",
+          "Evaluates performance across 23 diverse downstream tasks using linear probing and fine-tuning",
+          "Provides systematic scaling analysis of model capacity and data for EEG representations"
+        ]
+      }
+    },
+    {
       "arxiv_id": "2611.05097v1",
       "arxiv_id_base": "2611.05097",
       "authors": [
@@ -21,8 +139,76 @@
         "pdf": "https://arxiv.org/pdf/2611.05097v1"
       },
       "published_date": "2026-11-03",
-      "summary": null,
-      "summary_failed_reason": "llm_other:InternalServerError",
+      "summary": {
+        "arxiv_id_base": "2611.05097",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "CineBrain"
+          ],
+          "eeg_hours": 3.0,
+          "subjects": 6.0
+        },
+        "detailed_summary": "The paper tests the Platonic Representation Hypothesis by analyzing 14 EEG foundation models across five families using the CineBrain dataset. It introduces 'NICE decodability' as a task-free measure of capability and uses calibrated mKNN and CKA metrics to assess representational alignment. The results show that higher decodability predicts stronger intramodal convergence and global alignment with language models, while parameter count is not a consistent proxy for alignment.",
+        "evaluation": {
+          "benchmarks": [
+            "CineBrain"
+          ],
+          "headline_results": [
+            "Positive correlation between NICE decodability and cross-family alignment (mKNN p=0.003, CKA p=0.007)",
+            "No consistent correlation between parameter count and alignment"
+          ],
+          "tasks": [
+            "NICE decodability",
+            "Intramodal representational alignment",
+            "Cross-modal alignment"
+          ]
+        },
+        "key_points": [
+          "Analysis of EEG foundation models: Tests the Platonic Representation Hypothesis to see if models converge on shared representations as they improve.",
+          "Capability over scale: Found that alignment correlates with the ability to decode general EEG markers (NICE decodability) rather than model parameter count.",
+          "Cross-modal dissociation: Observed strong global alignment with language models for high-capability EEG models, but no consistent local alignment with vision models."
+        ],
+        "limitations": [
+          "Small sample size of 14 models from five families.",
+          "Limited number of participants (six subjects).",
+          "Reliance on a single dataset (CineBrain), limiting generalizability.",
+          "Cross-modal neighborhood similarity only modestly exceeded the time-shifted control."
+        ],
+        "method": {
+          "architecture": "Analysis of 14 frozen EEG models (FEMBA, LUNA, NeuroLM, ST-EEGFormer, REVE) compared with vision and language models.",
+          "finetuning": null,
+          "objective": "Representational alignment analysis using mKNN (local) and Linear CKA (global) with a cyclic-shift null calibration.",
+          "pretraining": "Models were pretrained on large-scale EEG data as per their original publications."
+        },
+        "notes": "{\"chars\": 38058, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7819",
+        "one_liner": "Investigates whether EEG foundation models converge toward shared representations as their capability to decode brain markers increases.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-11-03",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "The Platonic Brain: Representational Convergence in EEG Foundation Models",
+        "unique_contribution": "Demonstrates that representational convergence in EEG foundation models is driven by model capability (NICE decodability) rather than parameter scale.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "The Platonic Brain: Representational Convergence in EEG Foundation Models",
       "triage": {
         "confidence": 1.0,
@@ -33,12 +219,428 @@
           "EEG is the central modality used to test the Platonic Representation Hypothesis."
         ]
       }
+    },
+    {
+      "arxiv_id": "2611.05538v1",
+      "arxiv_id_base": "2611.05538",
+      "authors": [
+        "Xin Zhou",
+        "Elena Sergeeva",
+        "Nan Bi",
+        "Wenyu Song",
+        "Lijun Yin",
+        "Hao Deng"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.05538v1",
+        "pdf": "https://arxiv.org/pdf/2611.05538v1"
+      },
+      "published_date": "2026-11-03",
+      "summary": {
+        "arxiv_id_base": "2611.05538",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "vEpiSet",
+            "TUEV",
+            "TUAB"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper explores whether generalist VLMs can interpret EEG visually, emulating the way clinicians inspect EEG patterns, without requiring large-scale EEG-specific pretraining. The authors demonstrate that VLMs like Qwen3-VL perform competitively on clinical tasks (vEpiSet, TUEV, TUAB) and exhibit scaling laws and superior few-shot adaptability compared to specialist EEG foundation models. Evidence shows that the choice of visual rendering, specifically longitudinal bipolar montages, significantly enhances diagnostic performance.",
+        "evaluation": {
+          "benchmarks": [
+            "vEpiSet",
+            "TUEV",
+            "TUAB"
+          ],
+          "headline_results": [
+            "Qwen-4B achieved 0.835 balanced accuracy on vEpiSet, outperforming specialist FMs (0.763)."
+          ],
+          "tasks": [
+            "interictal epileptiform discharge detection",
+            "EEG event recognition",
+            "normal-abnormal classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model approach: leverages generalist Vision-Language Models (VLMs) to interpret EEG signals as visual patterns.",
+          "Shows that VLMs exhibit performance scaling with model size and superior few-shot adaptation compared to specialist EEG-pretrained models.",
+          "Achieved state-of-the-art balanced accuracy (0.750) on the TUEV FM-Bench split using Qwen3-VL-8B."
+        ],
+        "limitations": [
+          "Naive VLMs lack strong zero-shot capacities on EEG tasks.",
+          "Performance is highly dependent on the visual rendering method (e.g., montage type).",
+          "Requires fine-tuning for optimal clinical performance."
+        ],
+        "method": {
+          "architecture": "Vision-Language Model (Qwen3-VL, InternVL-3)",
+          "finetuning": "LoRA or prediction-head adaptation",
+          "objective": "Supervised fine-tuning / LoRA",
+          "pretraining": "General-purpose VLM pretraining (non-EEG)"
+        },
+        "notes": "{\"chars\": 64943, \"error\": null, \"pages\": 24, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7961",
+        "one_liner": "Proposes using general-purpose Vision-Language Models (VLMs) as foundation models for EEG neurodiagnostics by treating EEG signals as visual patterns.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-11-03",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": [
+            "topology-agnostic"
+          ]
+        },
+        "title": "Recasting Visual Language Models as EEG Foundation Models for Clinical Neurodiagnostics",
+        "unique_contribution": "Demonstrates that generalist VLMs can serve as effective EEG foundation models without domain-specific pretraining, exhibiting scaling and few-shot capabilities that specialist EEG models lack.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Recasting Visual Language Models as EEG Foundation Models for Clinical Neurodiagnostics",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Title explicitly proposes recasting VLMs as 'EEG Foundation Models'.",
+          "Abstract discusses the paradigm of creating unified representations for multiple EEG tasks.",
+          "Evaluates the approach across a collection of clinical neuro-diagnostic tasks using few-shot learning.",
+          "Directly compares the proposed method against 'specialist foundation models'."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2611.05652v1",
+      "arxiv_id_base": "2611.05652",
+      "authors": [
+        "Anusha Madapura",
+        "Aditya Kommineni",
+        "Shrikanth Narayanan"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.05652v1",
+        "pdf": "https://arxiv.org/pdf/2611.05652v1"
+      },
+      "published_date": "2026-11-03",
+      "summary": {
+        "arxiv_id_base": "2611.05652",
+        "categories": [
+          "cs.AI",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Physionet-MI",
+            "High Gamma",
+            "ERPCore"
+          ],
+          "eeg_hours": null,
+          "subjects": 163.0
+        },
+        "detailed_summary": "The paper introduces a geometric hierarchy metric to analyze how EEG foundation models and signal processing features organize trait (subject identity) and state (task) information. The authors find that most embeddings form a macro-trait hierarchy, which negatively correlates with state classification performance. They demonstrate that subject mean-normalization and task-specific fine-tuning can shift this hierarchy toward a macro-state organization, thereby improving BCI performance.",
+        "evaluation": {
+          "benchmarks": [
+            "Physionet-MI",
+            "High Gamma",
+            "ERPCore"
+          ],
+          "headline_results": [
+            "Strong negative correlation (Spearman -0.73) between macro-trait hierarchy and state classification accuracy.",
+            "Subject mean-normalization improved balanced accuracy by approximately 10%."
+          ],
+          "tasks": [
+            "Motor Imagery",
+            "ERP classification"
+          ]
+        },
+        "key_points": [
+          "Analysis method for EEG representations: Quantifies the trait-state hierarchy in embeddings to show that subject identity typically dominates task-related signatures.",
+          "Evidence of performance bottleneck: Finds a strong negative correlation (Spearman -0.73) between macro-trait hierarchy and state classification accuracy.",
+          "Mitigation strategies: Demonstrates that subject mean-normalization and fine-tuning transform embeddings from macro-trait to macro-state hierarchies, improving balanced accuracy by ~10%."
+        ],
+        "limitations": [
+          "Current pre-training objectives may inherently bias models toward capturing subject identity over task states.",
+          "The magnitude of performance gains from normalization depends on the existing state purity within subjects.",
+          "Some tasks show smaller separation between subject and state purity, suggesting task-dependent representation."
+        ],
+        "method": {
+          "architecture": "Analyzes embeddings from various FMs (BIOT, LaBraM, CBraMod, CSBrain, REVE) and signal processing features.",
+          "finetuning": "Evaluates task-specific fine-tuning and subject mean-normalization to shift the trait-state hierarchy.",
+          "objective": "Uses a Hierarchy Metric (ratio of inter-trait to intra-trait distances) and kNN purity to evaluate representation structure.",
+          "pretraining": "Evaluates models using contrastive and masked reconstruction objectives."
+        },
+        "notes": "{\"chars\": 29014, \"error\": null, \"pages\": 5, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7992",
+        "one_liner": "Quantifies the dominance of subject-specific 'traits' over task-specific 'states' in EEG embeddings and shows that reducing trait information improves state decoding.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-11-03",
+        "tags": {
+          "backbone": [],
+          "objective": [
+            "contrastive",
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "latent-tokens"
+          ],
+          "topology": []
+        },
+        "title": "Quantifying Trait-State Hierarchy in EEG Foundation Model and Signal Processing Embeddings",
+        "unique_contribution": "Introduces a quantitative hierarchy metric to reveal that EEG foundation models primarily capture subject-specific traits, which hinders state decoding unless mitigated by normalization or fine-tuning.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Quantifying Trait-State Hierarchy in EEG Foundation Model and Signal Processing Embeddings",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly targets 'EEG foundation models' in both the title and abstract.",
+          "Focuses on the analysis and quantification of embeddings produced by EEG-FMs.",
+          "Investigates the impact of fine-tuning and normalization on EEG-FM representation hierarchies."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2611.06356v1",
+      "arxiv_id_base": "2611.06356",
+      "authors": [
+        "Kuber Shahi",
+        "Bruno Aristimunha",
+        "Arnaud Delorme"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.06356v1",
+        "pdf": "https://arxiv.org/pdf/2611.06356v1"
+      },
+      "published_date": "2026-11-04",
+      "summary": {
+        "arxiv_id_base": "2611.06356",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "EEGDash Corpus (77 public datasets)"
+          ],
+          "eeg_hours": 14075.0,
+          "subjects": 7272.0
+        },
+        "detailed_summary": "The authors propose the EEGDash Corpus, a curated collection of 77 redistributable public EEG datasets totaling over 14,000 hours of recordings. Unlike previous large-scale corpora that rely on non-redistributable clinical archives, this corpus is provided as a gated Hugging Face dataset in a chunked Zarr store. The utility of the corpus is validated by retraining the REVE-Base model from scratch, achieving performance on OpenEEGBench tasks comparable to the original released model.",
+        "evaluation": {
+          "benchmarks": [
+            "OpenEEGBench"
+          ],
+          "headline_results": [
+            "Linear probing score of 0.331 (vs 0.333 released)",
+            "Fine-tuning score of 0.273 (vs 0.325 released)"
+          ],
+          "tasks": [
+            "OpenEEGBench tasks"
+          ]
+        },
+        "key_points": [
+          "New EEG benchmark: A training-ready corpus containing 77 public datasets, 14,075 hours of EEG data, and 7,272 subjects.",
+          "Provides a standardized Zarr store format and conversion pipeline based on the REVE model's recipe to streamline foundation model pretraining.",
+          "Demonstrates viability by retraining REVE-Base from scratch, reaching a 0.331 linear probing score on OpenEEGBench tasks."
+        ],
+        "limitations": [
+          "Excludes 12 datasets from the original REVE corpus due to redistribution restrictions.",
+          "Excludes datasets recorded at 100 Hz as they fall below the 200 Hz input requirement of the REVE recipe.",
+          "Performance of the retrained model is slightly lower than the original released model due to missing clinical data."
+        ],
+        "method": {
+          "architecture": "REVE-Base",
+          "finetuning": "Linear probing and full fine-tuning on OpenEEGBench tasks.",
+          "objective": "Masked autoencoding",
+          "pretraining": "Retrained from scratch on the EEGDash corpus using the original REVE trainer."
+        },
+        "notes": "{\"chars\": 43513, \"error\": null, \"pages\": 8, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8066;max_tokens=8000",
+        "one_liner": "A training-ready public corpus of 77 EEG datasets designed to facilitate the reproducibility and development of EEG foundation models.",
+        "open_source": {
+          "code_url": "https://huggingface.co/datasets/EEGDash/eegdash-corpus-v0",
+          "license": "Gated Hugging Face",
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-11-04",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "EEGDash Corpus: A Training-Ready Public Corpus for EEG Foundation Models",
+        "unique_contribution": "The release of a large-scale, redistributable, and training-ready EEG corpus (eegdash-corpus-v0) that enables the reproduction of foundation model pretraining without requiring restricted clinical data.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EEGDash Corpus: A Training-Ready Public Corpus for EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Title explicitly targets EEG Foundation Models.",
+          "Provides a large-scale, training-ready corpus specifically for pretraining EEG-FMs.",
+          "Validates the corpus by retraining an existing EEG-FM (REVE-Base) and evaluating it on OpenEEGBench tasks."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2611.06546v1",
+      "arxiv_id_base": "2611.06546",
+      "authors": [
+        "Alexis Bollengier",
+        "Abel Díaz Berenguer",
+        "Olivier Pallanca",
+        "André Anjos",
+        "Hichem Sahli"
+      ],
+      "categories": [
+        "eess.SP",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.06546v1",
+        "pdf": "https://arxiv.org/pdf/2611.06546v1"
+      },
+      "published_date": "2026-11-04",
+      "summary": {
+        "arxiv_id_base": "2611.06546",
+        "categories": [
+          "eess.SP",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 3.0,
+          "datasets": [
+            "MODA",
+            "MASS"
+          ],
+          "eeg_hours": null,
+          "subjects": 180.0
+        },
+        "detailed_summary": "The paper proposes a framework to adapt the frozen SleepFM foundation model for precise sleep spindle localization, addressing the resolution loss caused by multi-second token compression. It introduces a parallel local time-frequency branch with a band-structured readout and a localized wavelet synthesis decoder to reconstruct sample-level boundaries. Evaluation on the MODA benchmark shows an event-level F1 of 0.8080 at IoU 0.2, demonstrating that combining local spectral details with pretrained temporal context improves dense event recovery.",
+        "evaluation": {
+          "benchmarks": [
+            "MODA"
+          ],
+          "headline_results": [
+            "Event-level F1 of 0.8080 ± 0.0040 at IoU 0.2",
+            "Event-level F1 of 0.7766 ± 0.0050 at IoU 0.5"
+          ],
+          "tasks": [
+            "Dense sleep spindle localization"
+          ]
+        },
+        "key_points": [
+          "Method for adapting sleep foundation models: utilizes a frozen SleepFM encoder augmented with a local time-frequency branch for dense spindle localization.",
+          "Employs a band-structured readout and localized wavelet synthesis to reconstruct temporal details below the pretrained token scale.",
+          "Achieves an event-level F1 of 0.8080 at IoU 0.2 on the MODA benchmark, showing that local spectral information is primary for localization while the FM provides context."
+        ],
+        "limitations": [
+          "Performance declines rapidly at stricter IoU thresholds, indicating challenges in very precise boundary alignment.",
+          "Relies on a frozen backbone, which may limit the potential for deeper task-specific feature adaptation.",
+          "Evaluation is limited to the MODA benchmark."
+        ],
+        "method": {
+          "architecture": "Frozen SleepFM encoder + local time-frequency branch (Morlet wavelets, SE-module, CNNs) + asymmetric cross-attention + localized wavelet synthesis decoder + TCN refinement.",
+          "finetuning": "Frozen backbone with trainable local pathway and decoder.",
+          "objective": "Combination of Focal loss, Dice loss, and smooth L1 loss for event localization.",
+          "pretraining": "SleepFM (pretrained via contrastive learning on large-scale sleep EEG)."
+        },
+        "notes": "{\"chars\": 20160, \"error\": null, \"pages\": 5, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=6379",
+        "one_liner": "Adapts a frozen SleepFM encoder for dense sleep spindle localization by adding a local time-frequency pathway to recover sub-token temporal resolution.",
+        "open_source": {
+          "code_url": null,
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-11-04",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": []
+        },
+        "title": "Adapting Sleep Foundation Models for Dense Sleep Spindle Localization",
+        "unique_contribution": "Introduces a local time-frequency pathway and localized token-to-sample reconstruction to recover high-resolution event boundaries from frozen, coarse-grained foundation model tokens.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Adapting Sleep Foundation Models for Dense Sleep Spindle Localization",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly focuses on adapting a sleep foundation model (SleepFM) for EEG event localization.",
+          "EEG is the primary modality used for the task of sleep spindle localization.",
+          "Falls under the EEG-FM ecosystem as a paper concerning the adaptation and fine-tuning of a pretrained foundation model."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 1,
-    "candidates": 6,
-    "summarized": 0
+    "accepted": 6,
+    "candidates": 11,
+    "summarized": 6
   },
-  "top_picks": []
+  "top_picks": [
+    "2611.06546",
+    "2611.06356",
+    "2611.05652",
+    "2611.05538",
+    "2611.05097"
+  ]
 }

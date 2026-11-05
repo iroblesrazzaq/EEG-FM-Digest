@@ -1,11 +1,39 @@
 {
   "featured_paper": null,
   "month": "2026-11",
-  "sections": [],
+  "sections": [
+    {
+      "paper_ids": [
+        "2611.06356"
+      ],
+      "title": "benchmark"
+    },
+    {
+      "paper_ids": [
+        "2611.05097",
+        "2611.05538",
+        "2611.05652",
+        "2611.06546"
+      ],
+      "title": "method"
+    },
+    {
+      "paper_ids": [
+        "2611.03165"
+      ],
+      "title": "new_model"
+    }
+  ],
   "stats": {
-    "accepted": 1,
-    "candidates": 6,
-    "summarized": 0
+    "accepted": 6,
+    "candidates": 11,
+    "summarized": 6
   },
-  "top_picks": []
+  "top_picks": [
+    "2611.06546",
+    "2611.06356",
+    "2611.05652",
+    "2611.05538",
+    "2611.05097"
+  ]
 }
