@@ -629,18 +629,128 @@
           "Falls under the EEG-FM ecosystem as a paper concerning the adaptation and fine-tuning of a pretrained foundation model."
         ]
       }
+    },
+    {
+      "arxiv_id": "2611.07192v1",
+      "arxiv_id_base": "2611.07192",
+      "authors": [
+        "Mingyang Jiang",
+        "Yamin Li",
+        "Fan Ma",
+        "Daniel Moyer",
+        "Hua Xu",
+        "Catie Chang"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.07192v1",
+        "pdf": "https://arxiv.org/pdf/2611.07192v1"
+      },
+      "published_date": "2026-11-04",
+      "summary": {
+        "arxiv_id_base": "2611.07192",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "FACED",
+            "ISRUC",
+            "TUEV",
+            "PhysioNet-MI",
+            "SEED-V"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper investigates whether adapters that mirror the channel and temporal structure of a pretrained EEG backbone (native adapters) outperform simple token-wise MLP adapters when trainable parameter counts are matched. Using CBraMod and LaBraM backbones across tasks like emotion recognition and sleep staging, the authors find that native adapters show no consistent advantage. The results indicate that performance depends heavily on the specific backbone and task, suggesting that structural priors in adapters may not be inherently superior to capacity-matched alternatives.",
+        "evaluation": {
+          "benchmarks": [
+            "FACED",
+            "ISRUC",
+            "TUEV",
+            "PhysioNet-MI",
+            "SEED-V"
+          ],
+          "headline_results": [
+            "Native adapters showed no consistent advantage over token-wise MLPs.",
+            "LaBraM performed better with token-wise controls on FACED and TUEV."
+          ],
+          "tasks": [
+            "Emotion Recognition",
+            "Sleep Staging",
+            "Event Classification",
+            "Motor Imagery"
+          ]
+        },
+        "key_points": [
+          "Method study on EEG adaptation: compares native-axis attention adapters that mirror backbone structure against parameter-matched token-wise MLP controls.",
+          "Findings show no consistent advantage for native adapters, with token-wise controls performing better on certain tasks such as emotion recognition and event classification.",
+          "Highlights the importance of capacity-controlled comparisons when evaluating parameter-efficient tuning strategies for EEG foundation models."
+        ],
+        "limitations": [
+          "Results for CBraMod on TUEV may be affected by potential data leakage during pretraining.",
+          "The study focuses on adapters placed after a fixed backbone rather than internal tuning like LoRA.",
+          "The number of seeds used (3) is small, limiting population-level significance claims."
+        ],
+        "method": {
+          "architecture": "Native-axis attention adapters (mixing along channel and temporal-patch axes) vs. Token-wise MLP adapters.",
+          "finetuning": "Frozen backbone with trainable adapters and a linear classifier head.",
+          "objective": "Downstream task classification accuracy.",
+          "pretraining": "Uses frozen pretrained EEG-FMs (CBraMod and LaBraM)."
+        },
+        "notes": "{\"chars\": 73640, \"error\": null, \"pages\": 25, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7996",
+        "one_liner": "A capacity-controlled study comparing backbone-informed native adapters against token-wise MLP adapters for EEG foundation models.",
+        "open_source": {
+          "code_url": "https://github.com/0oJimmyo0/EEGxPlore-TMLR",
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-11-04",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": []
+        },
+        "title": "Backbone-Informed Adaptation after EEG Pretraining: A Capacity-Controlled Study",
+        "unique_contribution": "Demonstrates that backbone-informed adapters do not consistently outperform capacity-matched token-wise MLP adapters across different EEG foundation models and downstream tasks.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Backbone-Informed Adaptation after EEG Pretraining: A Capacity-Controlled Study",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly focuses on adaptation and fine-tuning strategies for EEG foundation models.",
+          "Evaluates performance across multiple existing EEG-FMs and diverse downstream tasks.",
+          "Investigates the effectiveness of backbone-informed adapters versus capacity-matched controls for pretrained EEG encoders."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 6,
-    "candidates": 11,
-    "summarized": 6
+    "accepted": 7,
+    "candidates": 14,
+    "summarized": 7
   },
   "top_picks": [
+    "2611.07192",
     "2611.06546",
     "2611.06356",
     "2611.05652",
-    "2611.05538",
-    "2611.05097"
+    "2611.05538"
   ]
 }
