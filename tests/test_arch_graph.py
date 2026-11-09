@@ -223,8 +223,10 @@ def test_diagram_from_hf_zuna_nested_config():
     assert "4D RoPE" in left
     heads = next(item for item in diagram["callouts"] if item["kind"] == "heads")
     assert heads["label"] == "16 heads"
-    assert diagram["below"][0]["label"] == "Sample EEG"
+    assert diagram["below"][0]["label"] == "Noisy EEG"
+    assert [item["label"] for item in diagram["head"]] == ["Reconstruction head"]
     assert diagram["family"] == "Denoising transformer"
+    assert diagram["meta"]["denoise"] is True
 
 
 def test_looks_like_reve_from_arxiv_and_repo():
@@ -308,12 +310,22 @@ def test_diagram_from_hf_zuna_tensors_infer_swiglu_and_q_out_heads():
     tensors = {
         "model.decoder.layers.0.attention.wq.weight": {"shape": [512, 1024]},
         "model.decoder.layers.0.attention_norm.weight": {"shape": [1024]},
+        "model.decoder.layers.0.cross_attention.wq.weight": {"shape": [512, 1024]},
         "model.decoder.layers.0.feed_forward.w1.weight": {"shape": [2816, 1024]},
         "model.decoder.layers.0.feed_forward.w2.weight": {"shape": [1024, 2816]},
         "model.decoder.layers.0.feed_forward.w3.weight": {"shape": [2816, 1024]},
         "model.decoder.layers.1.feed_forward.w1.weight": {"shape": [2816, 1024]},
+        "model.encoder.layers.0.attention.wq.weight": {"shape": [512, 1024]},
+        "model.encoder.layers.0.feed_forward.w1.weight": {"shape": [2816, 1024]},
+        "model.encoder.layers.1.feed_forward.w1.weight": {"shape": [2816, 1024]},
     }
-    diagram = diagram_from_hf(cfg, tensors=tensors, label="ZUNA")
+    diagram = diagram_from_hf(
+        cfg,
+        tensors=tensors,
+        label="ZUNA",
+        title="ZUNA1.1: A more flexible EEG foundation model for Denoising and Super-resolution",
+        arxiv_id="2607.27308",
+    )
     heads = next(item for item in diagram["callouts"] if item["kind"] == "heads")
     assert heads["label"] == "8 heads"
     ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
@@ -323,6 +335,19 @@ def test_diagram_from_hf_zuna_tensors_infer_swiglu_and_q_out_heads():
     assert "SwiGLU" in ffn["title"]
     assert diagram["repeat"]["steps"][0]["label"].startswith("RMSNorm")
     assert diagram["annotations"]["embed_dim"] == 1024
+    assert diagram["below"][0]["label"] == "Noisy EEG"
+    assert [item["label"] for item in diagram["head"]] == ["Reconstruction head"]
+    roles = [stack["role"] for stack in diagram["stacks"]]
+    assert roles == ["encoder", "decoder"]
+    decoder = next(stack for stack in diagram["stacks"] if stack["role"] == "decoder")
+    assert decoder["label"] == "Decoder"
+    assert decoder["count"] == 16
+    assert [step["label"] for step in decoder["steps"] if step["kind"] == "attention"] == [
+        "Multi-head attention",
+        "Cross attention",
+    ]
+    left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
+    assert left["cross-meta"] == "Attend encoder"
 
 
 def test_diagram_from_hf_labram_tensors_infer_heads_pe_and_mlp_width():
@@ -346,9 +371,10 @@ def test_diagram_from_hf_labram_tensors_infer_heads_pe_and_mlp_width():
     assert ffn["activation"] == "GELU"
     assert ffn["hidden_dim"] == 800
     assert [item["label"] for item in diagram["stem"]] == ["Patch embedding layer", "VQ-VAE codebook"]
+    assert diagram["stem"][1].get("side") == "left"
     left = [item["label"] for item in diagram["annotations"]["left"]]
     assert "Absolute PE" in left
-    assert "Frozen codebook" in left
+    assert "Frozen codebook" not in left
     assert "QK-Norm" in left
     assert diagram["annotations"]["embed_dim"] == 200
     assert diagram["notes"]["tokenizer"] == "vqvae"
@@ -384,11 +410,15 @@ def test_diagram_from_hf_cbramod_criss_cross_attention():
     }
     diagram = diagram_from_hf(cfg, tensors=tensors, label="CBraMod")
     attn_labels = [step["label"] for step in diagram["repeat"]["steps"] if step["kind"] == "attention"]
-    assert attn_labels == ["Criss-cross attention"]
-    left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
-    assert left["cost-st"] == "O(N²T) ∥ O(NT²)"
-    assert left["pe"] == "Asymmetric PE"
-    assert left["ffn-kind"] == "GELU\n2-layer MLP"
+    assert attn_labels == []
+    parallel = next(step for step in diagram["repeat"]["steps"] if step["kind"] == "parallel")
+    assert parallel["label"] == "Criss-cross attention"
+    assert [item["label"] for item in parallel["items"]] == ["Spatial", "Temporal"]
+    left = {item["id"]: item for item in diagram["annotations"]["left"]}
+    assert left["cost-st"]["label"] == "O(N²T) ∥ O(NT²)"
+    assert left["cost-st"].get("side") == "right"
+    assert left["pe"]["label"] == "Asymmetric PE"
+    assert left["ffn-kind"]["label"] == "GELU\n2-layer MLP"
     assert diagram["notes"]["attn"] == "criss_cross"
     assert "Spatial attention" not in [step["label"] for step in diagram["repeat"]["steps"]]
     assert "Temporal attention" not in [step["label"] for step in diagram["repeat"]["steps"]]
@@ -408,6 +438,9 @@ def test_diagram_from_hf_luna_channel_unifier_and_rope():
         "cross_attn.0.q_proj.weight": {"shape": [256, 64]},
         "freq_embed.frequency_to_embed.fc1.weight": {"shape": [168, 42]},
         "cross_attn.query_self_attn.layers.0.linear1.weight": {"shape": [256, 64]},
+        "cross_attn.query_self_attn.layers.0.self_attn.weight": {"shape": [256, 64]},
+        "cross_attn.query_self_attn.layers.7.linear1.weight": {"shape": [256, 64]},
+        "cross_attn.query_self_attn.layers.7.self_attn.weight": {"shape": [256, 64]},
         "blocks.0.attn.qkv_proj.weight": {"shape": [768, 256]},
         "blocks.0.attn.rotary_emb.freqs": {"shape": [16]},
         "blocks.0.mlp.fc1.weight": {"shape": [1024, 256]},
@@ -417,13 +450,19 @@ def test_diagram_from_hf_luna_channel_unifier_and_rope():
     diagram = diagram_from_hf(cfg, tensors=tensors, label="LUNA")
     assert diagram["repeat"]["count"] == 8
     assert diagram["annotations"]["embed_dim"] == 256
-    assert [item["label"] for item in diagram["stem"]] == [
-        "Patch embedding layer",
-        "Channel unifier",
-    ]
+    assert [item["label"] for item in diagram["stem"]] == ["Patch embedding layer"]
+    roles = [stack["role"] for stack in diagram["stacks"]]
+    assert roles == ["encoder", "query"]
+    query = next(stack for stack in diagram["stacks"] if stack["role"] == "query")
+    assert query["label"] == "Channel unifier"
+    assert query["count"] == 8
+    assert any(step["label"] == "Query attention" for step in query["steps"])
     left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
     assert left["pe"] == "RoPE"
     assert left["unify-meta"] == "Learned queries"
+    assert left["unify-meta"] and next(
+        item["anchor"] for item in diagram["annotations"]["left"] if item["id"] == "unify-meta"
+    ) == "qry.attn"
     assert diagram["family"] == "Channel-query transformer"
     ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
     assert ffn["hidden_dim"] == 1024
@@ -450,9 +489,13 @@ def test_diagram_from_hf_brainomni_lm_aliases_and_codebook():
         "Sensor encoder",
         "VQ-VAE codebook",
     ]
+    assert diagram["stem"][1].get("side") == "left"
+    assert diagram["stem"][1].get("detail") == "4×512 codes"
     assert diagram["notes"]["tokenizer"] == "vqvae"
     left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
-    assert left["vq-meta"] == "Frozen codebook"
+    assert "vq-meta" not in left
+    assert "Frozen codebook" not in left.values()
+    assert left["sensor-meta"] == "EEG + MEG"
     assert diagram["family"] == "Sensor-encoder transformer"
     ffn = next(item for item in diagram["callouts"] if item["kind"] == "ffn")
     assert ffn["gated"] is False
@@ -470,9 +513,36 @@ def test_diagram_from_hf_femba_bidirectional_mamba():
     }
     diagram = diagram_from_hf(cfg, tensors=tensors, label="FEMBA")
     assert diagram["repeat"]["count"] == 10
-    assert [step["kind"] for step in diagram["repeat"]["steps"]] == ["norm", "attention", "add"]
-    assert diagram["repeat"]["steps"][1]["label"] == "Bidirectional Mamba"
+    assert [step["kind"] for step in diagram["repeat"]["steps"]] == ["norm", "parallel", "add"]
+    mixer = diagram["repeat"]["steps"][1]
+    assert mixer["label"] == "Bidirectional Mamba"
+    assert [item["label"] for item in mixer["items"]] == ["Forward Mamba", "Reverse Mamba"]
     assert diagram["annotations"]["embed_dim"] == 385
     assert diagram["notes"]["backbone"] == "mamba"
     assert diagram["family"] == "Bidirectional Mamba"
+    left = {item["id"]: item["label"] for item in diagram["annotations"]["left"]}
+    assert "mamba-dir" not in left
+    assert "Forward ∥ Reverse" not in left.values()
     assert not any(item["kind"] == "ffn" for item in diagram["callouts"])
+
+
+def test_graph_from_tensors_orders_encoder_before_decoder():
+    names = []
+    for idx in range(2):
+        names.extend(
+            [
+                f"model.decoder.layers.{idx}.attention.weight",
+                f"model.decoder.layers.{idx}.cross_attention.weight",
+                f"model.encoder.layers.{idx}.attention.weight",
+            ]
+        )
+    graph = graph_from_tensors(names, hidden_size=1024)
+    ids = [node["id"] for node in graph["nodes"] if node.get("kind") == "repeat"]
+    assert ids == ["model.encoder", "model.decoder"]
+
+
+def test_diagram_from_hf_llama_single_stack_has_no_block_label():
+    diagram = diagram_from_hf(_llama_cfg(), label="Llama")
+    assert len(diagram["stacks"]) == 1
+    assert "label" not in diagram["stacks"][0]
+    assert diagram["stacks"][0]["id"] == "block"
