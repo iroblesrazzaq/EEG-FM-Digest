@@ -221,7 +221,7 @@
       }
     },
     {
-      "arxiv_id": "2611.05538v1",
+      "arxiv_id": "2611.05538v2",
       "arxiv_id_base": "2611.05538",
       "authors": [
         "Xin Zhou",
@@ -235,8 +235,8 @@
         "cs.LG"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2611.05538v1",
-        "pdf": "https://arxiv.org/pdf/2611.05538v1"
+        "abs": "http://arxiv.org/abs/2611.05538v2",
+        "pdf": "https://arxiv.org/pdf/2611.05538v2"
       },
       "published_date": "2026-11-03",
       "summary": {
@@ -430,7 +430,7 @@
       }
     },
     {
-      "arxiv_id": "2611.06356v1",
+      "arxiv_id": "2611.06356v2",
       "arxiv_id_base": "2611.06356",
       "authors": [
         "Kuber Shahi",
@@ -441,8 +441,8 @@
         "cs.LG"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2611.06356v1",
-        "pdf": "https://arxiv.org/pdf/2611.06356v1"
+        "abs": "http://arxiv.org/abs/2611.06356v2",
+        "pdf": "https://arxiv.org/pdf/2611.06356v2"
       },
       "published_date": "2026-11-04",
       "summary": {
@@ -739,18 +739,209 @@
           "Investigates the effectiveness of backbone-informed adapters versus capacity-matched controls for pretrained EEG encoders."
         ]
       }
+    },
+    {
+      "arxiv_id": "2611.08969v1",
+      "arxiv_id_base": "2611.08969",
+      "authors": [
+        "Yanlong Chen",
+        "Simone Benatti",
+        "Luca Benini",
+        "Cuntai Guan",
+        "Yawei Li"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.08969v1",
+        "pdf": "https://arxiv.org/pdf/2611.08969v1"
+      },
+      "published_date": "2026-11-06",
+      "summary": null,
+      "summary_failed_reason": "llm_other:InternalServerError",
+      "title": "PhysioWave-T: Token-Efficient Wavelet Foundation Models for Biosignals",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly describes PhysioWave-T as a 'foundation model family' including EEG.",
+          "Details pre-training of a 30M-parameter EEG model on 15M windows for reuse via lightweight adapters.",
+          "Directly benchmarks the EEG encoder against known EEG foundation models such as BENDR, BIOT, LaBraM, and EEGPT."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2611.11149v1",
+      "arxiv_id_base": "2611.11149",
+      "authors": [
+        "Dheeraj Chintapalli",
+        "Sunkalp Chandra"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.11149v1",
+        "pdf": "https://arxiv.org/pdf/2611.11149v1"
+      },
+      "published_date": "2026-11-08",
+      "summary": null,
+      "summary_failed_reason": "llm_invalid_json",
+      "title": "ZarrFM: A Canonical Tensor Storage Architecture for EEG Foundation-Model Pretraining",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Title explicitly targets 'EEG Foundation-Model Pretraining'",
+          "Proposes a storage architecture specifically designed to support large-scale EEG pretraining",
+          "Fits the EEG-FM ecosystem criteria by addressing the infrastructure/storage layer for foundation model development"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2611.11782v1",
+      "arxiv_id_base": "2611.11782",
+      "authors": [
+        "SuGil Choi",
+        "Mooseop Kim",
+        "Chi Yoon Jeong"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.11782v1",
+        "pdf": "https://arxiv.org/pdf/2611.11782v1"
+      },
+      "published_date": "2026-11-09",
+      "summary": null,
+      "summary_failed_reason": "llm_other:InternalServerError",
+      "title": "CABrain: A Correlation-Aware Brain Foundation Model for EEG Decoding",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly identifies as an 'EEG foundation model' (CABrain) focused on large-scale self-supervised pretraining.",
+          "Proposes specific improvements to EEG-FM pretraining, including GCN-based conditional positional encoding and adaptive masking.",
+          "Evaluates the model across ten benchmark datasets, demonstrating the intended broad transferability of the foundation model representations."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2611.14035v1",
+      "arxiv_id_base": "2611.14035",
+      "authors": [
+        "Minyu Zhou",
+        "Yajing Wu",
+        "Yongqiang Tang",
+        "Wang Jia",
+        "Wensheng Zhang"
+      ],
+      "categories": [
+        "cs.LG",
+        "eess.SP",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.14035v1",
+        "pdf": "https://arxiv.org/pdf/2611.14035v1"
+      },
+      "published_date": "2026-11-10",
+      "summary": {
+        "arxiv_id_base": "2611.14035",
+        "categories": [
+          "cs.LG",
+          "eess.SP",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "6 public BCI benchmarks"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "ScaleBrain proposes a pre-training framework that coordinates multi-scale EEG representations by utilizing analysis windows of varying temporal spans with shared temporal anchors. It addresses the gap in prior work by aligning the input tokenization with a scale-specific reconstruction objective, ensuring sufficient supervision across different temporal resolutions. The model incorporates an axial spatio-temporal attention mechanism and demonstrates superior performance on six public BCI benchmarks with a compact 5.0M parameter architecture.",
+        "evaluation": {
+          "benchmarks": [
+            "6 public BCI benchmarks"
+          ],
+          "headline_results": [
+            "Highest mean Balanced Accuracy on 5/6 datasets compared to 12 baselines"
+          ],
+          "tasks": [
+            "BCI benchmarks (e.g., motor imagery, emotion recognition, sleep staging)"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: ScaleBrain implements a scale-consistent framework that synchronizes multi-scale input representations with their corresponding self-supervised optimization objectives.",
+          "Method novelty: Employs multi-scale tokenization with shared temporal anchors and an axial spatio-temporal attention mechanism for efficient feature fusion.",
+          "Strong evidence: Outperforms 12 representative baselines on five out of six public BCI benchmarks while utilizing only 5.0M parameters."
+        ],
+        "limitations": [
+          "The provided text does not explicitly discuss model limitations.",
+          "Evaluation is restricted to six public BCI benchmarks."
+        ],
+        "method": {
+          "architecture": "Axial spatio-temporal attention, multi-scale tokenization",
+          "finetuning": "Downstream BCI task adaptation",
+          "objective": "Scale-specific reconstruction",
+          "pretraining": "Self-supervised pre-training with scale-consistent reconstruction"
+        },
+        "notes": "{\"chars\": 63350, \"error\": null, \"pages\": 12, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8080;max_tokens=8000",
+        "one_liner": "A scale-consistent pre-training framework for EEG foundation models that aligns multi-scale tokenization with scale-specific reconstruction objectives.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-11-10",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": []
+        },
+        "title": "ScaleBrain: A Scale-Consistent Framework for EEG Foundation Models",
+        "unique_contribution": "Introduces a scale-consistent framework that explicitly aligns multi-scale EEG tokenization (via shared anchors) with scale-specific reconstruction objectives.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "ScaleBrain: A Scale-Consistent Framework for EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Title explicitly identifies the work as a framework for EEG Foundation Models.",
+          "Abstract describes a self-supervised pre-training framework using large unlabeled EEG corpora for broad BCI applications.",
+          "Evaluates the resulting representations across six public BCI benchmarks, demonstrating the intended broad transferability."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 7,
-    "candidates": 14,
-    "summarized": 7
+    "accepted": 11,
+    "candidates": 23,
+    "summarized": 8
   },
   "top_picks": [
+    "2611.14035",
     "2611.07192",
     "2611.06546",
     "2611.06356",
-    "2611.05652",
-    "2611.05538"
+    "2611.05652"
   ]
 }
