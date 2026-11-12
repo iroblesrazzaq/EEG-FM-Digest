@@ -758,8 +758,88 @@
         "pdf": "https://arxiv.org/pdf/2611.08969v1"
       },
       "published_date": "2026-11-06",
-      "summary": null,
-      "summary_failed_reason": "llm_other:InternalServerError",
+      "summary": {
+        "arxiv_id_base": "2611.08969",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 128.0,
+          "datasets": [
+            "EEG",
+            "ECG",
+            "sEMG"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "PhysioWave-T introduces a foundation model family for biosignals that employs dynamic scale folding to compress multiscale wavelet subbands into a single token sequence, significantly reducing computational overhead. It utilizes route-specific front ends and channel-name embeddings to accommodate varying channel counts and sampling rates within a single Transformer backbone. The EEG encoder, pre-trained on 15M windows, outperforms several existing foundation models across sleep staging and P300 tasks, while the Reliability-aware Latent Fusion (RALF) mechanism improves multimodal seizure detection.",
+        "evaluation": {
+          "benchmarks": [
+            "SeizeIT2",
+            "PTB-XL Super",
+            "Chapman-Shaoxing"
+          ],
+          "headline_results": [
+            "Outperforms BENDR, BIOT, LaBraM, and EEGPT on 8/9 EEG metrics.",
+            "Seizure detection sensitivity increased from 61.4% to 74.4% on SeizeIT2.",
+            "Achieved SOTA performance on sEMG and top macro-F1 on PTB-XL Super."
+          ],
+          "tasks": [
+            "Sleep staging",
+            "P300 detection",
+            "ERN detection",
+            "Seizure detection",
+            "ECG classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: A 30M-parameter encoder pre-trained on 15M windows that supports flexible channel counts and sampling rates via route-specific front ends.",
+          "Token-efficient architecture: Dynamic scale folding reduces Transformer latency by up to 7.2x and peak memory by up to 12.7x compared to scale expansion.",
+          "Multimodal integration: Reliability-aware latent fusion (RALF) improves seizure detection sensitivity on SeizeIT2 from 61.4% to 74.4% using adaptive weights."
+        ],
+        "limitations": [
+          "Requires route-specific front ends for different sampling rates.",
+          "Multimodal fusion (RALF) relies on independently pre-trained encoders rather than joint multimodal pre-training.",
+          "Performance on very low-channel counts may differ from high-density setups."
+        ],
+        "method": {
+          "architecture": "Transformer backbone with route-specific wavelet front ends and learned channel-name embeddings.",
+          "finetuning": "Task-specific linear probing and fine-tuning for sleep staging, P300, ERN, and seizure detection.",
+          "objective": "Frequency-guided masked reconstruction.",
+          "pretraining": "Pre-trained on 15M windows of EEG data with varying sampling rates and channel counts."
+        },
+        "notes": "{\"chars\": 85075, \"error\": null, \"pages\": 15, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8015;max_tokens=8000",
+        "one_liner": "A token-efficient wavelet foundation model family for EEG, ECG, and sEMG that uses dynamic scale folding and route-specific front ends to handle diverse acquisition setups.",
+        "open_source": {
+          "code_url": "https://github.com/ForeverBlue816/PhysioWave",
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-11-06",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "PhysioWave-T: Token-Efficient Wavelet Foundation Models for Biosignals",
+        "unique_contribution": "Introduces dynamic scale folding to maintain multiscale time-frequency information without increasing token sequence length, enabling efficient scaling to high-density EEG.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "PhysioWave-T: Token-Efficient Wavelet Foundation Models for Biosignals",
       "triage": {
         "confidence": 1.0,
@@ -786,8 +866,83 @@
         "pdf": "https://arxiv.org/pdf/2611.11149v1"
       },
       "published_date": "2026-11-08",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2611.11149",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "PhysioNet open-access EDF databases"
+          ],
+          "eeg_hours": 8359.0,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes ZarrFM, an execution-oriented storage representation that complements BIDS by using a Zarr v3 hierarchy with a two-level consolidated index and canonical channel mapping. Unlike traditional formats like EDF or Parquet, ZarrFM implements block-aligned sharding and an append-only edit protocol to minimize metadata overhead and ensure data integrity. Evaluation on PhysioNet corpora demonstrates significant reductions in storage size and a substantial increase in random-window loading throughput compared to existing formats.",
+        "evaluation": {
+          "benchmarks": [
+            "EDF",
+            "FIF",
+            "NPY",
+            "HDF5",
+            "Parquet"
+          ],
+          "headline_results": [
+            "11x faster throughput than Parquet",
+            "Metadata queries reduced from 601 to 14",
+            "Storage reduced from 42.4 MB/hour to 22.7 MB/hour"
+          ],
+          "tasks": [
+            "Metadata query count",
+            "Storage size efficiency",
+            "Random-window read throughput"
+          ]
+        },
+        "key_points": [
+          "ZarrFM provides a standardized, execution-efficient representation using Zarr v3 to reduce I/O bottlenecks in foundation model pretraining.",
+          "Achieves up to 11x faster window sampling than Parquet and reduces metadata queries from 601 to 14 across 200 recordings.",
+          "Verified bit-exact readback across 11,877 PhysioNet recordings (8,359 hours), reducing storage from 236.5 GB to approximately 100 GB."
+        ],
+        "limitations": [
+          "No end-to-end model training was evaluated to assess the impact on convergence.",
+          "Canonical projection is lossy for montages relying on specific references or electrode geometry.",
+          "Float-valued sources are quantized, meaning original values are not preserved bit-exactly.",
+          "Throughput results confound the storage format with the block-aligned sampler.",
+          "Bipolar clinical channels can collide into a single canonical slot, leading to data loss.",
+          "The effect of buffer size on optimization dynamics was not evaluated."
+        ],
+        "method": {
+          "architecture": "Zarr v3 hierarchy with two-level consolidated indexing and canonical channel projection (112 slots).",
+          "finetuning": null,
+          "objective": "Minimize I/O overhead and standardize EEG data for foundation model pretraining.",
+          "pretraining": null
+        },
+        "notes": "{\"chars\": 48503, \"error\": null, \"pages\": 14, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7849",
+        "one_liner": "A Zarr v3-based storage architecture designed to optimize I/O throughput, storage efficiency, and data standardization for large-scale EEG foundation model pretraining.",
+        "open_source": {
+          "code_url": "https://github.com/ZarrFM",
+          "license": "unknown",
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-11-08",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "ZarrFM: A Canonical Tensor Storage Architecture for EEG Foundation-Model Pretraining",
+        "unique_contribution": "Introduces a canonical tensor storage architecture for EEG that optimizes the pipeline from raw recordings to model-ready windows via block-aligned sharding and consolidated indexing.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "ZarrFM: A Canonical Tensor Storage Architecture for EEG Foundation-Model Pretraining",
       "triage": {
         "confidence": 1.0,
@@ -816,8 +971,78 @@
         "pdf": "https://arxiv.org/pdf/2611.11782v1"
       },
       "published_date": "2026-11-09",
-      "summary": null,
-      "summary_failed_reason": "llm_other:InternalServerError",
+      "summary": {
+        "arxiv_id_base": "2611.11782",
+        "categories": [
+          "cs.AI",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Temple University Hospital EEG Corpus (TUEG)"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "CABrain introduces a foundation model for EEG decoding that replaces random masking with an adaptive strategy and utilizes Graph Convolutional Networks (GCNs) for conditional positional encoding. This approach addresses the limitations of treating EEG data as image-like grids by explicitly modeling the spatial correlations between brain channels. The model was pretrained on the TUEG dataset and demonstrated state-of-the-art or competitive performance across ten benchmark datasets.",
+        "evaluation": {
+          "benchmarks": [
+            "Ten benchmark EEG datasets"
+          ],
+          "headline_results": [
+            "Achieved state-of-the-art or competitive performance across ten benchmark datasets"
+          ],
+          "tasks": [
+            "EEG Decoding"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: CABrain uses GCN-based conditional positional encoding to explicitly model inter-channel correlations.",
+          "Implements an adaptive masking strategy to modulate reconstruction difficulty, enhancing the learning of weakly correlated channels.",
+          "Demonstrates state-of-the-art or competitive performance across ten benchmark EEG datasets."
+        ],
+        "limitations": [
+          "Not explicitly mentioned in the provided text",
+          "Potential dependence on the quality of the initial channel correlation estimates"
+        ],
+        "method": {
+          "architecture": "Transformer-based with GCN-based conditional positional encoding",
+          "finetuning": "Finetuned on ten benchmark EEG datasets",
+          "objective": "Masked patch reconstruction",
+          "pretraining": "Pretrained on TUEG dataset using adaptive masking"
+        },
+        "notes": "{\"chars\": 96779, \"error\": null, \"pages\": 51, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8001;max_tokens=8000",
+        "one_liner": "A transformer-based EEG foundation model employing GCN-based conditional positional encoding and adaptive masking to capture inter-channel correlations.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-11-09",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "CABrain: A Correlation-Aware Brain Foundation Model for EEG Decoding",
+        "unique_contribution": "The first EEG foundation model to integrate graph-based representations into conditional positional encoding and implement an adaptive masking strategy during pretraining.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "CABrain: A Correlation-Aware Brain Foundation Model for EEG Decoding",
       "triage": {
         "confidence": 1.0,
@@ -935,13 +1160,13 @@
   "stats": {
     "accepted": 11,
     "candidates": 23,
-    "summarized": 8
+    "summarized": 11
   },
   "top_picks": [
     "2611.14035",
-    "2611.07192",
-    "2611.06546",
-    "2611.06356",
-    "2611.05652"
+    "2611.11782",
+    "2611.11149",
+    "2611.08969",
+    "2611.07192"
   ]
 }
