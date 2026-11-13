@@ -438,7 +438,8 @@
         "Arnaud Delorme"
       ],
       "categories": [
-        "cs.LG"
+        "cs.LG",
+        "eess.SP"
       ],
       "links": {
         "abs": "http://arxiv.org/abs/2611.06356v2",
@@ -1155,18 +1156,118 @@
           "Evaluates the resulting representations across six public BCI benchmarks, demonstrating the intended broad transferability."
         ]
       }
+    },
+    {
+      "arxiv_id": "2611.17031v1",
+      "arxiv_id_base": "2611.17031",
+      "authors": [
+        "Guoan Wang",
+        "Feng Liu"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.17031v1",
+        "pdf": "https://arxiv.org/pdf/2611.17031v1"
+      },
+      "published_date": "2026-11-12",
+      "summary": {
+        "arxiv_id_base": "2611.17031",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Clinical",
+            "Sleep",
+            "Affective",
+            "BCI"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes SeeEEG, a method that renders EEG signals as images (waveforms or scalograms) to be processed by a frozen vision transformer. Unlike existing EEG foundation models that require massive EEG pretraining, SeeEEG optimizes only a lightweight display module (montage, filtering, and contrast) to align EEG patterns with the visual priors of models like DINOv3. Evaluation across eight diverse datasets shows that SeeEEG outperforms seven specialized EEG foundation models in balanced accuracy and mean rank.",
+        "evaluation": {
+          "benchmarks": [
+            "8 diverse EEG datasets"
+          ],
+          "headline_results": [
+            "Outperforms 7 specialized EEG-FMs in balanced accuracy on all 8 datasets",
+            "Achieved a mean rank of 1.3 compared to 2.9 for the best EEG-FM (REVE)"
+          ],
+          "tasks": [
+            "EEG classification across clinical, sleep, affective, and BCI domains"
+          ]
+        },
+        "key_points": [
+          "New method: SeeEEG uses a frozen vision foundation model (e.g., DINOv3) as an EEG encoder by rendering signals as images.",
+          "Optimizes a lightweight display module (<= 1,113 parameters) for montage and filtering instead of fine-tuning the backbone.",
+          "Outperforms seven specialized EEG foundation models across eight clinical, sleep, affective, and BCI datasets."
+        ],
+        "limitations": [
+          "Requires rendering EEG as images, which may introduce computational overhead compared to raw signal processing.",
+          "Performance is heavily dependent on the quality and priors of the frozen vision backbone.",
+          "The learnable display parameters are optimized per task, potentially limiting zero-shot transfer of the rendering itself."
+        ],
+        "method": {
+          "architecture": "Frozen DINOv3 ViT-B backbone with a learnable display module (montage, filtering, contrast) that renders EEG as waveforms or scalograms.",
+          "finetuning": "Only the lightweight display module is trained; the ViT backbone remains frozen.",
+          "objective": "Task-specific optimization of display parameters to maximize classification accuracy.",
+          "pretraining": "Uses a frozen vision foundation model pretrained on image data (DINOv3)."
+        },
+        "notes": "{\"chars\": 50154, \"error\": null, \"pages\": 11, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8059;max_tokens=8000",
+        "one_liner": "SeeEEG leverages frozen vision foundation models as EEG encoders by learning an optimal visual rendering of EEG signals.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-11-12",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Your Vision Foundation Model Is Secretly an EEG Foundation Model",
+        "unique_contribution": "Demonstrates that a frozen vision foundation model, with a learnable rendering module, outperforms specialized EEG foundation models without any EEG-specific pretraining.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Your Vision Foundation Model Is Secretly an EEG Foundation Model",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly frames the work around EEG foundation models and their transferability to downstream tasks.",
+          "Proposes a method to leverage a vision foundation model as an EEG foundation model.",
+          "Benchmarks SeeEEG against seven existing EEG foundation models across eight diverse datasets."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 11,
-    "candidates": 23,
-    "summarized": 11
+    "accepted": 12,
+    "candidates": 26,
+    "summarized": 12
   },
   "top_picks": [
+    "2611.17031",
     "2611.14035",
     "2611.11782",
     "2611.11149",
-    "2611.08969",
-    "2611.07192"
+    "2611.08969"
   ]
 }
