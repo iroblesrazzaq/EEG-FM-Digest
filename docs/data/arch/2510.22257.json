@@ -15,7 +15,7 @@
           "label": "GELU\n2-layer MLP"
         },
         {
-          "anchor": "unify",
+          "anchor": "qry.attn",
           "id": "unify-meta",
           "label": "Learned queries"
         }
@@ -62,18 +62,25 @@
     ],
     "meta": {
       "causal": false,
+      "denoise": false,
       "eeg_like": true,
       "gated": false,
-      "has_patch": true
+      "has_patch": false
     },
     "notes": {
       "family": "Channel-query transformer",
-      "head_dim": 64
+      "head_dim": 64,
+      "stacks": [
+        "encoder",
+        "query"
+      ]
     },
     "param_label": null,
     "repeat": {
       "count": 8,
       "id": "enc",
+      "label": "Encoder",
+      "role": "encoder",
       "steps": [
         {
           "id": "enc.n1",
@@ -102,16 +109,79 @@
         }
       ]
     },
+    "stacks": [
+      {
+        "count": 8,
+        "id": "enc",
+        "label": "Encoder",
+        "role": "encoder",
+        "steps": [
+          {
+            "id": "enc.n1",
+            "kind": "norm",
+            "label": "LayerNorm 1"
+          },
+          {
+            "id": "enc.attn",
+            "kind": "attention",
+            "label": "Multi-head attention"
+          },
+          {
+            "id": "enc.n2",
+            "kind": "norm",
+            "label": "LayerNorm 2"
+          },
+          {
+            "id": "enc.mlp",
+            "kind": "ffn",
+            "label": "Feed forward"
+          },
+          {
+            "id": "enc.add",
+            "kind": "add",
+            "label": "+"
+          }
+        ]
+      },
+      {
+        "count": 8,
+        "id": "qry",
+        "label": "Channel unifier",
+        "role": "query",
+        "steps": [
+          {
+            "id": "qry.n1",
+            "kind": "norm",
+            "label": "LayerNorm 1"
+          },
+          {
+            "id": "qry.attn",
+            "kind": "attention",
+            "label": "Query attention"
+          },
+          {
+            "id": "qry.n2",
+            "kind": "norm",
+            "label": "LayerNorm 2"
+          },
+          {
+            "id": "qry.mlp",
+            "kind": "ffn",
+            "label": "Feed forward"
+          },
+          {
+            "id": "qry.add",
+            "kind": "add",
+            "label": "+"
+          }
+        ]
+      }
+    ],
     "stem": [
       {
         "id": "patch",
         "kind": "embed",
         "label": "Patch embedding layer"
-      },
-      {
-        "id": "unify",
-        "kind": "embed",
-        "label": "Channel unifier"
       }
     ],
     "title": "LUNA"

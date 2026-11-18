@@ -10,9 +10,10 @@
           "label": "Asymmetric PE"
         },
         {
-          "anchor": "enc.attn",
+          "anchor": "enc.mixer",
           "id": "cost-st",
-          "label": "O(N²T) ∥ O(NT²)"
+          "label": "O(N²T) ∥ O(NT²)",
+          "side": "right"
         },
         {
           "anchor": "enc.mlp",
@@ -55,6 +56,7 @@
     ],
     "meta": {
       "causal": false,
+      "denoise": false,
       "eeg_like": true,
       "gated": false,
       "has_patch": true
@@ -67,6 +69,7 @@
     "repeat": {
       "count": 12,
       "id": "enc",
+      "role": "encoder",
       "steps": [
         {
           "id": "enc.n1",
@@ -74,8 +77,20 @@
           "label": "LayerNorm 1"
         },
         {
-          "id": "enc.attn",
-          "kind": "attention",
+          "id": "enc.mixer",
+          "items": [
+            {
+              "id": "enc.spatial",
+              "kind": "attention",
+              "label": "Spatial"
+            },
+            {
+              "id": "enc.temporal",
+              "kind": "attention",
+              "label": "Temporal"
+            }
+          ],
+          "kind": "parallel",
           "label": "Criss-cross attention"
         },
         {
@@ -95,6 +110,52 @@
         }
       ]
     },
+    "stacks": [
+      {
+        "count": 12,
+        "id": "enc",
+        "role": "encoder",
+        "steps": [
+          {
+            "id": "enc.n1",
+            "kind": "norm",
+            "label": "LayerNorm 1"
+          },
+          {
+            "id": "enc.mixer",
+            "items": [
+              {
+                "id": "enc.spatial",
+                "kind": "attention",
+                "label": "Spatial"
+              },
+              {
+                "id": "enc.temporal",
+                "kind": "attention",
+                "label": "Temporal"
+              }
+            ],
+            "kind": "parallel",
+            "label": "Criss-cross attention"
+          },
+          {
+            "id": "enc.n2",
+            "kind": "norm",
+            "label": "LayerNorm 2"
+          },
+          {
+            "id": "enc.mlp",
+            "kind": "ffn",
+            "label": "Feed forward"
+          },
+          {
+            "id": "enc.add",
+            "kind": "add",
+            "label": "+"
+          }
+        ]
+      }
+    ],
     "stem": [
       {
         "id": "patch",
