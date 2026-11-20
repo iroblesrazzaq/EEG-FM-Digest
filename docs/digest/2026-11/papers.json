@@ -1256,12 +1256,109 @@
           "Benchmarks SeeEEG against seven existing EEG foundation models across eight diverse datasets."
         ]
       }
+    },
+    {
+      "arxiv_id": "2611.25315v1",
+      "arxiv_id_base": "2611.25315",
+      "authors": [
+        "Sergey Musienko"
+      ],
+      "categories": [
+        "cs.HC",
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.25315v1",
+        "pdf": "https://arxiv.org/pdf/2611.25315v1"
+      },
+      "published_date": "2026-11-19",
+      "summary": {
+        "arxiv_id_base": "2611.25315",
+        "categories": [
+          "cs.HC",
+          "cs.LG",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "BNCI2014-004",
+            "Zhou2016",
+            "Shin2017A",
+            "Kumar2024"
+          ],
+          "eeg_hours": null,
+          "subjects": 31.0
+        },
+        "detailed_summary": "The paper proposes a 'resource ladder' (factory → Bayesian head → affine map → full fine-tune) and a clean-referenced mean-shift gate to determine when a deployed BCI decoder should adapt. Unlike typical always-on fine-tuning, this approach uses a utility function to price classification accuracy against computational fit time and label costs. Evidence across five encoder architectures and multiple datasets shows that a lightweight LDA head can recover accuracy under severe synthetic stress at approximately 23x lower fit time than full fine-tuning.",
+        "evaluation": {
+          "benchmarks": [
+            "Synthetic channel-mix stress",
+            "Natural session drift"
+          ],
+          "headline_results": [
+            "LDA head achieved ~23x lower fit time than full fine-tuning while maintaining or improving accuracy under severe stress."
+          ],
+          "tasks": [
+            "Motor Imagery (MI) decoding"
+          ]
+        },
+        "key_points": [
+          "Method for BCI adaptation: Proposes a resource-priced ladder (factory → Bayesian head → affine map) governed by a regime-aware gate to optimize the cost of adaptation.",
+          "Cost-efficient recovery: Demonstrates that a lightweight LDA head matches or exceeds frozen trunk accuracy under severe stress across five architectures with ~23x lower fit time than full fine-tuning.",
+          "Gated adaptation: Shows that a clean-referenced gate prevents unnecessary adaptation on natural session drift, improving cost-efficiency and safety."
+        ],
+        "limitations": [
+          "Adaptation severity does not follow a universal ordinal ladder across datasets.",
+          "Recovery claims are primarily made under controlled synthetic channel mixing rather than natural drift.",
+          "The value under natural drift is cost-efficiency and clean-safety rather than demonstrated accuracy gains."
+        ],
+        "method": {
+          "architecture": "Frozen encoder trunks (e.g., EEGNet, Conformer, ATCNet) with a thin control layer consisting of a Bayesian LDA head or affine map.",
+          "finetuning": "Ladder-based adaptation (L1: Bayesian head update, L2: affine map, L3: full warm-start fine-tuning).",
+          "objective": "Utility maximization: U = acc - lambda_w * t_adapt - mu_n * (n_adapt/N_max).",
+          "pretraining": "Trunks are trained on calibration data and then frozen."
+        },
+        "notes": "{\"chars\": 48997, \"error\": null, \"pages\": 16, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8048;max_tokens=8000",
+        "one_liner": "A resource-aware adaptation framework for frozen EEG encoders that uses a gated ladder of lightweight heads to balance accuracy, fit time, and label costs.",
+        "open_source": {
+          "code_url": "Provided in ancillary bundle",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-11-19",
+        "tags": {
+          "backbone": [],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "When Should Deployed BCI Decoders Adapt? A Resource-Priced Ladder for Frozen EEG Trunks",
+        "unique_contribution": "Introduces a gated, resource-priced adaptation ladder that treats the decision to adapt as a first-class control variable based on a utility trade-off between accuracy, fit time, and label cost.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "When Should Deployed BCI Decoders Adapt? A Resource-Priced Ladder for Frozen EEG Trunks",
+      "triage": {
+        "confidence": 0.85,
+        "decision": "accept",
+        "reasons": [
+          "Focuses on adaptation and fine-tuning strategies for 'frozen EEG trunks' (pretrained encoders).",
+          "Evaluates the transferability and deployment of 'factory' models across multiple encoder architectures.",
+          "Targets the EEG-FM ecosystem by analyzing the trade-offs between lightweight adaptation and full fine-tuning of pretrained representations."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 12,
-    "candidates": 30,
-    "summarized": 12
+    "accepted": 13,
+    "candidates": 35,
+    "summarized": 13
   },
   "top_picks": [
     "2611.17031",

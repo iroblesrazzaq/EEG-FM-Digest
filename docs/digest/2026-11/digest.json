@@ -16,7 +16,8 @@
         "2611.06546",
         "2611.07192",
         "2611.11149",
-        "2611.17031"
+        "2611.17031",
+        "2611.25315"
       ],
       "title": "method"
     },
@@ -31,9 +32,9 @@
     }
   ],
   "stats": {
-    "accepted": 12,
-    "candidates": 30,
-    "summarized": 12
+    "accepted": 13,
+    "candidates": 35,
+    "summarized": 13
   },
   "top_picks": [
     "2611.17031",
