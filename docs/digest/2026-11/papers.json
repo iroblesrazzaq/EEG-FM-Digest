@@ -742,7 +742,7 @@
       }
     },
     {
-      "arxiv_id": "2611.08969v1",
+      "arxiv_id": "2611.08969v2",
       "arxiv_id_base": "2611.08969",
       "authors": [
         "Yanlong Chen",
@@ -755,8 +755,8 @@
         "cs.AI"
       ],
       "links": {
-        "abs": "http://arxiv.org/abs/2611.08969v1",
-        "pdf": "https://arxiv.org/pdf/2611.08969v1"
+        "abs": "http://arxiv.org/abs/2611.08969v2",
+        "pdf": "https://arxiv.org/pdf/2611.08969v2"
       },
       "published_date": "2026-11-06",
       "summary": {
@@ -1353,12 +1353,649 @@
           "Targets the EEG-FM ecosystem by analyzing the trade-offs between lightweight adaptation and full fine-tuning of pretrained representations."
         ]
       }
+    },
+    {
+      "arxiv_id": "2611.26856v1",
+      "arxiv_id_base": "2611.26856",
+      "authors": [
+        "Mirko Morello",
+        "Shivang Rawat",
+        "David J. Heeger"
+      ],
+      "categories": [
+        "cs.LG",
+        "eess.SP",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.26856v1",
+        "pdf": "https://arxiv.org/pdf/2611.26856v1"
+      },
+      "published_date": "2026-11-19",
+      "summary": {
+        "arxiv_id_base": "2611.26856",
+        "categories": [
+          "cs.LG",
+          "eess.SP",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "TUAB",
+            "BrainTreebank",
+            "ISRUC-SG1",
+            "BCI-IV-2a",
+            "TUEG"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes Recursive Quadrature Filters (RQFs), complex-valued temporal filters that function as learnable band-pass filters and a special case of diagonal state-space models. The model is pretrained using a self-supervised objective where the encoder predicts its own future activity via either windowed summaries or dense log-power. Evaluation across four neural benchmarks (TUAB, BrainTreebank, ISRUC-SG1, BCI-IV-2a) shows that the RQF system, with as few as 110k parameters, performs comparably to or better than much larger EEG foundation models.",
+        "evaluation": {
+          "benchmarks": [
+            "TUAB",
+            "BrainTreebank",
+            "ISRUC-SG1",
+            "BCI-IV-2a"
+          ],
+          "headline_results": [
+            "0.9247 AUROC on TUAB",
+            "0.8822 AUROC on BrainTreebank (frozen)",
+            "0.8223 balanced accuracy on ISRUC-SG1",
+            "0.6108 balanced accuracy on BCI-IV-2a"
+          ],
+          "tasks": [
+            "abnormal EEG detection",
+            "sentence onset detection",
+            "sleep staging",
+            "motor imagery"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: A compact RQF encoder using complex-valued temporal filters that explicitly parameterize tuning frequency and bandwidth.",
+          "Method novelty: Employs a self-supervised prediction-error objective (windowed or dense) to learn representations without task labels.",
+          "Strong evidence: A 110k-parameter model achieves 0.9247 AUROC on TUAB, outperforming SAMBA and rivaling models with up to 369M parameters."
+        ],
+        "limitations": [
+          "Most corpora use their own pretrained weights, target geometry, and readout rather than a single universal model.",
+          "Cross-corpus transfer was only explicitly tested for the TUEG-to-BCI-IV-2a transition."
+        ],
+        "method": {
+          "architecture": "Stack of L layers of d complex-valued Recursive Quadrature Filters (diagonal SSMs) with a spatial readout for multichannel fusion.",
+          "finetuning": "Downstream task readouts are trained with the encoder either frozen or fully fine-tuned.",
+          "objective": "Self-supervised future-state prediction using InfoNCE loss (windowed summary prediction or dense log-power prediction).",
+          "pretraining": "Pretrained on unlabeled time series to predict future activity; uses a phase-rotation prior and first-order look-ahead."
+        },
+        "notes": "{\"chars\": 71456, \"error\": null, \"pages\": 20, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7985",
+        "one_liner": "A compact, biologically motivated RQF encoder using self-supervised future-state prediction to achieve foundation-model performance with orders of magnitude fewer parameters.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-11-19",
+        "tags": {
+          "backbone": [
+            "mamba-ssm"
+          ],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Self-Supervised Learning with Recursive Quadrature Filters for Neural Time Series",
+        "unique_contribution": "Introduces a highly parameter-efficient EEG encoder based on Recursive Quadrature Filters that leverages biologically motivated oscillatory dynamics and self-supervised future-state prediction.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Self-Supervised Learning with Recursive Quadrature Filters for Neural Time Series",
+      "triage": {
+        "confidence": 0.85,
+        "decision": "accept",
+        "reasons": [
+          "Develops a self-supervised pretraining framework for EEG and intracranial recordings intended for downstream task readouts.",
+          "Evaluates the pretrained representations across four neural benchmarks.",
+          "Explicitly frames and compares the model's performance and efficiency against existing EEG foundation models."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2611.26929v1",
+      "arxiv_id_base": "2611.26929",
+      "authors": [
+        "Joseph Sankoorikal Johny",
+        "Antony J. Sankoorikal"
+      ],
+      "categories": [
+        "cs.LG",
+        "stat.ML"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.26929v1",
+        "pdf": "https://arxiv.org/pdf/2611.26929v1"
+      },
+      "published_date": "2026-11-20",
+      "summary": {
+        "arxiv_id_base": "2611.26929",
+        "categories": [
+          "cs.LG",
+          "stat.ML"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "CHB-MIT",
+            "Siena Scalp EEG"
+          ],
+          "eeg_hours": null,
+          "subjects": 38.0
+        },
+        "detailed_summary": "The paper investigates claims by Dani and Liebe (2026) that SSL adaptation of the final encoder block in BIOT and CBraMod significantly boosts seizure detection performance. The authors identify critical implementation errors in the original release, including the use of random initialization instead of pretrained weights and active dropout during probing. After correcting these issues and applying a revised protocol with subject rotations on CHB-MIT and Siena Scalp EEG, the reported gains are found to be negligible or non-existent, suggesting the original results were artifacts of implementation bugs.",
+        "evaluation": {
+          "benchmarks": [
+            "CHB-MIT",
+            "Siena Scalp EEG"
+          ],
+          "headline_results": [
+            "BIOT adaptation gain reduced from 36.2 to -0.6 ROC-AUC",
+            "CBraMod adaptation gain reduced from 29.5 to +0.01 ROC-AUC"
+          ],
+          "tasks": [
+            "Seizure detection"
+          ]
+        },
+        "key_points": [
+          "Benchmark audit: Investigates the reproducibility of SSL adaptation gains for BIOT and CBraMod on seizure detection.",
+          "Identifies critical bugs in the original release, such as random weight initialization during adaptation and active dropout during probing.",
+          "Shows that corrected evaluation on CHB-MIT and Siena datasets reduces reported ROC-AUC gains from ~30 points to near zero."
+        ],
+        "limitations": [
+          "Findings are specific to the tested configurations and the encoder-level probe chosen post hoc.",
+          "The +/- 3 point margin used for equivalence is an analysis threshold, not a clinically validated one.",
+          "Some comparisons (6 of 18) remained unresolved."
+        ],
+        "method": {
+          "architecture": "Linear probing and SSL adaptation of BIOT and CBraMod encoder blocks",
+          "finetuning": "SSL adaptation of the final encoder block followed by linear probing",
+          "objective": "Seizure detection (binary classification)",
+          "pretraining": "Pretrained BIOT and CBraMod encoders"
+        },
+        "notes": "{\"chars\": 178606, \"error\": null, \"pages\": 47, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8026;max_tokens=8000",
+        "one_liner": "An audit of SSL adaptation gains for BIOT and CBraMod on CHB-MIT, finding that reported improvements vanish when using pretrained weights and proper evaluation modes.",
+        "open_source": {
+          "code_url": "https://github.com/johnyj02/eeg-drift",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-11-20",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "Large Reported CHB-MIT Adaptation Gains Disappear with Pretrained Encoders and Matched Probes",
+        "unique_contribution": "Demonstrates that large reported SSL adaptation gains for EEG foundation models on CHB-MIT were artifacts of implementation errors and an inadequate evaluation protocol.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Large Reported CHB-MIT Adaptation Gains Disappear with Pretrained Encoders and Matched Probes",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Focuses on the evaluation and adaptation of specific EEG foundation models (BIOT and CBraMod)",
+          "Analyzes the effectiveness of self-supervised learning (SSL) adaptation for pretrained EEG representations",
+          "Provides a critical audit of adaptation gains and probing protocols for EEG-FMs"
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2611.27029v1",
+      "arxiv_id_base": "2611.27029",
+      "authors": [
+        "Weikang Qiu",
+        "Zheng Huang",
+        "Tinglin Huang",
+        "Yujun Yan",
+        "Rex Ying"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.27029v1",
+        "pdf": "https://arxiv.org/pdf/2611.27029v1"
+      },
+      "published_date": "2026-11-20",
+      "summary": {
+        "arxiv_id_base": "2611.27029",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": 64.0,
+          "datasets": [
+            "EgoBrain"
+          ],
+          "eeg_hours": 63.28,
+          "subjects": 40.0
+        },
+        "detailed_summary": "The paper proposes the Mind World Model (MWM), which jointly trains a mind model to encode EEG and a world model to predict future visual frames from egocentric video. Unlike prior work relying on cue-based trials or EEG-only self-supervision, MWM uses a movement-grounded objective that aligns neural activity with the visual consequences of behavior. The approach incorporates a Lateralization-Aware Transformer (LAT) to handle hemispheric symmetry and is evaluated across 16 motor decoding tasks, showing significant improvements in accuracy and correlation.",
+        "evaluation": {
+          "benchmarks": [
+            "EgoBrain"
+          ],
+          "headline_results": [
+            "Balanced accuracy improved by 5.9%",
+            "Pearson correlation improved by 16.2%"
+          ],
+          "tasks": [
+            "motor classification",
+            "motor regression"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: MWM learns motor representations by predicting the visual consequences of behavior using synchronized EEG and egocentric video.",
+          "Introduces the Lateralization-Aware Transformer (LAT) to explicitly separate bilateral and lateral EEG features, improving hemispheric correspondence.",
+          "Demonstrates superior performance across 9 classification and 7 regression tasks, improving balanced accuracy by 5.9% and Pearson correlation by 16.2%."
+        ],
+        "limitations": [
+          "Reliance on synchronized egocentric video and EEG data, which may be difficult to collect at massive scales.",
+          "The world model's ability to generalize to entirely different environments beyond the EgoBrain dataset is not extensively detailed.",
+          "Performance gains are measured via linear probing, which may not capture the full potential of the representations."
+        ],
+        "method": {
+          "architecture": "Mind Model (EEG encoder) and World Model (visual predictor) utilizing a Lateralization-Aware Transformer (LAT).",
+          "finetuning": "Linear probing on downstream motor classification and regression tasks.",
+          "objective": "Predict the representation of a future visual frame given EEG observed up to the current frame.",
+          "pretraining": "Joint learning on synchronized EEG and egocentric video without action labels."
+        },
+        "notes": "{\"chars\": 73432, \"error\": null, \"pages\": 20, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8032;max_tokens=8000",
+        "one_liner": "A framework that learns motor EEG representations by treating EEG as a latent action to predict future egocentric visual states.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-11-20",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "autoregressive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "fixed-montage"
+          ]
+        },
+        "title": "Mind World Models: Joint Learning of Motor EEG Representations and Action-Conditioned World Dynamics",
+        "unique_contribution": "Introduces a pretraining objective that treats EEG as a latent action for predicting future visual states in egocentric video, eliminating the need for explicit action annotations.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Mind World Models: Joint Learning of Motor EEG Representations and Action-Conditioned World Dynamics",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Learns motor EEG representations from scalable naturalistic EEG and egocentric video",
+          "Uses a pretraining objective to create a mind model for downstream motor decoding",
+          "Evaluated across a broad set of 9 classification and 7 regression tasks",
+          "Explicitly targets the creation of transferable motor representations"
+        ]
+      }
+    },
+    {
+      "architecture": {
+        "fact_sheet": null,
+        "hf_repo": "inclusionAI/LingSante-Pulse",
+        "hfviewer_url": "https://hfviewer.com/inclusionAI/LingSante-Pulse",
+        "skip_reason": "gated",
+        "status": "skipped"
+      },
+      "arxiv_id": "2611.27206v1",
+      "arxiv_id_base": "2611.27206",
+      "authors": [
+        "Linxiao Yang",
+        "Wenwei Wang",
+        "Tian Zhou",
+        "Bingqing Peng",
+        "Zihao Zhang",
+        "Zuyi Zhu",
+        "Jinjie Gu",
+        "Liang Sun"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.27206v1",
+        "pdf": "https://arxiv.org/pdf/2611.27206v1"
+      },
+      "published_date": "2026-11-20",
+      "summary": {
+        "arxiv_id_base": "2611.27206",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": 64.0,
+          "datasets": [
+            "HMC",
+            "Sleep-EDF",
+            "Apnea-ECG",
+            "EEGMMIDB",
+            "PTB-XL",
+            "PPG-DaLiA",
+            "DB8"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "LingSante-Pulse proposes a shared, signal-conditioned encoder that processes multiple physiological modalities independently to support both multimodal and single-sensor inference. It introduces a joint pretraining objective combining pairwise cross-modal alignment, structured random-feature prediction (RFP), and masked waveform reconstruction to capture both inter-signal relationships and intra-signal structures. The model was evaluated across 38 tasks, demonstrating state-of-the-art performance with a frozen encoder in domains including EEG sleep staging (0.7941 Macro-F1) and ECG apnea screening (0.9183 AUROC).",
+        "evaluation": {
+          "benchmarks": [
+            "HMC",
+            "Sleep-EDF",
+            "Apnea-ECG",
+            "EEGMMIDB",
+            "PTB-XL",
+            "PPG-DaLiA",
+            "DB8"
+          ],
+          "headline_results": [
+            "Sleep-EDF EEG-only staging: Macro-F1 0.7941",
+            "Apnea-ECG single-lead: AUROC 0.9183",
+            "HMC multimodal sleep staging: Macro-F1 0.7784",
+            "EEGMMIDB 64-channel motor imagery: Macro-F1 0.5150"
+          ],
+          "tasks": [
+            "Sleep staging",
+            "Apnea screening",
+            "Motor imagery classification"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: A unified framework (LingSante-Pulse) that learns shared representations across EEG, ECG, PPG, and EMG using a single signal-conditioned encoder.",
+          "Novel pretraining: Combines masked reconstruction with structured random-feature prediction and pairwise alignment to preserve rhythmic information and enable transitive transfer between modalities.",
+          "Strong evidence: Achieves top mean ranks across 38 tasks, including high performance in EEG-only sleep staging (0.7941 Macro-F1) and single-lead ECG apnea screening (0.9183 AUROC)."
+        ],
+        "limitations": [
+          "Reliance on the availability of synchronized multi-modal pairs for cross-modal alignment pretraining.",
+          "Potential sensitivity to the choice of random teacher functions used in the Random-Feature Prediction objective."
+        ],
+        "method": {
+          "architecture": "Shared signal-conditioned encoder",
+          "finetuning": "Evaluated using a frozen encoder with linear readouts or BiLSTM heads",
+          "objective": "Joint objective of pairwise cross-modal alignment, structured random-feature prediction (RFP), and masked waveform reconstruction",
+          "pretraining": "Pretrained on heterogeneous physiological recordings using random teacher functions for RFP and synchronized pairs for alignment"
+        },
+        "notes": "{\"chars\": 196526, \"error\": null, \"pages\": 70, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8061;max_tokens=8000",
+        "one_liner": "A unified physiological representation framework using random-feature prediction and cross-modal alignment to learn reusable features across EEG, ECG, PPG, and EMG.",
+        "open_source": {
+          "code_url": "https://github.com/inclusionAI/LingSante-Pulse",
+          "license": "unknown",
+          "weights_url": "https://huggingface.co/inclusionAI/LingSante-Pulse"
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-11-20",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction",
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "LingSante-Pulse: Unified Physiological Pretraining through Random-Feature Prediction and Cross-Modal Alignment",
+        "unique_contribution": "Introduces a unified encoder that enables transitive relational bridging across partially overlapping physiological recordings through a combination of random-feature prediction and cross-modal alignment.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "LingSante-Pulse: Unified Physiological Pretraining through Random-Feature Prediction and Cross-Modal Alignment",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Proposes a unified, general-purpose physiological representation framework that explicitly includes EEG as a core modality.",
+          "Uses pretraining (random-feature prediction and masked reconstruction) to learn reusable features across signal types.",
+          "Evaluates a frozen encoder across 38 tasks, including EEG-only sleep staging, demonstrating broad transferability."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2611.27783v1",
+      "arxiv_id_base": "2611.27783",
+      "authors": [
+        "Targol Bakhtiarvand",
+        "Terrance E. Boult",
+        "Jugal Kalita",
+        "Adham Atyabi"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.27783v1",
+        "pdf": "https://arxiv.org/pdf/2611.27783v1"
+      },
+      "published_date": "2026-11-20",
+      "summary": {
+        "arxiv_id_base": "2611.27783",
+        "categories": [
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "Temple University Hospital Seizure Corpus (TUSZ v2.0.3)"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes an open-set recognition (OSR) framework for EEG seizure type classification, moving beyond the standard closed-set assumption. It defines known and unknown classes based on subject representation in the TUSZ v2.0.3 dataset and evaluates seven post-hoc scorers applied to a fine-tuned EEG Foundation Model. Results show that while some scorers achieve a mean AUROC of 0.66 for unknown classes, detecting held-out known types from unseen subjects remains near chance, highlighting the difficulty of the task.",
+        "evaluation": {
+          "benchmarks": [
+            "TUSZ v2.0.3"
+          ],
+          "headline_results": [
+            "Best scorer (Mahalanobis) achieved mean AUROC of 0.66 on true unknown classes",
+            "Held-out knowns AUROC 0.54-0.58"
+          ],
+          "tasks": [
+            "Open-set seizure type classification",
+            "Fairness analysis of rejection rates"
+          ]
+        },
+        "key_points": [
+          "Benchmark protocol: Introduces the first open-set recognition framework for EEG seizure type classification on the TUSZ v2.0.3 corpus.",
+          "Methodological evaluation: Tests seven post-hoc OSR scorers on a fine-tuned EEG foundation model using a subject-disjoint leave-one-class-out protocol.",
+          "Performance findings: Demonstrates that open-set seizure recognition is challenging, with the best scorer reaching 0.66 AUROC for unknown classes."
+        ],
+        "limitations": [
+          "Open-set seizure type recognition remains a hard, open problem with low AUROC.",
+          "Detection of held-out known seizure types from unseen subjects is only slightly above chance.",
+          "Per-subject rejection rates are highly uneven across all tested scorers.",
+          "GHOST does not significantly improve per-subject fairness over energy scoring."
+        ],
+        "method": {
+          "architecture": "EEG Foundation Model (EFM) with post-hoc open-set scorers (MSP, MaxLogit, energy, Mahalanobis, kNN, GHOST, COSTARR)",
+          "finetuning": "Partially fine-tuned on known seizure types",
+          "objective": "Seizure type classification / Open-set recognition",
+          "pretraining": "Pretrained EEG foundation model"
+        },
+        "notes": "{\"chars\": 46154, \"error\": null, \"pages\": 9, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8023;max_tokens=8000",
+        "one_liner": "Introduces the first open-set recognition benchmark for EEG seizure type classification using a fine-tuned EEG foundation model.",
+        "open_source": {
+          "code_url": "unknown",
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "benchmark",
+        "published_date": "2026-11-20",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "benchmark"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "A Benchmark Protocol and Fairness Analysis Towards Open-Set EEG Seizure Type Classification",
+        "unique_contribution": "Establishes a clinically-grounded open-set recognition protocol for EEG seizure classification on the TUSZ corpus to evaluate the ability of models to reject rare or atypical seizure types.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "A Benchmark Protocol and Fairness Analysis Towards Open-Set EEG Seizure Type Classification",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "EEG is the central modality of the study.",
+          "The paper explicitly evaluates a 'partially fine-tuned EEG Foundation Model (EFM)'.",
+          "It proposes a benchmark protocol and evaluation for open-set recognition using an EEG-FM."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2611.28856v1",
+      "arxiv_id_base": "2611.28856",
+      "authors": [
+        "A Adith"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.28856v1",
+        "pdf": "https://arxiv.org/pdf/2611.28856v1"
+      },
+      "published_date": "2026-11-21",
+      "summary": null,
+      "summary_failed_reason": "llm_invalid_json",
+      "title": "PhyMind: Physics-Informed Masked Autoencoding for EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Title and abstract explicitly frame the work as being for 'EEG Foundation Models'.",
+          "Proposes a new pre-training architecture (physics-informed masked autoencoding) to create reusable EEG representations.",
+          "Evaluates the model on downstream tasks and compares performance against an existing EEG-FM (MANAS-2).",
+          "Pre-trained on a large-scale dataset of 3k hours of open EEG."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2611.29364v1",
+      "arxiv_id_base": "2611.29364",
+      "authors": [
+        "Xiaoyu Chen",
+        "Xiao Gu",
+        "Chao Zhang",
+        "Wen Wu",
+        "Shuaicong Hu",
+        "Qinfan Xiao",
+        "Jie Yang",
+        "Chen Chen",
+        "Wei Chen"
+      ],
+      "categories": [
+        "cs.LG",
+        "eess.SP"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.29364v1",
+        "pdf": "https://arxiv.org/pdf/2611.29364v1"
+      },
+      "published_date": "2026-11-22",
+      "summary": null,
+      "summary_failed_reason": "llm_invalid_json",
+      "title": "SleepXA: Composing Pretrained Neural and Cardiac Foundation Models for Sleep Representation Learning",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly utilizes and composes existing pretrained EEG foundation models.",
+          "Develops a multimodal foundation model (SleepXA) with EEG as a core target modality.",
+          "Demonstrates broad transferability across 27 downstream tasks and daytime physiological settings."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2611.31171v1",
+      "arxiv_id_base": "2611.31171",
+      "authors": [
+        "Hao-Run Cai",
+        "Si-Yang Liu",
+        "Han-Jia Ye",
+        "Hairong Zheng"
+      ],
+      "categories": [
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.31171v1",
+        "pdf": "https://arxiv.org/pdf/2611.31171v1"
+      },
+      "published_date": "2026-11-23",
+      "summary": null,
+      "summary_failed_reason": "llm_invalid_json",
+      "title": "EEG Decoding in Context: A Framework for Tuning-Free EEG Foundation Models",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly proposes a framework for 'tuning-free EEG foundation models'.",
+          "Develops a foundation-model paradigm based on in-context learning for EEG decoding.",
+          "Evaluates the approach across ten datasets and seven EEG decoding paradigms to demonstrate broad transferability."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 13,
-    "candidates": 35,
-    "summarized": 13
+    "accepted": 21,
+    "candidates": 45,
+    "summarized": 18
   },
   "top_picks": [
     "2611.17031",
