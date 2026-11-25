@@ -1948,8 +1948,76 @@
         "pdf": "https://arxiv.org/pdf/2611.29364v1"
       },
       "published_date": "2026-11-22",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2611.29364",
+        "categories": [
+          "cs.LG",
+          "eess.SP"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "three large cohorts"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "SleepXA proposes a compositional framework that integrates pretrained neural and cardiac foundation models instead of training a multimodal sleep model from scratch. It employs sleep-guided alignment to separate shared common representations from modality-specific information through common-space alignment, private-space preservation, and common-specific disentanglement. The model was pretrained on 9,230 overnight PSG recordings and evaluated on 27 downstream tasks, demonstrating superior performance in sleep staging, clinical prediction, and daytime physiological transfer, outperforming models trained from scratch.",
+        "evaluation": {
+          "benchmarks": [
+            "15 datasets"
+          ],
+          "headline_results": [
+            "Ranks top two on 22/27 tasks",
+            "Ranks first on 17/27 tasks"
+          ],
+          "tasks": [
+            "sleep representation",
+            "clinical/disease prediction",
+            "daytime physiological transfer"
+          ]
+        },
+        "key_points": [
+          "Composes pretrained EEG and ECG foundation models with lightweight encoders for other PSG modalities to learn robust sleep representations.",
+          "Utilizes a three-module alignment strategy (common-space, private-space, and disentanglement) to preserve modality-specific knowledge while learning shared features.",
+          "Achieved top-two performance on 22 of 27 downstream tasks across 15 datasets, including clinical and non-sleep physiological transfer."
+        ],
+        "limitations": [
+          "Requires synchronized multimodal PSG data for the composition phase.",
+          "Dependence on the quality and availability of independently pretrained modality-specific foundation models.",
+          "Potential challenges in scaling to modalities without existing foundation models."
+        ],
+        "method": {
+          "architecture": "Composition of pretrained EEG and ECG foundation models with lightweight encoders for other PSG modalities.",
+          "finetuning": "Evaluated on 27 downstream tasks across 15 datasets.",
+          "objective": "Sleep-guided alignment involving common-space alignment, modality-specific preservation, and common-specific disentanglement using contrastive and structural losses.",
+          "pretraining": "Pretrained on 9,230 overnight PSG recordings."
+        },
+        "notes": "{\"chars\": 140912, \"error\": null, \"pages\": 36, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8006;max_tokens=8000",
+        "one_liner": "A framework that composes independently pretrained EEG and ECG foundation models using synchronized PSG data to learn versatile sleep representations.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-11-22",
+        "tags": {
+          "backbone": [],
+          "objective": [
+            "contrastive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "SleepXA: Composing Pretrained Neural and Cardiac Foundation Models for Sleep Representation Learning",
+        "unique_contribution": "Introduces a compositional paradigm that leverages existing modality-specific foundation models via synchronized multimodal physiology as a natural interface for alignment.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "SleepXA: Composing Pretrained Neural and Cardiac Foundation Models for Sleep Representation Learning",
       "triage": {
         "confidence": 1.0,
@@ -1958,6 +2026,118 @@
           "Explicitly utilizes and composes existing pretrained EEG foundation models.",
           "Develops a multimodal foundation model (SleepXA) with EEG as a core target modality.",
           "Demonstrates broad transferability across 27 downstream tasks and daytime physiological settings."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2611.31320v1",
+      "arxiv_id_base": "2611.31320",
+      "authors": [
+        "Yanlin Fu",
+        "Wei Liu",
+        "Liming Zhao"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.31320v1",
+        "pdf": "https://arxiv.org/pdf/2611.31320v1"
+      },
+      "published_date": "2026-11-23",
+      "summary": {
+        "arxiv_id_base": "2611.31320",
+        "categories": [
+          "cs.LG",
+          "cs.AI"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "OpenBMI",
+            "ERP CORE",
+            "SEED-V",
+            "HMC",
+            "ISRUC"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes a systematic framework to disentangle the effects of readout mechanisms (pooling) from layer depth in frozen EEG foundation models. It demonstrates that while optimizing the readout recovers much of the final layer's performance, intermediate layers still provide unique predictive utility. The authors provide evidence across five models and multiple tasks that layer-readout interfaces selected on source datasets transfer effectively to target datasets, reducing the need for target-side search.",
+        "evaluation": {
+          "benchmarks": [
+            "OpenBMI",
+            "N170",
+            "N400",
+            "SEED-V",
+            "HMC",
+            "ISRUC"
+          ],
+          "headline_results": [
+            "Source-selected interfaces outperformed final-layer baselines in 10/10 cross-dataset comparisons for CBraMod and REVE."
+          ],
+          "tasks": [
+            "Motor Imagery",
+            "ERP Classification",
+            "Emotion Recognition",
+            "Sleep Staging"
+          ]
+        },
+        "key_points": [
+          "Method for EEG-FM interfacing: Proposes a sequential selection process to optimize readout and depth for frozen feature extraction.",
+          "Depth vs. Readout: Finds that intermediate layers maintain a predictive advantage even after the final-layer readout is optimized.",
+          "Cross-dataset transfer: Shows that interfaces selected on source data outperform final-layer baselines on target datasets across various EEG tasks."
+        ],
+        "limitations": [
+          "Analysis is limited to frozen feature extraction rather than full fine-tuning.",
+          "The number of evaluated readout families is relatively small.",
+          "Cross-dataset transfer was tested on a limited number of dataset pairs.",
+          "Residual utility analysis depends on the choice of PCA dimensionality."
+        ],
+        "method": {
+          "architecture": "Frozen feature extraction from five EEG-FMs (CBraMod, REVE, LaBraM, LUNA, CSBrain) using a sequential selection of readout and layer depth.",
+          "finetuning": "Frozen backbone with linear readout probes.",
+          "objective": "Linear probing for downstream task performance and PCA-based residual analysis for predictive utility.",
+          "pretraining": "Analyzes existing pre-trained foundation models."
+        },
+        "notes": "{\"chars\": 88455, \"error\": null, \"pages\": 31, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7899",
+        "one_liner": "Investigates the impact of readout mechanisms and layer depth on the predictive utility of frozen EEG foundation models and their transferability across datasets.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-11-23",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "post-training"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "Layer-Readout Interfaces in EEG Foundation Models: Predictive Accessibility and Cross-Dataset Transfer",
+        "unique_contribution": "Demonstrates that source-selected layer-readout interfaces provide a reusable and transferable feature interface across different EEG datasets.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "Layer-Readout Interfaces in EEG Foundation Models: Predictive Accessibility and Cross-Dataset Transfer",
+      "triage": {
+        "confidence": 1.0,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly focuses on 'EEG foundation models' in both title and abstract.",
+          "Investigates the use of these models as frozen feature extractors for cross-dataset transfer.",
+          "Analyzes the predictive utility and depth structure of representations across multiple EEG-FMs and tasks."
         ]
       }
     },
@@ -1978,8 +2158,74 @@
         "pdf": "https://arxiv.org/pdf/2611.31171v1"
       },
       "published_date": "2026-11-23",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2611.31171",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "10 datasets"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes a framework for EEG decoding based on in-context learning (ICL), utilizing a frozen general-purpose predictor instead of traditional task-specific fine-tuning. It introduces EEG-specific context construction—incorporating waveform, spectral, covariance, regional, and local-temporal representations—alongside a metric-based adaptation mechanism to select the optimal context without requiring validation data. The approach was evaluated across ten datasets and seven paradigms, achieving the highest mean BAcc compared to eleven specialized and fine-tuned baselines.",
+        "evaluation": {
+          "benchmarks": [
+            "10 diverse EEG datasets across 7 paradigms"
+          ],
+          "headline_results": [
+            "Achieved highest mean BAcc compared to 11 specialized and fine-tuned baselines."
+          ],
+          "tasks": [
+            "EEG decoding"
+          ]
+        },
+        "key_points": [
+          "New EEG decoding method: utilizes a frozen general-purpose in-context predictor to perform tuning-free decoding by treating labeled examples as context.",
+          "Develops diverse context construction strategies (spectral, covariance, regional, etc.) and a support-only metric for automatic context selection.",
+          "Outperforms eleven specialized and fine-tuned baselines across ten datasets and seven EEG paradigms in mean BAcc."
+        ],
+        "limitations": [
+          "Deployment cost increases with wider waveform features and multiview contexts.",
+          "Requires multiple prediction passes for One-vs-Rest (OVR) configurations.",
+          "Raw vectorization is unstable and does not generalize reliably across paradigms without specialized context construction."
+        ],
+        "method": {
+          "architecture": "Frozen general-purpose ICL predictor (e.g., TabPFN/TabICL) with EEG-specific context construction.",
+          "finetuning": "Tuning-free; adaptation occurs via context construction and metric-based selection.",
+          "objective": "In-context learning for classification/regression without parameter updates.",
+          "pretraining": "Uses a pre-trained general-purpose tabular ICL model."
+        },
+        "notes": "{\"chars\": 84955, \"error\": null, \"pages\": 22, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8049;max_tokens=8000",
+        "one_liner": "A tuning-free EEG decoding framework that leverages in-context learning and specialized context construction to avoid parameter updates during deployment.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "method",
+        "published_date": "2026-11-23",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": [
+            "topology-agnostic"
+          ]
+        },
+        "title": "EEG Decoding in Context: A Framework for Tuning-Free EEG Foundation Models",
+        "unique_contribution": "Introduces a tuning-free EEG foundation model paradigm where task adaptation is achieved through EEG-specific context construction and a metric-based selection rule rather than gradient-based parameter updates.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "EEG Decoding in Context: A Framework for Tuning-Free EEG Foundation Models",
       "triage": {
         "confidence": 1.0,
@@ -1990,18 +2236,235 @@
           "Evaluates the approach across ten datasets and seven EEG decoding paradigms to demonstrate broad transferability."
         ]
       }
+    },
+    {
+      "architecture": {
+        "fact_sheet": null,
+        "hf_repo": null,
+        "hfviewer_url": null,
+        "skip_reason": "not_a_model_repo",
+        "status": "skipped"
+      },
+      "arxiv_id": "2611.32100v1",
+      "arxiv_id_base": "2611.32100",
+      "authors": [
+        "Dengzhe Hou",
+        "Kazunori D. Yamada"
+      ],
+      "categories": [
+        "eess.SP",
+        "cs.LG"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.32100v1",
+        "pdf": "https://arxiv.org/pdf/2611.32100v1"
+      },
+      "published_date": "2026-11-24",
+      "summary": {
+        "arxiv_id_base": "2611.32100",
+        "categories": [
+          "eess.SP",
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "EEGJev-Bench"
+          ],
+          "eeg_hours": null,
+          "subjects": null
+        },
+        "detailed_summary": "The paper proposes EEGJev, a model that combines a frozen CBraMod EEG encoder and a frozen MPNet text encoder via a bidirectional Transformer decision head to score candidate answers. Unlike prior work that uses task-specific heads, EEGJev handles multiple attributes through a question-answering interface. The authors introduce EEGJev-Bench, covering six question types across 19 public datasets, demonstrating that the model follows questions with 99.7% accuracy and achieves D1 balanced accuracy (63.8%) comparable to task-specific EEGNet.",
+        "evaluation": {
+          "benchmarks": [
+            "EEGJev-Bench"
+          ],
+          "headline_results": [
+            "63.8% balanced accuracy on D1 (vs 64.5% EEGNet)",
+            "99.7% attribute selection accuracy"
+          ],
+          "tasks": [
+            "Single attribute (D1)",
+            "Paired questions (D2)",
+            "Ordered bins (D3)",
+            "Refusal (D4)",
+            "Two-window comparison (T1)",
+            "Long-window timing (T2)"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model and benchmark: EEGJev enables multi-task EEG decoding by scoring candidate answers based on natural language questions.",
+          "Architecture uses a frozen CBraMod EEG encoder and MPNet text encoder joined by a 2-layer bidirectional Transformer decision head.",
+          "Demonstrates high question-following reliability (99.7% accuracy) and competitive performance against task-specific models across 19 public EEG sources."
+        ],
+        "limitations": [
+          "Performance on specific answers (62.04% BA) is lower than the ability to simply identify the correct attribute (99.7%).",
+          "D2 joint scores (both questions correct) are significantly lower than individual question scores.",
+          "T2 long-window timing accuracy is relatively low (15% for EEGJev).",
+          "Performance drops when using held-out phrasings (D1h)."
+        ],
+        "method": {
+          "architecture": "CBraMod EEG encoder + MPNet text encoder + 2-layer bidirectional Transformer decision head + Act head for refusal.",
+          "finetuning": "Decision head and Act head are trained on EEGJev-Bench.",
+          "objective": "Scoring candidate answers via softmax over offered options.",
+          "pretraining": "CBraMod is pretrained; then fine-tuned on 19 sources and frozen."
+        },
+        "notes": "{\"chars\": 93589, \"error\": null, \"pages\": 28, \"tool\": \"pymupdf\"};input_mode=fulltext;prompt_tokens=7972",
+        "one_liner": "A question-guided EEG decision model and benchmark designed to evaluate multi-task decoding and question-following capabilities.",
+        "open_source": {
+          "code_url": "https://github.com/EEGJev/EEGJev",
+          "license": "unknown",
+          "weights_url": "https://huggingface.co/EEGJev"
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-11-24",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [],
+          "paper_type": [
+            "new-model",
+            "benchmark"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "EEGJev: A System One Decision Model and Benchmark for Multi-Task EEG Question Answering",
+        "unique_contribution": "Introduces a single-pass decision model that can switch decoding targets for the same EEG recording simply by changing the input question.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EEGJev: A System One Decision Model and Benchmark for Multi-Task EEG Question Answering",
+      "triage": {
+        "confidence": 0.95,
+        "decision": "accept",
+        "reasons": [
+          "Explicitly mentions EEG foundation models and the need to evaluate how they handle changing questions.",
+          "Introduces EEGJev-Bench, a benchmark specifically designed to test EEG decoders/foundation models across 19 public sources.",
+          "Compares performance against NeuroLM, an existing EEG foundation model."
+        ]
+      }
+    },
+    {
+      "arxiv_id": "2611.32825v1",
+      "arxiv_id_base": "2611.32825",
+      "authors": [
+        "Junxiang Zhang",
+        "Jiayu Zuo",
+        "Wenhao Ye",
+        "Junfeng Xia",
+        "Xiang Chen",
+        "Mo Wang",
+        "Quanying Liu"
+      ],
+      "categories": [
+        "cs.CV",
+        "q-bio.NC"
+      ],
+      "links": {
+        "abs": "http://arxiv.org/abs/2611.32825v1",
+        "pdf": "https://arxiv.org/pdf/2611.32825v1"
+      },
+      "published_date": "2026-11-24",
+      "summary": {
+        "arxiv_id_base": "2611.32825",
+        "categories": [
+          "cs.CV",
+          "q-bio.NC"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "VAEEG"
+          ],
+          "eeg_hours": 2584.0,
+          "subjects": 78.0
+        },
+        "detailed_summary": "The paper proposes EEG-World, a recurrent world model designed to forecast 10 seconds of EEG band-power dynamics using 6 seconds of prior EEG and subsequent audiovisual input. Unlike traditional encoding models that ignore the viewer's current brain state, EEG-World learns shared neural dynamics pretrained on continuous EEG and adapts to individuals via lightweight readouts. Using 2,584 hours of EEG from 78 participants, the model demonstrates superior forecasting correlation (0.261) and a longer forecasting horizon compared to strong history-aware linear baselines.",
+        "evaluation": {
+          "benchmarks": [
+            "Linear history-aware baselines",
+            "iTransformer direct forecaster"
+          ],
+          "headline_results": [
+            "Forecasting correlation of 0.261 vs 0.233 for linear baselines",
+            "3.3-second increase in forecasting horizon",
+            "Outperformed linear baselines in 23/24 unseen subjects"
+          ],
+          "tasks": [
+            "EEG band-power forecasting",
+            "Zero-shot and calibrated transfer to unseen subjects"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: A recurrent world model that predicts future EEG band-power by integrating preceding neural history with audiovisual stimuli.",
+          "Demonstrates that nonlinear recurrent forecasting outperforms history-aware linear baselines at scale, achieving a 3.3-second advantage in forecasting horizon.",
+          "Shows strong transferability to unseen participants, outperforming linear baselines in 23 out of 24 individuals after calibration."
+        ],
+        "limitations": [
+          "Reliance on large-scale datasets to outperform linear baselines.",
+          "Zero-shot transfer performance was lower than pooled linear models.",
+          "Some hypothesis tests regarding persistence-controlled identification failed to reach significance.",
+          "Audio features provided smaller gains compared to visual features."
+        ],
+        "method": {
+          "architecture": "Recurrent world model with a recurrent dynamics core and lightweight subject-specific readouts.",
+          "finetuning": "Lightweight calibration of subject-specific readouts for unseen individuals.",
+          "objective": "Forecasting 10 seconds of EEG band-power dynamics.",
+          "pretraining": "Pretrained on continuous EEG data to learn shared neural dynamics."
+        },
+        "notes": "{\"chars\": 78508, \"error\": null, \"pages\": 20, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8002;max_tokens=8000",
+        "one_liner": "A recurrent world model that forecasts individual EEG band-power dynamics by conditioning on both preceding neural activity and audiovisual stimuli.",
+        "open_source": {
+          "code_url": null,
+          "license": null,
+          "weights_url": null
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-11-24",
+        "tags": {
+          "backbone": [],
+          "objective": [
+            "autoregressive"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [],
+          "topology": []
+        },
+        "title": "EEG-World: Context-Conditioned Dynamics of the Watching Brain",
+        "unique_contribution": "Introduces a recurrent world model that separates state-driven from stimulus-driven predictability to forecast individualized EEG trajectories.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
+      "title": "EEG-World: Context-Conditioned Dynamics of the Watching Brain",
+      "triage": {
+        "confidence": 0.9,
+        "decision": "accept",
+        "reasons": [
+          "Pretrained on a large-scale dataset (2,584 hours of EEG) to learn shared neural dynamics.",
+          "Explicitly focuses on transferable representations that adapt to unseen individuals via lightweight readouts.",
+          "Frames the work as a 'recurrent world model' for general EEG band-power forecasting."
+        ]
+      }
     }
   ],
   "stats": {
-    "accepted": 21,
-    "candidates": 45,
-    "summarized": 18
+    "accepted": 24,
+    "candidates": 48,
+    "summarized": 23
   },
   "top_picks": [
+    "2611.31320",
+    "2611.31171",
+    "2611.29364",
     "2611.17031",
-    "2611.14035",
-    "2611.11782",
-    "2611.11149",
-    "2611.08969"
+    "2611.14035"
   ]
 }
