@@ -1898,6 +1898,13 @@
       }
     },
     {
+      "architecture": {
+        "fact_sheet": null,
+        "hf_repo": null,
+        "hfviewer_url": null,
+        "skip_reason": "not_a_model_repo",
+        "status": "skipped"
+      },
       "arxiv_id": "2611.28856v1",
       "arxiv_id_base": "2611.28856",
       "authors": [
@@ -1911,8 +1918,89 @@
         "pdf": "https://arxiv.org/pdf/2611.28856v1"
       },
       "published_date": "2026-11-21",
-      "summary": null,
-      "summary_failed_reason": "llm_invalid_json",
+      "summary": {
+        "arxiv_id_base": "2611.28856",
+        "categories": [
+          "cs.LG"
+        ],
+        "data_scale": {
+          "channels": null,
+          "datasets": [
+            "EEGMAT",
+            "MI",
+            "ADFTD",
+            "Sleep-ST"
+          ],
+          "eeg_hours": 3000.0,
+          "subjects": null
+        },
+        "detailed_summary": "PhyMind proposes a new pre-training framework for EEG foundation models where the masked transformer encoder is paired with a physics-based decoder. This decoder models EEG signals as the projection of 68 cortical regions—each driven by damped stochastic oscillators and an aperiodic Ornstein-Uhlenbeck process—through a fixed boundary-element lead field. The model is trained using a combination of masked reconstruction, Whittle spectral likelihood, and dynamics residuals, demonstrating that this physics-informed constraint significantly improves the linear decodability of spectral content in the encoder tokens compared to standard MAE or MANAS-2 objectives.",
+        "evaluation": {
+          "benchmarks": [
+            "EEGMAT",
+            "MI-4",
+            "ADFTD",
+            "Sleep-ST"
+          ],
+          "headline_results": [
+            "Mean R² on spectral probe reached 0.67-0.77, significantly outperforming MAE (0.24-0.50).",
+            "Frozen motor-imagery accuracy improved by 7-14 percentage points using region-level features."
+          ],
+          "tasks": [
+            "Token-level spectral probe",
+            "Motor-imagery classification",
+            "Sleep stage classification",
+            "EEG-based disease detection"
+          ]
+        },
+        "key_points": [
+          "New EEG foundation model: PhyMind utilizes a physics-informed decoder based on cortical source dynamics and a fixed BEM lead field to guide self-supervised pre-training.",
+          "Method novelty: Integrates a Whittle spectral likelihood and oscillator-dynamics residuals into the masked autoencoding objective to constrain the learned latent space.",
+          "Strongest result: Encoder tokens exhibit markedly higher linear decodability of spectral structure (mean R² 0.67-0.77) compared to standard MAE (0.24-0.50)."
+        ],
+        "limitations": [
+          "Downstream accuracy gains in controlled settings are relatively small.",
+          "Inferred sources do not reproduce lateralisation found in classical inverse solutions.",
+          "The model is not fully anatomically interpretable.",
+          "MANAS-2 still performs better after full fine-tuning."
+        ],
+        "method": {
+          "architecture": "Masked Transformer encoder with a physics-informed decoder consisting of a transformer trunk, 68 region queries, source dynamics (AR(2) oscillators + AR(1) aperiodic), and a fixed BEM lead field projection.",
+          "finetuning": "Frozen linear probing and full fine-tuning on downstream tasks.",
+          "objective": "Combined loss including masked MSE, Whittle spectral likelihood, oscillator-dynamics residual, minimum-norm source prior, and a penalised neural residual.",
+          "pretraining": "Masked autoencoding with 50% block-structured masking (random tokens, whole patches, and whole channels)."
+        },
+        "notes": "{\"chars\": 39482, \"error\": null, \"pages\": 14, \"tool\": \"pymupdf\"};input_mode=fulltext_slices;reason=fulltext_over_limit;prompt_tokens=8122;max_tokens=8000",
+        "one_liner": "A physics-informed masked autoencoder for EEG that replaces the standard free-form decoder with a differentiable biophysical forward model to improve spectral representations.",
+        "open_source": {
+          "code_url": "https://github.com/PhyMind/PhyMind",
+          "license": "unknown",
+          "weights_url": "https://huggingface.co/PhyMind"
+        },
+        "paper_type": "new_model",
+        "published_date": "2026-11-21",
+        "tags": {
+          "backbone": [
+            "transformer"
+          ],
+          "objective": [
+            "masked-reconstruction"
+          ],
+          "paper_type": [
+            "new-model"
+          ],
+          "tokenization": [
+            "time-patch"
+          ],
+          "topology": [
+            "channel-flexible"
+          ]
+        },
+        "title": "PhyMind: Physics-Informed Masked Autoencoding for EEG Foundation Models",
+        "unique_contribution": "Replaces the unconstrained decoder in EEG masked autoencoders with a parametric biophysical forward model to force the encoder to learn more spectrally accurate representations.",
+        "used_fulltext": true
+      },
+      "summary_failed_reason": null,
       "title": "PhyMind: Physics-Informed Masked Autoencoding for EEG Foundation Models",
       "triage": {
         "confidence": 1.0,
@@ -2458,13 +2546,13 @@
   "stats": {
     "accepted": 24,
     "candidates": 48,
-    "summarized": 23
+    "summarized": 24
   },
   "top_picks": [
     "2611.31320",
     "2611.31171",
     "2611.29364",
-    "2611.17031",
-    "2611.14035"
+    "2611.28856",
+    "2611.17031"
   ]
 }
